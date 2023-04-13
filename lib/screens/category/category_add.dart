@@ -57,12 +57,10 @@ class _CategoryAddState extends State<CategoryAdd> {
     SlugUrlController.clear();
     CategoryController.clear();
   }
+//////
 
-  //////
+ ///// File Picker ==========================================================
 
-  // Map<String, TextEditingController> _controllers = new Map();
-
-  // File Picker ==========================================================
   var uploadedDoc;
   var imagePri;
 // result;
@@ -116,19 +114,16 @@ class _CategoryAddState extends State<CategoryAdd> {
     }
   }
 
-  ///
+ /////////
 
 ///////////  firebase property
-  final Stream<QuerySnapshot> _crmStream =
-      FirebaseFirestore.instance.collection('category').snapshots();
+  final Stream<QuerySnapshot> _crmStream = FirebaseFirestore.instance.collection('category').snapshots();
+  CollectionReference _category = FirebaseFirestore.instance.collection('category');
 
-  final List StoreDocs = [];
-  var db = FirebaseFirestore.instance;
-  CollectionReference _category =
-      FirebaseFirestore.instance.collection('category');
-      
-/////////////++++++++++++++++++++++++++++++++++++++++++++++
-  _getUser() async {
+/////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
+
+   final List StoreDocs = [];
+   _CateData() async {
    // var collection = FirebaseFirestore.instance.collection('category');
     var querySnapshot = await _category.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
@@ -141,8 +136,11 @@ class _CategoryAddState extends State<CategoryAdd> {
     // });
   }
 
-  /// add list
-  Future<void> addList() {
+/////////////
+
+/////// add Category Data  =++++++++++++++++++++++++++++++++++++++
+ 
+ Future<void> addList() {
     return _category
         .add({
           'category_name': "$cate_name",
@@ -157,8 +155,11 @@ class _CategoryAddState extends State<CategoryAdd> {
             (error) => themeAlert(context, 'Failed to Submit', type: "error"));
   }
 
-  ///
-  ///delete
+//////////
+
+
+////////// delete Category Data ++++++++++++++++++++++++++++++++++++++
+
   Future<void> deleteUser(id) {
     return _category
         .doc(id)
@@ -168,12 +169,11 @@ class _CategoryAddState extends State<CategoryAdd> {
             (error) => themeAlert(context, 'Not find Data', type: "error"));
   }
 
-  ///
+  ////////////
 
   @override
   void initState() {
-    // TODO: implement initState
-    _getUser();
+    _CateData();
     super.initState();
   }
 

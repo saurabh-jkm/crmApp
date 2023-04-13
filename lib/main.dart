@@ -11,17 +11,17 @@ import 'screens/main/main_screen.dart';
 import 'package:firedart/firedart.dart';
 
 void main() async {
-  // // //WidgetsFlutterBinding.ensureInitialized();
-  /////// if (kIsWeb) {
-  //  ////// await Firebase.initializeApp(
-  ////  //   options: FirebaseOptions(
+  //     WidgetsFlutterBinding.ensureInitialized();
+  //     if (kIsWeb) {
+  //     await Firebase.initializeApp(
+  //     options: FirebaseOptions(
   //     apiKey: Constants.apiKey,
   //     appId: Constants.appId,
   //     messagingSenderId: Constants.messagingSenderId,
   //     projectId: Constants.projectId,
   //     storageBucket: Constants.storageBucket,
   //   ));
-  // }
+  //  }
   // else if (!kIsWeb) {
   var projectId = Constants.projectId;
   await Firestore.initialize(projectId);
