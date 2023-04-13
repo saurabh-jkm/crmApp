@@ -116,9 +116,10 @@ class _CategoryAddState extends State<CategoryAdd> {
 
  /////////
 
-///////////  firebase property
+///////////  firebase property Database access  +++++++++++++++++++++++++++
   final Stream<QuerySnapshot> _crmStream = FirebaseFirestore.instance.collection('category').snapshots();
   CollectionReference _category = FirebaseFirestore.instance.collection('category');
+////////
 
 /////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
 
@@ -171,18 +172,26 @@ class _CategoryAddState extends State<CategoryAdd> {
 
   ////////////
 
+
+
+
+
+
   @override
   void initState() {
     _CateData();
     super.initState();
   }
 
-  ///
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
+    return 
+    
+    StreamBuilder<QuerySnapshot>(
         stream: _crmStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+     
           //////
           if (snapshot.hasError) {
             print("Something went wrong");
@@ -190,12 +199,12 @@ class _CategoryAddState extends State<CategoryAdd> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
-          snapshot.data!.docs.map((DocumentSnapshot document) {
-            Map Docs = document.data() as Map<String, dynamic>;
-            // StoreDocs.add(Docs);
-            // Docs["id"] = document.id;
-          }).toList();
-          ////////
+          // snapshot.data!.docs.map((DocumentSnapshot document) {
+          //   Map Docs = document.data() as Map<String, dynamic>;
+          //   // StoreDocs.add(Docs);
+          //   // Docs["id"] = document.id;
+          // }).toList();
+          // ////////
 
           return Scaffold(
               body: Container(

@@ -2,6 +2,7 @@
 
 import 'package:crm_demo/shared/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -11,25 +12,25 @@ import 'screens/main/main_screen.dart';
 import 'package:firedart/firedart.dart';
 
 void main() async {
-  //     WidgetsFlutterBinding.ensureInitialized();
-  //     if (kIsWeb) {
-  //     await Firebase.initializeApp(
-  //     options: FirebaseOptions(
-  //     apiKey: Constants.apiKey,
-  //     appId: Constants.appId,
-  //     messagingSenderId: Constants.messagingSenderId,
-  //     projectId: Constants.projectId,
-  //     storageBucket: Constants.storageBucket,
-  //   ));
-  //  }
-  // else if (!kIsWeb) {
+      WidgetsFlutterBinding.ensureInitialized();
+      if (kIsWeb) {
+      await Firebase.initializeApp(
+      options: FirebaseOptions(
+      apiKey: Constants.apiKey,
+      appId: Constants.appId,
+      messagingSenderId: Constants.messagingSenderId,
+      projectId: Constants.projectId,
+      storageBucket: Constants.storageBucket,
+    ));
+   }
+  else if (!kIsWeb) {
   var projectId = Constants.projectId;
   await Firestore.initialize(projectId);
-  // }
-  // else {
-  //   await
-  //   Firebase.initializeApp();
-  //   }
+  }
+  else {
+    await
+    Firebase.initializeApp();
+    }
 
   runApp(MyApp());
 }

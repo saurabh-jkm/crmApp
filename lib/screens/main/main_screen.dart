@@ -1,5 +1,5 @@
 
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,13 +7,14 @@ import 'package:provider/provider.dart';
 
 import '../../controllers/MenuAppController.dart';
 import '../../responsive.dart';
+import '../Profile/profile_details.dart';
 import '../category/category_add.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../inventry/inventry_list.dart';
 import '../order/oreder_list.dart';
 import '../product/product_add.dart';
-import 'components/side_menu.dart';
 
+// ignore: use_key_in_widget_constructors
 class MainScreen extends StatefulWidget {
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -82,10 +83,10 @@ class _MainScreenState extends State<MainScreen> {
            ) 
 
            else if (sidemenu == 7)
- Expanded(
+            Expanded(
             flex: 5,
             child: 
-            InventryList()
+            ProfileDetails()
            ) 
 
 
@@ -127,7 +128,6 @@ class _MainScreenState extends State<MainScreen> {
         style: TextStyle(color: Colors.white54),
       ),
     ),
-
 
     ListTile(
       onTap: ()
