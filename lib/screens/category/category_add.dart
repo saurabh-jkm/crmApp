@@ -199,8 +199,6 @@ class _CategoryAddState extends State<CategoryAdd> {
 
           return Scaffold(
               body: Container(
-            // padding: EdgeInsets.all(defaultPadding),
-
             child: ListView(
               children: [
                 Header(
