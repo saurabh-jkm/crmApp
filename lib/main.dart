@@ -11,7 +11,7 @@ import 'screens/main/main_screen.dart';
 import 'package:firedart/firedart.dart';
 
 void main() async {
-  //  WidgetsFlutterBinding.ensureInitialized();
+  // // WidgetsFlutterBinding.ensureInitialized();
   // if (kIsWeb) {
   //   await Firebase.initializeApp(
   //     options: FirebaseOptions(
@@ -21,13 +21,13 @@ void main() async {
   //     projectId: Constants.projectId,
   //     storageBucket: Constants.storageBucket,
   //   ));
-  // } 
+  // }
   // else if (!kIsWeb) {
-    var projectId = Constants.projectId;
-    await  Firestore.initialize(projectId);
+  var projectId = Constants.projectId;
+  await Firestore.initialize(projectId);
   // }
   // else {
-  //   await 
+  //   await
   //   Firebase.initializeApp();
   //   }
 
