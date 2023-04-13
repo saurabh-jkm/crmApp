@@ -12,8 +12,8 @@ import 'package:firedart/firedart.dart';
 
 void main() async {
   // // //WidgetsFlutterBinding.ensureInitialized();
-  // if (kIsWeb) {
-  //   await Firebase.initializeApp(
+  /////// if (kIsWeb) {
+  //  ////// await Firebase.initializeApp(
   //     options: FirebaseOptions(
   //     apiKey: Constants.apiKey,
   //     appId: Constants.appId,
