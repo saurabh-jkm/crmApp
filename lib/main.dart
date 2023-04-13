@@ -14,7 +14,7 @@ void main() async {
   // // //WidgetsFlutterBinding.ensureInitialized();
   /////// if (kIsWeb) {
   //  ////// await Firebase.initializeApp(
-  //     options: FirebaseOptions(
+  ////  //   options: FirebaseOptions(
   //     apiKey: Constants.apiKey,
   //     appId: Constants.appId,
   //     messagingSenderId: Constants.messagingSenderId,
