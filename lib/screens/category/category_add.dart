@@ -122,7 +122,12 @@ class _CategoryAddState extends State<CategoryAdd> {
                             const BorderRadius.all(Radius.circular(10)),
                       ),
                       child:  TextButton(
-                  onPressed: () =>  deleteUser(iid_delete),
+                  onPressed: () {
+                   setState(() {
+                     deleteUser(iid_delete);
+                      Navigator.of(context).pop(false);
+                   });
+                  } ,
                   child: Text(
                     'Yes',
                     style: themeTextStyle(
@@ -146,6 +151,7 @@ class _CategoryAddState extends State<CategoryAdd> {
   var uploadedDoc;
   var imagePri;
 // result;
+   var result;
   String? fileName;
   PlatformFile? pickedfile;
   File? fileToDisplay;
@@ -155,7 +161,8 @@ class _CategoryAddState extends State<CategoryAdd> {
   pickFile() async {
     if (!kIsWeb) {
     
-        FilePickerResult? result = await FilePicker.platform.pickFiles(
+       // FilePickerResult?
+         result = await FilePicker.platform.pickFiles(
           type: FileType.custom,
           allowedExtensions: ['png', 'jpeg', 'jpg'],
           allowMultiple: false,
@@ -188,14 +195,14 @@ class _CategoryAddState extends State<CategoryAdd> {
       //   });
       // }
 
-   final results = await FilePicker.platform.pickFiles(
+          result = await FilePicker.platform.pickFiles(
           allowMultiple: false,
           type: FileType.custom,
           allowedExtensions: ['png','jpg'],
                );
-          if(results != null){
-             Uint8List? UploadImage =  results.files.single.bytes;
-              fileName = results.files.single.name;
+          if(result != null){
+             Uint8List? UploadImage =  result.files.single.bytes;
+              fileName = result.files.single.name;
             setState(() {
             uploadedDoc = base64.encode(UploadImage!);
             imagePri = base64.decode(uploadedDoc);
@@ -226,8 +233,7 @@ class _CategoryAddState extends State<CategoryAdd> {
 
    final List StoreDocs = [];
    _CateData() async {
-
-           var collection = FirebaseFirestore.instance.collection('category');
+    var collection = FirebaseFirestore.instance.collection('category');
     var querySnapshot = await collection.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
       // ignore: unnecessary_cast
@@ -269,9 +275,15 @@ class _CategoryAddState extends State<CategoryAdd> {
     return _category
         .doc(id)
         .delete()
-        .then((value) => themeAlert(context, "Deleted Successfully "))
-        .catchError(
-            (error) => themeAlert(context, 'Not find Data', type: "error"));
+        .then((value){
+          setState(() {
+             themeAlert(context, "Deleted Successfully ");         
+          });
+        }
+        //  => 
+        //  themeAlert(context, "Deleted Successfully ")
+        )
+        .catchError((error) => themeAlert(context, 'Not find Data', type: "error"));
   }
 
   ////////////
@@ -391,13 +403,12 @@ class _CategoryAddState extends State<CategoryAdd> {
                                           color: Colors.black,
                                           size: 15,
                                           fw: FontWeight.bold)),
-                                  Text_field(context, CategoryController,
-                                      "Category Name", "Enter Category Name"),
+                                  Text_field(context, CategoryController,"Category Name", "Enter Category Name"),
                                 ],
                               )),
                               SizedBox(height: defaultPadding),
                               if (Responsive.isMobile(context))
-                                SizedBox(width: defaultPadding),
+                              SizedBox(width: defaultPadding),
                               if (Responsive.isMobile(context))
                                 Container(
                                     child: Column(
@@ -754,6 +765,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                         setState(() {
                           cate_name = CategoryController.text;
                           slug__url = SlugUrlController.text;
+                        
                           addList();
                           clearText();
                         });
@@ -771,6 +783,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                   ])
                 ],
               )),
+          SizedBox(height: 100,)      
         ]));
   }
 
@@ -876,6 +889,8 @@ class _CategoryAddState extends State<CategoryAdd> {
               )
               
               ),
+
+            
         ],
       ),
     );
@@ -1113,7 +1128,54 @@ Widget action_button(BuildContext context, iid){
                           //             ))),
                           //   ],
                           // )
-                           action_button(context ,iid)
+                           Row(
+                           mainAxisAlignment: MainAxisAlignment.start,
+                           children: [
+                  Container(
+                      height: 40,
+                      width: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: IconButton(
+                          onPressed: () {
+                            
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        UpdateCategory(id: iid)));
+                          },
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.blue,
+                          )) ////
+                      ),
+                  SizedBox(width: 10),
+                  Container(
+                      height: 40,
+                      width: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.1),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: IconButton(
+                          onPressed: () {
+                            showExitPopup(iid);
+                           // deleteUser(iid);
+                            // print("$iid+++++++++++++");
+                          },
+                          icon: Icon(
+                            Icons.delete_outline_outlined,
+                            color: Colors.red,
+                          ))),
+                ],
+              )
                             ],
                           ),
                         ),
