@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, avoid_print, non_constant_identifier_names, prefer_typing_uninitialized_variables, unnecessary_string_interpolations, no_leading_underscores_for_local_identifiers, deprecated_member_use, unnecessary_brace_in_string_interps, sized_box_for_whitespace, unnecessary_new, unused_shown_name, prefer_final_fields, depend_on_referenced_packages, unused_local_variable, use_build_context_synchronously
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, avoid_print, non_constant_identifier_names, prefer_typing_uninitialized_variables, unnecessary_string_interpolations, no_leading_underscores_for_local_identifiers, deprecated_member_use, unnecessary_brace_in_string_interps, sized_box_for_whitespace, unnecessary_new, unused_shown_name, prefer_final_fields, depend_on_referenced_packages, unused_local_variable, use_build_context_synchronously, unnecessary_null_comparison
 
 import 'dart:convert';
 import 'dart:io';
@@ -148,22 +148,18 @@ class _CategoryAddState extends State<CategoryAdd> {
 // result;
   String? fileName;
   PlatformFile? pickedfile;
-  bool isLoading = false;
   File? fileToDisplay;
   void clear_upload() {
     fileName = null;
   }
   pickFile() async {
     if (!kIsWeb) {
-      try {
-        setState(() {
-          isLoading = true;
-        });
+    
         FilePickerResult? result = await FilePicker.platform.pickFiles(
           type: FileType.custom,
           allowedExtensions: ['png', 'jpeg', 'jpg'],
           allowMultiple: false,
-        );
+          );
         if (result != null) {
           fileName = result.files.first.name;
           pickedfile = result.files.first;
@@ -175,13 +171,12 @@ class _CategoryAddState extends State<CategoryAdd> {
           });
           // print('File name $uploadedDoc');
         }
-        setState(() {
-          isLoading = false;
-        });
-      } catch (e) {
-        print(e);
+        else {
+            themeAlert(context, 'Not find selected', type: "error");
       }
-    } else if (kIsWeb) {
+    } 
+    
+    else if (kIsWeb) {
       // final ImagePicker _picker = ImagePicker();
       // XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       // if (image != null) {
@@ -200,11 +195,10 @@ class _CategoryAddState extends State<CategoryAdd> {
                );
           if(results != null){
              Uint8List? UploadImage =  results.files.single.bytes;
-             String fileName = results.files.single.name;
+              fileName = results.files.single.name;
             setState(() {
             uploadedDoc = base64.encode(UploadImage!);
             imagePri = base64.decode(uploadedDoc);
-            themeAlert(context, "Upload Successfully ");
           });
           }
           else{
@@ -370,7 +364,7 @@ class _CategoryAddState extends State<CategoryAdd> {
   Widget listCon(BuildContext context, tab) {
     return Container(
         margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-        child: Column(children: [
+        child: ListView(children: [
           Container(
               padding: EdgeInsets.all(defaultPadding),
               decoration: BoxDecoration(
@@ -512,15 +506,10 @@ class _CategoryAddState extends State<CategoryAdd> {
                                 ],
                               ),
                             ),
-
-                            // Text_field(context,"category_name","Category Name","Enter Category Name"),
                             SizedBox(height: defaultPadding),
                             if (Responsive.isMobile(context))
                               SizedBox(width: defaultPadding),
                             if (Responsive.isMobile(context))
-
-                              //   Text_field(context,"slug_url","Slug Url","Enter Slug Url"),
-
                               Container(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -667,7 +656,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                 color: Colors.grey[200],
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              height: 55,
+                              height: 45,
                               margin: EdgeInsets.only(
                                   top: 10, bottom: 10, right: 10),
                               padding: EdgeInsets.only(left: 10, right: 10),
@@ -678,7 +667,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                       _LogoutAlert(context);
                                     },
                                     child: Container(
-                                      padding: EdgeInsets.all(10),
+                                      padding: EdgeInsets.all(5),
                                       decoration: BoxDecoration(
                                           border: Border.all(
                                               color: Color.fromARGB(
@@ -712,7 +701,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                               width: 10,
                                             ),
                                             Text(
-                                              "file selected",
+                                              "$fileName",
                                               style: themeTextStyle(
                                                   size: 12,
                                                   fw: FontWeight.w400,
@@ -743,16 +732,17 @@ class _CategoryAddState extends State<CategoryAdd> {
                   // image preview section
 
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: uploadedDoc == null
+                     uploadedDoc == null
                             ? Icon(Icons.photo, size: 12)
                             : Image.memory(
                                 imagePri,
-                                height: 80,
-                                width: 100,
+                                height: 200,
+                                width: 300,
+                                fit: BoxFit.contain,
                               ),
-                      ),
+                    
                     ],
                   ),
                   SizedBox(
