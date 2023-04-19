@@ -320,7 +320,7 @@ Widget themeListRow(BuildContext context, label, desc,
     double labelWidth: 100.0,
     double decWidth: 0.0,
     decFontWait: FontWeight.normal,
-    descColor: Colors.black}) {
+    descColor: Colors.white}) {
   return Padding(
     padding: EdgeInsets.only(bottom: bottomSpace),
     child: Row(
@@ -334,7 +334,7 @@ Widget themeListRow(BuildContext context, label, desc,
             "$label",
             style: themeTextStyle(
                 size: 12.0,
-                color: themeBG2,
+                color: Colors.white,
                 ftFamily: 'ms',
                 fw: FontWeight.bold),
           ),

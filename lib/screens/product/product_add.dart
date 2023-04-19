@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print
 
 import 'dart:convert';
 import 'dart:io';
@@ -134,25 +134,10 @@ class _ProductAddState extends State<ProductAdd> {
       StoreDocs.add(data);
       data["id"] = queryDocumentSnapshot.id;
     }
-    // setState(() {
-    print("$StoreDocs");
-    // });
 
-    //   _crmStream.data!.docs.map((DocumentSnapshot document)
-    //   {
-    //   Map Docs = document.data() as Map<String, dynamic>;
-    //   StoreDocs.add(Docs);
-    //   Docs["id"] = document.id;
-    // })
-    // .toList();
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // dynamic userData = (prefs.getString("$_category"));
-    // if (userData != null) {
-    //   setState(() {
-    //     cat_data = jsonDecode(userData) as Map<dynamic, dynamic>;
-    //     print("$cat_data  ++++++++++");
-    //   });
-    // }
+    setState(() {
+      print("$StoreDocs ++++++++++++++++");
+    });
   }
 
   /// add list
@@ -1085,23 +1070,28 @@ class _ProductAddState extends State<ProductAdd> {
   Widget listList(BuildContext context, tab) {
 //    print("$StoreDocs");
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-      padding: EdgeInsets.all(defaultPadding),
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
+      padding: EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: secondaryColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
-      child: Column(
-        children: [
-          Text(
-            "Product List",
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-          Container(
-              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-              width: double.infinity,
-              child: Column(
+      child: 
+              ListView(
                 children: [
+                  (Responsive.isMobile(context)) 
+                  ?
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      height: 30,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                        Text("Product Details",
+                            style: TextStyle(fontWeight: FontWeight.bold))
+                      ],),
+                    )
+               : 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -1141,9 +1131,23 @@ class _ProductAddState extends State<ProductAdd> {
                     height: 20,
                   ),
                   Divider(
-                    thickness: 1.5,
+                    thickness: 2.0,
                   ),
                   for (var index = 0; index < StoreDocs.length; index++)
+                   (Responsive.isMobile(context)) 
+                    ?
+
+                  recentFileDataRow_Mobile(
+                    context,
+                    "$index",
+                        "${StoreDocs[index]["image"]}",
+                        "${StoreDocs[index]["name"]}",
+                        "${StoreDocs[index]["parent_cate"]}",
+                        "${StoreDocs[index]["status"]}",
+                        "${StoreDocs[index]["date_at"]}",
+                        "${StoreDocs[index]["id"]}"
+                  )
+                  :
                     recentFileDataRow(
                         context,
                         "$index",
@@ -1153,10 +1157,11 @@ class _ProductAddState extends State<ProductAdd> {
                         "${StoreDocs[index]["status"]}",
                         "${StoreDocs[index]["date_at"]}",
                         "${StoreDocs[index]["id"]}"),
+
+
+                 SizedBox(height: 80,)       
                 ],
-              )),
-        ],
-      ),
+              )
     );
   }
 
@@ -1238,6 +1243,139 @@ class _ProductAddState extends State<ProductAdd> {
       ),
     );
   }
+
+
+
+////////// Row   mobile ++++++++++++++++
+
+  Widget recentFileDataRow_Mobile(
+      BuildContext context, sno, Iimage, name, pName, status, date, iid) {  
+      var bytes = base64.decode(Iimage);
+      return
+             Container(
+                 decoration: BoxDecoration(
+                  color: secondaryColor.withOpacity(0.2),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                       
+                        Container(
+                          margin: EdgeInsets.all(5),
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 214, 214, 214),
+                              image: DecorationImage(
+                                  image: 
+                                      MemoryImage(
+                                      bytes,
+                                    ),fit: BoxFit.cover
+                                    
+                                    )),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                          child: Column(
+                            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              themeListRow(context, "Product Name", "$name"),
+                              themeListRow(context, "Category Name","$pName"),
+                              themeListRow(context, "Satus","$status"),
+                              themeListRow(context, "Date","$date"),
+                        SizedBox(height: 10,),
+                            Row(
+                            children: [
+                                SizedBox(
+                             width:  100.0,
+                             child: Text(
+                             "Action",
+                             style: themeTextStyle(
+                             size: 12.0,
+                             color: Colors.white,
+                             ftFamily: 'ms',
+                             fw: FontWeight.bold),
+                           ),
+                              ),
+          
+                          Text(
+                            ": ",
+                            overflow: TextOverflow.ellipsis,
+                            style: themeTextStyle(
+                                size: 14,
+                                color: Colors.white,
+                                ftFamily: 'ms',
+                                fw: FontWeight.normal),
+                          ),
+                              Container(
+                                  height: 40,
+                                  width: 40,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.withOpacity(0.1),
+                                    borderRadius:
+                                        const BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                  child: IconButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UpdateProduct(id: iid)
+                                                    ));
+                                      },
+                                      icon:
+                                       Icon(
+                                        Icons.edit,
+                                        color: Colors.blue,
+                                      )) ////
+                                  ),
+                              SizedBox(width: 10),
+                              Container(
+                                  height: 40,
+                                  width: 40,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.withOpacity(0.1),
+                                    borderRadius:
+                                        const BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                  child: IconButton(
+                                      onPressed: () {
+                                        deleteUser(iid);
+                                      },
+                                      icon: Icon(
+                                        Icons.delete_outline_outlined,
+                                        color: Colors.red,
+                                      ))),
+                            ],
+                          )
+                           
+                            ],
+                          ),
+                        ),
+                       
+                      ],
+                    ),
+
+
+                 Divider(thickness: 1.0,color: Colors.white12,)   
+                  ],
+                ),
+      //         ),
+      //     ),
+      //   ],
+      // ),
+    );
+  }
+/////////
+
+
+
 
 ///////++++++++++++++++++++++End Product List+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

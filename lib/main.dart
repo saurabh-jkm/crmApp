@@ -23,10 +23,10 @@ void main() async {
       storageBucket: Constants.storageBucket,
     ));
    }
-  else if (!kIsWeb) {
-  var projectId = Constants.projectId;
-  await Firestore.initialize(projectId);
-  }
+  // else if (!kIsWeb) {
+  // var projectId = Constants.projectId;
+  // await Firestore.initialize(projectId);
+  // }
   else {
     await
     Firebase.initializeApp();
@@ -53,8 +53,7 @@ class MyApp extends StatelessWidget {
               theme: ThemeData.dark().copyWith(
                 scaffoldBackgroundColor: bgColor,
                 textTheme:
-                    GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
-                        .apply(bodyColor: Colors.white),
+                    GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme).apply(bodyColor: Colors.white),
                 canvasColor: secondaryColor,
               ),
               home: MultiProvider(

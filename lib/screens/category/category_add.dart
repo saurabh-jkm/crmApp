@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, avoid_print, non_constant_identifier_names, prefer_typing_uninitialized_variables, unnecessary_string_interpolations, no_leading_underscores_for_local_identifiers, deprecated_member_use, unnecessary_brace_in_string_interps, sized_box_for_whitespace, unnecessary_new, unused_shown_name, prefer_final_fields
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, avoid_print, non_constant_identifier_names, prefer_typing_uninitialized_variables, unnecessary_string_interpolations, no_leading_underscores_for_local_identifiers, deprecated_member_use, unnecessary_brace_in_string_interps, sized_box_for_whitespace, unnecessary_new, unused_shown_name, prefer_final_fields, depend_on_referenced_packages, unused_local_variable, use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:io';
@@ -22,6 +22,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
 
+import '../product/update_pro.dart';
 import 'update_cate.dart';
 
 class CategoryAdd extends StatefulWidget {
@@ -59,6 +60,87 @@ class _CategoryAddState extends State<CategoryAdd> {
   }
 //////
 
+  Future<bool> showExitPopup(iid_delete) async {
+      return await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              backgroundColor: Colors.white,
+              title: Row(
+                children: [
+                  Icon(Icons.delete_forever_outlined,color: Colors.red,size: 35,),
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                  Text(
+                    'CRM App says',
+                    style: themeTextStyle(
+                        size: 20.0,
+                        ftFamily: 'ms',
+                        fw: FontWeight.bold,
+                        color: themeBG2),
+                  ),
+                ],
+              ),
+              content: Text(
+                'Are you sure to delete this Categorys ?',
+                style: themeTextStyle(
+                    size: 16.0,
+                    ftFamily: 'ms',
+                    fw: FontWeight.normal,
+                    color: Colors.black87),
+              ),
+              actions: [
+               
+               Container(
+                      height: 30,
+                      width: 60,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.1),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child:  TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(
+                    'No',
+                    style: themeTextStyle(
+                        size: 16.0,
+                        ftFamily: 'ms',
+                        fw: FontWeight.normal,
+                        color: Colors.red),
+                  ),
+                ),
+                ),
+                Container(
+                      height: 30,
+                      width: 60,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child:  TextButton(
+                  onPressed: () =>  deleteUser(iid_delete),
+                  child: Text(
+                    'Yes',
+                    style: themeTextStyle(
+                        size: 16.0,
+                        ftFamily: 'ms',
+                        fw: FontWeight.normal,
+                        color: themeBG4),
+                  ),),
+                ),
+              ],
+            ),
+          ) ??
+          false; //if showDialouge had returned null, then return false
+    }
+
+
+
+
  ///// File Picker ==========================================================
 
   var uploadedDoc;
@@ -71,7 +153,6 @@ class _CategoryAddState extends State<CategoryAdd> {
   void clear_upload() {
     fileName = null;
   }
-
   pickFile() async {
     if (!kIsWeb) {
       try {
@@ -90,7 +171,7 @@ class _CategoryAddState extends State<CategoryAdd> {
           setState(() {
             List<int> imageBytes = fileToDisplay!.readAsBytesSync();
             uploadedDoc = base64Encode(imageBytes);
-            // _controllers['doc'] = uploadedDoc;
+               imagePri = base64.decode(uploadedDoc);
           });
           // print('File name $uploadedDoc');
         }
@@ -101,45 +182,74 @@ class _CategoryAddState extends State<CategoryAdd> {
         print(e);
       }
     } else if (kIsWeb) {
-      final ImagePicker _picker = ImagePicker();
-      XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        var f = await image.readAsBytes();
-        setState(() {
-          var webImage = f;
-          uploadedDoc = base64.encode(webImage);
-          imagePri = base64.decode(uploadedDoc);
-        });
-      }
+      // final ImagePicker _picker = ImagePicker();
+      // XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      // if (image != null) {
+      //   var f = await image.readAsBytes();
+      //   setState(() {
+      //     var webImage = f;
+      //     uploadedDoc = base64.encode(webImage);
+      //     imagePri = base64.decode(uploadedDoc);
+      //   });
+      // }
+
+   final results = await FilePicker.platform.pickFiles(
+          allowMultiple: false,
+          type: FileType.custom,
+          allowedExtensions: ['png','jpg'],
+               );
+          if(results != null){
+             Uint8List? UploadImage =  results.files.single.bytes;
+             String fileName = results.files.single.name;
+            setState(() {
+            uploadedDoc = base64.encode(UploadImage!);
+            imagePri = base64.decode(uploadedDoc);
+            themeAlert(context, "Upload Successfully ");
+          });
+          }
+          else{
+                themeAlert(context, 'Not find selected', type: "error");
+            return null;
+
+          }    
+
+
     }
   }
+
+
 
  /////////
 
 ///////////  firebase property Database access  +++++++++++++++++++++++++++
-  final Stream<QuerySnapshot> _crmStream = FirebaseFirestore.instance.collection('category').snapshots();
-  CollectionReference _category = FirebaseFirestore.instance.collection('category');
+///
+    final Stream<QuerySnapshot> _crmStream =
+      FirebaseFirestore.instance.collection('category').snapshots();
+      CollectionReference _category = FirebaseFirestore.instance.collection('category');
 ////////
 
 /////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
 
    final List StoreDocs = [];
    _CateData() async {
-   // var collection = FirebaseFirestore.instance.collection('category');
-    var querySnapshot = await _category.get();
+
+           var collection = FirebaseFirestore.instance.collection('category');
+    var querySnapshot = await collection.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
+      // ignore: unnecessary_cast
       Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
       StoreDocs.add(data);
       data["id"] = queryDocumentSnapshot.id;
+
     }
     // setState(() {
-    //   print("$StoreDocs");
+    //   print("$StoreDocs++++++");
     // });
   }
 
 /////////////
 
-/////// add Category Data  =++++++++++++++++++++++++++++++++++++++
+/////// add Category Data  =+++++++++++++++++++
  
  Future<void> addList() {
     return _category
@@ -153,7 +263,7 @@ class _CategoryAddState extends State<CategoryAdd> {
         })
         .then((value) => themeAlert(context, "Successfully Submit"))
         .catchError(
-            (error) => themeAlert(context, 'Failed to Submit', type: "error"));
+        (error) => themeAlert(context, 'Failed to Submit', type: "error"));
   }
 
 //////////
@@ -171,27 +281,18 @@ class _CategoryAddState extends State<CategoryAdd> {
   }
 
   ////////////
-
-
-
-
-
-
   @override
   void initState() {
     _CateData();
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return 
-    
+    return
     StreamBuilder<QuerySnapshot>(
         stream: _crmStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-     
           //////
           if (snapshot.hasError) {
             print("Something went wrong");
@@ -199,12 +300,14 @@ class _CategoryAddState extends State<CategoryAdd> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
-          // snapshot.data!.docs.map((DocumentSnapshot document) {
-          //   Map Docs = document.data() as Map<String, dynamic>;
-          //   // StoreDocs.add(Docs);
-          //   // Docs["id"] = document.id;
-          // }).toList();
-          // ////////
+
+          snapshot.data!.docs.map((DocumentSnapshot document) {
+            Map Docs = document.data() as Map<String, dynamic>;
+            //StoreDocs.add(Docs);
+            // Docs["id"] = document.id;
+            //print("$StoreDocs");
+          }).toList();
+          ////////
 
           return Scaffold(
               body: Container(
@@ -693,17 +796,28 @@ class _CategoryAddState extends State<CategoryAdd> {
         color: secondaryColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
-      child: Column(
+      child: ListView(
         children: [
-          Text(
-            "Category List",
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
           Container(
               margin: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
               width: double.infinity,
               child: Column(
                 children: [
+                  (Responsive.isMobile(context)) 
+                  ?
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      height: 30,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                        Text("Category Details",
+                            style: TextStyle(fontWeight: FontWeight.bold))
+                      ],),
+                    )
+
+               : 
+              //  SizedBox(width: defaultPadding),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -739,6 +853,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                       )
                     ],
                   ),
+
                   SizedBox(
                     height: 20,
                   ),
@@ -746,6 +861,18 @@ class _CategoryAddState extends State<CategoryAdd> {
                     thickness: 1.5,
                   ),
                   for (var index = 0; index < StoreDocs.length; index++)
+                   (Responsive.isMobile(context)) 
+                   ?
+                   recentFileDataRow_Mobile(
+                        context,
+                        "$index",
+                        "${StoreDocs[index]["image"]}",
+                        "${StoreDocs[index]["category_name"]}",
+                        "${StoreDocs[index]["parent_cate"]}",
+                        "${StoreDocs[index]["status"]}",
+                        "${StoreDocs[index]["date_at"]}",
+                        "${StoreDocs[index]["id"]}")
+                   :
                     recentFileDataRow(
                         context,
                         "$index",
@@ -756,11 +883,16 @@ class _CategoryAddState extends State<CategoryAdd> {
                         "${StoreDocs[index]["date_at"]}",
                         "${StoreDocs[index]["id"]}"),
                 ],
-              )),
+              )
+              
+              ),
         ],
       ),
     );
   }
+
+
+////////// Row   ++++++++++++++++
 
   Widget recentFileDataRow(
       BuildContext context, sno, Iimage, name, pName, status, date, iid) {
@@ -774,20 +906,40 @@ class _CategoryAddState extends State<CategoryAdd> {
             children: [
               Expanded(child: Text("$sno")),
               Expanded(
-                  child: (Iimage != null && Iimage.isNotEmpty)
-                      ? Image.memory(
-                          bytes,
-                          height: 50,
-                          width: 80,
-                          fit: BoxFit.contain,
-                        )
-                      : SizedBox()),
+                  child:
+                (Iimage != null && Iimage.isNotEmpty)
+                      ?
+                       Container(
+                        alignment: Alignment.bottomLeft,
+                        child: Image.memory(
+                            bytes,
+                            height: 80,
+                            width: 80,
+                            fit: BoxFit.contain,
+                          ),
+                      )
+              : 
+              SizedBox()),
               Expanded(child: Text("$name")),
               Expanded(child: Text("$pName")),
               Expanded(child: Text("$status")),
               Expanded(child: Text("$date")),
-              Expanded(
-                  child: Row(
+              action_button(context, iid)
+            ],
+          ),
+          Divider(
+            thickness: 1.5,
+          )
+        ],
+      ),
+    );
+  }
+/////////
+
+Widget action_button(BuildContext context, iid){
+  return 
+ Row(
+  mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
                       height: 40,
@@ -800,6 +952,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                       ),
                       child: IconButton(
                           onPressed: () {
+                            
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -823,7 +976,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                       ),
                       child: IconButton(
                           onPressed: () {
-                            deleteUser(iid);
+                            showExitPopup(iid);
+                           // deleteUser(iid);
                             // print("$iid+++++++++++++");
                           },
                           icon: Icon(
@@ -831,21 +985,167 @@ class _CategoryAddState extends State<CategoryAdd> {
                             color: Colors.red,
                           ))),
                 ],
-              ))
-            ],
-          ),
-          Divider(
-            thickness: 1.5,
-          )
-        ],
-      ),
+              ) ;
+}
+
+
+
+
+////////// Row   mobile ++++++++++++++++
+
+  Widget recentFileDataRow_Mobile(
+      BuildContext context, sno, Iimage, name, pName, status, date, iid) {  
+      var bytes = base64.decode(Iimage);
+      return
+    
+    // Container(
+    //   margin: EdgeInsets.symmetric(horizontal: 10),
+    //   child: Row(
+    //     children: [
+    //        SizedBox(
+    //                       width: 50,
+    //                       child:  Text(
+    //                         "$sno",
+    //                         style: TextStyle(fontWeight: FontWeight.bold),
+    //                       ),),
+    //       Expanded(
+    //         child:
+             Container(
+                // margin: EdgeInsets.symmetric( vertical: 10),
+                // height: 140.0,
+                // decoration: BoxDecoration(
+                // borderRadius: BorderRadius.circular(10), boxShadow: themeBox),
+                 decoration: BoxDecoration(
+                  color: secondaryColor.withOpacity(0.2),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                       
+                        Container(
+                          margin: EdgeInsets.all(5),
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              //color: themeBG3,
+                              // borderRadius: BorderRadius.only(
+                              //     topLeft: Radius.circular(10.0),
+                              //     bottomLeft: Radius.circular(10.0)),
+                              // boxShadow: themeBox,
+                              //gradient: themeGradient1,
+                              color: Color.fromARGB(255, 214, 214, 214),
+                              image: DecorationImage(
+                                  image: 
+                                      MemoryImage(
+                                      bytes,
+                                    ),fit: BoxFit.cover
+                                    
+                                    )),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                          child: Column(
+                            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              themeListRow(context, "Category Name", "$name"),
+                              themeListRow(context, "Parent Category","$pName"),
+                              themeListRow(context, "Satus","$status"),
+                              themeListRow(context, "Date","$date"),
+                        SizedBox(height: 10,),
+                          //   Row(
+                          //   children: [
+                          //       SizedBox(
+                          //    width:  100.0,
+                          //    child: Text(
+                          //    "Action",
+                          //    style: themeTextStyle(
+                          //    size: 12.0,
+                          //    color: Colors.white,
+                          //    ftFamily: 'ms',
+                          //    fw: FontWeight.bold),
+                          //  ),
+                          //     ),
+          
+                          // Text(
+                          //   ": ",
+                          //   overflow: TextOverflow.ellipsis,
+                          //   style: themeTextStyle(
+                          //       size: 14,
+                          //       color: Colors.white,
+                          //       ftFamily: 'ms',
+                          //       fw: FontWeight.normal),
+                          // ),
+                          //     Container(
+                          //         height: 40,
+                          //         width: 40,
+                          //         alignment: Alignment.center,
+                          //         decoration: BoxDecoration(
+                          //           color: Colors.blue.withOpacity(0.1),
+                          //           borderRadius:
+                          //               const BorderRadius.all(Radius.circular(10)),
+                          //         ),
+                          //         child: IconButton(
+                          //             onPressed: () {
+                          //               Navigator.push(
+                          //                   context,
+                          //                   MaterialPageRoute(
+                          //                       builder: (context) =>
+                          //                           UpdateCategory(id: iid)
+                          //                           )
+                          //                           );
+                          //             },
+                          //             icon:
+                          //              Icon(
+                          //               Icons.edit,
+                          //               color: Colors.blue,
+                          //             )) ////
+                          //         ),
+                          //     SizedBox(width: 10),
+                          //     Container(
+                          //         height: 40,
+                          //         width: 40,
+                          //         alignment: Alignment.center,
+                          //         decoration: BoxDecoration(
+                          //           color: Colors.red.withOpacity(0.1),
+                          //           borderRadius:
+                          //               const BorderRadius.all(Radius.circular(10)),
+                          //         ),
+                          //         child: IconButton(
+                          //             onPressed: () {
+                          //               deleteUser(iid);
+                          //             },
+                          //             icon: Icon(
+                          //               Icons.delete_outline_outlined,
+                          //               color: Colors.red,
+                          //             ))),
+                          //   ],
+                          // )
+                           action_button(context ,iid)
+                            ],
+                          ),
+                        ),
+                       
+                      ],
+                    ),
+
+
+                 Divider(thickness: 1.0,color: Colors.white12,)   
+                  ],
+                ),
+      //         ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 /////////
-  ///
-//
-  ///
 
+
+
+//////////////////
   void _LogoutAlert(BuildContext context) {
     showDialog(
         context: context,
