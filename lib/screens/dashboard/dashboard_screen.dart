@@ -67,7 +67,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
           ElevatedButton(onPressed: ()async{
          pickFile();
-               }, child: Text("Upload ImAGE"))
+               }, child: Text("Upload ImAGE")),
+
+
+          Container(
+    child: FutureBuilder(
+      future:  FireStoreDatabase().getData(),//downloadURL("Guddusingh.jpeg"),
+      builder: (context, snapshot){
+       
+       if(snapshot.connectionState == ConnectionState.waiting  || !snapshot.hasData){
+
+        return CircularProgressIndicator();
+       } 
+     return
+       
+         Container(
+         height: 400,
+         width: 400,
+         child: Image.network(snapshot.data.toString()));
+    
+
+      }),
+  )
+
+
+
+
           ],
         ),
       ),
