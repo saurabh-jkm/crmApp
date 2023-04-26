@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, avoid_print, prefer_const_constructors, await_only_futures
+// ignore_for_file: use_key_in_widget_constructors, avoid_print, prefer_const_constructors, await_only_futures, unused_import
 
 import 'package:crm_demo/shared/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
