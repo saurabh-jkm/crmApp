@@ -1,5 +1,5 @@
 //UpdateCategory
-// ignore_for_file: non_constant_identifier_names, prefer_const_constructors, avoid_print, no_leading_underscores_for_local_identifiers, prefer_typing_uninitialized_variables, use_key_in_widget_constructors, depend_on_referenced_packages, unnecessary_string_interpolations
+// ignore_for_file: non_constant_identifier_names, prefer_const_constructors, avoid_print, no_leading_underscores_for_local_identifiers, prefer_typing_uninitialized_variables, use_key_in_widget_constructors, depend_on_referenced_packages, unnecessary_string_interpolations, prefer_final_fields, unused_field, avoid_unnecessary_containers, body_might_complete_normally_nullable
 
 import 'dart:convert';
 import 'dart:io';
@@ -26,7 +26,8 @@ class UpdateProduct extends StatefulWidget {
 
 class _UpdateProductState extends State<UpdateProduct> {
   final _formKey = GlobalKey<FormState>();
-  final CategoryController = TextEditingController();
+
+  final ProductController = TextEditingController();
   final offerController = TextEditingController();
   final mrpController = TextEditingController();
   final NoitemController = TextEditingController();
@@ -34,9 +35,7 @@ class _UpdateProductState extends State<UpdateProduct> {
   final DiscountController = TextEditingController();
 
   final NameController = TextEditingController();
-  var pro_name = "";
-  var slug__url = "";
-  var image_logo = "";
+
   String _sizeValue = "Select";
   String _brandValue = "Select";
   String _dropDownValue = "Select";
@@ -102,12 +101,11 @@ class _UpdateProductState extends State<UpdateProduct> {
   }
 
 ///////////  firebase property
-  final Stream<QuerySnapshot> _crmStream =
-      FirebaseFirestore.instance.collection('product').snapshots();
+  final Stream<QuerySnapshot> _crmStream = FirebaseFirestore.instance.collection('product').snapshots();
   final List StoreDocs = [];
   var db = FirebaseFirestore.instance;
   CollectionReference _product =
-      FirebaseFirestore.instance.collection('product');
+  FirebaseFirestore.instance.collection('product');
 
   // add list
   Future<void>
@@ -128,7 +126,7 @@ class _UpdateProductState extends State<UpdateProduct> {
           'discount': "${DiscountController.text}",
           "mrp": "${mrpController.text}",
           "No_Of_Item": "${NoitemController.text}",
-          'product_name': "$pro_name",
+          'product_name': "${ProductController.text}",
           'slug_url': "$slug__url",
           'parent_cate': "$_dropDownValue",
           'status': "$_StatusValue",
@@ -155,9 +153,7 @@ class _UpdateProductState extends State<UpdateProduct> {
     return Scaffold(
         body: Container(
             padding: EdgeInsets.all(defaultPadding),
-            child: DefaultTabController(
-                length: 2,
-                child: ListView(children: [
+            child:  ListView(children: [
                   Header(
                     title: "Update Product",
                   ),
@@ -274,7 +270,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                                                 Text_field(
                                                     context,
                                                     Noitem,
-                                                    " No Item",
+                                                    "No Item",
                                                     "Enter No Item"),
                                               ],
                                             )),
@@ -371,10 +367,11 @@ class _UpdateProductState extends State<UpdateProduct> {
                                                         dropdownColor:
                                                             Color.fromARGB(255,
                                                                 248, 247, 247),
-                                                        hint: _StatusValue ==
-                                                                null
-                                                            ? Text('Dropdown')
-                                                            : Text(
+                                                        hint: (_StatusValue == null)
+                                                            ? 
+                                                            Text('Dropdown')
+                                                            :
+                                                             Text(
                                                                 _Status,
                                                                 style: TextStyle(
                                                                     color: Colors
@@ -410,10 +407,8 @@ class _UpdateProductState extends State<UpdateProduct> {
                                                         onChanged: (val) {
                                                           setState(
                                                             () {
-                                                              _StatusValue =
-                                                                  val!;
-                                                              _Status =
-                                                                  _StatusValue;
+                                                              _StatusValue =val!;
+                                                              _Status = _StatusValue;
                                                             },
                                                           );
                                                         },
@@ -471,8 +466,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                                                                   248,
                                                                   247,
                                                                   247),
-                                                          hint: _dropDownValue ==
-                                                                  null
+                                                          hint: (_dropDownValue == null)
                                                               ? Text('Dropdown')
                                                               : Text(
                                                                   _dropDownValue,
@@ -601,8 +595,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                                                         onChanged: (val) {
                                                           setState(
                                                             () {
-                                                              _dropDownValue =
-                                                                  val!;
+                                                              _dropDownValue = val!;
                                                             },
                                                           );
                                                         },
@@ -715,7 +708,6 @@ class _UpdateProductState extends State<UpdateProduct> {
                                         if (!Responsive.isMobile(context))
                                           SizedBox(width: defaultPadding),
                                         // On Mobile means if the screen is less than 850 we dont want to show it
-
                                         if (!Responsive.isMobile(context))
                                           Expanded(
                                             flex: 2,
@@ -756,13 +748,13 @@ class _UpdateProductState extends State<UpdateProduct> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Container(
-                                                        child: Text("Size",
+                                                        child: 
+                                                        Text("Size",
                                                             style: themeTextStyle(
                                                                 color: Colors
                                                                     .black,
                                                                 size: 15,
-                                                                fw: FontWeight
-                                                                    .bold))),
+                                                                fw: FontWeight.bold))),
                                                     Container(
                                                       height: 40,
                                                       margin: EdgeInsets.only(
@@ -1165,7 +1157,10 @@ class _UpdateProductState extends State<UpdateProduct> {
                                   ],
                                 );
                               }))),
-                ]))));
+                ]
+                )
+                )
+                );
   }
 
   void _LogoutAlert(BuildContext context) {
@@ -1302,7 +1297,7 @@ class _UpdateProductState extends State<UpdateProduct> {
         ),
         child: TextFormField(
           initialValue: ini_value,
-          // controller: ctr_name,
+        // controller: ctr_name,
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please Enter value';

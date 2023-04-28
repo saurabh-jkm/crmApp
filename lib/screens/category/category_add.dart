@@ -1,30 +1,20 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, avoid_print, non_constant_identifier_names, prefer_typing_uninitialized_variables, unnecessary_string_interpolations, no_leading_underscores_for_local_identifiers, deprecated_member_use, unnecessary_brace_in_string_interps, sized_box_for_whitespace, unnecessary_new, unused_shown_name, prefer_final_fields, depend_on_referenced_packages, unused_local_variable, use_build_context_synchronously, unnecessary_null_comparison, avoid_function_literals_in_foreach_calls, unnecessary_this
 
-import 'dart:convert';
-import 'dart:io';
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:slugify/slugify.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/firebase_Storage.dart';
-import '../../themes/firebase_functions.dart';
-import '../../themes/function.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
-import '../dashboard/components/my_fields.dart';
-import '../dashboard/components/recent_files.dart';
-import '../dashboard/components/storage_details.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import '../product/update_pro.dart';
 import 'update_cate.dart';
 
 class CategoryAdd extends StatefulWidget {
@@ -35,15 +25,17 @@ class CategoryAdd extends StatefulWidget {
 
 class _CategoryAddState extends State<CategoryAdd> {
   final _formKey = GlobalKey<FormState>();
+
   var cate_name = "";
   var slug__url = slugify('', delimiter: '_', lowercase: false);
   var image_logo = "";
+
   String _dropDownValue = "Select";
   String _StatusValue = "Select";
   String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
   // Create a text controller and use it to retrieve the current value
   // of the TextField.
-
   final CategoryController = TextEditingController();
   final SlugUrlController = TextEditingController();
   bool Tranding = false;
@@ -59,6 +51,8 @@ class _CategoryAddState extends State<CategoryAdd> {
   clearText() {
     SlugUrlController.clear();
     CategoryController.clear();
+    _dropDownValue = "Select";
+    _StatusValue  = "Select" ;
   }
 //////
 
@@ -91,8 +85,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                     fw: FontWeight.normal,
                     color: Colors.black87),
               ),
-              actions: [
-               
+              actions: [     
                Container(
                       height: 30,
                       width: 60,
@@ -145,49 +138,34 @@ class _CategoryAddState extends State<CategoryAdd> {
           false; //if showDialouge had returned null, then return false
     }
 
-
-
-
  ///// File Picker ==========================================================
   var url_img; 
-  var uploadedDoc;
-  var imagePri;
-// result;
-   var result;
   String? fileName;
-  PlatformFile? pickedfile;
-  File? fileToDisplay;
-  void clear_upload() {
+
+  void clear_imageData() {
     fileName = null;
+    url_img = null;
   }
 
   pickFile() async {
     if (!kIsWeb) {
-    
-       // FilePickerResult?
-         result = await FilePicker.platform.pickFiles(
+         final results = await FilePicker.platform.pickFiles(
           type: FileType.custom,
-          allowedExtensions: ['png', 'jpeg', 'jpg'],
+          allowedExtensions: ['png','jpg'],
           allowMultiple: false,
           );
-        if (result != null) {
-        //  fileName = result.files.first.name;
-         // pickedfile = result.files.first;
-          final path = result.files.single.path;
-          final fileName = result.files.single.name;
-          fileToDisplay = File(pickedfile!.path.toString());
+        if (results != null) {
+          final path = results.files.single.path;
+          final fileName = results.files.single.name;
            UploadFile(path!,fileName).then((value) 
            {
-            print("");
-            themeAlert(context, "Upload Successfully ");
+            print("image selected");
            });
-        //   themeAlert(context, "Upload Successfully ")); 
-          // setState(() {
-          //   List<int> imageBytes = fileToDisplay!.readAsBytesSync();
-          //   uploadedDoc = base64Encode(imageBytes);
-          //   imagePri = base64.decode(uploadedDoc);
-          // });
-          // print('File name $uploadedDoc');
+            setState(() async{
+              downloadURL = await FirebaseStorage.instance.ref().child('media/$fileName').getDownloadURL();
+              url_img = downloadURL.toString();
+            });
+
         }
         else {
             themeAlert(context, 'Not find selected', type: "error");
@@ -198,31 +176,29 @@ class _CategoryAddState extends State<CategoryAdd> {
           allowMultiple: false,
           type: FileType.custom,
           allowedExtensions: ['png','jpg'],
-               );
+          );
           if(results != null){
              Uint8List? UploadImage =  results.files.single.bytes;
              fileName = results.files.single.name;
              Reference reference = FirebaseStorage.instance.ref('media/$fileName');
              final UploadTask uploadTask = reference.putData(UploadImage!);
              uploadTask.whenComplete(() => print("selected image"));
-            setState(() async{
+              setState(() async{
               downloadURL = await FirebaseStorage.instance.ref().child('media/$fileName').getDownloadURL();
               url_img = downloadURL.toString(); 
-            
-            // uploadedDoc = base64.encode(UploadImage!);
-            // imagePri = base64.decode(uploadedDoc);
+              print("$url_img  +++++++88888888+++++++++");
             });
           }
           else{
                 themeAlert(context, 'Not find selected', type: "error");
             return null;
-
           }    
-    }
+       }
   }
 
 /////////// firebase Storage +++++++++++++++++++
- String?  downloadURL;
+///
+String?  downloadURL;
 List<String> myList = [];
 Future listExample() async {
     firebase_storage.ListResult result =
@@ -240,7 +216,6 @@ downloadURL = await FirebaseStorage.instance
 .ref()
 .child(image_path)
 .getDownloadURL();
-//  print("${downloadURL.toString()}  ++++++++++++++++++++");
 return downloadURL.toString();
 }
 
@@ -248,7 +223,6 @@ return downloadURL.toString();
  
 
 ///////////  firebase property Database access  +++++++++++++++++++++++++++
-///
     final Stream<QuerySnapshot> _crmStream =
       FirebaseFirestore.instance.collection('category').snapshots();
       CollectionReference _category = FirebaseFirestore.instance.collection('category');
@@ -256,7 +230,7 @@ return downloadURL.toString();
 
 /////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
 
-   final List StoreDocs = [];
+    List StoreDocs = [];
    _CateData() async {
     var collection = FirebaseFirestore.instance.collection('category');
     var querySnapshot = await collection.get();
@@ -265,11 +239,10 @@ return downloadURL.toString();
       Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
       StoreDocs.add(data);
       data["id"] = queryDocumentSnapshot.id;
-
     }
-    // setState(() {
-    //   print("$StoreDocs++++++");
-    // });
+     setState(() {
+         listExample();
+       });   
   }
 
 /////////////
@@ -277,7 +250,8 @@ return downloadURL.toString();
 /////// add Category Data  =+++++++++++++++++++
  
  Future<void> addList() {
-    return _category
+    return
+     _category
         .add({
           'category_name': "$cate_name",
           'slug_url': "$slug__url",
@@ -305,17 +279,15 @@ return downloadURL.toString();
              themeAlert(context, "Deleted Successfully ");         
           });
         }
-        //  => 
-        //  themeAlert(context, "Deleted Successfully ")
         )
         .catchError((error) => themeAlert(context, 'Not find Data', type: "error"));
   }
 
   ////////////
+  
   @override
   void initState() {
     _CateData();
-    listExample();
     super.initState();
   }
 
@@ -325,22 +297,14 @@ return downloadURL.toString();
     StreamBuilder<QuerySnapshot>(
         stream: _crmStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          //////
+        //////
           if (snapshot.hasError) {
-            print("Something went wrong");
+             themeAlert(context, '"Something went wrong"', type: "error");
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
-
-          snapshot.data!.docs.map((DocumentSnapshot document) {
-            Map Docs = document.data() as Map<String, dynamic>;
-            //StoreDocs.add(Docs);
-            // Docs["id"] = document.id;
-            //print("$StoreDocs");
-          }).toList();
-          ////////
-
+        ////////
           return Scaffold(
               body: Container(
             child: ListView(
@@ -375,15 +339,14 @@ return downloadURL.toString();
                               labelColor: Colors.white,
                               unselectedLabelColor: Colors.white,
                               tabs: [
-                                Tab(text: "Add"),
-                                Tab(text: "List"),
+                                Tab(text: "Add New"),
+                                Tab(text: "List All"),
                               ],
                             ),
                           ),
                           Expanded(
                               child: TabBarView(
                             children: [
-                              //Start_up(context),
                               listCon(context, 'tab1'),
                               listList(context, 'tab2'),
                             ],
@@ -398,7 +361,6 @@ return downloadURL.toString();
   }
 
 //// Widget for Start_up
-
   Widget listCon(BuildContext context, tab) {
     return Container(
         margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
@@ -440,13 +402,12 @@ return downloadURL.toString();
                                     child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Slug Url",
-                                        style: themeTextStyle(
+                                        Text("Slug Url",
+                                            style: themeTextStyle(
                                             color: Colors.black,
                                             size: 15,
                                             fw: FontWeight.bold)),
-                                    Text_field(context, SlugUrlController,
-                                        "Slug Url", "Enter Slug Url"),
+                                            Text_field(context, SlugUrlController,"Slug Url", "Enter Slug Url"),
                                   ],
                                 )),
                             ],
@@ -454,7 +415,6 @@ return downloadURL.toString();
                         ),
                         if (!Responsive.isMobile(context))
                           SizedBox(width: defaultPadding),
-                        // On Mobile means if the screen is less than 850 we dont want to show it
                         if (!Responsive.isMobile(context))
                           Expanded(
                             flex: 2,
@@ -467,8 +427,7 @@ return downloadURL.toString();
                                         color: Colors.black,
                                         size: 15,
                                         fw: FontWeight.bold)),
-                                Text_field(context, SlugUrlController,
-                                    "Slug Url", "Enter Slug Url"),
+                                        Text_field(context, SlugUrlController,"Slug Url", "Enter Slug Url"),
                               ],
                             )),
                           ),
@@ -685,7 +644,7 @@ return downloadURL.toString();
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Icon Image",
+                            Text("Icon Image*",
                                 style: themeTextStyle(
                                     size: 15, fw: FontWeight.bold)),
                             Container(
@@ -757,7 +716,6 @@ return downloadURL.toString();
 
                       if (!Responsive.isMobile(context))
                         SizedBox(width: defaultPadding),
-                      // On Mobile means if the screen is less than 850 we dont want to show it
                       if (!Responsive.isMobile(context))
                         Expanded(
                           flex: 2,
@@ -765,13 +723,10 @@ return downloadURL.toString();
                         ),
                     ],
                   ),
-
-                  // image preview section
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                     url_img == null
+                         url_img == null
                             ? Icon(Icons.photo, size: 12)
                             : Image.network(
                                 url_img,
@@ -779,7 +734,6 @@ return downloadURL.toString();
                                 width: 300,
                                 fit: BoxFit.contain,
                               ),
-                    
                     ],
                   ),
                   SizedBox(
@@ -787,14 +741,17 @@ return downloadURL.toString();
                   ),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     themeButton3(context, () {
-                      if (_formKey.currentState!.validate()) {
+                      if (_formKey.currentState!.validate() && url_img != null) {
                         setState(() {
                           cate_name = CategoryController.text;
                           slug__url = SlugUrlController.text;
-                        
                           addList();
                           clearText();
+                          clear_imageData();
                         });
+                      }
+                      else{
+                         themeAlert(context, 'Image value required!', type: "error");
                       }
                     }, buttonColor: Colors.green, label: "Submit"),
                     SizedBox(
@@ -913,10 +870,7 @@ return downloadURL.toString();
                         "${StoreDocs[index]["id"]}"),
                 ],
               )
-              
-              ),
-
-            
+            ),
         ],
       ),
     );
@@ -950,7 +904,12 @@ return downloadURL.toString();
                           ),
                       )
               : 
-              SizedBox()),
+              Container(
+                        alignment: Alignment.bottomLeft,
+                        child:  Image( image: NetworkImage(
+                            "https://bento.pbs.org/prod/3.92.0/staticfiles/dist/app/bento-components/custom-promo/media/default-image.jpg?1921528efb1e84f4f11b3513f93b75af",
+                          ),
+                      ))),
               Expanded(child: Text("$name")),
               Expanded(child: Text("$pName")),
               Expanded(child: Text("$status")),
@@ -1008,8 +967,6 @@ Widget action_button(BuildContext context, iid){
                       child: IconButton(
                           onPressed: () {
                             showExitPopup(iid);
-                           // deleteUser(iid);
-                            // print("$iid+++++++++++++");
                           },
                           icon: Icon(
                             Icons.delete_outline_outlined,
@@ -1026,26 +983,8 @@ Widget action_button(BuildContext context, iid){
 
   Widget recentFileDataRow_Mobile(
       BuildContext context, sno, Iimage, name, pName, status, date, iid) {  
-      // var bytes = base64.decode(Iimage);
       return
-    
-    // Container(
-    //   margin: EdgeInsets.symmetric(horizontal: 10),
-    //   child: Row(
-    //     children: [
-    //        SizedBox(
-    //                       width: 50,
-    //                       child:  Text(
-    //                         "$sno",
-    //                         style: TextStyle(fontWeight: FontWeight.bold),
-    //                       ),),
-    //       Expanded(
-    //         child:
              Container(
-                // margin: EdgeInsets.symmetric( vertical: 10),
-                // height: 140.0,
-                // decoration: BoxDecoration(
-                // borderRadius: BorderRadius.circular(10), boxShadow: themeBox),
                  decoration: BoxDecoration(
                   color: secondaryColor.withOpacity(0.2),
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -1053,25 +992,18 @@ Widget action_button(BuildContext context, iid){
                 child: Column(
                   children: [
                     Row(
-                      children: [
-                       
+                      children: [     
                         Container(
                           margin: EdgeInsets.all(5),
                           height: 100,
                           width: 100,
                           decoration: BoxDecoration(
-                              //color: themeBG3,
-                              // borderRadius: BorderRadius.only(
-                              //     topLeft: Radius.circular(10.0),
-                              //     bottomLeft: Radius.circular(10.0)),
-                              // boxShadow: themeBox,
-                              //gradient: themeGradient1,
                               color: Color.fromARGB(255, 214, 214, 214),
                               image: DecorationImage(
                                   image: 
                                       NetworkImage(
                                       Iimage,
-                                    ),fit: BoxFit.cover
+                                    ),fit: BoxFit.contain
                                     
                                     )),
                         ),
@@ -1085,79 +1017,11 @@ Widget action_button(BuildContext context, iid){
                               themeListRow(context, "Parent Category","$pName"),
                               themeListRow(context, "Satus","$status"),
                               themeListRow(context, "Date","$date"),
-                        SizedBox(height: 10,),
-                          //   Row(
-                          //   children: [
-                          //       SizedBox(
-                          //    width:  100.0,
-                          //    child: Text(
-                          //    "Action",
-                          //    style: themeTextStyle(
-                          //    size: 12.0,
-                          //    color: Colors.white,
-                          //    ftFamily: 'ms',
-                          //    fw: FontWeight.bold),
-                          //  ),
-                          //     ),
-          
-                          // Text(
-                          //   ": ",
-                          //   overflow: TextOverflow.ellipsis,
-                          //   style: themeTextStyle(
-                          //       size: 14,
-                          //       color: Colors.white,
-                          //       ftFamily: 'ms',
-                          //       fw: FontWeight.normal),
-                          // ),
-                          //     Container(
-                          //         height: 40,
-                          //         width: 40,
-                          //         alignment: Alignment.center,
-                          //         decoration: BoxDecoration(
-                          //           color: Colors.blue.withOpacity(0.1),
-                          //           borderRadius:
-                          //               const BorderRadius.all(Radius.circular(10)),
-                          //         ),
-                          //         child: IconButton(
-                          //             onPressed: () {
-                          //               Navigator.push(
-                          //                   context,
-                          //                   MaterialPageRoute(
-                          //                       builder: (context) =>
-                          //                           UpdateCategory(id: iid)
-                          //                           )
-                          //                           );
-                          //             },
-                          //             icon:
-                          //              Icon(
-                          //               Icons.edit,
-                          //               color: Colors.blue,
-                          //             )) ////
-                          //         ),
-                          //     SizedBox(width: 10),
-                          //     Container(
-                          //         height: 40,
-                          //         width: 40,
-                          //         alignment: Alignment.center,
-                          //         decoration: BoxDecoration(
-                          //           color: Colors.red.withOpacity(0.1),
-                          //           borderRadius:
-                          //               const BorderRadius.all(Radius.circular(10)),
-                          //         ),
-                          //         child: IconButton(
-                          //             onPressed: () {
-                          //               deleteUser(iid);
-                          //             },
-                          //             icon: Icon(
-                          //               Icons.delete_outline_outlined,
-                          //               color: Colors.red,
-                          //             ))),
-                          //   ],
-                          // )
+                           SizedBox(height: 10,),
                            Row(
                            mainAxisAlignment: MainAxisAlignment.start,
                            children: [
-                  Container(
+                       Container(
                       height: 40,
                       width: 40,
                       alignment: Alignment.center,
@@ -1193,38 +1057,29 @@ Widget action_button(BuildContext context, iid){
                       child: IconButton(
                           onPressed: () {
                             showExitPopup(iid);
-                           // deleteUser(iid);
-                            // print("$iid+++++++++++++");
                           },
                           icon: Icon(
                             Icons.delete_outline_outlined,
                             color: Colors.red,
                           ))),
-                ],
-              )
-                            ],
-                          ),
-                        ),
-                       
-                      ],
-                    ),
-
-
-                 Divider(thickness: 1.0,color: Colors.white12,)   
+                       ],
+                      )
+                    ],
+                  ),
+                ),       
+              ],
+            ),
+    Divider(thickness: 1.0,color: Colors.white12,)   
                   ],
                 ),
-      //         ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 /////////
 
 
 
-//////////////////
-///
+//////////////////   popup Box for Image selection ++++++++++++++++++++++++++++++++++++++ 
+
   void _ImageSelect_Alert(BuildContext context) {
     showDialog(
         context: context,
@@ -1313,12 +1168,12 @@ Widget action_button(BuildContext context, iid){
         });
   }
 
+//////////////////////////////////////////==========
 
 
 ////////  Data bases Image call  +++++++++++++++++++++++++++++++
  List<String> _selectedOptions = [];
   Widget All_media(BuildContext context, setStatee) {
-    //print("$myList  +++++++++00000");
     return 
     Container(
           height: 500,
@@ -1327,12 +1182,10 @@ Widget action_button(BuildContext context, iid){
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount:    4,
           ),
-          itemCount: myList.length, // <-- required
+          itemCount: myList.length,
           itemBuilder: (_, index) => 
          Container(
                   margin: EdgeInsets.all(10),
-                  // height: 100,
-                  // width: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(
@@ -1347,7 +1200,6 @@ Widget action_button(BuildContext context, iid){
                     activeColor: Colors.green,
                     side:
                      BorderSide(width: 2, color: Colors.red),
-                  //  title: Text(_options[index]),
                   value: _selectedOptions.contains(myList[index]),
                     onChanged: ( value) {
                   setState(() {
@@ -1355,16 +1207,13 @@ Widget action_button(BuildContext context, iid){
                     setState(() {
                        _selectedOptions.add(myList[index]);
                         url_img = _selectedOptions[0];
-                        print("$url_img   +++++++");
                        Navigator.pop(context);
                     });
               } 
               else if(_selectedOptions != null && _selectedOptions.isNotEmpty){
                  setState(() {
                    _selectedOptions[0] = "${myList[index]}";
-                 /// print("$_selectedOptions   +++++++");
                     url_img = _selectedOptions[0];
-                    print("$url_img   +++++++");
                    Navigator.pop(context);
                  });
               }  
@@ -1373,32 +1222,19 @@ Widget action_button(BuildContext context, iid){
               }
             });
           },
-        )
-                  
-                  //  Checkbox(
-                  //   checkColor: Colors.white,
-                  //   activeColor: Colors.green,
-                  //   side:
-                  //   BorderSide(width: 2, color: Colors.red),
-                  //   value: this.Tranding,
-                  //   onChanged: (value) {
-                  //   setStatee(() {
-   
-                  //       this.Tranding = value!;
-                  //   });
-                  //   },
-                  // ),
-                ),
-        ),
-    );
-  }
+        )            
+      ),
+    ),
+  );
+}
 //////////
-///
-///
-////////  Data bases Image call  +++++++++++++++++++++++++++++++
 
-  Widget All_media_mobile(BuildContext context, setStatee) {
-    //print("$myList  +++++++++00000");
+
+
+////////  Data bases Image call   MOBILE +++++++++++++++++++++++++++++++
+
+Widget All_media_mobile(BuildContext context, setStatee) 
+     {
     return 
     Container(
           height: 500,
@@ -1411,8 +1247,6 @@ Widget action_button(BuildContext context, iid){
           itemBuilder: (_, index) => 
          Container(
                   margin: EdgeInsets.all(10),
-                  // height: 100,
-                  // width: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(
@@ -1420,21 +1254,35 @@ Widget action_button(BuildContext context, iid){
                       fit: BoxFit.contain,
                     ),
                   ),
-                  alignment: Alignment.topLeft,
                   child:
-                  
-                   Checkbox(
+                    CheckboxListTile(
                     checkColor: Colors.white,
                     activeColor: Colors.green,
                     side:
                      BorderSide(width: 2, color: Colors.red),
-                    value: this.Tranding,
-                    onChanged: (value) {
-                      setStatee(() {
-                        this.Tranding = value!;
-                      });
-                    },
-                  ),
+                  value: _selectedOptions.contains(myList[index]),
+                    onChanged: ( value) {
+                  setState(() {
+                   if (value != null && _selectedOptions.isEmpty) {
+                    setState(() {
+                       _selectedOptions.add(myList[index]);
+                        url_img = _selectedOptions[0];
+                       Navigator.pop(context);
+                    });
+              } 
+              else if(_selectedOptions != null && _selectedOptions.isNotEmpty){
+                 setState(() {
+                   _selectedOptions[0] = "${myList[index]}";
+                    url_img = _selectedOptions[0];
+                   Navigator.pop(context);
+                 });
+              }  
+              else {
+                _selectedOptions.remove(myList[index]);
+              }
+            });
+          },
+        )
                 ),
         ),
     );
@@ -1472,6 +1320,4 @@ Widget action_button(BuildContext context, iid){
   }
 ///////////
 
-}
-
-/// Class CLose
+}/// Class CLose

@@ -1,5 +1,5 @@
 //UpdateCategory
-// ignore_for_file: non_constant_identifier_names, prefer_const_constructors, avoid_print, no_leading_underscores_for_local_identifiers, prefer_typing_uninitialized_variables, use_key_in_widget_constructors, depend_on_referenced_packages
+// ignore_for_file: non_constant_identifier_names, prefer_const_constructors, avoid_print, no_leading_underscores_for_local_identifiers, prefer_typing_uninitialized_variables, use_key_in_widget_constructors, depend_on_referenced_packages, unused_field
 
 import 'dart:convert';
 import 'dart:io';
@@ -30,8 +30,6 @@ class _UpdateCategoryState extends State<UpdateCategory> {
   String _dropDownValue = "Select";
   String _StatusValue = "Select";
   String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
-  // Create a text controller and use it to retrieve the current value
-  // of the TextField.
 
   //////
 

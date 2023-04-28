@@ -1,15 +1,18 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable
 
 import 'dart:convert';
 import 'dart:io';
 import 'package:crm_demo/screens/product/update_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
+import '../../themes/firebase_Storage.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
@@ -17,6 +20,7 @@ import '../dashboard/components/my_fields.dart';
 import '../dashboard/components/recent_files.dart';
 import '../dashboard/components/storage_details.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 import 'package:intl/intl.dart';
 
@@ -28,95 +32,114 @@ class ProductAdd extends StatefulWidget {
 
 class _ProductAddState extends State<ProductAdd> {
   final _formKey = GlobalKey<FormState>();
-  final CategoryController = TextEditingController();
   final offerController = TextEditingController();
   final mrpController = TextEditingController();
   final NoitemController = TextEditingController();
   final SlugUrlController = TextEditingController();
   final DiscountController = TextEditingController();
-
   final NameController = TextEditingController();
-  var pro_name = "";
-  var slug__url = "";
-  var image_logo = "";
   String _dropDownValue = "Select";
   String _StatusValue = "Select";
   String _sizeValue = "Select";
   String _brandValue = "Select";
   String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
-
-  bool Tranding = false;
-  bool Feature = false;
   @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    CategoryController.dispose();
-    SlugUrlController.dispose();
-    super.dispose();
-  }
-
   clearText() {
+    NameController.clear();
     SlugUrlController.clear();
-    CategoryController.clear();
+    mrpController.clear();
+    offerController.clear();
+    DiscountController.clear();
+    NoitemController.clear();
+    _dropDownValue = "Select";
+    _StatusValue = "Select";
+    _sizeValue = "Select";
+    _brandValue = "Select";
+    clear_imageData();
   }
 
-  // File Picker ==========================================================
-  // Codec<String, String> stringToBase64 = utf8.fuse(base64);
-  var uploadedDoc;
-  var imagePri;
-// result;
+ ///// File Picker ==========================================================
+  var url_img; 
   String? fileName;
-  PlatformFile? pickedfile;
-  bool isLoading = false;
-  File? fileToDisplay;
 
-  void clear_upload() {
+  void clear_imageData() {
     fileName = null;
+    url_img = null;
   }
 
   pickFile() async {
     if (!kIsWeb) {
-      try {
-        setState(() {
-          isLoading = true;
-        });
-        FilePickerResult? result = await FilePicker.platform.pickFiles(
+         final results = await FilePicker.platform.pickFiles(
           type: FileType.custom,
-          allowedExtensions: ['png', 'jpeg', 'jpg'],
+          allowedExtensions: ['png','jpg'],
           allowMultiple: false,
-        );
-        if (result != null) {
-          fileName = result.files.first.name;
-          pickedfile = result.files.first;
-          fileToDisplay = File(pickedfile!.path.toString());
-          setState(() {
-            List<int> imageBytes = fileToDisplay!.readAsBytesSync();
-            uploadedDoc = base64Encode(imageBytes);
-            // _controllers['doc'] = uploadedDoc;
-          });
-          // print('File name $uploadedDoc');
+          );
+        if (results != null) {
+          final path = results.files.single.path;
+          final fileName = results.files.single.name;
+           UploadFile(path!,fileName).then((value) 
+           {
+            print("image selected");
+           });
+            setState(() async{
+              downloadURL = await FirebaseStorage.instance.ref().child('media/$fileName').getDownloadURL();
+              url_img = downloadURL.toString();
+            });
+
         }
-        setState(() {
-          isLoading = false;
-        });
-      } catch (e) {
-        print(e);
+        else {
+            themeAlert(context, 'Not find selected', type: "error");
       }
-    } else if (kIsWeb) {
-      final ImagePicker _picker = ImagePicker();
-      XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        var f = await image.readAsBytes();
-        setState(() {
-          var webImage = f;
-          uploadedDoc = base64.encode(webImage);
-          imagePri = base64.decode(uploadedDoc);
-        });
-      }
-    }
+    } 
+    else if (kIsWeb) {
+      final results = await FilePicker.platform.pickFiles(
+          allowMultiple: false,
+          type: FileType.custom,
+          allowedExtensions: ['png','jpg'],
+          );
+          if(results != null){
+             Uint8List? UploadImage =  results.files.single.bytes;
+             fileName = results.files.single.name;
+             Reference reference = FirebaseStorage.instance.ref('media/$fileName');
+             final UploadTask uploadTask = reference.putData(UploadImage!);
+             uploadTask.whenComplete(() => print("selected image"));
+              setState(() async{
+              downloadURL = await FirebaseStorage.instance.ref().child('media/$fileName').getDownloadURL();
+              url_img = downloadURL.toString(); 
+              // print("$url_img  +++++++88888888+++++++++");
+            });
+          }
+          else{
+                themeAlert(context, 'Not find selected', type: "error");
+            return null;
+          }    
+       }
   }
 
-  ///
+/////////// firebase Storage +++++++++++++++++++
+///
+String?  downloadURL;
+List<String> myList = [];
+Future listExample() async {
+    firebase_storage.ListResult result =
+        await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
+        result.items.forEach((firebase_storage.Reference ref)
+        async {
+        var uri = await downloadURLExample("${ref.fullPath}");
+        myList.add(uri);
+    });
+    return myList;
+}
+
+Future downloadURLExample(image_path) async{
+downloadURL = await FirebaseStorage.instance
+.ref()
+.child(image_path)
+.getDownloadURL();
+return downloadURL.toString();
+}
+
+////
 
   ///////////  firebase property
   final Stream<QuerySnapshot> _crmStream =
@@ -125,8 +148,8 @@ class _ProductAddState extends State<ProductAdd> {
   var db = FirebaseFirestore.instance;
   CollectionReference _product =
       FirebaseFirestore.instance.collection('product');
-  ////////////++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  _getUser() async {
+  ////////////+++++++++++++++++++++++++++++++++++++++++++++++++
+  Pro_Data() async {
     var collection = FirebaseFirestore.instance.collection('product');
     var querySnapshot = await collection.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
@@ -134,10 +157,9 @@ class _ProductAddState extends State<ProductAdd> {
       StoreDocs.add(data);
       data["id"] = queryDocumentSnapshot.id;
     }
-
-    setState(() {
-      print("$StoreDocs ++++++++++++++++");
-    });
+   setState(() {
+     listExample();
+   });
   }
 
   /// add list
@@ -149,13 +171,12 @@ class _ProductAddState extends State<ProductAdd> {
           'discount': "${DiscountController.text}",
           "mrp": "${mrpController.text}",
           "No_Of_Item": "${NoitemController.text}",
-          'product_name': "$pro_name",
-          'slug_url': "$slug__url",
+          'slug_url': "${SlugUrlController.text}",
           'parent_cate': "$_dropDownValue",
           'status': "$_StatusValue",
           'size': "$_sizeValue",
           'brand': "$_brandValue",
-          'image': "$uploadedDoc",
+          'image': "$url_img",
           "date_at": "$Date_at"
         })
         .then((value) => themeAlert(context, "Successfully Submit"))
@@ -175,14 +196,50 @@ class _ProductAddState extends State<ProductAdd> {
   }
 
   ///
+/////// Update
+
+  Future<void> updatelist(id, Name, Noitem, slugUrl, _Status, _Category, Mrp, Discount, Offer, _Size, _Brand, image) 
+    {
+    return 
+        _product
+        .doc(id)
+        .update({
+          'name': "$Name",
+          "No_Of_Item": "$Noitem",
+          'slug_url': "$slugUrl",
+          'status': "$_Status",
+          'parent_cate': "$_Category",
+          "mrp": "$Mrp",
+          'discount': "$Discount",
+          "Offer": "$Offer",
+          'size': "$_Size",
+          'brand': "$_Brand",
+          "image":"$image",
+          "date_at": "$Date_at"
+        })
+        .then((value) {
+          themeAlert(context, "Successfully Update");
+          setState(() {
+            updateWidget = false;
+          });
+        } )
+        .catchError(
+            (error) => themeAlert(context, 'Failed to update', type: "error"));
+  }
+
+
+
+  ///
 
   @override
   void initState() {
-    // TODO: implement initState
-    _getUser();
+      Pro_Data();
     super.initState();
   }
 
+  ///
+  bool updateWidget = false;
+  var update_id ;
   ///
   @override
   Widget build(BuildContext context) {
@@ -197,13 +254,13 @@ class _ProductAddState extends State<ProductAdd> {
             return Center(child: CircularProgressIndicator());
           }
 
-          snapshot.data!.docs.map((DocumentSnapshot document) {
-            Map Docs = document.data() as Map<String, dynamic>;
-            //StoreDocs.add(Docs);
-            // Docs["id"] = document.id;
-            //print("$StoreDocs");
-          }).toList();
-          ////////
+          // snapshot.data!.docs.map((DocumentSnapshot document) {
+          //   Map Docs = document.data() as Map<String, dynamic>;
+          //   //StoreDocs.add(Docs);
+          //   // Docs["id"] = document.id;
+          //   //print("$StoreDocs");
+          // }).toList();
+          // ////////
 
           return Scaffold(
               body: Container(
@@ -242,8 +299,8 @@ class _ProductAddState extends State<ProductAdd> {
                               labelColor: Colors.white,
                               unselectedLabelColor: Colors.white,
                               tabs: [
-                                Tab(text: "Add"),
-                                Tab(text: "List"),
+                                Tab(text: "Add New"),
+                                Tab(text: "List All"),
                               ],
                             ),
                           ),
@@ -252,21 +309,24 @@ class _ProductAddState extends State<ProductAdd> {
                             children: [
                               //Start_up(context),
                               listCon(context, 'tab1'),
-                              listList(context, 'tab2'),
+                              (updateWidget == false)
+                              ?
+                              listList(context, 'tab2')
+                              :
+                              Update_product(context,update_id)
                             ],
                           )),
                         ],
                       ),
                     )),
-
-////////////////////     Tabbar End Here ++++++++++++++++++++++++++++++
+                /// Tabbar End Here ++++++
               ],
             ),
           ));
         });
   }
 
-//// ///////////   Widget for Product Add Form  ++++++++++++++++++++++++++++++++++++++++++
+ ///////////   Widget for Product Add Form  ++++++++++++++++++++++++++++++++++++++++++
 
   Widget listCon(BuildContext context, tab) {
     return Container(
@@ -276,7 +336,7 @@ class _ProductAddState extends State<ProductAdd> {
           Container(
               padding: EdgeInsets.all(defaultPadding),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
               child: Column(
@@ -462,9 +522,7 @@ class _ProductAddState extends State<ProductAdd> {
                             if (Responsive.isMobile(context))
                               SizedBox(width: defaultPadding),
                             if (Responsive.isMobile(context))
-
                               //   Text_field(context,"slug_url","Slug Url","Enter Slug Url"),
-
                               Container(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -663,7 +721,7 @@ class _ProductAddState extends State<ProductAdd> {
                                       color: Colors.black,
                                       size: 15,
                                       fw: FontWeight.bold)),
-                              Text_field(context, CategoryController,
+                              Text_field(context, DiscountController,
                                   "Discount", "Enter Discount"),
                             ],
                           )),
@@ -953,7 +1011,7 @@ class _ProductAddState extends State<ProductAdd> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      _LogoutAlert(context);
+                                      _ImageSelect_Alert(context);
                                     },
                                     child: Container(
                                       padding: EdgeInsets.all(10),
@@ -972,7 +1030,7 @@ class _ProductAddState extends State<ProductAdd> {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  (uploadedDoc == null || uploadedDoc.isEmpty)
+                                  (url_img == null || url_img.isEmpty)
                                       ? Row(
                                           children: [
                                             SizedBox(
@@ -1023,10 +1081,10 @@ class _ProductAddState extends State<ProductAdd> {
                   Row(
                     children: [
                       Expanded(
-                        child: uploadedDoc == null
+                        child: url_img == null
                             ? Icon(Icons.photo, size: 12)
-                            : Image.memory(
-                                imagePri,
+                            : Image.network(
+                                url_img,
                                 height: 80,
                                 width: 100,
                               ),
@@ -1042,10 +1100,9 @@ class _ProductAddState extends State<ProductAdd> {
                     themeButton3(context, () {
                       if (_formKey.currentState!.validate()) {
                         setState(() {
-                          pro_name = CategoryController.text;
-                          slug__url = SlugUrlController.text;
                           addList();
                           clearText();
+
                         });
                       }
                     }, buttonColor: Colors.green, label: "Submit"),
@@ -1056,7 +1113,8 @@ class _ProductAddState extends State<ProductAdd> {
                       setState(() {
                         clearText();
                       });
-                    }, label: "Reset", buttonColor: Colors.black),
+                    }, 
+                    label: "Reset", buttonColor: Colors.black),
                     SizedBox(width: 20.0),
                   ])
                 ],
@@ -1078,88 +1136,95 @@ class _ProductAddState extends State<ProductAdd> {
       ),
       child: 
               ListView(
-                children: [
-                  (Responsive.isMobile(context)) 
-                  ?
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      height: 30,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                        Text("Product Details",
-                            style: TextStyle(fontWeight: FontWeight.bold))
-                      ],),
-                    )
-               : 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "S.No.",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+        children: [
+          Container(
+              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+              width: double.infinity,
+              child: Column(
+                      children: [
+                        (Responsive.isMobile(context)) 
+                        ?
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            height: 30,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                              Text("Product Details",
+                                  style: TextStyle(fontWeight: FontWeight.bold))
+                            ],),
+                          )
+                     : 
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "S.No.",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text("Logo",
+                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                            Expanded(
+                              child: Text("Product Name",
+                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                            Expanded(
+                              child: Text("Category Name",
+                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                            Expanded(
+                              child: Text("Status",
+                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                            Expanded(
+                              child: Text("Date",
+                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                            Expanded(
+                              child: Text("Actions",
+                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                            )
+                          ],
                         ),
-                      ),
-                      Expanded(
-                        child: Text("Logo",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: Text("Product Name",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: Text("Category Name",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: Text("Status",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: Text("Date",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                      Expanded(
-                        child: Text("Actions",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      )
-                    ],
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Divider(
+                          thickness: 2.0,
+                        ),
+                        for (var index = 0; index < StoreDocs.length; index++)
+                         (Responsive.isMobile(context)) 
+                          ?
+                  
+                        recentFileDataRow_Mobile(
+                          context,
+                          "$index",
+                              "${StoreDocs[index]["image"]}",
+                              "${StoreDocs[index]["name"]}",
+                              "${StoreDocs[index]["parent_cate"]}",
+                              "${StoreDocs[index]["status"]}",
+                              "${StoreDocs[index]["date_at"]}",
+                              "${StoreDocs[index]["id"]}"
+                        )
+                        :
+                          recentFileDataRow(
+                              context,
+                              "$index",
+                              "${StoreDocs[index]["image"]}",
+                              "${StoreDocs[index]["name"]}",
+                              "${StoreDocs[index]["parent_cate"]}",
+                              "${StoreDocs[index]["status"]}",
+                              "${StoreDocs[index]["date_at"]}",
+                              "${StoreDocs[index]["id"]}"),
+                       SizedBox(height: 80,)       
+                      ],
+                    ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Divider(
-                    thickness: 2.0,
-                  ),
-                  for (var index = 0; index < StoreDocs.length; index++)
-                   (Responsive.isMobile(context)) 
-                    ?
-
-                  recentFileDataRow_Mobile(
-                    context,
-                    "$index",
-                        "${StoreDocs[index]["image"]}",
-                        "${StoreDocs[index]["name"]}",
-                        "${StoreDocs[index]["parent_cate"]}",
-                        "${StoreDocs[index]["status"]}",
-                        "${StoreDocs[index]["date_at"]}",
-                        "${StoreDocs[index]["id"]}"
-                  )
-                  :
-                    recentFileDataRow(
-                        context,
-                        "$index",
-                        "${StoreDocs[index]["image"]}",
-                        "${StoreDocs[index]["name"]}",
-                        "${StoreDocs[index]["parent_cate"]}",
-                        "${StoreDocs[index]["status"]}",
-                        "${StoreDocs[index]["date_at"]}",
-                        "${StoreDocs[index]["id"]}"),
-
-
-                 SizedBox(height: 80,)       
                 ],
               )
     );
@@ -1167,8 +1232,9 @@ class _ProductAddState extends State<ProductAdd> {
 
   Widget recentFileDataRow(
       BuildContext context, sno, Iimage, name, pName, status, date, iid) {
-    var bytes = base64.decode(Iimage);
-    return Container(
+  //  var bytes = base64.decode(Iimage);
+    return
+     Container(
       // margin: EdgeInsets.only(top: 5),
       child: Column(
         children: [
@@ -1178,9 +1244,9 @@ class _ProductAddState extends State<ProductAdd> {
               Expanded(child: Text("$sno")),
               Expanded(
                   child: (Iimage != null && Iimage.isNotEmpty)
-                      ? Image.memory(
-                          bytes,
-                          height: 50,
+                      ? Image.network(
+                          Iimage,
+                          height: 80,
                           width: 80,
                           fit: BoxFit.contain,
                         )
@@ -1203,11 +1269,15 @@ class _ProductAddState extends State<ProductAdd> {
                       ),
                       child: IconButton(
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        UpdateProduct(id: iid)));
+                            setState(() {
+                              updateWidget = true;
+                              update_id = iid;
+                            });
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) =>
+                            //             UpdateProduct(id: iid)));
                           },
                           icon: Icon(
                             Icons.edit,
@@ -1250,7 +1320,7 @@ class _ProductAddState extends State<ProductAdd> {
 
   Widget recentFileDataRow_Mobile(
       BuildContext context, sno, Iimage, name, pName, status, date, iid) {  
-      var bytes = base64.decode(Iimage);
+     // var bytes = base64.decode(Iimage);
       return
              Container(
                  decoration: BoxDecoration(
@@ -1270,9 +1340,9 @@ class _ProductAddState extends State<ProductAdd> {
                               color: Color.fromARGB(255, 214, 214, 214),
                               image: DecorationImage(
                                   image: 
-                                      MemoryImage(
-                                      bytes,
-                                    ),fit: BoxFit.cover
+                                      NetworkImage(
+                                      Iimage,
+                                    ),fit: BoxFit.contain
                                     
                                     )),
                         ),
@@ -1321,12 +1391,10 @@ class _ProductAddState extends State<ProductAdd> {
                                   ),
                                   child: IconButton(
                                       onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    UpdateProduct(id: iid)
-                                                    ));
+                                           setState(() {
+                                             updateWidget = true;
+                                              update_id = iid;
+                                                  });
                                       },
                                       icon:
                                        Icon(
@@ -1366,22 +1434,1403 @@ class _ProductAddState extends State<ProductAdd> {
                  Divider(thickness: 1.0,color: Colors.white12,)   
                   ],
                 ),
-      //         ),
-      //     ),
-      //   ],
-      // ),
+
     );
   }
 /////////
 
+/////////////  Update widget for product Update+++++++++++++++++++++++++
+Widget Update_product(BuildContext context,id){
+  return 
+            Container(
+            margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+            child:  ListView(children: [
+                  // Text("${id}",style: TextStyle(color: Colors.black),),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 20),
+                    child:
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                    Container(
+                      child:
+                       Row(
+                        children: [
+                          Icon(Icons.edit_document,color: Colors.green,),
+                          SizedBox(width: 10,),
+                          Text("Update Product",
+                          style: GoogleFonts.lato(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20
+                          ),),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 20),
+
+                    ElevatedButton(
+                      style:ElevatedButton.styleFrom(
+                             primary: Colors.redAccent, // Background color
+                           ),
+                      onPressed: (){
+                      setState(() {
+                      updateWidget = false;
+                      });
+                    }, 
+                    child:  
+                    Row(
+                      children: [
+                        Icon(Icons.arrow_back,color: Colors.white),
+                        Text("Back",style: TextStyle(color: Colors.white),)
+                      ],
+                    )),
+                
+                    
+                  ],)
+                  ),
+                  Container(
+                      padding: EdgeInsets.all(defaultPadding),
+                      decoration: BoxDecoration(
+                        color: Colors.black12,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child:
+                       Form(
+                          key: _formKey,
+                          child: FutureBuilder<
+                                  DocumentSnapshot<Map<String, dynamic>>>(
+                              future: FirebaseFirestore.instance
+                                  .collection("product")
+                                  .doc(id)
+                                  .get(),
+                              builder: (_, snapshot) {
+                                //////
+                                if (snapshot.hasError) {
+                                  print("Something went wrong");
+                                }
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                }
+                                var data = snapshot.data!.data();
+                                var Name = data!['name'];
+                                var Noitem = data['No_Of_Item'];
+                                var slugUrl = data['slug_url'];
+                                var Discount = data['discount'];
+                                var Offer = data['Offer'];
+                                var Mrp = data['mrp'];
+                                var image = data["image"];
+                                var _Status = data['status'];
+                                var _Size = data['size'];
+                                var _Brand = data['brand'];
+                                var _Category = data['parent_cate'];
+
+                                return Column(
+                                  children: [
+                                    //first row
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                  child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("Name*",
+                                                      style: themeTextStyle(
+                                                          color: Colors.black,
+                                                          size: 15,
+                                                          fw: FontWeight.bold)),
+                                                //  Text_field_up(context, Name,"Name", "Enter Name"),
 
 
+                                                    Container(
+                                                      height: 40,
+                                                      margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                      ),
+                                                      child: TextFormField(
+                                                        initialValue: Name,
+                                                        autofocus: false,
+                                                        onChanged: (value) => Name = value,
+                                                      // controller: ctr_name,
+                                                        validator: (value) {
+                                                          if (value == null || value.isEmpty) {
+                                                            return 'Please Enter Name';
+                                                          }
+                                                          return null;
+                                                        },
+                                                        style: TextStyle(color: Colors.black),
+                                                        decoration: InputDecoration(
+                                                          border: InputBorder.none,
+                                                          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                          hintText: 'Enter Name',
+                                                          hintStyle: TextStyle(
+                                                            color: Colors.grey,
+                                                            fontSize: 16,
+                                                          ),
+                                                        ),
+                                                      ))
 
-///////++++++++++++++++++++++End Product List+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-/////////
-  ///
-  void _LogoutAlert(BuildContext context) {
+                                          
+                                                ],
+                                              )),
+                                              SizedBox(height: defaultPadding),
+                                              if (Responsive.isMobile(context))
+                                                SizedBox(width: defaultPadding),
+                                              if (Responsive.isMobile(context))
+                                                Container(
+                                                    child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text("Slug Url",
+                                                        style: themeTextStyle(
+                                                            color: Colors.black,
+                                                            size: 15,
+                                                            fw: FontWeight
+                                                                .bold)),
+                                                    // Text_field_up(
+                                                    //     context,
+                                                    //     slugUrl,
+                                                    //     "Slug Url",
+                                                    //     "Enter Slug Url"),
+
+                                                   Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: slugUrl,
+                                                              autofocus: false,
+                                                              onChanged: (value) => slugUrl = value,
+                                                            // controller: ctr_name,
+                                                              validator: (value) {
+                                                                if (value == null || value.isEmpty) {
+                                                                  return 'Please Enter Slug Url';
+                                                                }
+                                                                return null;
+                                                              },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: 'Enter Slug Url',
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+
+                                                  ],
+                                                )),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: defaultPadding),
+                                        if (Responsive.isMobile(context))
+                                          SizedBox(width: defaultPadding),
+                                        if (Responsive.isMobile(context))
+                                          Expanded(
+                                            flex: 2,
+                                            child: Container(
+                                                child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text("No Item",
+                                                    style: themeTextStyle(
+                                                        color: Colors.black,
+                                                        size: 15,
+                                                        fw: FontWeight.bold)),
+                                                // Text_field_up(
+                                                //     context,
+                                                //     Noitem,
+                                                //     "No Item",
+                                                //     "Enter No Item"),
+
+                                                  Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: Noitem,
+                                                              autofocus: false,
+                                                              onChanged: (value) => Noitem = value,
+                                                            // controller: ctr_name,
+                                                              validator: (value) {
+                                                                if (value == null || value.isEmpty) {
+                                                                  return 'Please Enter No Item';
+                                                                }
+                                                                return null;
+                                                              },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: 'Enter No Item',
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+
+                                            
+                                              ],
+                                            )),
+                                          ),
+                                        if (!Responsive.isMobile(context))
+                                          SizedBox(width: defaultPadding),
+                                        // On Mobile means if the screen is less than 850 we dont want to show it
+                                        if (!Responsive.isMobile(context))
+                                          Expanded(
+                                            flex: 2,
+                                            child: Container(
+                                                child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text("No Item",
+                                                    style: themeTextStyle(
+                                                        color: Colors.black,
+                                                        size: 15,
+                                                        fw: FontWeight.bold)),
+                                                // Text_field_up(context, Noitem,
+                                                //     "No Item", "Enter No Item"),
+                                             
+                                               Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: Noitem,
+                                                              autofocus: false,
+                                                              onChanged: (value) => Noitem = value,
+                                                            // controller: ctr_name,
+                                                              validator: (value) {
+                                                                if (value == null || value.isEmpty) {
+                                                                  return 'Please Enter No Item';
+                                                                }
+                                                                return null;
+                                                              },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: 'Enter No Item',
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+
+                                             
+                                              ],
+                                            )),
+                                          ),
+
+                                        if (!Responsive.isMobile(context))
+                                          SizedBox(width: defaultPadding),
+                                        // On Mobile means if the screen is less than 850 we dont want to show it
+
+                                        if (!Responsive.isMobile(context))
+                                          Expanded(
+                                            flex: 2,
+                                            child: Container(
+                                                child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text("Slug Url",
+                                                    style: themeTextStyle(
+                                                        color: Colors.black,
+                                                        size: 15,
+                                                        fw: FontWeight.bold)),
+                                                // Text_field_up(
+                                                //     context,
+                                                //     slugUrl,
+                                                //     "Slug Url",
+                                                //     "Enter Slug Url"),
+                                                 Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: slugUrl,
+                                                              autofocus: false,
+                                                              onChanged: (value) => slugUrl = value,
+                                                            // controller: ctr_name,
+                                                              validator: (value) {
+                                                                if (value == null || value.isEmpty) {
+                                                                  return "Please Enter Slug Url";
+                                                                }
+                                                                return null;
+                                                              },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: '"Enter Slug Url"',
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+
+                                          
+                                              ],
+                                            )),
+                                          ),
+                                      ],
+                                    ),
+
+                                    //status
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                        child: Text("Status",
+                                                            style: themeTextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                size: 15,
+                                                                fw: FontWeight
+                                                                    .bold))),
+                                                    Container(
+                                                      height: 40,
+                                                      margin: EdgeInsets.only(
+                                                          top: 10,
+                                                          bottom: 10,
+                                                          right: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.grey[200],
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      padding: EdgeInsets.only(
+                                                          left: 10, right: 10),
+                                                      child: DropdownButton(
+                                                        dropdownColor:
+                                                            Color.fromARGB(255,
+                                                                248, 247, 247),
+                                                        hint: (_StatusValue == null)
+                                                            ? 
+                                                            Text('Dropdown')
+                                                            :
+                                                             Text(
+                                                                _Status,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                        underline: Container(),
+                                                        isExpanded: true,
+                                                        icon: Icon(
+                                                          Icons.arrow_drop_down,
+                                                          color: Colors.black,
+                                                        ),
+                                                        iconSize: 35,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    7,
+                                                                    10,
+                                                                    12)),
+                                                        items: [
+                                                          'Select',
+                                                          'Inactive',
+                                                          'Active'
+                                                        ].map(
+                                                          (val) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value: val,
+                                                              child: Text(val),
+                                                            );
+                                                          },
+                                                        ).toList(),
+                                                        onChanged: (val) {
+                                                          setState(
+                                                            () {
+                                                              _StatusValue =val!;
+                                                              _Status = _StatusValue;
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                              // Text_field(context,"category_name","Category Name","Enter Category Name"),
+                                              SizedBox(height: defaultPadding),
+                                              if (Responsive.isMobile(context))
+                                                SizedBox(width: defaultPadding),
+                                              if (Responsive.isMobile(context))
+
+                                                //   Text_field(context,"slug_url","Slug Url","Enter Slug Url"),
+
+                                                Container(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Container(
+                                                          child: Text(
+                                                              "Parent Category",
+                                                              style: themeTextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  size: 15,
+                                                                  fw: FontWeight
+                                                                      .bold))),
+                                                      Container(
+                                                        height: 40,
+                                                        margin: EdgeInsets.only(
+                                                            top: 10,
+                                                            bottom: 10,
+                                                            right: 10),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Colors.grey[200],
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10,
+                                                                right: 10),
+                                                        child: DropdownButton(
+                                                          dropdownColor:
+                                                              Color.fromARGB(
+                                                                  255,
+                                                                  248,
+                                                                  247,
+                                                                  247),
+                                                          hint: (_dropDownValue == null)
+                                                              ? Text('Dropdown')
+                                                              : Text(
+                                                                  _dropDownValue,
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black),
+                                                                ),
+                                                          underline:
+                                                              Container(),
+                                                          isExpanded: true,
+                                                          icon: Icon(
+                                                            Icons
+                                                                .arrow_drop_down,
+                                                            color: Colors.black,
+                                                          ),
+                                                          iconSize: 35,
+                                                          style: TextStyle(
+                                                              color: Color
+                                                                  .fromARGB(255,
+                                                                      4, 6, 7)),
+                                                          items: [
+                                                            'Select',
+                                                            'One',
+                                                            'Two',
+                                                            'Three'
+                                                          ].map(
+                                                            (val) {
+                                                              return DropdownMenuItem<
+                                                                  String>(
+                                                                value: val,
+                                                                child:
+                                                                    Text(val),
+                                                              );
+                                                            },
+                                                          ).toList(),
+                                                          onChanged: (val) {
+                                                            setState(
+                                                              () {
+                                                                _dropDownValue =
+                                                                    val!;
+                                                              },
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                            ],
+                                          ),
+                                        ),
+                                        if (!Responsive.isMobile(context))
+                                          SizedBox(width: defaultPadding),
+                                        // On Mobile means if the screen is less than 850 we dont want to show it
+                                        if (!Responsive.isMobile(context))
+                                          Expanded(
+                                              flex: 2,
+                                              child: Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                        child: Text(
+                                                            "Parent Category",
+                                                            style: themeTextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                size: 15,
+                                                                fw: FontWeight
+                                                                    .bold))),
+                                                    Container(
+                                                      height: 40,
+                                                      margin: EdgeInsets.only(
+                                                          top: 10,
+                                                          bottom: 10,
+                                                          right: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.grey[200],
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      padding: EdgeInsets.only(
+                                                          left: 10, right: 10),
+                                                      child: DropdownButton(
+                                                        dropdownColor:
+                                                            Color.fromARGB(255,
+                                                                248, 247, 247),
+                                                        hint: _Category == null
+                                                            ? Text('Dropdown')
+                                                            : Text(
+                                                                _Category,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                        underline: Container(),
+                                                        isExpanded: true,
+                                                        icon: Icon(
+                                                          Icons.arrow_drop_down,
+                                                          color: Colors.black,
+                                                        ),
+                                                        iconSize: 35,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    8,
+                                                                    12,
+                                                                    16)),
+                                                        items: [
+                                                          'Select',
+                                                          'One',
+                                                          'Two',
+                                                          'Three'
+                                                        ].map(
+                                                          (val) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value: val,
+                                                              child: Text(val),
+                                                            );
+                                                          },
+                                                        ).toList(),
+                                                        onChanged: (val) {
+                                                          setState(
+                                                            () {
+                                                              _dropDownValue = val!;
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )),
+                                      ],
+                                    ),
+
+                                    ///mrp
+
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                  child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("MRP",
+                                                      style: themeTextStyle(
+                                                          color: Colors.black,
+                                                          size: 15,
+                                                          fw: FontWeight.bold)),
+                                                  // Text_field_up(context, Mrp,
+                                                  //     "MRP", "Enter MRP"),
+
+                                                    Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: Mrp,
+                                                              autofocus: false,
+                                                              onChanged: (value) => Mrp = value,
+                                                            // controller: ctr_name,
+                                                              validator: (value) {
+                                                                if (value == null || value.isEmpty) {
+                                                                  return "Please Enter MRP";
+                                                                }
+                                                                return null;
+                                                              },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: '"Enter MRP"',
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+
+                                                ],
+                                              )),
+                                              SizedBox(height: defaultPadding),
+                                              if (Responsive.isMobile(context))
+                                                SizedBox(width: defaultPadding),
+                                              if (Responsive.isMobile(context))
+                                                Container(
+                                                    child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text("Offer Price",
+                                                        style: themeTextStyle(
+                                                            color: Colors.black,
+                                                            size: 15,
+                                                            fw: FontWeight
+                                                                .bold)),
+                                                    // Text_field_up(
+                                                    //     context,
+                                                    //     Offer,
+                                                    //     "Offer Price",
+                                                    //     "Enter Offer Price"),
+                                                      Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: Offer,
+                                                              autofocus: false,
+                                                              onChanged: (value) => Offer = value,
+                                                            // controller: ctr_name,
+                                                              validator: (value) {
+                                                                if (value == null || value.isEmpty) {
+                                                                  return "Please Enter Offer Price";
+                                                                }
+                                                                return null;
+                                                              },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: '"Enter Offer Price"',
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+                                                  ],
+                                                )),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: defaultPadding),
+                                        if (Responsive.isMobile(context))
+                                          SizedBox(width: defaultPadding),
+                                        if (Responsive.isMobile(context))
+                                          Expanded(
+                                            flex: 2,
+                                            child: Container(
+                                                child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text("Discount",
+                                                    style: themeTextStyle(
+                                                        color: Colors.black,
+                                                        size: 15,
+                                                        fw: FontWeight.bold)),
+                                                // Text_field_up(
+                                                //     context,
+                                                //     Discount,
+                                                //     "Discount",
+                                                //     "Enter Discount"),
+
+                                                 Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: Discount,
+                                                              autofocus: false,
+                                                              onChanged: (value) => Discount = value,
+                                                            // controller: ctr_name,
+                                                              validator: (value) {
+                                                                if (value == null || value.isEmpty) {
+                                                                  return "Please Enter Discount";
+                                                                }
+                                                                return null;
+                                                              },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: '"Enter Discount"',
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+                                              ],
+                                            )),
+                                          ),
+                                        if (!Responsive.isMobile(context))
+                                          SizedBox(width: defaultPadding),
+                                        // On Mobile means if the screen is less than 850 we dont want to show it
+                                        if (!Responsive.isMobile(context))
+                                          Expanded(
+                                            flex: 2,
+                                            child: Container(
+                                                child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text("Discount",
+                                                    style: themeTextStyle(
+                                                        color: Colors.black,
+                                                        size: 15,
+                                                        fw: FontWeight.bold)),
+                                                // Text_field_up(
+                                                //     context,
+                                                //     Discount,
+                                                //     "Discount",
+                                                //     "Enter Discount"),
+                                                 Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: Discount,
+                                                              autofocus: false,
+                                                              onChanged: (value) => Discount = value,
+                                                            // controller: ctr_name,
+                                                              validator: (value) {
+                                                                if (value == null || value.isEmpty) {
+                                                                  return "Please Enter Discount";
+                                                                }
+                                                                return null;
+                                                              },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: '"Enter Discount"',
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+                                              ],
+                                            )),
+                                          ),
+
+                                        if (!Responsive.isMobile(context))
+                                          SizedBox(width: defaultPadding),
+                                        // On Mobile means if the screen is less than 850 we dont want to show it
+                                        if (!Responsive.isMobile(context))
+                                          Expanded(
+                                            flex: 2,
+                                            child: Container(
+                                                child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text("Offer Price",
+                                                    style: themeTextStyle(
+                                                        color: Colors.black,
+                                                        size: 15,
+                                                        fw: FontWeight.bold)),
+                                                // Text_field_up(
+                                                //     context,
+                                                //     Offer,
+                                                //     "Offer Price",
+                                                //     "Enter Offer Price"),
+
+                                                 Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: Offer,
+                                                              autofocus: false,
+                                                              onChanged: (value) => Offer = value,
+                                                            // controller: ctr_name,
+                                                              validator: (value) {
+                                                                if (value == null || value.isEmpty) {
+                                                                  return "Please Enter Offer";
+                                                                }
+                                                                return null;
+                                                              },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: '"Enter Offer"',
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+                                              ],
+                                            )),
+                                          ),
+                                      ],
+                                    ),
+
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                        child: 
+                                                        Text("Size",
+                                                            style: themeTextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                size: 15,
+                                                                fw: FontWeight.bold))),
+                                                    Container(
+                                                      height: 40,
+                                                      margin: EdgeInsets.only(
+                                                          top: 10,
+                                                          bottom: 10,
+                                                          right: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.grey[200],
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      padding: EdgeInsets.only(
+                                                          left: 10, right: 10),
+                                                      child: DropdownButton(
+                                                        dropdownColor:
+                                                            Color.fromARGB(255,
+                                                                248, 247, 247),
+                                                        hint: _Size == null
+                                                            ? Text('Dropdown')
+                                                            : Text(
+                                                                _Size,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                        underline: Container(),
+                                                        isExpanded: true,
+                                                        icon: Icon(
+                                                          Icons.arrow_drop_down,
+                                                          color: Colors.black,
+                                                        ),
+                                                        iconSize: 35,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    4,
+                                                                    7,
+                                                                    9)),
+                                                        items: [
+                                                          'Select',
+                                                          'Inactive',
+                                                          'Active'
+                                                        ].map(
+                                                          (val) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value: val,
+                                                              child: Text(val),
+                                                            );
+                                                          },
+                                                        ).toList(),
+                                                        onChanged: (val) {
+                                                          setState(
+                                                            () {
+                                                              _StatusValue =
+                                                                  val!;
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                              // Text_field(context,"category_name","Category Name","Enter Category Name"),
+                                              SizedBox(height: defaultPadding),
+                                              if (Responsive.isMobile(context))
+                                                SizedBox(width: defaultPadding),
+                                              if (Responsive.isMobile(context))
+
+                                                 // Text_field_up(context,slug_url,"Slug Url","Enter Slug Url"),
+
+                                                Container(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Container(
+                                                          child: Text(
+                                                              "Select Brand",
+                                                              style: themeTextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  size: 15,
+                                                                  fw: FontWeight
+                                                                      .bold))),
+                                                      Container(
+                                                        height: 40,
+                                                        margin: EdgeInsets.only(
+                                                            top: 10,
+                                                            bottom: 10,
+                                                            right: 10),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Colors.grey[200],
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10,
+                                                                right: 10),
+                                                        child: DropdownButton(
+                                                          dropdownColor:
+                                                              Color.fromARGB(
+                                                                  255,
+                                                                  248,
+                                                                  247,
+                                                                  247),
+                                                          hint: _Brand == null
+                                                              ? Text('Dropdown')
+                                                              : Text(
+                                                                  _Brand,
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black),
+                                                                ),
+                                                          underline:
+                                                              Container(),
+                                                          isExpanded: true,
+                                                          icon: Icon(
+                                                            Icons
+                                                                .arrow_drop_down,
+                                                            color: Colors.black,
+                                                          ),
+                                                          iconSize: 35,
+                                                          style: TextStyle(
+                                                              color: Color
+                                                                  .fromARGB(255,
+                                                                      5, 6, 7)),
+                                                          items: [
+                                                            'Select',
+                                                            'One',
+                                                            'Two',
+                                                            'Three'
+                                                          ].map(
+                                                            (val) {
+                                                              return DropdownMenuItem<
+                                                                  String>(
+                                                                value: val,
+                                                                child:
+                                                                    Text(val),
+                                                              );
+                                                            },
+                                                          ).toList(),
+                                                          onChanged: (val) {
+                                                            setState(
+                                                              () {
+                                                                _dropDownValue =
+                                                                    val!;
+                                                              },
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                            ],
+                                          ),
+                                        ),
+                                        if (!Responsive.isMobile(context))
+                                          SizedBox(width: defaultPadding),
+                                        // On Mobile means if the screen is less than 850 we dont want to show it
+                                        if (!Responsive.isMobile(context))
+                                          Expanded(
+                                              flex: 2,
+                                              child: Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                        child: Text(
+                                                            "Select Brand",
+                                                            style: themeTextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                size: 15,
+                                                                fw: FontWeight
+                                                                    .bold))),
+                                                    Container(
+                                                      height: 40,
+                                                      margin: EdgeInsets.only(
+                                                          top: 10,
+                                                          bottom: 10,
+                                                          right: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.grey[200],
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      padding: EdgeInsets.only(
+                                                          left: 10, right: 10),
+                                                      child: DropdownButton(
+                                                        dropdownColor:
+                                                            Color.fromARGB(255,
+                                                                248, 247, 247),
+                                                        hint: _Brand == null
+                                                            ? Text('Dropdown')
+                                                            : Text(
+                                                                _Brand,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                        underline: Container(),
+                                                        isExpanded: true,
+                                                        icon: Icon(
+                                                          Icons.arrow_drop_down,
+                                                          color: Colors.black,
+                                                        ),
+                                                        iconSize: 35,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    3,
+                                                                    7,
+                                                                    11)),
+                                                        items: [
+                                                          'Select',
+                                                          'Original',
+                                                          'Local',
+                                                          'International'
+                                                        ].map(
+                                                          (val) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value: val,
+                                                              child: Text(val),
+                                                            );
+                                                          },
+                                                        ).toList(),
+                                                        onChanged: (val) {
+                                                          setState(
+                                                            () {
+                                                              _dropDownValue = val!;
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )),
+                                      ],
+                                    ),
+                               
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.symmetric(horizontal:10),
+                                              width: 100,
+                                             
+                                              child: 
+                                              Column(children: [
+                                                Image.network("$image", height: 100,fit: BoxFit.contain,),
+
+                                                GestureDetector(
+                                                  onTap:(){
+                                                    print("Image Removed Successfully");
+                                                  },
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    width: double.infinity,
+                                                    decoration: BoxDecoration(border:Border.all(color: Colors.black),color: Colors.red),
+                                                    child: Text("Remove Image",style: TextStyle(color: Colors.white,fontSize:11),)),
+                                                )
+                                            ],)),
+                                          ],
+                                        ),
+                                         SizedBox(height: 10,),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              flex: 2,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("Upload Image Here",
+                                                      style: themeTextStyle(
+                                                          size: 15,
+                                                          fw: FontWeight.bold)),
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.grey[200],
+                                                      borderRadius:
+                                                          BorderRadius.circular(10),
+                                                    ),
+                                                    height: 50,
+                                                    margin: EdgeInsets.only(
+                                                        top: 10,
+                                                        bottom: 10,
+                                                        right: 10),
+                                                    padding: EdgeInsets.only(
+                                                        left: 10, right: 10),
+                                                    child: Row(
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                           _ImageSelect_Alert(context);
+                                                          },
+                                                          child: Container(
+                                                            padding:
+                                                                EdgeInsets.all(10),
+                                                            decoration: BoxDecoration(
+                                                                border: Border.all(
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            31,
+                                                                            232,
+                                                                            226,
+                                                                            226)),
+                                                                color:
+                                                                    Color.fromARGB(
+                                                                        255,
+                                                                        237,
+                                                                        235,
+                                                                        235)),
+                                                            child: Text(
+                                                              "Choose File",
+                                                              style: themeTextStyle(
+                                                                  size: 15),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        (url_img == null ||
+                                                                url_img.isEmpty)
+                                                            ?
+                                                             Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Text(
+                                                                      "No file choosen",
+                                                                      style: themeTextStyle(
+                                                                          size: 15,
+                                                                          color: Colors
+                                                                              .black38)),
+                                                                ],
+                                                              )
+                                                            : Row(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  Text(
+                                                                    "file selected",
+                                                                    style: themeTextStyle(
+                                                                        size: 12,
+                                                                        fw: FontWeight
+                                                                            .w400,
+                                                                        color:
+                                                                            themeBG4),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  ////
+                                                  SizedBox(height: defaultPadding),
+                                                ],
+                                              ),
+                                            ),
+
+                                            if (!Responsive.isMobile(context))
+                                              SizedBox(width: defaultPadding),
+                                            // On Mobile means if the screen is less than 850 we dont want to show it
+                                            if (!Responsive.isMobile(context))
+                                              Expanded(
+                                                flex: 2,
+                                                child:
+                                                    SizedBox(width: defaultPadding),
+                                              ),
+                                          ],
+                                        ),
+                                  
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          themeButton3(context, () {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                                  setState(() {
+                                                  if(_formKey.currentState!.validate()){
+                                                 updatelist(id, Name, Noitem, slugUrl,_Status,
+                                                 _Category, Mrp, Discount,Offer,_Size,_Brand,url_img
+                                                 );
+                                                }
+                                              });
+                                            }
+                                          },
+                                              buttonColor: Colors.blueAccent,
+                                              label: "Update"),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          // themeButton3(context, () {
+                                          //   setState(() {
+                                          //     //    clearText();
+                                          //   });
+                                          // },
+                                          //     label: "Reset",
+                                          //     buttonColor: Colors.black),
+                                          // SizedBox(width: 20.0),
+                                        ])
+                                  ],
+                                );
+                              }))),
+                ]
+                )
+                );
+                
+}
+///////////////////////////
+
+//////////////////   popup Box for Image selection ++++++++++++++++++++++++++++++++++++++ 
+
+  void _ImageSelect_Alert(BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -1456,7 +2905,10 @@ class _ProductAddState extends State<ProductAdd> {
                         thickness: 1.5,
                         color: Colors.black,
                       ),
-                      All_media(context, setStatee)
+                      if (!Responsive.isMobile(context))
+                      All_media(context, setStatee),
+                      if (Responsive.isMobile(context)) 
+                      All_media_mobile(context, setStatee)
                     ],
                   ),
                 ),
@@ -1466,55 +2918,165 @@ class _ProductAddState extends State<ProductAdd> {
         });
   }
 
+////////  Data bases Image call  +++++++++++++++++++++++++++++++
+ List<String> _selectedOptions = [];
   Widget All_media(BuildContext context, setStatee) {
-    return Container(
-        child: Column(
-      children: [
-        Row(
-          children: [
-            for (var i = 0; i < 4; i++)
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  height: 100,
-                  width: 100,
+    return 
+    Container(
+          height: 500,
+        child:
+         GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+          ),
+          itemCount: myList.length,
+          itemBuilder: (_, index) => 
+         Container(
+                  margin: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQ0JhaimSD1ayvA9vffVRcueFMd8MqD5cJH9A&usqp=CAU'),
-                      fit: BoxFit.fill,
+                          '${myList[index]}'),
+                      fit: BoxFit.contain,
                     ),
                   ),
                   alignment: Alignment.topLeft,
-                  child: Checkbox(
+                  child:
+                   CheckboxListTile(
                     checkColor: Colors.white,
                     activeColor: Colors.green,
-                    side: BorderSide(width: 2, color: Colors.white),
-                    value: this.Tranding,
-                    onChanged: (value) {
-                      setStatee(() {
-                        this.Tranding = value!;
-                      });
-                    },
+                    side:
+                     BorderSide(width: 2, color: Colors.red),
+                  value: _selectedOptions.contains(myList[index]),
+                    onChanged: ( value) {
+                  setState(() {
+                   if (value != null && _selectedOptions.isEmpty) {
+                    setState(() {
+                       _selectedOptions.add(myList[index]);
+                        url_img = _selectedOptions[0];
+                       Navigator.pop(context);
+                    });
+              } 
+              else if(_selectedOptions != null && _selectedOptions.isNotEmpty){
+                 setState(() {
+                   _selectedOptions[0] = "${myList[index]}";
+                    url_img = _selectedOptions[0];
+                   Navigator.pop(context);
+                 });
+              }  
+              else {
+                _selectedOptions.remove(myList[index]);
+              }
+            });
+          },
+        )            
+      ),
+    ),
+  );
+}
+//////////
+
+////////  Data bases Image call   MOBILE +++++++++++++++++++++++++++++++
+
+Widget All_media_mobile(BuildContext context, setStatee) 
+     {
+    return 
+    Container(
+          height: 500,
+        child:
+         GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount:    2,
+          ),
+          itemCount: myList.length, // <-- required
+          itemBuilder: (_, index) => 
+         Container(
+                  margin: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(
+                          '${myList[index]}'),
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-              ),
-          ],
+                  child:
+                    CheckboxListTile(
+                    checkColor: Colors.white,
+                    activeColor: Colors.green,
+                    side:
+                     BorderSide(width: 2, color: Colors.red),
+                  value: _selectedOptions.contains(myList[index]),
+                    onChanged: ( value) {
+                  setState(() {
+                   if (value != null && _selectedOptions.isEmpty) {
+                    setState(() {
+                       _selectedOptions.add(myList[index]);
+                        url_img = _selectedOptions[0];
+                       Navigator.pop(context);
+                    });
+              } 
+              else if(_selectedOptions != null && _selectedOptions.isNotEmpty){
+                 setState(() {
+                   _selectedOptions[0] = "${myList[index]}";
+                    url_img = _selectedOptions[0];
+                   Navigator.pop(context);
+                 });
+              }  
+              else {
+                _selectedOptions.remove(myList[index]);
+              }
+            });
+          },
         )
-      ],
-    ));
+                ),
+        ),
+    );
   }
+////////////// update text widget ++++++++++++++++
+ Widget Text_field_up(BuildContext context, ini_value, lebel, hint) {
+    return
 
-  ///
-  ///
-  ///
+     Container(
+        height: 40,
+        margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: TextFormField(
+          initialValue: ini_value,
+          autofocus: false,
+          onChanged: (value) => ini_value = value,
+        // controller: ctr_name,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please $hint';
+            }
+             return null;
+          },
+          style: TextStyle(color: Colors.black),
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            hintText: '$hint',
+            hintStyle: TextStyle(
+              color: Colors.grey,
+              fontSize: 16,
+            ),
+          ),
+        ));
 
+  
+        }
+//////
+
+///////////// New Add text widget +++++++++++++++++++++
   Widget Text_field(BuildContext context, ctr_name, lebel, hint) {
     return Container(
-        height: 50,
+        height: 40,
         margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
         decoration: BoxDecoration(
-          color: Colors.grey[200],
+          color: Colors.white,
           borderRadius: BorderRadius.circular(10),
         ),
         child: TextFormField(

@@ -74,40 +74,24 @@ class FireStoreDatabase{
 
 List myList = [];
 Future listExample() async {
+    // ignore: unused_local_variable
     var MediaLink = [];
     firebase_storage.ListResult result =
         await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
     result.items.forEach((firebase_storage.Reference ref) async {
-     //   print('Found file: $ref++++++++++++++++++++++');
-    //  print("Found file: ${ref.fullPath}");
-      // myList.add("${downloadURLExample("${ref.fullPath}")}");
-      print("++=======================");
       var uri = await downloadURLExample("${ref.fullPath}");
-    //   print(uri);
        myList.add(uri);
-      //myList.add("${ref.fullPath}");
-   //   print("Found file: ${ref.fullPath}");
-    //  MediaLink.add("${ref.fullPath}");
     });
      return myList;
-     // print("$MediaLink  -----");
-    // result.prefixes.forEach((firebase_storage.Reference ref) {
-    //     print('Found directory: $ref ++++++++++++++++++++');
-    // });
 }
+
+///////   Download URL function Storage image path convert to Image Url +++++++++++++
 
 Future downloadURLExample(image_path) async{
 downloadURL = await FirebaseStorage.instance
 .ref()
 .child(image_path)
 .getDownloadURL();
-//debugPrint(downloadURL.toString());
- print("${downloadURL.toString()}  ++++++++++++++++++++");
 return downloadURL.toString();
- //print("${downloadURL.toString()}  ++++++++++++++++++++");
-
 }
-
-
-
 }

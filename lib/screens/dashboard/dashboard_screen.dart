@@ -2,16 +2,12 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, avoid_returning_null_for_void, no_leading_underscores_for_local_identifiers, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, sized_box_for_whitespace
 
 
-import 'package:crm_demo/themes/firebase_Storage.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../../constants.dart';
-import '../../themes/style.dart';
 import 'components/header.dart';
 import 'components/my_fields.dart';
 import 'components/recent_files.dart';
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -26,9 +22,6 @@ var hhh ;
 
 @override
 void initState() {
-    // TODO: implement initState
-   //  hhh = FireStoreDatabase().listExample();
-    //   print("$hhh -----8");
     super.initState();
   }
 
@@ -76,36 +69,12 @@ void initState() {
 
 
 
-          ElevatedButton(onPressed: ()async{
-              pickFile();
-       //  listFiles();
-               }, child: Text("Upload ImAGE")),
+      //     ElevatedButton(onPressed: ()async{
+      //         pickFile();
+      //  //  listFiles();
+      //          }, child: Text("Upload ImAGE")),
 
 
-  //         Container(
-  //   child: FutureBuilder(
-  //     future:  FireStoreDatabase().listExample(),//downloadURL("Guddusingh.jpeg"),
-  //     builder: (context, snapshot){
-       
-  //      if(snapshot.connectionState == ConnectionState.waiting  || !snapshot.hasData){
-
-  //       return CircularProgressIndicator();
-  //      } 
-  //    return
-  //            Column(
-  //              children: [
-  //                Container(
-  //                height: 400,
-  //                width: 400,
-  //                child: 
-  //                //Text("${snapshot.data.toString()}",style:TextStyle(fontSize: 20,fontWeight: FontWeight.bold),));
-                 
-  //           Image.network(snapshot.data.toString())),
-  //              ],
-  //            );
-    
-  //     }),
-  // ),
 
           ],
         ),
@@ -113,89 +82,89 @@ void initState() {
     );
   }
 
-  pickFile() async {
-   if(!kIsWeb){
-    final results = await FilePicker.platform.pickFiles(
-          allowMultiple: false,
-          type: FileType.custom,
-          allowedExtensions: ['png','jpg'],
-               );
-          if(results == null){
-            themeAlert(context, 'Not find selected', type: "error");
-            return null;
-          }    
-          final path = results.files.single.path;
-          final fileName = results.files.single.name;
-          setState(() {
-          print("$path+++++");
-          print("$fileName------");
-           UploadFile(path!,fileName).then((value) => themeAlert(context, "Upload Successfully ")); 
-          });
-   }
-   else if (kIsWeb){
+  // pickFile() async {
+  //  if(!kIsWeb){
+  //   final results = await FilePicker.platform.pickFiles(
+  //         allowMultiple: false,
+  //         type: FileType.custom,
+  //         allowedExtensions: ['png','jpg'],
+  //              );
+  //         if(results == null){
+  //           themeAlert(context, 'Not find selected', type: "error");
+  //           return null;
+  //         }    
+  //         final path = results.files.single.path;
+  //         final fileName = results.files.single.name;
+  //         setState(() {
+  //         print("$path+++++");
+  //         print("$fileName------");
+  //          UploadFile(path!,fileName).then((value) => themeAlert(context, "Upload Successfully ")); 
+  //         });
+  //  }
+  //  else if (kIsWeb){
 
-      // final ImagePicker _picker = ImagePicker();
-      // XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-      //     if(image != null){
-      //     String filePath = path.dirname(image.path);
-      //     String filename = path.basename(image.name); 
-      //     setState(() 
-      //     {
+  //     // final ImagePicker _picker = ImagePicker();
+  //     // XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  //     //     if(image != null){
+  //     //     String filePath = path.dirname(image.path);
+  //     //     String filename = path.basename(image.name); 
+  //     //     setState(() 
+  //     //     {
            
-      //      UploadFile(filePath,filename).then((value) => themeAlert(context, "Upload Successfully ")); 
-      //     });
-      //     }   
-      //     else{  
-      //     themeAlert(context, 'Not find selected', type: "error");
-      //       return null;
-      //     }
+  //     //      UploadFile(filePath,filename).then((value) => themeAlert(context, "Upload Successfully ")); 
+  //     //     });
+  //     //     }   
+  //     //     else{  
+  //     //     themeAlert(context, 'Not find selected', type: "error");
+  //     //       return null;
+  //     //     }
     
-    //  final ImagePicker _picker = ImagePicker();
-    //   XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    //   if (image != null) {
-    //     var f = await image.readAsBytes();
+  //   //  final ImagePicker _picker = ImagePicker();
+  //   //   XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  //   //   if (image != null) {
+  //   //     var f = await image.readAsBytes();
 
-    //       String filePath = path.dirname(image.path);
-    //       String filename = path.basename(image.name); 
-    //       String imgPath = image.path;
+  //   //       String filePath = path.dirname(image.path);
+  //   //       String filename = path.basename(image.name); 
+  //   //       String imgPath = image.path;
           
-    //     setState(() {
-    //       // print("$filePath+++++");
-    //       // print("$filename------");
-    //       // print("${image.path}oo");
-    //      // print("$f*******");
-    //        UploadFile(imgPath,filename).then((value) => themeAlert(context, "Upload Successfully ")); 
-    //     });
-    //   }
+  //   //     setState(() {
+  //   //       // print("$filePath+++++");
+  //   //       // print("$filename------");
+  //   //       // print("${image.path}oo");
+  //   //      // print("$f*******");
+  //   //        UploadFile(imgPath,filename).then((value) => themeAlert(context, "Upload Successfully ")); 
+  //   //     });
+  //   //   }
      
-     final results = await FilePicker.platform.pickFiles(
-          allowMultiple: false,
-          type: FileType.custom,
-          allowedExtensions: ['png','jpg'],
-               );
-          if(results != null){
-             Uint8List? UploadImage =  results.files.single.bytes;
-             String fileName = results.files.single.name;
-             Reference reference = FirebaseStorage.instance
-             .ref('media/$fileName');
-             final UploadTask uploadTask = reference.putData(UploadImage!);
-             uploadTask.whenComplete(() =>  themeAlert(context, "Upload Successfully "));
-          //    String? filePath = results.files.single.path;
-          // setState(() {
-          // print("$fileName+++++");
-          // print("$filePath------");
-          //  UploadFile(filePath!,fileName).then((value) => themeAlert(context, "Upload Successfully ")); 
-          // });
+  //    final results = await FilePicker.platform.pickFiles(
+  //         allowMultiple: false,
+  //         type: FileType.custom,
+  //         allowedExtensions: ['png','jpg'],
+  //              );
+  //         if(results != null){
+  //            Uint8List? UploadImage =  results.files.single.bytes;
+  //            String fileName = results.files.single.name;
+  //            Reference reference = FirebaseStorage.instance
+  //            .ref('media/$fileName');
+  //            final UploadTask uploadTask = reference.putData(UploadImage!);
+  //            uploadTask.whenComplete(() =>  themeAlert(context, "Upload Successfully "));
+  //         //    String? filePath = results.files.single.path;
+  //         // setState(() {
+  //         // print("$fileName+++++");
+  //         // print("$filePath------");
+  //         //  UploadFile(filePath!,fileName).then((value) => themeAlert(context, "Upload Successfully ")); 
+  //         // });
 
-          }
-          else{
-                themeAlert(context, 'Not find selected', type: "error");
-            return null;
+  //         }
+  //         else{
+  //               themeAlert(context, 'Not find selected', type: "error");
+  //           return null;
 
-          }    
+  //         }    
 
-    }
+  //   }
 
-  }
+   // }
 }
  
