@@ -37,10 +37,10 @@ class _ProductAddState extends State<ProductAdd> {
   final SlugUrlController = TextEditingController();
   final DiscountController = TextEditingController();
   final NameController = TextEditingController();
-  String _dropDownValue = "Select";
+  String? _PerentCate;
   String? _StatusValue;
-  String _sizeValue = "Select";
-  String _brandValue = "Select";
+  String? _sizeValue;
+  String? _brandValue;
   String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
   @override
   clearText() {
@@ -50,10 +50,10 @@ class _ProductAddState extends State<ProductAdd> {
     offerController.clear();
     DiscountController.clear();
     NoitemController.clear();
-    _dropDownValue = "Select";
-    _StatusValue = "Select";
-    _sizeValue = "Select";
-    _brandValue = "Select";
+    _PerentCate;
+    _StatusValue;
+    _sizeValue;
+    _brandValue;
     clear_imageData();
   }
 
@@ -170,10 +170,11 @@ return downloadURL.toString();
   var _Status ;
   var _Size;
   var _Brand ;
-  var _Category ;
+  var _PerentC ;
 //////
   Map<String, dynamic>? data;
- Future Update_initial(id)async{
+ Future Update_initial(id)
+    async{
     DocumentSnapshot pathData = await FirebaseFirestore.instance
        .collection('product')
        .doc(id)
@@ -191,7 +192,7 @@ return downloadURL.toString();
         _Status = data!['status'];
         _Size = data!['size'];
         _Brand = data!['brand'];
-        _Category = data!['parent_cate'];
+        _PerentC = data!['parent_cate'];
        });
      }
 
@@ -209,7 +210,7 @@ return downloadURL.toString();
           "mrp": "${mrpController.text}",
           "No_Of_Item": "${NoitemController.text}",
           'slug_url': "${SlugUrlController.text}",
-          'parent_cate': "$_dropDownValue",
+          'parent_cate': "$_PerentCate",
           'status': "$_StatusValue",
           'size': "$_sizeValue",
           'brand': "$_brandValue",
@@ -531,7 +532,7 @@ return downloadURL.toString();
                                       style: TextStyle(
                                           color: Color.fromARGB(255, 3, 5, 6)),
                                       items:
-                                          ['Inactive', 'Active'].map(
+                                          ['Select','Inactive', 'Active'].map(
                                         (val) {
                                           return DropdownMenuItem<String>(
                                             value: val,
@@ -581,10 +582,10 @@ return downloadURL.toString();
                                       child: DropdownButton(
                                         dropdownColor:
                                             Colors.white,
-                                        hint: _dropDownValue == null
+                                        hint: _PerentCate == null
                                             ? Text('Select',style:TextStyle(color:Colors.black12))
                                             : Text(
-                                                _dropDownValue,
+                                                _PerentCate!,
                                                 style: TextStyle(
                                                     color: Colors.black),
                                               ),
@@ -599,6 +600,7 @@ return downloadURL.toString();
                                             color:
                                                 Color.fromARGB(255, 4, 6, 8)),
                                         items: [
+                                          'Select',
                                           'bajaj',
                                           'hawels',
                                           'syska'
@@ -613,7 +615,7 @@ return downloadURL.toString();
                                         onChanged: (val) {
                                           setState(
                                             () {
-                                              _dropDownValue = val!;
+                                              _PerentCate = val!;
                                             },
                                           );
                                         },
@@ -646,18 +648,18 @@ return downloadURL.toString();
                                     margin: EdgeInsets.only(
                                         top: 10, bottom: 10, right: 10),
                                     decoration: BoxDecoration(
-                                      color: Colors.grey[200],
+                                      color: Colors.white,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     padding:
                                         EdgeInsets.only(left: 10, right: 10),
                                     child: DropdownButton(
                                       dropdownColor:
-                                          Color.fromARGB(255, 248, 247, 247),
-                                      hint: _dropDownValue == null
+                                          Colors.white,
+                                      hint: _PerentCate == null
                                           ?Text('Select',style:TextStyle(color:Colors.black12))
                                           : Text(
-                                              _dropDownValue,
+                                              _PerentCate!,
                                               style: TextStyle(
                                                   color: Colors.black),
                                             ),
@@ -671,6 +673,7 @@ return downloadURL.toString();
                                       style: TextStyle(
                                           color: Color.fromARGB(255, 5, 8, 10)),
                                       items: [
+                                        'Select',
                                         'bajaj',
                                         'hawels',
                                         'syska'
@@ -685,7 +688,7 @@ return downloadURL.toString();
                                       onChanged: (val) {
                                         setState(
                                           () {
-                                            _dropDownValue = val!;
+                                            _PerentCate = val!;
                                           },
                                         );
                                       },
@@ -839,7 +842,7 @@ return downloadURL.toString();
                                       hint: _sizeValue == null
                                           ? Text('Select',style:TextStyle(color:Colors.black12))
                                           : Text(
-                                              _sizeValue,
+                                              _sizeValue!,
                                               style: TextStyle(
                                                   color: Colors.black),
                                             ),
@@ -912,7 +915,7 @@ return downloadURL.toString();
                                         hint: _brandValue == null
                                             ? Text('Select',style:TextStyle(color:Colors.black12))
                                             : Text(
-                                                _brandValue,
+                                                _brandValue!,
                                                 style: TextStyle(
                                                     color: Colors.black),
                                               ),
@@ -926,7 +929,7 @@ return downloadURL.toString();
                                         style: TextStyle(
                                             color: Color.fromARGB(
                                                 255, 14, 18, 22)),
-                                        items: [ 'apple', 'del', 'hp']
+                                        items: ['Select', 'Apple', 'Dell', 'HP']
                                             .map(
                                           (val) {
                                             return DropdownMenuItem<String>(
@@ -982,7 +985,7 @@ return downloadURL.toString();
                                       hint: _brandValue == null
                                           ? Text('Select',style: TextStyle(color:Colors.black),)
                                           : Text(
-                                              _brandValue,
+                                              _brandValue!,
                                               style: TextStyle(
                                                   color: Colors.black),
                                             ),
@@ -997,7 +1000,7 @@ return downloadURL.toString();
                                           color:
                                               Color.fromARGB(255, 9, 12, 15)),
                                       items:
-                                          ['apple', 'del', 'hp'].map(
+                                          ['Select','Apple', 'Dell', 'HP'].map(
                                         (val) {
                                           return DropdownMenuItem<String>(
                                             value: val,
@@ -1047,16 +1050,12 @@ return downloadURL.toString();
                                       _ImageSelect_Alert(context);
                                     },
                                     child: Container(
-                                      padding: EdgeInsets.all(10),
+                                      padding: EdgeInsets.all(2),
                                       decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Color.fromARGB(
-                                                  31, 242, 238, 238)),
-                                          color: Color.fromARGB(
-                                              255, 251, 250, 250)),
+                                          color: Colors.grey),
                                       child: Text(
                                         "Choose File",
-                                        style: themeTextStyle(size: 15),
+                                        style: TextStyle(fontWeight:FontWeight.bold,color:Colors.black),
                                       ),
                                     ),
                                   ),
@@ -1153,257 +1152,12 @@ return downloadURL.toString();
               )),
         ]));
   }
-//////////////  End Prodct Add form +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-//// Widget for   Product List ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-//   Widget listList(BuildContext context, tab) {
-// //    print("$StoreDocs");
-//     return Container(
-//       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
-//       padding: EdgeInsets.all(5),
-//       decoration: BoxDecoration(
-//         color: secondaryColor,
-//         borderRadius: const BorderRadius.all(Radius.circular(10)),
-//       ),
-//       child: 
-//               ListView(
-//         children: [
-//           Container(
-//               margin: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-//               width: double.infinity,
-//               child: Column(
-//                       children: [
-//                         (Responsive.isMobile(context)) 
-//                         ?
-//                           Container(
-//                             padding: EdgeInsets.symmetric(horizontal: 10),
-//                             height: 30,
-//                             child: Row(
-//                               mainAxisAlignment: MainAxisAlignment.center,
-//                               children: [
-//                               Text("Product Details",
-//                                   style: TextStyle(fontWeight: FontWeight.bold))
-//                             ],),
-//                           )
-//                      : 
-//                         Row(
-//                           mainAxisAlignment: MainAxisAlignment.start,
-//                         //  crossAxisAlignment: CrossAxisAlignment.center,
-//                           children: [
-//                             // Expanded(
-//                             //   child: 
-//                               Text(
-//                                 "S.No.",
-//                                 style: TextStyle(fontWeight: FontWeight.bold),
-//                               ),
-
-//                             SizedBox(width: MediaQuery.of(context).size.width/20,),  
-//                            // ),
-//                             // Expanded(
-//                             //   child: 
-//                               Text("Logo",
-//                                   style: TextStyle(fontWeight: FontWeight.bold)),
-//                                      SizedBox(width: MediaQuery.of(context).size.width/12,),    
-//                            // ),
-//                             // Expanded(
-//                             //   child: 
-//                               Text("Product Name",
-//                                   style: TextStyle(fontWeight: FontWeight.bold)),
-//                                      SizedBox(width: MediaQuery.of(context).size.width/12,),    
-//                            // ),
-//                             // Expanded(
-//                             //   child: 
-//                               Text("Category Name",
-//                                   style: TextStyle(fontWeight: FontWeight.bold)),
-//                                      SizedBox(width: MediaQuery.of(context).size.width/12,),    
-//                            // ),
-//                             // Expanded(
-//                             //   child: 
-//                               Text("Status",
-//                                   style: TextStyle(fontWeight: FontWeight.bold)),
-//                           //  ),
-//                             // Expanded(
-//                             //   child:
-//                                Text("Date",
-//                                   style: TextStyle(fontWeight: FontWeight.bold)),
-//                                      SizedBox(width: MediaQuery.of(context).size.width/12,),    
-//                            // ),
-//                             // Expanded(
-//                             //   child: 
-//                               Text("Actions",
-//                                   style: TextStyle(fontWeight: FontWeight.bold)),
-//                                      SizedBox(width: MediaQuery.of(context).size.width/12,),    
-//                           //  )
-//                           ],
-//                         ),
-//                         SizedBox(
-//                           height: 20,
-//                         ),
-//                         Divider(
-//                           thickness: 2.0,
-//                         ),
-//                         for (var index = 0; index < StoreDocs.length; index++)
-//                          (Responsive.isMobile(context)) 
-//                           ?
-                  
-//                         recentFileDataRow_Mobile(
-//                           context,
-//                           "$index",
-//                               "${StoreDocs[index]["image"]}",
-//                               "${StoreDocs[index]["name"]}",
-//                               "${StoreDocs[index]["parent_cate"]}",
-//                               "${StoreDocs[index]["status"]}",
-//                               "${StoreDocs[index]["date_at"]}",
-//                               "${StoreDocs[index]["id"]}"
-//                         )
-//                         :
-//                         recentFileDataRow(
-//                               context,
-//                               "$index",
-//                               "${StoreDocs[index]["image"]}",
-//                               "${StoreDocs[index]["name"]}",
-//                               "${StoreDocs[index]["parent_cate"]}",
-//                               "${StoreDocs[index]["status"]}",
-//                               "${StoreDocs[index]["date_at"]}",
-//                               "${StoreDocs[index]["id"]}"),
-//                            SizedBox(height: 80,)       
-//                       ],
-//                     ),
-//                   ),
-//                 ],
-//               )
-//     );
-//   }
-
-  // Widget recentFileDataRow(
-  //     BuildContext context, sno, Iimage, name, pName, status, date, iid) {
-  // //  var bytes = base64.decode(Iimage);
-  //   return
-  //    Container(
-  //     // margin: EdgeInsets.only(top: 5),
-  //     child: Column(
-  //       children: [
-  //         Row(
-  //           mainAxisAlignment: MainAxisAlignment.start,
-  //           children: [
-  //           //  Expanded(child: 
-  //             Text("$sno"),
-
-  //               SizedBox(width: MediaQuery.of(context).size.width/20,), 
-  //             //),
-  //             // Expanded(
-  //             //     child:  
-  //                 Container(
-  //                         margin: EdgeInsets.only(left: 15),
-  //                         height: 80,
-  //                         width: 80,
-  //                         decoration: BoxDecoration(
-  //                             //color: Color.fromARGB(255, 214, 214, 214),
-  //                             image: DecorationImage(
-  //                                 image:
-  //                                    (Iimage != "null" && Iimage.isNotEmpty)
-  //                                     ?  
-  //                                     NetworkImage(
-  //                                     Iimage,
-  //                                   )
-  //                                   :
-  //                                     NetworkImage(
-  //                                     "https://shopnguyenlieumypham.com/wp-content/uploads/no-image/product-456x456.jpg",
-  //                                   )
-  //                                   ,fit: BoxFit.contain
-  //                                   )
-  //                                   ),
-  //                       ),
-  //                        SizedBox(width: MediaQuery.of(context).size.width/17,), 
-  //                       //),
-  //             //Expanded(child: 
-  //             Container(
-  //               width: 100,
-  //               color: Colors.white,
-  //               child: Text("$name")),
-  //              SizedBox(width: MediaQuery.of(context).size.width/12,), 
-  //             //),
-  //           //  Expanded(child:
-  //              Container(
-  //               color: Colors.white,
-  //               child: Text("$pName")),
-  //               SizedBox(width: MediaQuery.of(context).size.width/12,), 
-  //             // ),
-  //            // Expanded(child:
-  //              Text("$status"),
-  //               SizedBox(width: MediaQuery.of(context).size.width/12,), 
-  //              //),
-  //            // Expanded(child: 
-  //             Text("$date"),
-  //              SizedBox(width: MediaQuery.of(context).size.width/12,), 
-  //             //),
-  //             // Expanded(
-  //             //     child: 
-  //                 Row(
-  //               children: [
-  //                 Container(
-  //                     height: 40,
-  //                     width: 40,
-  //                     alignment: Alignment.center,
-  //                     decoration: BoxDecoration(
-  //                       color: Colors.blue.withOpacity(0.1),
-  //                       borderRadius:
-  //                           const BorderRadius.all(Radius.circular(10)),
-  //                     ),
-  //                     child: IconButton(
-  //                         onPressed: () {
-  //                           setState(() {
-  //                             updateWidget = true;
-  //                             update_id = iid;
-  //                             Update_initial(iid);
-  //                           });
-  //                           // Navigator.push(
-  //                           //     context,
-  //                           //     MaterialPageRoute(
-  //                           //         builder: (context) =>
-  //                           //             UpdateProduct(id: iid)));
-  //                         },
-  //                         icon: Icon(
-  //                           Icons.edit,
-  //                           color: Colors.blue,
-  //                         )) ////
-  //                     ),
-  //                 SizedBox(width: 10),
-  //                 Container(
-  //                     height: 40,
-  //                     width: 40,
-  //                     alignment: Alignment.center,
-  //                     decoration: BoxDecoration(
-  //                       color: Colors.red.withOpacity(0.1),
-  //                       borderRadius:
-  //                           const BorderRadius.all(Radius.circular(10)),
-  //                     ),
-  //                     child: IconButton(
-  //                         onPressed: () {
-  //                           deleteUser(iid);
-  //                         },
-  //                         icon: Icon(
-  //                           Icons.delete_outline_outlined,
-  //                           color: Colors.red,
-  //                         ))),
-  //               ],
-  //             )
-  //             //)
-  //           ],
-  //         ),
-  //         Divider(
-  //           thickness: 1.5,
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
+////////             List        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     Widget listList(BuildContext context, tab) {
       return
-
-             Container(
+       Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
       // padding: EdgeInsets.all(5),
       decoration: BoxDecoration(
@@ -1710,8 +1464,9 @@ return downloadURL.toString();
                                   child: IconButton(
                                       onPressed: () {
                                            setState(() {
-                                             updateWidget = true;
-                                              update_id = iid;
+                                           updateWidget = true;
+                                            update_id = iid;
+                                            Update_initial(iid);
                                                   });
                                       },
                                       icon:
@@ -1808,42 +1563,11 @@ Widget Update_product(BuildContext context,id) {
                             const BorderRadius.all(Radius.circular(10)),
                       ),
                       child: 
-                      (data == null)
-                      ?
-                      Center(
-                             child: CircularProgressIndicator())
-                     :
-                      //  Form(
-                      //     key: _formKey,
-                      //     child: FutureBuilder<
-                      //             DocumentSnapshot<Map<String, dynamic>>>(
-                      //         future: FirebaseFirestore.instance
-                      //             .collection("product")
-                      //             .doc(id)
-                      //             .get(),
-                      //         builder: (_, snapshot) {
-                      //           //////
-                      //           if (snapshot.hasError) {
-                      //             print("Something went wrong");
-                      //           }
-                      //           if (snapshot.connectionState ==
-                      //               ConnectionState.waiting) {
-                      //             return Center(
-                      //                 child: CircularProgressIndicator());
-                      //           }
-                      //           var data = snapshot.data!.data();
-                      //           var Name = data!['name'];
-                      //           var Noitem = data['No_Of_Item'];
-                      //           var slugUrl = data['slug_url'];
-                      //           var Discount = data['discount'];
-                      //           var Offer = data['Offer'];
-                      //           var Mrp = data['mrp'];
-                      //           var image = data["image"];
-                      //           var _Status = data['status'];
-                      //           var _Size = data['size'];
-                      //           var _Brand = data['brand'];
-                      //           var _Category = data['parent_cate'];
-                      //           return 
+                            (data == null)
+                              ?
+                                Center(
+                                child: CircularProgressIndicator())
+                              :
                                 Column(
                                   children: [
                                     //first row
@@ -1865,7 +1589,7 @@ Widget Update_product(BuildContext context,id) {
                                                           color: Colors.black,
                                                           size: 15,
                                                           fw: FontWeight.bold)),
-                                                //  Text_field_up(context, Name,"Name", "Enter Name"),
+                                              //   Text_field_up(context, Name,"Name", "Enter Name"),
 
 
                                                     Container(
@@ -1898,8 +1622,6 @@ Widget Update_product(BuildContext context,id) {
                                                         ),
                                                       ))
 
-
-                                          
                                                 ],
                                               )),
                                               SizedBox(height: defaultPadding),
@@ -2149,119 +1871,61 @@ Widget Update_product(BuildContext context,id) {
                                                                 size: 15,
                                                                 fw: FontWeight
                                                                     .bold))),
-                                                    // Container(
-                                                    //   height: 40,
-                                                    //   margin: EdgeInsets.only(
-                                                    //       top: 10,
-                                                    //       bottom: 10,
-                                                    //       right: 10),
-                                                    //   decoration: BoxDecoration(
-                                                    //     color: Colors.grey[200],
-                                                    //     borderRadius:
-                                                    //         BorderRadius
-                                                    //             .circular(10),
-                                                    //   ),
-                                                    //   padding: EdgeInsets.only(
-                                                    //       left: 10, right: 10),
-                                                    //   child: DropdownButton(
-                                                    //     dropdownColor:
-                                                    //         Color.fromARGB(255,
-                                                    //             248, 247, 247),
-                                                    //     hint: (_StatusValue == null)
-                                                    //         ? 
-                                                    //         Text('Dropdown')
-                                                    //         :
-                                                    //          Text(
-                                                    //             _Status,
-                                                    //             style: TextStyle(
-                                                    //                 color: Colors
-                                                    //                     .black),
-                                                    //           ),
-                                                    //     underline: Container(),
-                                                    //     isExpanded: true,
-                                                    //     icon: Icon(
-                                                    //       Icons.arrow_drop_down,
-                                                    //       color: Colors.black,
-                                                    //     ),
-                                                    //     iconSize: 35,
-                                                    //     style: TextStyle(
-                                                    //         color:
-                                                    //             Color.fromARGB(
-                                                    //                 255,
-                                                    //                 7,
-                                                    //                 10,
-                                                    //                 12)),
-                                                    //     items: [
-                                                    //       'Select',
-                                                    //       'Inactive',
-                                                    //       'Active'
-                                                    //     ].map(
-                                                    //       (val) {
-                                                    //         return DropdownMenuItem<
-                                                    //             String>(
-                                                    //           value: val,
-                                                    //           child: Text(val),
-                                                    //         );
-                                                    //       },
-                                                    //     ).toList(),
-                                                    //     onChanged: (val) {
-                                                    //       setState(
-                                                    //         () 
-                                                    //         {
-                                                    //           _StatusValue =val!;
-                                                    //           _Status = _StatusValue;
-                                                    //         },
-                                                    //       );
-                                                    //     },
-                                                    //   ),
-                                                    // ),
-
                                   Container(
                                     height: 40,
-                                    margin: EdgeInsets.only(
-                                        top: 10, bottom: 10, right: 10),
+                                    margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
                                     decoration: BoxDecoration(
-                                      color: Colors.grey[200],
+                                      color: Colors.white,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    padding:
-                                        EdgeInsets.only(left: 10, right: 10),
+                                    padding: EdgeInsets.only(left: 10, right: 10),
                                     child: DropdownButton(
-                                      dropdownColor:
-                                          Color.fromARGB(255, 248, 247, 247),
-                                      hint: _StatusValue == null
-                                          ? Text('Dropdown')
-                                          : Text(
-                                              _StatusValue!,
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            ),
-                                      underline: Container(),
-                                      isExpanded: true,
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.black,
-                                      ),
-                                      iconSize: 35,
-                                      style: TextStyle(
-                                          color: Color.fromARGB(255, 3, 5, 6)),
-                                      items:
-                                          ['$_Status', 'Inactive', 'Active'].map(
-                                        (val) {
-                                          return DropdownMenuItem<String>(
-                                            value: val,
-                                            child: Text(val),
-                                          );
-                                        },
-                                      ).toList(),
-                                      onChanged: (val) {
-                                        setState(
-                                          () {
-                                            _StatusValue = val!;
-                                          },
-                                        );
-                                      },
-                                    ),
+                                                        dropdownColor:
+                                                            Colors.white,
+                                                        hint: _StatusValue == null
+                                                            ? Text('$_Status',style: TextStyle(color:Colors.black),)
+                                                            : Text(
+                                                                _StatusValue!,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                        isExpanded: true,
+                                                        underline: Container(),
+                                                        icon: Icon(
+                                                          Icons.arrow_drop_down,
+                                                          color: Colors.black,
+                                                        ),
+                                                        iconSize: 35,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    0,
+                                                                    0,
+                                                                    0)),
+                                                        items: [
+                                                          'Select',
+                                                          'Inactive',
+                                                          'Active'
+                                                        ].map(
+                                                          (val) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value: val,
+                                                              child: Text(val),
+                                                            );
+                                                          },
+                                                        ).toList(),
+                                                        onChanged: (val) {
+                                                          setState(
+                                                            () {
+                                                              _StatusValue =
+                                                                  val!;
+                                                            },
+                                                          );
+                                                        },
+                                                      )
                                   ),
 
 
@@ -2302,7 +1966,7 @@ Widget Update_product(BuildContext context,id) {
                                                         decoration:
                                                             BoxDecoration(
                                                           color:
-                                                              Colors.grey[200],
+                                                              Colors.white,
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
@@ -2313,15 +1977,11 @@ Widget Update_product(BuildContext context,id) {
                                                                 right: 10),
                                                         child: DropdownButton(
                                                           dropdownColor:
-                                                              Color.fromARGB(
-                                                                  255,
-                                                                  248,
-                                                                  247,
-                                                                  247),
-                                                          hint: (_dropDownValue == null)
-                                                              ? Text('Dropdown')
+                                                              Colors.white,
+                                                          hint: (_PerentCate == null)
+                                                              ? Text('$_PerentC',style: TextStyle(color:Colors.black),)
                                                               : Text(
-                                                                  _dropDownValue,
+                                                                  _PerentCate!,
                                                                   style: TextStyle(
                                                                       color: Colors
                                                                           .black),
@@ -2357,7 +2017,7 @@ Widget Update_product(BuildContext context,id) {
                                                           onChanged: (val) {
                                                             setState(
                                                               () {
-                                                                _dropDownValue =
+                                                                _PerentCate =
                                                                     val!;
                                                               },
                                                             );
@@ -2397,7 +2057,7 @@ Widget Update_product(BuildContext context,id) {
                                                           bottom: 10,
                                                           right: 10),
                                                       decoration: BoxDecoration(
-                                                        color: Colors.grey[200],
+                                                        color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(10),
@@ -2405,53 +2065,53 @@ Widget Update_product(BuildContext context,id) {
                                                       padding: EdgeInsets.only(
                                                           left: 10, right: 10),
                                                       child: DropdownButton(
-                                                        dropdownColor:
-                                                            Color.fromARGB(255,
-                                                                248, 247, 247),
-                                                        hint: _Category == null
-                                                            ? Text('Dropdown')
-                                                            : Text(
-                                                                _Category,
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                        underline: Container(),
-                                                        isExpanded: true,
-                                                        icon: Icon(
-                                                          Icons.arrow_drop_down,
-                                                          color: Colors.black,
-                                                        ),
-                                                        iconSize: 35,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    8,
-                                                                    12,
-                                                                    16)),
-                                                        items: [
-                                                          'Select',
-                                                          'One',
-                                                          'Two',
-                                                          'Three'
-                                                        ].map(
-                                                          (val) {
-                                                            return DropdownMenuItem<
-                                                                String>(
-                                                              value: val,
-                                                              child: Text(val),
+                                                          dropdownColor:
+                                                              Colors.white,
+                                                          hint: (_PerentCate == null)
+                                                              ? Text('$_PerentC',style: TextStyle(color:Colors.black),)
+                                                              : Text(
+                                                                  _PerentCate!,
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black),
+                                                                ),
+                                                          underline:
+                                                              Container(),
+                                                          isExpanded: true,
+                                                          icon: Icon(
+                                                            Icons
+                                                                .arrow_drop_down,
+                                                            color: Colors.black,
+                                                          ),
+                                                          iconSize: 35,
+                                                          style: TextStyle(
+                                                              color: Color
+                                                                  .fromARGB(255,
+                                                                      4, 6, 7)),
+                                                          items: [
+                                                            'Select',
+                                                            'One',
+                                                            'Two',
+                                                            'Three'
+                                                          ].map(
+                                                            (val) {
+                                                              return DropdownMenuItem<
+                                                                  String>(
+                                                                value: val,
+                                                                child:
+                                                                    Text(val),
+                                                              );
+                                                            },
+                                                          ).toList(),
+                                                          onChanged: (val) {
+                                                            setState(
+                                                              () {
+                                                                _PerentCate =
+                                                                    val!;
+                                                              },
                                                             );
                                                           },
-                                                        ).toList(),
-                                                        onChanged: (val) {
-                                                          setState(
-                                                            () {
-                                                              _dropDownValue = val!;
-                                                            },
-                                                          );
-                                                        },
-                                                      ),
+                                                        )
                                                     ),
                                                   ],
                                                 ),
@@ -2763,7 +2423,7 @@ Widget Update_product(BuildContext context,id) {
                                                           bottom: 10,
                                                           right: 10),
                                                       decoration: BoxDecoration(
-                                                        color: Colors.grey[200],
+                                                        color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(10),
@@ -2772,12 +2432,13 @@ Widget Update_product(BuildContext context,id) {
                                                           left: 10, right: 10),
                                                       child: DropdownButton(
                                                         dropdownColor:
-                                                            Color.fromARGB(255,
-                                                                248, 247, 247),
-                                                        hint: _Size == null
-                                                            ? Text('Dropdown')
-                                                            : Text(
-                                                                _Size,
+                                                            Colors.white,
+                                                        hint: _sizeValue  == null
+                                                            ?
+                                                             Text('$_Size',style: TextStyle(color:Colors.black),)
+                                                            :
+                                                             Text(
+                                                               _sizeValue!,
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .black),
@@ -2856,7 +2517,7 @@ Widget Update_product(BuildContext context,id) {
                                                         decoration:
                                                             BoxDecoration(
                                                           color:
-                                                              Colors.grey[200],
+                                                              Colors.white,
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
@@ -2867,15 +2528,11 @@ Widget Update_product(BuildContext context,id) {
                                                                 right: 10),
                                                         child: DropdownButton(
                                                           dropdownColor:
-                                                              Color.fromARGB(
-                                                                  255,
-                                                                  248,
-                                                                  247,
-                                                                  247),
-                                                          hint: _Brand == null
-                                                              ? Text('Dropdown')
+                                                              Colors.white,
+                                                          hint: _brandValue == null
+                                                              ?  Text('$_Brand',style: TextStyle(color:Colors.black),)
                                                               : Text(
-                                                                  _Brand,
+                                                                  _brandValue!,
                                                                   style: TextStyle(
                                                                       color: Colors
                                                                           .black),
@@ -2911,7 +2568,7 @@ Widget Update_product(BuildContext context,id) {
                                                           onChanged: (val) {
                                                             setState(
                                                               () {
-                                                                _dropDownValue =
+                                                                _PerentCate =
                                                                     val!;
                                                               },
                                                             );
@@ -2951,7 +2608,7 @@ Widget Update_product(BuildContext context,id) {
                                                           bottom: 10,
                                                           right: 10),
                                                       decoration: BoxDecoration(
-                                                        color: Colors.grey[200],
+                                                        color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(10),
@@ -2959,53 +2616,53 @@ Widget Update_product(BuildContext context,id) {
                                                       padding: EdgeInsets.only(
                                                           left: 10, right: 10),
                                                       child: DropdownButton(
-                                                        dropdownColor:
-                                                            Color.fromARGB(255,
-                                                                248, 247, 247),
-                                                        hint: _Brand == null
-                                                            ? Text('Dropdown')
-                                                            : Text(
-                                                                _Brand,
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                        underline: Container(),
-                                                        isExpanded: true,
-                                                        icon: Icon(
-                                                          Icons.arrow_drop_down,
-                                                          color: Colors.black,
-                                                        ),
-                                                        iconSize: 35,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    3,
-                                                                    7,
-                                                                    11)),
-                                                        items: [
-                                                          'Select',
-                                                          'Original',
-                                                          'Local',
-                                                          'International'
-                                                        ].map(
-                                                          (val) {
-                                                            return DropdownMenuItem<
-                                                                String>(
-                                                              value: val,
-                                                              child: Text(val),
+                                                          dropdownColor:
+                                                              Colors.white,
+                                                          hint: _brandValue == null
+                                                              ?  Text('$_Brand',style: TextStyle(color:Colors.black),)
+                                                              : Text(
+                                                                  _brandValue!,
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black),
+                                                                ),
+                                                          underline:
+                                                              Container(),
+                                                          isExpanded: true,
+                                                          icon: Icon(
+                                                            Icons
+                                                                .arrow_drop_down,
+                                                            color: Colors.black,
+                                                          ),
+                                                          iconSize: 35,
+                                                          style: TextStyle(
+                                                              color: Color
+                                                                  .fromARGB(255,
+                                                                      5, 6, 7)),
+                                                          items: [
+                                                            'Select',
+                                                            'One',
+                                                            'Two',
+                                                            'Three'
+                                                          ].map(
+                                                            (val) {
+                                                              return DropdownMenuItem<
+                                                                  String>(
+                                                                value: val,
+                                                                child:
+                                                                    Text(val),
+                                                              );
+                                                            },
+                                                          ).toList(),
+                                                          onChanged: (val) {
+                                                            setState(
+                                                              () {
+                                                                _PerentCate =
+                                                                    val!;
+                                                              },
                                                             );
                                                           },
-                                                        ).toList(),
-                                                        onChanged: (val) {
-                                                          setState(
-                                                            () {
-                                                              _dropDownValue = val!;
-                                                            },
-                                                          );
-                                                        },
-                                                      ),
+                                                        ),
                                                     ),
                                                   ],
                                                 ),
@@ -3023,7 +2680,6 @@ Widget Update_product(BuildContext context,id) {
                                             Container(
                                               margin: EdgeInsets.symmetric(horizontal:10),
                                               width: 100,
-                                             
                                               child: 
                                               Column(children: [
                                                 (url_img == null || url_img.isEmpty)
@@ -3032,7 +2688,7 @@ Widget Update_product(BuildContext context,id) {
                                                 :
                                                 Image.network(url_img, height: 100,fit: BoxFit.contain,),
 
-                                                GestureDetector(
+                                                 GestureDetector(
                                                   onTap:(){
                                                     print("Image Removed Successfully");
                                                   },
@@ -3067,7 +2723,7 @@ Widget Update_product(BuildContext context,id) {
                                                       borderRadius:
                                                           BorderRadius.circular(10),
                                                     ),
-                                                    height: 50,
+                                                    height: 45,
                                                     margin: EdgeInsets.only(
                                                         top: 10,
                                                         bottom: 10,
@@ -3082,25 +2738,14 @@ Widget Update_product(BuildContext context,id) {
                                                           },
                                                           child: Container(
                                                             padding:
-                                                                EdgeInsets.all(10),
+                                                                EdgeInsets.all(2),
                                                             decoration: BoxDecoration(
-                                                                border: Border.all(
-                                                                    color: Color
-                                                                        .fromARGB(
-                                                                            31,
-                                                                            232,
-                                                                            226,
-                                                                            226)),
+                                                    
                                                                 color:
-                                                                    Color.fromARGB(
-                                                                        255,
-                                                                        237,
-                                                                        235,
-                                                                        235)),
+                                                                    Colors.grey),
                                                             child: Text(
                                                               "Choose File",
-                                                              style: themeTextStyle(
-                                                                  size: 15),
+                                                              style:TextStyle(color: Colors.black)
                                                             ),
                                                           ),
                                                         ),
@@ -3168,12 +2813,9 @@ Widget Update_product(BuildContext context,id) {
                                             MainAxisAlignment.center,
                                         children: [
                                           themeButton3(context, () {
-                                            // if (_formKey.currentState!
-                                            //     .validate()) {
-                                            //       setState(() {
-                                            //       if(_formKey.currentState!.validate()){
+                                     
                                                  updatelist(id, Name, Noitem, slugUrl,_StatusValue,
-                                                 _Category, Mrp, Discount,Offer,_Size,_Brand,
+                                                 _PerentC, Mrp, Discount,Offer,_Size,_Brand,
                                                  
                                                  (url_img == null || url_img.isEmpty)
                                                  ?
@@ -3181,9 +2823,7 @@ Widget Update_product(BuildContext context,id) {
                                                  :
                                                  url_img
                                                  );
-                                            //     }
-                                            //   });
-                                            // }
+                                                 clearText();
                                           },
                                               buttonColor: Colors.blueAccent,
                                               label: "Update"),
@@ -3319,6 +2959,7 @@ Widget Update_product(BuildContext context,id) {
          Container(
                   margin: EdgeInsets.all(10),
                   decoration: BoxDecoration(
+                    border: Border.all(color:Colors.grey),
                     image: DecorationImage(
                       image: NetworkImage(
                           '${myList[index]}'),
@@ -3378,6 +3019,7 @@ Widget All_media_mobile(BuildContext context, setStatee)
          Container(
                   margin: EdgeInsets.all(10),
                   decoration: BoxDecoration(
+                    border: Border.all(color:Colors.grey),
                     image: DecorationImage(
                       image: NetworkImage(
                           '${myList[index]}'),

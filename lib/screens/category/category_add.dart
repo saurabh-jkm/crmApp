@@ -463,7 +463,7 @@ return downloadURL.toString();
                                       iconSize: 35,
                                       style: TextStyle(
                                           color: Color.fromARGB(255, 1, 7, 7)),
-                                      items: ['Inactive', 'Active'].map(
+                                      items: ['Select','Inactive', 'Active'].map(
                                         (val) {
                                           return DropdownMenuItem<String>(
                                             value: val,
@@ -525,7 +525,7 @@ return downloadURL.toString();
                                         ),
                                         iconSize: 35,
                                         style: TextStyle(color: Colors.blue),
-                                        items: ['One', 'Two', 'Three']
+                                        items: ['Select', 'Two', 'Three']
                                             .map(
                                           (val) {
                                             return DropdownMenuItem<String>(
@@ -595,7 +595,7 @@ return downloadURL.toString();
                                       style: TextStyle(
                                           color: Color.fromARGB(255, 4, 6, 7)),
                                       items:
-                                          ['One', 'Two', 'Three'].map(
+                                          ['Select','One', 'Two', 'Three'].map(
                                         (val) {
                                           return DropdownMenuItem<String>(
                                             value: val,
@@ -751,313 +751,7 @@ return downloadURL.toString();
         ]));
   }
 
-/////////
-
-// //// Widget for Start_up
-
-//   Widget listList(BuildContext context, tab) {
-//     return Container(
-//       margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-//       padding: EdgeInsets.all(defaultPadding),
-//       decoration: BoxDecoration(
-//         color: secondaryColor,
-//         borderRadius: const BorderRadius.all(Radius.circular(10)),
-//       ),
-//       child: ListView(
-//         children: [
-//           Container(
-//               margin: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-//               width: double.infinity,
-//               child: Column(
-//                 children: [
-//                   (Responsive.isMobile(context)) 
-//                   ?
-//                     Container(
-//                       padding: EdgeInsets.symmetric(horizontal: 10),
-//                       height: 30,
-//                       child: Row(
-//                         mainAxisAlignment: MainAxisAlignment.center,
-//                         children: [
-//                         Text("Category Details",
-//                             style: TextStyle(fontWeight: FontWeight.bold))
-//                       ],),
-//                     )
-
-//                : 
-//               //  SizedBox(width: defaultPadding),
-//                   Row(
-//                     mainAxisAlignment: MainAxisAlignment.start,
-//                     children: [
-//                       Expanded(
-//                         child: Text(
-//                           "S.No.",
-//                           style: TextStyle(fontWeight: FontWeight.bold),
-//                         ),
-//                       ),
-//                       Expanded(
-//                         child: Text("Logo",
-//                             style: TextStyle(fontWeight: FontWeight.bold)),
-//                       ),
-//                       Expanded(
-//                         child: Text("Category Name",
-//                             style: TextStyle(fontWeight: FontWeight.bold)),
-//                       ),
-//                       Expanded(
-//                         child: Text("Parent Category",
-//                             style: TextStyle(fontWeight: FontWeight.bold)),
-//                       ),
-//                       Expanded(
-//                         child: Text("Status",
-//                             style: TextStyle(fontWeight: FontWeight.bold)),
-//                       ),
-//                       Expanded(
-//                         child: Text("Date",
-//                             style: TextStyle(fontWeight: FontWeight.bold)),
-//                       ),
-//                       Expanded(
-//                         child: Text("Actions",
-//                             style: TextStyle(fontWeight: FontWeight.bold)),
-//                       )
-//                     ],
-//                   ),
-
-//                   SizedBox(
-//                     height: 20,
-//                   ),
-//                   Divider(
-//                     thickness: 1.5,
-//                   ),
-//                   for (var index = 0; index < StoreDocs.length; index++)
-//                    (Responsive.isMobile(context)) 
-//                    ?
-//                    recentFileDataRow_Mobile(
-//                         context,
-//                         "$index",
-//                         "${StoreDocs[index]["image"]}",
-//                         "${StoreDocs[index]["category_name"]}",
-//                         "${StoreDocs[index]["parent_cate"]}",
-//                         "${StoreDocs[index]["status"]}",
-//                         "${StoreDocs[index]["date_at"]}",
-//                         "${StoreDocs[index]["id"]}")
-//                    :
-//                     recentFileDataRow(
-//                         context,
-//                         "$index",
-//                         "${StoreDocs[index]["image"]}",
-//                         "${StoreDocs[index]["category_name"]}",
-//                         "${StoreDocs[index]["parent_cate"]}",
-//                         "${StoreDocs[index]["status"]}",
-//                         "${StoreDocs[index]["date_at"]}",
-//                         "${StoreDocs[index]["id"]}"),
-//                 ],
-//               )
-//             ),
-//         ],
-//       ),
-//     );
-//   }
-
-
-// ////////// Row   ++++++++++++++++
-
-//   Widget recentFileDataRow(
-//       BuildContext context, sno, Iimage, name, pName, status, date, iid) {
-//     //var bytes = base64.decode(Iimage);
-//     return Container(
-//       // margin: EdgeInsets.only(top: 5),
-//       child: Column(
-//         children: [
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             children: [
-//               Expanded(child: Text("$sno")),
-//               Expanded(
-//                   child:
-//                 (Iimage != null && Iimage.isNotEmpty)
-//                       ?
-//                        Container(
-//                         alignment: Alignment.bottomLeft,
-//                         child: Image.network(
-//                             Iimage,
-//                             height: 80,
-//                             width: 80,
-//                             fit: BoxFit.contain,
-//                           ),
-//                       )
-//               : 
-//               Container(
-//                         alignment: Alignment.bottomLeft,
-//                         child:  Image( image: NetworkImage(
-//                             "https://bento.pbs.org/prod/3.92.0/staticfiles/dist/app/bento-components/custom-promo/media/default-image.jpg?1921528efb1e84f4f11b3513f93b75af",
-//                           ),
-//                       ))),
-//               Expanded(child: Text("$name")),
-//               Expanded(child: Text("$pName")),
-//               Expanded(child: Text("$status")),
-//               Expanded(child: Text("$date")),
-//               action_button(context, iid)
-//             ],
-//           ),
-//           Divider(
-//             thickness: 1.5,
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// /////////
-
-// Widget action_button(BuildContext context, iid){
-//   return 
-//  Row(
-//   mainAxisAlignment: MainAxisAlignment.start,
-//                 children: [
-//                   Container(
-//                       height: 40,
-//                       width: 40,
-//                       alignment: Alignment.center,
-//                       decoration: BoxDecoration(
-//                         color: Colors.blue.withOpacity(0.1),
-//                         borderRadius:
-//                             const BorderRadius.all(Radius.circular(10)),
-//                       ),
-//                       child: IconButton(
-//                           onPressed: () {
-                            
-//                             // Navigator.push(
-//                             //     context,
-//                             //     MaterialPageRoute(
-//                             //         builder: (context) =>
-//                             //             UpdateCategory(id: iid)));
-//                           },
-//                           icon: Icon(
-//                             Icons.edit,
-//                             color: Colors.blue,
-//                           )) ////
-//                       ),
-//                   SizedBox(width: 10),
-//                   Container(
-//                       height: 40,
-//                       width: 40,
-//                       alignment: Alignment.center,
-//                       decoration: BoxDecoration(
-//                         color: Colors.red.withOpacity(0.1),
-//                         borderRadius:
-//                             const BorderRadius.all(Radius.circular(10)),
-//                       ),
-//                       child: IconButton(
-//                           onPressed: () {
-//                             showExitPopup(iid);
-//                           },
-//                           icon: Icon(
-//                             Icons.delete_outline_outlined,
-//                             color: Colors.red,
-//                           ))),
-//                 ],
-//               ) ;
-// }
-
-
-
-
-// ////////// Row   mobile ++++++++++++++++
-
-//   Widget recentFileDataRow_Mobile(
-//       BuildContext context, sno, Iimage, name, pName, status, date, iid) {  
-//       return
-//              Container(
-//                  decoration: BoxDecoration(
-//                   color: secondaryColor.withOpacity(0.2),
-//                   borderRadius: const BorderRadius.all(Radius.circular(10)),
-//                 ),
-//                 child: Column(
-//                   children: [
-//                     Row(
-//                       children: [     
-//                         Container(
-//                           margin: EdgeInsets.all(5),
-//                           height: 100,
-//                           width: 100,
-//                           decoration: BoxDecoration(
-//                               color: Color.fromARGB(255, 214, 214, 214),
-//                               image: DecorationImage(
-//                                   image: 
-//                                       NetworkImage(
-//                                       Iimage,
-//                                     ),fit: BoxFit.contain
-                                    
-//                                     )),
-//                         ),
-//                         Container(
-//                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-//                           child: Column(
-//                             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             crossAxisAlignment: CrossAxisAlignment.start,
-//                             children: [
-//                               themeListRow(context, "Category Name", "$name"),
-//                               themeListRow(context, "Parent Category","$pName"),
-//                               themeListRow(context, "Satus","$status"),
-//                               themeListRow(context, "Date","$date"),
-//                            SizedBox(height: 10,),
-//                            Row(
-//                            mainAxisAlignment: MainAxisAlignment.start,
-//                            children: [
-//                        Container(
-//                       height: 40,
-//                       width: 40,
-//                       alignment: Alignment.center,
-//                       decoration: BoxDecoration(
-//                         color: Colors.blue.withOpacity(0.1),
-//                         borderRadius:
-//                             const BorderRadius.all(Radius.circular(10)),
-//                       ),
-//                       child: IconButton(
-//                           onPressed: () {
-                            
-//                             // Navigator.push(
-//                             //     context,
-//                             //     MaterialPageRoute(
-//                             //         builder: (context) =>
-//                             //          /   UpdateCategory(id: iid)));
-//                           },
-//                           icon: Icon(
-//                             Icons.edit,
-//                             color: Colors.blue,
-//                           )) ////
-//                       ),
-//                   SizedBox(width: 10),
-//                   Container(
-//                       height: 40,
-//                       width: 40,
-//                       alignment: Alignment.center,
-//                       decoration: BoxDecoration(
-//                         color: Colors.red.withOpacity(0.1),
-//                         borderRadius:
-//                             const BorderRadius.all(Radius.circular(10)),
-//                       ),
-//                       child: IconButton(
-//                           onPressed: () {
-//                             showExitPopup(iid);
-//                           },
-//                           icon: Icon(
-//                             Icons.delete_outline_outlined,
-//                             color: Colors.red,
-//                           ))),
-//                        ],
-//                       )
-//                     ],
-//                   ),
-//                 ),       
-//               ],
-//             ),
-//     Divider(thickness: 1.0,color: Colors.white12,)   
-//                   ],
-//                 ),
-//     );
-//   }
-// /////////
-
-
+////////////////////////////// List ++++++++++++++++++++++++++++++++++++++++++++
 
   Widget listList(BuildContext context, tab) {
       return
@@ -1163,8 +857,8 @@ return downloadURL.toString();
                                (Responsive.isMobile(context)) 
                               ?
                                  tableRowWidget_mobile(
-                                  "${StoreDocs[index]["image"]}",
-                                 "${StoreDocs[index]["name"]}",
+                                "${StoreDocs[index]["image"]}",
+                                 "${StoreDocs[index]["category_name"]}",
                                  "${StoreDocs[index]["parent_cate"]}",
                                  "${StoreDocs[index]["status"]}",
                                  "${StoreDocs[index]["date_at"]}",
@@ -1369,8 +1063,9 @@ return downloadURL.toString();
                                   child: IconButton(
                                       onPressed: () {
                                            setState(() {
-                                            //  updateWidget = true;
-                                            //   update_id = iid;
+                                                updateWidget = true;
+                                                update_id = iid;
+                                                Update_initial(iid);
                                                   });
                                       },
                                       icon:
@@ -1424,7 +1119,6 @@ Widget Update_Category(BuildContext context,id) {
             Container(
             margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
             child:  ListView(children: [
-                  // Text("${id}",style: TextStyle(color: Colors.black),),
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 20),
                     child:
@@ -1638,7 +1332,7 @@ Widget Update_Category(BuildContext context,id) {
                                                           bottom: 10,
                                                           right: 10),
                                                       decoration: BoxDecoration(
-                                                        color: Colors.grey[200],
+                                                        color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(10),
@@ -1647,8 +1341,7 @@ Widget Update_Category(BuildContext context,id) {
                                                           left: 10, right: 10),
                                                       child: DropdownButton(
                                                         dropdownColor:
-                                                            Color.fromARGB(255,
-                                                                248, 247, 247),
+                                                            Colors.white,
                                                         hint: _StatusValue ==
                                                                 null
                                                             ? Text('$_Status',style: TextStyle(color:Colors.black),)
@@ -1673,6 +1366,7 @@ Widget Update_Category(BuildContext context,id) {
                                                                     0,
                                                                     0)),
                                                         items: [
+                                                          'Select',
                                                           'Inactive',
                                                           'Active'
                                                         ].map(
@@ -1730,7 +1424,7 @@ Widget Update_Category(BuildContext context,id) {
                                                         decoration:
                                                             BoxDecoration(
                                                           color:
-                                                              Colors.grey[200],
+                                                              Colors.white,
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(10),
@@ -1741,11 +1435,7 @@ Widget Update_Category(BuildContext context,id) {
                                                                 right: 10),
                                                         child: DropdownButton(
                                                           dropdownColor:
-                                                              Color.fromARGB(
-                                                                  255,
-                                                                  248,
-                                                                  247,
-                                                                  247),
+                                                              Colors.white,
                                                           hint: _dropDownValue ==
                                                                   null
                                                               ? Text('$Perent_cat',style: TextStyle(color:Colors.black),)
@@ -1769,7 +1459,7 @@ Widget Update_Category(BuildContext context,id) {
                                                                   .fromARGB(255,
                                                                       1, 1, 2)),
                                                           items: [
-                                                          
+                                                            'Select',
                                                             'One',
                                                             'Two',
                                                             'Three'
@@ -1826,7 +1516,7 @@ Widget Update_Category(BuildContext context,id) {
                                                           bottom: 10,
                                                           right: 10),
                                                       decoration: BoxDecoration(
-                                                        color: Colors.grey[200],
+                                                        color: Colors.white,
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(10),
@@ -1835,8 +1525,7 @@ Widget Update_Category(BuildContext context,id) {
                                                           left: 10, right: 10),
                                                       child: DropdownButton(
                                                         dropdownColor:
-                                                            Color.fromARGB(255,
-                                                                248, 247, 247),
+                                                            Colors.white,
                                                         hint: _dropDownValue ==
                                                                 null
                                                             ?Text('$Perent_cat',style: TextStyle(color:Colors.black),)
@@ -1861,6 +1550,7 @@ Widget Update_Category(BuildContext context,id) {
                                                                     14,
                                                                     18)),
                                                         items: [
+                                                          'Select',
                                                           'One',
                                                           'Two',
                                                           'Three'
@@ -1939,11 +1629,11 @@ Widget Update_Category(BuildContext context,id) {
                                                       fw: FontWeight.bold)),
                                               Container(
                                                 decoration: BoxDecoration(
-                                                  color: Colors.grey[200],
+                                                  color: Colors.white,
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                 ),
-                                                height: 55,
+                                                height: 40,
                                                 margin: EdgeInsets.only(
                                                     top: 10,
                                                     bottom: 10,
@@ -1957,26 +1647,14 @@ Widget Update_Category(BuildContext context,id) {
                                                         _ImageSelect_Alert(context);
                                                       },
                                                       child: Container(
-                                                        padding:
-                                                            EdgeInsets.all(10),
                                                         decoration: BoxDecoration(
                                                             border: Border.all(
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        31,
-                                                                        232,
-                                                                        226,
-                                                                        226)),
+                                                                color: Colors.white),
                                                             color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    237,
-                                                                    235,
-                                                                    235)),
+                                                                Colors.grey),
                                                         child: Text(
                                                           "Choose File",
-                                                          style: themeTextStyle(
-                                                              size: 15),
+                                                          style:TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
                                                         ),
                                                       ),
                                                     ),
@@ -2057,1318 +1735,12 @@ Widget Update_Category(BuildContext context,id) {
                                               });
                                         
                                           },
-                                              buttonColor: Colors.green,
-                                              label: "Submit"),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          themeButton3(context, () {
-                                            setState(() {
-                                              //    clearText();
-                                            });
-                                          },
-                                              label: "Reset",
-                                              buttonColor: Colors.black),
-                                          SizedBox(width: 20.0),
+                                              buttonColor: Colors.blue,
+                                              label: "Update"),
+                                          SizedBox(height: 20.0),
                                         ])
                                   ],
-                                )
-                                // Column(
-                                //   children: [
-                                //     //first row
-                                //     Row(
-                                //       crossAxisAlignment:
-                                //           CrossAxisAlignment.start,
-                                //       children: [
-                                //         Expanded(
-                                //           flex: 2,
-                                //           child: Column(
-                                //             children: [
-                                //               Container(
-                                //                   child: Column(
-                                //                 crossAxisAlignment:
-                                //                     CrossAxisAlignment.start,
-                                //                 children: [
-                                //                   Text("Name*",
-                                //                       style: themeTextStyle(
-                                //                           color: Colors.black,
-                                //                           size: 15,
-                                //                           fw: FontWeight.bold)),
-                                //                 //  Text_field_up(context, Name,"Name", "Enter Name"),
-
-
-                                //                     Container(
-                                //                       height: 40,
-                                //                       margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                                //                       decoration: BoxDecoration(
-                                //                         color: Colors.white,
-                                //                         borderRadius: BorderRadius.circular(10),
-                                //                       ),
-                                //                       child: TextFormField(
-                                //                         initialValue: Name,
-                                //                         autofocus: false,
-                                //                         onChanged: (value) => Name = value,
-                                //                       // controller: ctr_name,
-                                //                         validator: (value) {
-                                //                           if (value == null || value.isEmpty) {
-                                //                             return 'Please Enter Name';
-                                //                           }
-                                //                           return null;
-                                //                         },
-                                //                         style: TextStyle(color: Colors.black),
-                                //                         decoration: InputDecoration(
-                                //                           border: InputBorder.none,
-                                //                           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                //                           hintText: 'Enter Name',
-                                //                           hintStyle: TextStyle(
-                                //                             color: Colors.grey,
-                                //                             fontSize: 16,
-                                //                           ),
-                                //                         ),
-                                //                       ))
-
-
-                                          
-                                //                 ],
-                                //               )),
-                                //               SizedBox(height: defaultPadding),
-                                //               if (Responsive.isMobile(context))
-                                //                 SizedBox(width: defaultPadding),
-                                //               if (Responsive.isMobile(context))
-                                //                 Container(
-                                //                     child: Column(
-                                //                   crossAxisAlignment:
-                                //                       CrossAxisAlignment.start,
-                                //                   children: [
-                                //                     Text("Slug Url",
-                                //                         style: themeTextStyle(
-                                //                             color: Colors.black,
-                                //                             size: 15,
-                                //                             fw: FontWeight
-                                //                                 .bold)),
-                                //                     // Text_field_up(
-                                //                     //     context,
-                                //                     //     slugUrl,
-                                //                     //     "Slug Url",
-                                //                     //     "Enter Slug Url"),
-
-                                //                    Container(
-                                //                    height: 40,
-                                //                     margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                                //                     decoration: BoxDecoration(
-                                //                         color: Colors.white,
-                                //                         borderRadius: BorderRadius.circular(10),
-                                //                             ),
-                                //                             child: TextFormField(
-                                //                               initialValue: slugUrl,
-                                //                               autofocus: false,
-                                //                               onChanged: (value) => slugUrl = value,
-                                //                             // controller: ctr_name,
-                                //                               validator: (value) {
-                                //                                 if (value == null || value.isEmpty) {
-                                //                                   return 'Please Enter Slug Url';
-                                //                                 }
-                                //                                 return null;
-                                //                               },
-                                //                               style: TextStyle(color: Colors.black),
-                                //                               decoration: InputDecoration(
-                                //                                 border: InputBorder.none,
-                                //                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                //                                 hintText: 'Enter Slug Url',
-                                //                                 hintStyle: TextStyle(
-                                //                                   color: Colors.grey,
-                                //                                   fontSize: 16,
-                                //                                 ),
-                                //                               ),
-                                //                             ))
-
-                                //                   ],
-                                //                 )),
-                                //             ],
-                                //           ),
-                                //         ),
-                                //         SizedBox(height: defaultPadding),
-                                //         if (Responsive.isMobile(context))
-                                //           SizedBox(width: defaultPadding),
-                                //         if (Responsive.isMobile(context))
-                                //           Expanded(
-                                //             flex: 2,
-                                //             child: Container(
-                                //                 child: Column(
-                                //               crossAxisAlignment:
-                                //                   CrossAxisAlignment.start,
-                                //               children: [
-                                //                 Text("No Item",
-                                //                     style: themeTextStyle(
-                                //                         color: Colors.black,
-                                //                         size: 15,
-                                //                         fw: FontWeight.bold)),
-                                //                 // Text_field_up(
-                                //                 //     context,
-                                //                 //     Noitem,
-                                //                 //     "No Item",
-                                //                 //     "Enter No Item"),
-
-                                //                   Container(
-                                //                    height: 40,
-                                //                     margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                                //                     decoration: BoxDecoration(
-                                //                         color: Colors.white,
-                                //                         borderRadius: BorderRadius.circular(10),
-                                //                             ),
-                                //                             child: TextFormField(
-                                //                               initialValue: Noitem,
-                                //                               autofocus: false,
-                                //                               onChanged: (value) => Noitem = value,
-                                //                             // controller: ctr_name,
-                                //                               validator: (value) {
-                                //                                 if (value == null || value.isEmpty) {
-                                //                                   return 'Please Enter No Item';
-                                //                                 }
-                                //                                 return null;
-                                //                               },
-                                //                               style: TextStyle(color: Colors.black),
-                                //                               decoration: InputDecoration(
-                                //                                 border: InputBorder.none,
-                                //                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                //                                 hintText: 'Enter No Item',
-                                //                                 hintStyle: TextStyle(
-                                //                                   color: Colors.grey,
-                                //                                   fontSize: 16,
-                                //                                 ),
-                                //                               ),
-                                //                             ))
-
-                                            
-                                //               ],
-                                //             )),
-                                //           ),
-                                //         if (!Responsive.isMobile(context))
-                                //           SizedBox(width: defaultPadding),
-                                //         // On Mobile means if the screen is less than 850 we dont want to show it
-                                //         if (!Responsive.isMobile(context))
-                                //           Expanded(
-                                //             flex: 2,
-                                //             child: Container(
-                                //                 child: Column(
-                                //               crossAxisAlignment:
-                                //                   CrossAxisAlignment.start,
-                                //               children: [
-                                //                 Text("No Item",
-                                //                     style: themeTextStyle(
-                                //                         color: Colors.black,
-                                //                         size: 15,
-                                //                         fw: FontWeight.bold)),
-                                //                 // Text_field_up(context, Noitem,
-                                //                 //     "No Item", "Enter No Item"),
-                                             
-                                //                Container(
-                                //                    height: 40,
-                                //                     margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                                //                     decoration: BoxDecoration(
-                                //                         color: Colors.white,
-                                //                         borderRadius: BorderRadius.circular(10),
-                                //                             ),
-                                //                             child: TextFormField(
-                                //                               initialValue: Noitem,
-                                //                               autofocus: false,
-                                //                               onChanged: (value) => Noitem = value,
-                                //                             // controller: ctr_name,
-                                //                               validator: (value) {
-                                //                                 if (value == null || value.isEmpty) {
-                                //                                   return 'Please Enter No Item';
-                                //                                 }
-                                //                                 return null;
-                                //                               },
-                                //                               style: TextStyle(color: Colors.black),
-                                //                               decoration: InputDecoration(
-                                //                                 border: InputBorder.none,
-                                //                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                //                                 hintText: 'Enter No Item',
-                                //                                 hintStyle: TextStyle(
-                                //                                   color: Colors.grey,
-                                //                                   fontSize: 16,
-                                //                                 ),
-                                //                               ),
-                                //                             ))
-
-                                             
-                                //               ],
-                                //             )),
-                                //           ),
-
-                                //         if (!Responsive.isMobile(context))
-                                //           SizedBox(width: defaultPadding),
-                                //         // On Mobile means if the screen is less than 850 we dont want to show it
-
-                                //         if (!Responsive.isMobile(context))
-                                //           Expanded(
-                                //             flex: 2,
-                                //             child: Container(
-                                //                 child: Column(
-                                //               crossAxisAlignment:
-                                //                   CrossAxisAlignment.start,
-                                //               children: [
-                                //                 Text("Slug Url",
-                                //                     style: themeTextStyle(
-                                //                         color: Colors.black,
-                                //                         size: 15,
-                                //                         fw: FontWeight.bold)),
-                                //                 // Text_field_up(
-                                //                 //     context,
-                                //                 //     slugUrl,
-                                //                 //     "Slug Url",
-                                //                 //     "Enter Slug Url"),
-                                //                  Container(
-                                //                    height: 40,
-                                //                     margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                                //                     decoration: BoxDecoration(
-                                //                         color: Colors.white,
-                                //                         borderRadius: BorderRadius.circular(10),
-                                //                             ),
-                                //                             child: TextFormField(
-                                //                               initialValue: slugUrl,
-                                //                               autofocus: false,
-                                //                               onChanged: (value) => slugUrl = value,
-                                //                             // controller: ctr_name,
-                                //                               validator: (value) {
-                                //                                 if (value == null || value.isEmpty) {
-                                //                                   return "Please Enter Slug Url";
-                                //                                 }
-                                //                                 return null;
-                                //                               },
-                                //                               style: TextStyle(color: Colors.black),
-                                //                               decoration: InputDecoration(
-                                //                                 border: InputBorder.none,
-                                //                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                //                                 hintText: '"Enter Slug Url"',
-                                //                                 hintStyle: TextStyle(
-                                //                                   color: Colors.grey,
-                                //                                   fontSize: 16,
-                                //                                 ),
-                                //                               ),
-                                //                             ))
-                                //               ],
-                                //             )),
-                                //           ),
-                                //       ],
-                                //     ),
-
-                                //     //status
-                                //     Row(
-                                //       crossAxisAlignment:
-                                //           CrossAxisAlignment.start,
-                                //       children: [
-                                //         Expanded(
-                                //           flex: 2,
-                                //           child: Column(
-                                //             crossAxisAlignment:
-                                //                 CrossAxisAlignment.start,
-                                //             children: [
-                                //               Container(
-                                //                 child: Column(
-                                //                   crossAxisAlignment:
-                                //                       CrossAxisAlignment.start,
-                                //                   children: [
-                                //                     Container(
-                                //                         child: Text("Status",
-                                //                             style: themeTextStyle(
-                                //                                 color: Colors
-                                //                                     .black,
-                                //                                 size: 15,
-                                //                                 fw: FontWeight
-                                //                                     .bold))),
-                                               
-
-                                //   Container(
-                                //     height: 40,
-                                //     margin: EdgeInsets.only(
-                                //         top: 10, bottom: 10, right: 10),
-                                //     decoration: BoxDecoration(
-                                //       color: Colors.grey[200],
-                                //       borderRadius: BorderRadius.circular(10),
-                                //     ),
-                                //     padding:
-                                //         EdgeInsets.only(left: 10, right: 10),
-                                //     child: DropdownButton(
-                                //       dropdownColor:
-                                //           Color.fromARGB(255, 248, 247, 247),
-                                //       hint: _StatusValue == null
-                                //           ? Text('Dropdown')
-                                //           : Text(
-                                //               _StatusValue!,
-                                //               style: TextStyle(
-                                //                   color: Colors.black),
-                                //             ),
-                                //       underline: Container(),
-                                //       isExpanded: true,
-                                //       icon: Icon(
-                                //         Icons.arrow_drop_down,
-                                //         color: Colors.black,
-                                //       ),
-                                //       iconSize: 35,
-                                //       style: TextStyle(
-                                //           color: Color.fromARGB(255, 3, 5, 6)),
-                                //       items:
-                                //           ['$_Status', 'Inactive', 'Active'].map(
-                                //         (val) {
-                                //           return DropdownMenuItem<String>(
-                                //             value: val,
-                                //             child: Text(val),
-                                //           );
-                                //         },
-                                //       ).toList(),
-                                //       onChanged: (val) {
-                                //         setState(
-                                //           () {
-                                //             _StatusValue = val!;
-                                //           },
-                                //         );
-                                //       },
-                                //     ),
-                                //   ),
-
-
-
-                                //                   ],
-                                //                 ),
-                                //               ),
-
-                                //               // Text_field(context,"category_name","Category Name","Enter Category Name"),
-                                //               SizedBox(height: defaultPadding),
-                                //               if (Responsive.isMobile(context))
-                                //                 SizedBox(width: defaultPadding),
-                                //               if (Responsive.isMobile(context))
-
-                                //                 //   Text_field(context,"slug_url","Slug Url","Enter Slug Url"),
-
-                                //                 Container(
-                                //                   child: Column(
-                                //                     crossAxisAlignment:
-                                //                         CrossAxisAlignment
-                                //                             .start,
-                                //                     children: [
-                                //                       Container(
-                                //                           child: Text(
-                                //                               "Parent Category",
-                                //                               style: themeTextStyle(
-                                //                                   color: Colors
-                                //                                       .black,
-                                //                                   size: 15,
-                                //                                   fw: FontWeight
-                                //                                       .bold))),
-                                //                       Container(
-                                //                         height: 40,
-                                //                         margin: EdgeInsets.only(
-                                //                             top: 10,
-                                //                             bottom: 10,
-                                //                             right: 10),
-                                //                         decoration:
-                                //                             BoxDecoration(
-                                //                           color:
-                                //                               Colors.grey[200],
-                                //                           borderRadius:
-                                //                               BorderRadius
-                                //                                   .circular(10),
-                                //                         ),
-                                //                         padding:
-                                //                             EdgeInsets.only(
-                                //                                 left: 10,
-                                //                                 right: 10),
-                                //                         child: DropdownButton(
-                                //                           dropdownColor:
-                                //                               Color.fromARGB(
-                                //                                   255,
-                                //                                   248,
-                                //                                   247,
-                                //                                   247),
-                                //                           hint: (_dropDownValue == null)
-                                //                               ? Text('Dropdown')
-                                //                               : Text(
-                                //                                   _dropDownValue,
-                                //                                   style: TextStyle(
-                                //                                       color: Colors
-                                //                                           .black),
-                                //                                 ),
-                                //                           underline:
-                                //                               Container(),
-                                //                           isExpanded: true,
-                                //                           icon: Icon(
-                                //                             Icons
-                                //                                 .arrow_drop_down,
-                                //                             color: Colors.black,
-                                //                           ),
-                                //                           iconSize: 35,
-                                //                           style: TextStyle(
-                                //                               color: Color
-                                //                                   .fromARGB(255,
-                                //                                       4, 6, 7)),
-                                //                           items: [
-                                //                             'Select',
-                                //                             'One',
-                                //                             'Two',
-                                //                             'Three'
-                                //                           ].map(
-                                //                             (val) {
-                                //                               return DropdownMenuItem<
-                                //                                   String>(
-                                //                                 value: val,
-                                //                                 child:
-                                //                                     Text(val),
-                                //                               );
-                                //                             },
-                                //                           ).toList(),
-                                //                           onChanged: (val) {
-                                //                             setState(
-                                //                               () {
-                                //                                 _dropDownValue =
-                                //                                     val!;
-                                //                               },
-                                //                             );
-                                //                           },
-                                //                         ),
-                                //                       ),
-                                //                     ],
-                                //                   ),
-                                //                 )
-                                //             ],
-                                //           ),
-                                //         ),
-                                //         if (!Responsive.isMobile(context))
-                                //           SizedBox(width: defaultPadding),
-                                //         // On Mobile means if the screen is less than 850 we dont want to show it
-                                //         if (!Responsive.isMobile(context))
-                                //           Expanded(
-                                //               flex: 2,
-                                //               child: Container(
-                                //                 child: Column(
-                                //                   crossAxisAlignment:
-                                //                       CrossAxisAlignment.start,
-                                //                   children: [
-                                //                     Container(
-                                //                         child: Text(
-                                //                             "Parent Category",
-                                //                             style: themeTextStyle(
-                                //                                 color: Colors
-                                //                                     .black,
-                                //                                 size: 15,
-                                //                                 fw: FontWeight
-                                //                                     .bold))),
-                                //                     Container(
-                                //                       height: 40,
-                                //                       margin: EdgeInsets.only(
-                                //                           top: 10,
-                                //                           bottom: 10,
-                                //                           right: 10),
-                                //                       decoration: BoxDecoration(
-                                //                         color: Colors.grey[200],
-                                //                         borderRadius:
-                                //                             BorderRadius
-                                //                                 .circular(10),
-                                //                       ),
-                                //                       padding: EdgeInsets.only(
-                                //                           left: 10, right: 10),
-                                //                       child: DropdownButton(
-                                //                         dropdownColor:
-                                //                             Color.fromARGB(255,
-                                //                                 248, 247, 247),
-                                //                         hint: _Category == null
-                                //                             ? Text('Dropdown')
-                                //                             : Text(
-                                //                                 _Category,
-                                //                                 style: TextStyle(
-                                //                                     color: Colors
-                                //                                         .black),
-                                //                               ),
-                                //                         underline: Container(),
-                                //                         isExpanded: true,
-                                //                         icon: Icon(
-                                //                           Icons.arrow_drop_down,
-                                //                           color: Colors.black,
-                                //                         ),
-                                //                         iconSize: 35,
-                                //                         style: TextStyle(
-                                //                             color:
-                                //                                 Color.fromARGB(
-                                //                                     255,
-                                //                                     8,
-                                //                                     12,
-                                //                                     16)),
-                                //                         items: [
-                                //                           'Select',
-                                //                           'One',
-                                //                           'Two',
-                                //                           'Three'
-                                //                         ].map(
-                                //                           (val) {
-                                //                             return DropdownMenuItem<
-                                //                                 String>(
-                                //                               value: val,
-                                //                               child: Text(val),
-                                //                             );
-                                //                           },
-                                //                         ).toList(),
-                                //                         onChanged: (val) {
-                                //                           setState(
-                                //                             () {
-                                //                               _dropDownValue = val!;
-                                //                             },
-                                //                           );
-                                //                         },
-                                //                       ),
-                                //                     ),
-                                //                   ],
-                                //                 ),
-                                //               )),
-                                //       ],
-                                //     ),
-
-                                //     ///mrp
-
-                                //     Row(
-                                //       crossAxisAlignment:
-                                //           CrossAxisAlignment.start,
-                                //       children: [
-                                //         Expanded(
-                                //           flex: 2,
-                                //           child: Column(
-                                //             children: [
-                                //               Container(
-                                //                   child: Column(
-                                //                 crossAxisAlignment:
-                                //                     CrossAxisAlignment.start,
-                                //                 children: [
-                                //                   Text("MRP",
-                                //                       style: themeTextStyle(
-                                //                           color: Colors.black,
-                                //                           size: 15,
-                                //                           fw: FontWeight.bold)),
-                                //                   // Text_field_up(context, Mrp,
-                                //                   //     "MRP", "Enter MRP"),
-
-                                //                     Container(
-                                //                    height: 40,
-                                //                     margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                                //                     decoration: BoxDecoration(
-                                //                         color: Colors.white,
-                                //                         borderRadius: BorderRadius.circular(10),
-                                //                             ),
-                                //                             child: TextFormField(
-                                //                               initialValue: Mrp,
-                                //                               autofocus: false,
-                                //                               onChanged: (value) => Mrp = value,
-                                //                             // controller: ctr_name,
-                                //                               validator: (value) {
-                                //                                 if (value == null || value.isEmpty) {
-                                //                                   return "Please Enter MRP";
-                                //                                 }
-                                //                                 return null;
-                                //                               },
-                                //                               style: TextStyle(color: Colors.black),
-                                //                               decoration: InputDecoration(
-                                //                                 border: InputBorder.none,
-                                //                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                //                                 hintText: '"Enter MRP"',
-                                //                                 hintStyle: TextStyle(
-                                //                                   color: Colors.grey,
-                                //                                   fontSize: 16,
-                                //                                 ),
-                                //                               ),
-                                //                             ))
-
-                                //                 ],
-                                //               )),
-                                //               SizedBox(height: defaultPadding),
-                                //               if (Responsive.isMobile(context))
-                                //                 SizedBox(width: defaultPadding),
-                                //               if (Responsive.isMobile(context))
-                                //                 Container(
-                                //                     child: Column(
-                                //                   crossAxisAlignment:
-                                //                       CrossAxisAlignment.start,
-                                //                   children: [
-                                //                     Text("Offer Price",
-                                //                         style: themeTextStyle(
-                                //                             color: Colors.black,
-                                //                             size: 15,
-                                //                             fw: FontWeight
-                                //                                 .bold)),
-                                //                     // Text_field_up(
-                                //                     //     context,
-                                //                     //     Offer,
-                                //                     //     "Offer Price",
-                                //                     //     "Enter Offer Price"),
-                                //                       Container(
-                                //                    height: 40,
-                                //                     margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                                //                     decoration: BoxDecoration(
-                                //                         color: Colors.white,
-                                //                         borderRadius: BorderRadius.circular(10),
-                                //                             ),
-                                //                             child: TextFormField(
-                                //                               initialValue: Offer,
-                                //                               autofocus: false,
-                                //                               onChanged: (value) => Offer = value,
-                                //                             // controller: ctr_name,
-                                //                               validator: (value) {
-                                //                                 if (value == null || value.isEmpty) {
-                                //                                   return "Please Enter Offer Price";
-                                //                                 }
-                                //                                 return null;
-                                //                               },
-                                //                               style: TextStyle(color: Colors.black),
-                                //                               decoration: InputDecoration(
-                                //                                 border: InputBorder.none,
-                                //                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                //                                 hintText: '"Enter Offer Price"',
-                                //                                 hintStyle: TextStyle(
-                                //                                   color: Colors.grey,
-                                //                                   fontSize: 16,
-                                //                                 ),
-                                //                               ),
-                                //                             ))
-                                //                   ],
-                                //                 )),
-                                //             ],
-                                //           ),
-                                //         ),
-                                //         SizedBox(height: defaultPadding),
-                                //         if (Responsive.isMobile(context))
-                                //           SizedBox(width: defaultPadding),
-                                //         if (Responsive.isMobile(context))
-                                //           Expanded(
-                                //             flex: 2,
-                                //             child: Container(
-                                //                 child: Column(
-                                //               crossAxisAlignment:
-                                //                   CrossAxisAlignment.start,
-                                //               children: [
-                                //                 Text("Discount",
-                                //                     style: themeTextStyle(
-                                //                         color: Colors.black,
-                                //                         size: 15,
-                                //                         fw: FontWeight.bold)),
-                                //                 // Text_field_up(
-                                //                 //     context,
-                                //                 //     Discount,
-                                //                 //     "Discount",
-                                //                 //     "Enter Discount"),
-
-                                //                  Container(
-                                //                    height: 40,
-                                //                     margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                                //                     decoration: BoxDecoration(
-                                //                         color: Colors.white,
-                                //                         borderRadius: BorderRadius.circular(10),
-                                //                             ),
-                                //                             child: TextFormField(
-                                //                               initialValue: Discount,
-                                //                               autofocus: false,
-                                //                               onChanged: (value) => Discount = value,
-                                //                             // controller: ctr_name,
-                                //                               validator: (value) {
-                                //                                 if (value == null || value.isEmpty) {
-                                //                                   return "Please Enter Discount";
-                                //                                 }
-                                //                                 return null;
-                                //                               },
-                                //                               style: TextStyle(color: Colors.black),
-                                //                               decoration: InputDecoration(
-                                //                                 border: InputBorder.none,
-                                //                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                //                                 hintText: '"Enter Discount"',
-                                //                                 hintStyle: TextStyle(
-                                //                                   color: Colors.grey,
-                                //                                   fontSize: 16,
-                                //                                 ),
-                                //                               ),
-                                //                             ))
-                                //               ],
-                                //             )),
-                                //           ),
-                                //         if (!Responsive.isMobile(context))
-                                //           SizedBox(width: defaultPadding),
-                                //         // On Mobile means if the screen is less than 850 we dont want to show it
-                                //         if (!Responsive.isMobile(context))
-                                //           Expanded(
-                                //             flex: 2,
-                                //             child: Container(
-                                //                 child: Column(
-                                //               crossAxisAlignment:
-                                //                   CrossAxisAlignment.start,
-                                //               children: [
-                                //                 Text("Discount",
-                                //                     style: themeTextStyle(
-                                //                         color: Colors.black,
-                                //                         size: 15,
-                                //                         fw: FontWeight.bold)),
-                                //                 // Text_field_up(
-                                //                 //     context,
-                                //                 //     Discount,
-                                //                 //     "Discount",
-                                //                 //     "Enter Discount"),
-                                //                  Container(
-                                //                    height: 40,
-                                //                     margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                                //                     decoration: BoxDecoration(
-                                //                         color: Colors.white,
-                                //                         borderRadius: BorderRadius.circular(10),
-                                //                             ),
-                                //                             child: TextFormField(
-                                //                               initialValue: Discount,
-                                //                               autofocus: false,
-                                //                               onChanged: (value) => Discount = value,
-                                //                             // controller: ctr_name,
-                                //                               validator: (value) {
-                                //                                 if (value == null || value.isEmpty) {
-                                //                                   return "Please Enter Discount";
-                                //                                 }
-                                //                                 return null;
-                                //                               },
-                                //                               style: TextStyle(color: Colors.black),
-                                //                               decoration: InputDecoration(
-                                //                                 border: InputBorder.none,
-                                //                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                //                                 hintText: '"Enter Discount"',
-                                //                                 hintStyle: TextStyle(
-                                //                                   color: Colors.grey,
-                                //                                   fontSize: 16,
-                                //                                 ),
-                                //                               ),
-                                //                             ))
-                                //               ],
-                                //             )),
-                                //           ),
-
-                                //         if (!Responsive.isMobile(context))
-                                //           SizedBox(width: defaultPadding),
-                                //         // On Mobile means if the screen is less than 850 we dont want to show it
-                                //         if (!Responsive.isMobile(context))
-                                //           Expanded(
-                                //             flex: 2,
-                                //             child: Container(
-                                //                 child: Column(
-                                //               crossAxisAlignment:
-                                //                   CrossAxisAlignment.start,
-                                //               children: [
-                                //                 Text("Offer Price",
-                                //                     style: themeTextStyle(
-                                //                         color: Colors.black,
-                                //                         size: 15,
-                                //                         fw: FontWeight.bold)),
-                                //                 // Text_field_up(
-                                //                 //     context,
-                                //                 //     Offer,
-                                //                 //     "Offer Price",
-                                //                 //     "Enter Offer Price"),
-
-                                //                  Container(
-                                //                    height: 40,
-                                //                     margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                                //                     decoration: BoxDecoration(
-                                //                         color: Colors.white,
-                                //                         borderRadius: BorderRadius.circular(10),
-                                //                             ),
-                                //                             child: TextFormField(
-                                //                               initialValue: Offer,
-                                //                               autofocus: false,
-                                //                               onChanged: (value) => Offer = value,
-                                //                             // controller: ctr_name,
-                                //                               validator: (value) {
-                                //                                 if (value == null || value.isEmpty) {
-                                //                                   return "Please Enter Offer";
-                                //                                 }
-                                //                                 return null;
-                                //                               },
-                                //                               style: TextStyle(color: Colors.black),
-                                //                               decoration: InputDecoration(
-                                //                                 border: InputBorder.none,
-                                //                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                //                                 hintText: '"Enter Offer"',
-                                //                                 hintStyle: TextStyle(
-                                //                                   color: Colors.grey,
-                                //                                   fontSize: 16,
-                                //                                 ),
-                                //                               ),
-                                //                             ))
-                                //               ],
-                                //             )),
-                                //           ),
-                                //       ],
-                                //     ),
-
-                                //     Row(
-                                //       crossAxisAlignment:
-                                //           CrossAxisAlignment.start,
-                                //       children: [
-                                //         Expanded(
-                                //           flex: 2,
-                                //           child: Column(
-                                //             crossAxisAlignment:
-                                //                 CrossAxisAlignment.start,
-                                //             children: [
-                                //               Container(
-                                //                 child: Column(
-                                //                   crossAxisAlignment:
-                                //                       CrossAxisAlignment.start,
-                                //                   children: [
-                                //                     Container(
-                                //                         child: 
-                                //                         Text("Size",
-                                //                             style: themeTextStyle(
-                                //                                 color: Colors
-                                //                                     .black,
-                                //                                 size: 15,
-                                //                                 fw: FontWeight.bold))),
-                                //                     Container(
-                                //                       height: 40,
-                                //                       margin: EdgeInsets.only(
-                                //                           top: 10,
-                                //                           bottom: 10,
-                                //                           right: 10),
-                                //                       decoration: BoxDecoration(
-                                //                         color: Colors.grey[200],
-                                //                         borderRadius:
-                                //                             BorderRadius
-                                //                                 .circular(10),
-                                //                       ),
-                                //                       padding: EdgeInsets.only(
-                                //                           left: 10, right: 10),
-                                //                       child: DropdownButton(
-                                //                         dropdownColor:
-                                //                             Color.fromARGB(255,
-                                //                                 248, 247, 247),
-                                //                         hint: _Size == null
-                                //                             ? Text('Dropdown')
-                                //                             : Text(
-                                //                                 _Size,
-                                //                                 style: TextStyle(
-                                //                                     color: Colors
-                                //                                         .black),
-                                //                               ),
-                                //                         underline: Container(),
-                                //                         isExpanded: true,
-                                //                         icon: Icon(
-                                //                           Icons.arrow_drop_down,
-                                //                           color: Colors.black,
-                                //                         ),
-                                //                         iconSize: 35,
-                                //                         style: TextStyle(
-                                //                             color:
-                                //                                 Color.fromARGB(
-                                //                                     255,
-                                //                                     4,
-                                //                                     7,
-                                //                                     9)),
-                                //                         items: [
-                                //                           'Select',
-                                //                           'Small',
-                                //                           'Medium',
-                                //                           "Large"
-                                //                         ].map(
-                                //                           (val) {
-                                //                             return 
-                                //                             DropdownMenuItem<String>(
-                                //                               value: val,
-                                //                               child: Text(val),
-                                //                             );
-                                //                           },
-                                //                         ).toList(),
-                                //                         onChanged: (val) => _Size = val!,
-                                //                         //  (val) {
-                                //                         //   setState(
-                                //                         //     () {
-                                //                         //       _sizeValue = val!
-                                //                         //     },
-                                //                         //  );
-                                //                        // },
-                                //                       ),
-                                //                     ),
-                                //                   ],
-                                //                 ),
-                                //               ),
-
-                                //               // Text_field(context,"category_name","Category Name","Enter Category Name"),
-                                //               SizedBox(height: defaultPadding),
-                                //               if (Responsive.isMobile(context))
-                                //                 SizedBox(width: defaultPadding),
-                                //               if (Responsive.isMobile(context))
-
-                                //                  // Text_field_up(context,slug_url,"Slug Url","Enter Slug Url"),
-
-                                //                 Container(
-                                //                   child: Column(
-                                //                     crossAxisAlignment:
-                                //                         CrossAxisAlignment
-                                //                             .start,
-                                //                     children: [
-                                //                       Container(
-                                //                           child: Text(
-                                //                               "Select Brand",
-                                //                               style: themeTextStyle(
-                                //                                   color: Colors
-                                //                                       .black,
-                                //                                   size: 15,
-                                //                                   fw: FontWeight
-                                //                                       .bold))),
-                                //                       Container(
-                                //                         height: 40,
-                                //                         margin: EdgeInsets.only(
-                                //                             top: 10,
-                                //                             bottom: 10,
-                                //                             right: 10),
-                                //                         decoration:
-                                //                             BoxDecoration(
-                                //                           color:
-                                //                               Colors.grey[200],
-                                //                           borderRadius:
-                                //                               BorderRadius
-                                //                                   .circular(10),
-                                //                         ),
-                                //                         padding:
-                                //                             EdgeInsets.only(
-                                //                                 left: 10,
-                                //                                 right: 10),
-                                //                         child: DropdownButton(
-                                //                           dropdownColor:
-                                //                               Color.fromARGB(
-                                //                                   255,
-                                //                                   248,
-                                //                                   247,
-                                //                                   247),
-                                //                           hint: _Brand == null
-                                //                               ? Text('Dropdown')
-                                //                               : Text(
-                                //                                   _Brand,
-                                //                                   style: TextStyle(
-                                //                                       color: Colors
-                                //                                           .black),
-                                //                                 ),
-                                //                           underline:
-                                //                               Container(),
-                                //                           isExpanded: true,
-                                //                           icon: Icon(
-                                //                             Icons
-                                //                                 .arrow_drop_down,
-                                //                             color: Colors.black,
-                                //                           ),
-                                //                           iconSize: 35,
-                                //                           style: TextStyle(
-                                //                               color: Color
-                                //                                   .fromARGB(255,
-                                //                                       5, 6, 7)),
-                                //                           items: [
-                                //                             'Select',
-                                //                             'One',
-                                //                             'Two',
-                                //                             'Three'
-                                //                           ].map(
-                                //                             (val) {
-                                //                               return DropdownMenuItem<
-                                //                                   String>(
-                                //                                 value: val,
-                                //                                 child:
-                                //                                     Text(val),
-                                //                               );
-                                //                             },
-                                //                           ).toList(),
-                                //                           onChanged: (val) {
-                                //                             setState(
-                                //                               () {
-                                //                                 _dropDownValue =
-                                //                                     val!;
-                                //                               },
-                                //                             );
-                                //                           },
-                                //                         ),
-                                //                       ),
-                                //                     ],
-                                //                   ),
-                                //                 )
-                                //             ],
-                                //           ),
-                                //         ),
-                                //         if (!Responsive.isMobile(context))
-                                //           SizedBox(width: defaultPadding),
-                                //         // On Mobile means if the screen is less than 850 we dont want to show it
-                                //         if (!Responsive.isMobile(context))
-                                //           Expanded(
-                                //               flex: 2,
-                                //               child: Container(
-                                //                 child: Column(
-                                //                   crossAxisAlignment:
-                                //                       CrossAxisAlignment.start,
-                                //                   children: [
-                                //                     Container(
-                                //                         child: Text(
-                                //                             "Select Brand",
-                                //                             style: themeTextStyle(
-                                //                                 color: Colors
-                                //                                     .black,
-                                //                                 size: 15,
-                                //                                 fw: FontWeight
-                                //                                     .bold))),
-                                //                     Container(
-                                //                       height: 40,
-                                //                       margin: EdgeInsets.only(
-                                //                           top: 10,
-                                //                           bottom: 10,
-                                //                           right: 10),
-                                //                       decoration: BoxDecoration(
-                                //                         color: Colors.grey[200],
-                                //                         borderRadius:
-                                //                             BorderRadius
-                                //                                 .circular(10),
-                                //                       ),
-                                //                       padding: EdgeInsets.only(
-                                //                           left: 10, right: 10),
-                                //                       child: DropdownButton(
-                                //                         dropdownColor:
-                                //                             Color.fromARGB(255,
-                                //                                 248, 247, 247),
-                                //                         hint: _Brand == null
-                                //                             ? Text('Dropdown')
-                                //                             : Text(
-                                //                                 _Brand,
-                                //                                 style: TextStyle(
-                                //                                     color: Colors
-                                //                                         .black),
-                                //                               ),
-                                //                         underline: Container(),
-                                //                         isExpanded: true,
-                                //                         icon: Icon(
-                                //                           Icons.arrow_drop_down,
-                                //                           color: Colors.black,
-                                //                         ),
-                                //                         iconSize: 35,
-                                //                         style: TextStyle(
-                                //                             color:
-                                //                                 Color.fromARGB(
-                                //                                     255,
-                                //                                     3,
-                                //                                     7,
-                                //                                     11)),
-                                //                         items: [
-                                //                           'Select',
-                                //                           'Original',
-                                //                           'Local',
-                                //                           'International'
-                                //                         ].map(
-                                //                           (val) {
-                                //                             return DropdownMenuItem<
-                                //                                 String>(
-                                //                               value: val,
-                                //                               child: Text(val),
-                                //                             );
-                                //                           },
-                                //                         ).toList(),
-                                //                         onChanged: (val) {
-                                //                           setState(
-                                //                             () {
-                                //                               _dropDownValue = val!;
-                                //                             },
-                                //                           );
-                                //                         },
-                                //                       ),
-                                //                     ),
-                                //                   ],
-                                //                 ),
-                                //               )),
-                                //       ],
-                                //     ),
-                                //      (
-                                //     url_img == null && image == "null")
-                                //      ?
-                                //       SizedBox()
-                                //       :
-                                //         Row(
-                                //           mainAxisAlignment: MainAxisAlignment.start,
-                                //           children: [
-                                //             Container(
-                                //               margin: EdgeInsets.symmetric(horizontal:10),
-                                //               width: 100,
-                                             
-                                //               child: 
-                                //               Column(children: [
-                                //                 (url_img == null || url_img.isEmpty)
-                                //                 ?
-                                //                 Image.network("$image", height: 100,fit: BoxFit.contain,)
-                                //                 :
-                                //                 Image.network(url_img, height: 100,fit: BoxFit.contain,),
-
-                                //                 GestureDetector(
-                                //                   onTap:(){
-                                //                     print("Image Removed Successfully");
-                                //                   },
-                                //                   child: Container(
-                                //                     alignment: Alignment.center,
-                                //                     width: double.infinity,
-                                //                     decoration: BoxDecoration(border:Border.all(color: Colors.black),color: Colors.red),
-                                //                     child: Text("Remove Image",style: TextStyle(color: Colors.white,fontSize:11),)),
-                                //                 )
-                                //             ],)),
-
-                                //           ],
-                                //         ),
-                                //          SizedBox(height: 10,),
-                                //         Row(
-                                //           crossAxisAlignment:
-                                //               CrossAxisAlignment.start,
-                                //           children: [
-                                //             Expanded(
-                                //               flex: 2,
-                                //               child: Column(
-                                //                 crossAxisAlignment:
-                                //                     CrossAxisAlignment.start,
-                                //                 children: [
-                                //                   Text("Upload Image Here",
-                                //                       style: themeTextStyle(
-                                //                           size: 15,
-                                //                           fw: FontWeight.bold)),
-                                //                   Container(
-                                //                     decoration: BoxDecoration(
-                                //                       color: Colors.grey[200],
-                                //                       borderRadius:
-                                //                           BorderRadius.circular(10),
-                                //                     ),
-                                //                     height: 50,
-                                //                     margin: EdgeInsets.only(
-                                //                         top: 10,
-                                //                         bottom: 10,
-                                //                         right: 10),
-                                //                     padding: EdgeInsets.only(
-                                //                         left: 10, right: 10),
-                                //                     child: Row(
-                                //                       children: [
-                                //                         GestureDetector(
-                                //                           onTap: () {
-                                //                            _ImageSelect_Alert(context);
-                                //                           },
-                                //                           child: Container(
-                                //                             padding:
-                                //                                 EdgeInsets.all(10),
-                                //                             decoration: BoxDecoration(
-                                //                                 border: Border.all(
-                                //                                     color: Color
-                                //                                         .fromARGB(
-                                //                                             31,
-                                //                                             232,
-                                //                                             226,
-                                //                                             226)),
-                                //                                 color:
-                                //                                     Color.fromARGB(
-                                //                                         255,
-                                //                                         237,
-                                //                                         235,
-                                //                                         235)),
-                                //                             child: Text(
-                                //                               "Choose File",
-                                //                               style: themeTextStyle(
-                                //                                   size: 15),
-                                //                             ),
-                                //                           ),
-                                //                         ),
-                                //                         SizedBox(
-                                //                           height: 10,
-                                //                         ),
-                                //                         (url_img == null ||
-                                //                                 url_img.isEmpty)
-                                //                             ?
-                                //                              Row(
-                                //                                 children: [
-                                //                                   SizedBox(
-                                //                                     width: 10,
-                                //                                   ),
-                                //                                   Text(
-                                //                                       "No file choosen",
-                                //                                       style: themeTextStyle(
-                                //                                           size: 15,
-                                //                                           color: Colors
-                                //                                               .black38)),
-                                //                                 ],
-                                //                               )
-                                //                             : Row(
-                                //                                 children: [
-                                //                                   SizedBox(
-                                //                                     width: 10,
-                                //                                   ),
-                                //                                   Text(
-                                //                                     "file selected",
-                                //                                     style: themeTextStyle(
-                                //                                         size: 12,
-                                //                                         fw: FontWeight
-                                //                                             .w400,
-                                //                                         color:
-                                //                                             themeBG4),
-                                //                                   ),
-                                //                                 ],
-                                //                               ),
-                                //                       ],
-                                //                     ),
-                                //                   ),
-                                //                   ////
-                                //                   SizedBox(height: defaultPadding),
-                                //                 ],
-                                //               ),
-                                //             ),
-
-                                //             if (!Responsive.isMobile(context))
-                                //               SizedBox(width: defaultPadding),
-                                //             // On Mobile means if the screen is less than 850 we dont want to show it
-                                //             if (!Responsive.isMobile(context))
-                                //               Expanded(
-                                //                 flex: 2,
-                                //                 child:
-                                //                     SizedBox(width: defaultPadding),
-                                //               ),
-                                //           ],
-                                //         ),
-                                  
-                                //     SizedBox(
-                                //       height: 20,
-                                //     ),
-                                //     Row(
-                                //         mainAxisAlignment:
-                                //             MainAxisAlignment.center,
-                                //         children: [
-                                //           themeButton3(context, () {
-                                //             // if (_formKey.currentState!
-                                //             //     .validate()) {
-                                //             //       setState(() {
-                                //             //       if(_formKey.currentState!.validate()){
-                                //                  updatelist(id, Name, Noitem, slugUrl,_StatusValue,
-                                //                  _Category, Mrp, Discount,Offer,_Size,_Brand,
-                                                 
-                                //                  (url_img == null || url_img.isEmpty)
-                                //                  ?
-                                //                  image
-                                //                  :
-                                //                  url_img
-                                //                  );
-                                //             //     }
-                                //             //   });
-                                //             // }
-                                //           },
-                                //               buttonColor: Colors.blueAccent,
-                                //               label: "Update"),
-                                //           SizedBox(
-                                //             width: 10,
-                                //           ),
-                                //           // themeButton3(context, () {
-                                //           //   setState(() {
-                                //           //     //    clearText();
-                                //           //   });
-                                //           // },
-                                //           //     label: "Reset",
-                                //           //     buttonColor: Colors.black),
-                                //           // SizedBox(width: 20.0),
-                                //         ])
-                                //   ],
-                                // )
-                             // }
-                             // )
-                              //)
-                              
+                                )                    
                               ),
                 ]
                 )
@@ -3491,6 +1863,7 @@ Widget Update_Category(BuildContext context,id) {
          Container(
                   margin: EdgeInsets.all(10),
                   decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
                     image: DecorationImage(
                       image: NetworkImage(
                           '${myList[index]}'),
@@ -3552,6 +1925,7 @@ Widget All_media_mobile(BuildContext context, setStatee)
          Container(
                   margin: EdgeInsets.all(10),
                   decoration: BoxDecoration(
+                     border: Border.all(color: Colors.grey),
                     image: DecorationImage(
                       image: NetworkImage(
                           '${myList[index]}'),
