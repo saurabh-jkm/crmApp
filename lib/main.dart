@@ -6,31 +6,31 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
 import 'constants.dart';
 import 'controllers/MenuAppController.dart';
 import 'screens/main/main_screen.dart';
 import 'package:firedart/firedart.dart';
 
 void main() async {
-      WidgetsFlutterBinding.ensureInitialized();
-      if (kIsWeb) {
-      await Firebase.initializeApp(
-      options: FirebaseOptions(
+  WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: FirebaseOptions(
       apiKey: Constants.apiKey,
       appId: Constants.appId,
       messagingSenderId: Constants.messagingSenderId,
       projectId: Constants.projectId,
       storageBucket: Constants.storageBucket,
     ));
-   }
+  }
   // else if (!kIsWeb) {
   // var projectId = Constants.projectId;
   // await Firestore.initialize(projectId);
   // }
   else {
-    await
-    Firebase.initializeApp();
-    }
+    await Firebase.initializeApp();
+  }
 
   runApp(MyApp());
 }
@@ -53,7 +53,8 @@ class MyApp extends StatelessWidget {
               theme: ThemeData.dark().copyWith(
                 scaffoldBackgroundColor: bgColor,
                 textTheme:
-                    GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme).apply(bodyColor: Colors.white),
+                    GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
+                        .apply(bodyColor: Colors.white),
                 canvasColor: secondaryColor,
               ),
               home: MultiProvider(
