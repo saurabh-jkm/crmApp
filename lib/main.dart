@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'constants.dart';
 import 'controllers/MenuAppController.dart';
 import 'screens/main/main_screen.dart';
-import 'package:firedart/firedart.dart';
 
 void main() async {
       WidgetsFlutterBinding.ensureInitialized();
