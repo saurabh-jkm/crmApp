@@ -605,6 +605,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  slug_it:
+    dependency: "direct main"
+    description:
+      name: slug_it
+      sha256: "191fa19a2b1cbb7bdc6dacaa9796799bd41309d680e0249c853c63e96b3bf6e1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   source_span:
     dependency: transitive
     description:

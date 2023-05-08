@@ -40,7 +40,7 @@ dependencies:
   provider: ^5.0.0
   cupertino_icons: ^1.0.3
   qr_flutter: ^4.0.0
- 
+  slug_it: ^0.0.1
 
 
 # Firebase setup +++++

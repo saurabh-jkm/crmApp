@@ -35,8 +35,6 @@ class _MainScreenState extends State<MainScreen> {
             // We want this side menu only for large screen
             if (Responsive.isDesktop(context))
               Expanded(
-                // default flex = 1
-                // and it takes 1/6 part of the screen
                 child: WdSideMenu(context),
               ),
 
@@ -89,10 +87,6 @@ class _MainScreenState extends State<MainScreen> {
               setState(() {
                 sidemenu = 1;
               });
-              // Navigator.push(context,
-              //       MaterialPageRoute(builder: (context) => DashboardScreen()
-              //       )
-              //       );
             },
             horizontalTitleGap: 0.0,
             leading: SvgPicture.asset(
@@ -173,6 +167,7 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(color: Colors.white54),
             ),
           ),
+          
           ListTile(
             onTap: () {
               setState(() {
@@ -190,6 +185,7 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(color: Colors.white54),
             ),
           ),
+
           ListTile(
             onTap: () {
               setState(() {

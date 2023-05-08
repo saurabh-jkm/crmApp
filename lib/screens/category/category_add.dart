@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:slug_it/slug_it.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/firebase_Storage.dart';
@@ -259,6 +260,19 @@ return downloadURL.toString();
 
   ///
   
+
+///////////    Creating SLug Url Function +++++++++++++++++++++++++++++++++++++++
+    Slug_gen(String text){
+    var slus_string;
+    String slug = SlugIT().makeSlug(text);
+    setState(() {
+    slus_string = slug;
+    SlugUrlController.text = slus_string;
+    });
+    }
+///// ++++++++++++++++++++++++++++++++++++++
+
+
   @override
   void initState() {
     _CateData();
@@ -579,7 +593,8 @@ return downloadURL.toString();
                                       dropdownColor:
                                           Colors.white,
                                       hint: _dropDownValue == null
-                                          ?Text('Select',style: TextStyle(color:Colors.black),)
+                                          ?
+                                          Text('Select',style: TextStyle(color:Colors.black),)
                                           : Text(
                                               _dropDownValue!,
                                               style: TextStyle(
@@ -755,7 +770,6 @@ return downloadURL.toString();
 
   Widget listList(BuildContext context, tab) {
       return
-   
       Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
       //padding: EdgeInsets.all(5),
@@ -866,7 +880,7 @@ return downloadURL.toString();
                                  )
                              :
                               tableRowWidget( 
-                              "$index",
+                            "${index + 1}",
                             "${StoreDocs[index]["image"]}",
                             "${StoreDocs[index]["category_name"]}",
                             "${StoreDocs[index]["parent_cate"]}",
@@ -974,7 +988,7 @@ return downloadURL.toString();
                       ),
                       child: IconButton(
                           onPressed: () {
-                            deleteUser(iid);
+                            showExitPopup(iid);
                           },
                           icon: Icon(
                             Icons.delete_outline_outlined,
@@ -1086,7 +1100,7 @@ return downloadURL.toString();
                                   ),
                                   child: IconButton(
                                       onPressed: () {
-                                        deleteUser(iid);
+                                        showExitPopup(iid);
                                       },
                                       icon: Icon(
                                         Icons.delete_outline_outlined,
@@ -1981,6 +1995,14 @@ Widget All_media_mobile(BuildContext context, setStatee)
         ),
         child: TextFormField(
           controller: ctr_name,
+                  onChanged: 
+           (ctr_name == CategoryController)
+           ?
+           (value){
+            Slug_gen("${value}");
+           }
+           :
+           (value){}, 
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please Enter value';
@@ -2082,9 +2104,4 @@ Widget All_media_mobile(BuildContext context, setStatee)
           ) ??
           false; //if showDialouge had returned null, then return false
     }
-
-
-
-
-
 }/// Class CLose
