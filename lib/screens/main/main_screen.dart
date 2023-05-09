@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../admin/login_screen.dart';
+import '../../admin/signup_screen.dart';
 import '../../controllers/MenuAppController.dart';
 import '../../responsive.dart';
 import '../Profile/profile_details.dart';
@@ -68,7 +69,7 @@ class _MainScreenState extends State<MainScreen> {
             else if (sidemenu == 7)
               Expanded(flex: 5, child: ProfileDetails())
             else if (sidemenu == 8)
-              Expanded(flex: 5, child: LoginScreen())
+              Expanded(flex: 5, child: SignupScreen())
           ],
         ),
       ),

@@ -24,39 +24,32 @@ class _LoginScreenState extends State<LoginScreen> {
           width: 700,
           height: 500,
           decoration: BoxDecoration(
-              color: Colors.blueAccent,
-              boxShadow: [
-                BoxShadow(
-                    blurRadius: 30, color: Colors.red, offset: Offset(10, 20))
-              ],
-              image: DecorationImage(
-                image: NetworkImage(
-                    "https://img.freepik.com/free-vector/blue-curve-background_53876-113112.jpg"),
-                fit: BoxFit.cover,
-              )),
+            color: Color.fromARGB(255, 0, 0, 0),
+            boxShadow: [
+              BoxShadow(
+                  blurRadius: 30, color: Colors.red, offset: Offset(10, 20))
+            ],
+          ),
           child: Padding(
             padding: const EdgeInsets.all(100),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
+              children: [
                 TextField(
+                  obscureText: false,
                   decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 3, color: Colors.greenAccent), //<-- SEE HERE
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    labelText: 'Email',
                   ),
                 ),
                 SizedBox(height: 8.0),
                 TextField(
+                  obscureText: true,
                   decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 3, color: Colors.greenAccent), //<-- SEE HERE
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
+                    border: OutlineInputBorder(),
+                    labelText: 'password',
                   ),
                 ),
                 SizedBox(height: 24.0),
