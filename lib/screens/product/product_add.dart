@@ -312,10 +312,19 @@ return downloadURL.toString();
   var update_id ;
   var basic_Product = true;
   var fectured_Product;
+  ////////// colors ++++++++++++
   bool Product_colors = false;
+  bool colors_red = false;
+  bool colors_blue  = false;
+  ////// Size ++++++++++++++++++
   bool Product_Size = false;
-
+  bool size_s = false;
+  bool size_m =  false;
+  bool size_l = false;
+  ////// next >>>
+  bool text_fields = false;
   ///
+  
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -1006,24 +1015,402 @@ return downloadURL.toString();
                 padding: EdgeInsets.all(5), 
                 decoration: BoxDecoration(color: Colors.red.withOpacity(0.4),),
                  child: 
-                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                   (Product_Size == true)
-                   ?
-                   Text("Size")
-                   :
-                   SizedBox(),
+                 Column(
+                   children: [
+                     Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                      (Product_colors == true)
+                       ?
+                       Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           Row(
+                             children: [
+                               Icon(Icons.brightness_1_rounded ,size: 10,color:Colors.black),
+                               SizedBox(width: 5,),
+                               Text("Colour",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                             ],
+                           ),          
+                       Container(
+                          child:
+                          Row(
+                          children: [
+                                Checkbox(
+                                          activeColor: Colors.green,
+                                            side:
+                                            BorderSide(width: 2, color: Colors.black),
+                                             value: colors_red,
+                                             onChanged: (value) {
+                                                setState(() {  
+                                                colors_red = value!;  
+                                                  });  
+                                               },
+                                              ),
+                                Text("Red",style: TextStyle(color: Colors.black)),       
+                 
+                          ],),),
+                            Container(
+                          child:
+                         Row(
+                          children: [
+                                Checkbox(
+                                          activeColor: Colors.green,
+                                            side:BorderSide(width: 2, color: Colors.black),
+                                             value: colors_blue,
+                                             onChanged: (value) {
+                                              setState(() {  
+                                                   colors_blue = value!;  
+                                                   text_fields = false;
+                                                  });  
+                                               },
+                                              ),
+                                  Text("Blue",style: TextStyle(color: Colors.black)),       
+                          ],),),
+                         ],
+                       )
+                       :
+                       SizedBox(),
 
-                  (Product_colors == true)
-                   ?
-                   Text("Colors")
-                   :
-                   SizedBox(),
-                 ],)     
+                      SizedBox(width: 200),  
+                      (Product_Size == true)
+                       ?
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                           Row(
+                             children: [
+                               Icon(Icons.brightness_1_rounded ,size: 10,color:Colors.black),
+                               SizedBox(width: 5,),
+                               Text("Size",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                             ],
+                           ),
+                           Container(
+                          child:
+                         Row(
+                          children: [
+                                Checkbox(
+                                          activeColor: Colors.green,
+                                            side:BorderSide(width: 2, color: Colors.black),
+                                             value: size_s,
+                                             onChanged: (value) {
+                                              setState(() {  
+                                                   size_s = value!;  
+                                                   text_fields = false;
+                                                  });  
+                                               },
+                                              ),
+                                  Text("Small",style: TextStyle(color: Colors.black)),       
+                          ],),),
+                            
+                            Container(
+                          child:
+                         Row(
+                          children: [
+                                Checkbox(
+                                          activeColor: Colors.green,
+                                            side:BorderSide(width: 2, color: Colors.black),
+                                             value: size_m,
+                                             onChanged: (value) {
+                                              setState(() {  
+                                                   size_m = value!;  
+                                                   text_fields = false;
+                                                  });  
+                                               },
+                                              ),
+                                  Text("Medium",style: TextStyle(color: Colors.black)),       
+                          ],),),
+                        Container(
+                          child:
+                         Row(
+                          children: [
+                                Checkbox(
+                                          activeColor: Colors.green,
+                                            side:BorderSide(width: 2, color: Colors.black),
+                                             value: size_l,
+                                             onChanged: (value) {
+                                              setState(() {  
+                                                   size_l = value!;  
+                                                   text_fields = false;
+                                                  });  
+                                               },
+                                              ),
+                                  Text("Large",style: TextStyle(color: Colors.black)),       
+                          ],),),
+                        
+                          ],
+                        )
+                       :
+                       SizedBox(),
+                     ],
+                     ),
+                     SizedBox(height: 10,),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                             children: [
+                              (
+                                    colors_red == true
+                                     || colors_blue == true
+                                      || size_s == true 
+                                       ||size_m == true
+                                         ||size_l == true)
+                               ?
+                               ElevatedButton(
+                                 style: ElevatedButton.styleFrom(
+                                   primary: Colors.blue),
+                                onPressed: (){
+                                  if(
+                                    colors_red == true
+                                     || colors_blue == true
+                                      || size_s == true 
+                                       ||size_m == true
+                                         ||size_l == true)
+                                   {
+                                    setState(() {
+                                    text_fields = true;
+                                    });
+                               
+                                   }
+                                         
+                                    }, 
+                               child: Text("Next",style: TextStyle(color: Colors.white)))
+                               :
+                               SizedBox()
+                             ],
+                           )
+                   ],
+                 )     
                )
-               :
-               SizedBox()
+               :SizedBox(),
+
+               SizedBox(height: 10,),
+                  (text_fields == true)
+                    ?
+                     Column(
+                       children: [                                               
+                       (colors_red == true)?
+                         Column(
+                           children: [
+                             Row(
+                               children: [
+                                (colors_red == true && text_fields == true)
+                                ?
+                                 Container(
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                                  child: Text("Red",style: TextStyle(color: Colors.blue),))
+                                  :
+                                  SizedBox(),
+                                  (size_s == true && text_fields == true)
+                                  ?
+                                  Container(
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                                  child: Text("Small",style: TextStyle(color: Colors.blue),))
+                                  :
+                                  SizedBox()
+                               ],
+                             ),
+
+                            Text_field_up(context, "ini_value", "lebel", "hint")
+                            ],
+                         )
+                         :
+
+                         (colors_red == false &&  size_s == true && colors_blue == false)
+                              ?
+                              Row(
+                                children: [
+                                  Container(
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                                  child: Text("Small",style: TextStyle(color: Colors.blue),)),
+                                ],
+                              ) 
+                              :
+                              SizedBox(),
+
+
+
+
+
+                          (colors_blue == true)?
+                           Row(
+                           children: [
+                            (colors_blue == true && text_fields == true)?
+                             Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                              child: Text("Blue",style: TextStyle(color: Colors.blue),))
+                               :
+                               SizedBox(),
+                              (size_s == true && text_fields == true)
+                              ?
+                              Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                              child: Text("Small",style: TextStyle(color: Colors.blue),))
+                             :
+                              SizedBox(),
+                           ],
+                         )
+                         :
+                              SizedBox(),
+
+                       ],
+                     )    
+                    :
+                    SizedBox()  ,
+
+
+
+
+
+                 SizedBox(height: 10,),
+                   (text_fields == true)
+                    ?
+                     Column(
+                       children: [
+                           (colors_red == true )?
+                         Row(
+                           children: [
+                            (colors_red == true && (text_fields == true && size_m == true))?
+                             Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                              child: Text("Red",style: TextStyle(color: Colors.blue),))
+                               :
+                               SizedBox(),
+                              (size_m == true && text_fields == true)
+                              ?
+                              Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                              child: Text("Medium",style: TextStyle(color: Colors.blue),))
+                             :
+                              SizedBox(),
+                           ],
+                         )
+                          :
+                            (colors_red == false && colors_blue == false &&  size_m == true)
+                              ?
+                              Row(
+                                children: [
+                                  Container(
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                                  child: Text("Medium",style: TextStyle(color: Colors.blue),)),
+                                ],
+                              ) 
+                              :
+                              SizedBox(),
+                         
+
+
+
+                             (colors_blue == true)?
+                           Row(
+                           children: [
+                            (colors_blue == true && (text_fields == true && size_m == true))?
+                             Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                              child: Text("Blue",style: TextStyle(color: Colors.blue),))
+                               :
+                               SizedBox(),
+                              (size_m == true && text_fields == true)
+                              ?
+                              Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                              child: Text("Medium",style: TextStyle(color: Colors.blue),))
+                             :
+                              SizedBox(),
+                           ],
+                         )
+                         :
+                          
+                              SizedBox(),
+                       ],
+                     )    
+                    :
+                    SizedBox()  ,
+
+
+
+
+                    SizedBox(height: 10,),
+                    (text_fields == true)
+                    ?
+                     Column(
+                       children: [
+                        (colors_red == true)?
+                         Row(
+                           children: [
+                            (colors_red == true && (text_fields == true && size_l == true))?
+                             Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                              child: Text("Red",style: TextStyle(color: Colors.blue),))
+                               :
+                               SizedBox(),
+                              (size_l == true && text_fields == true)
+                              ?
+                              Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                              child: Text("Large",style: TextStyle(color: Colors.blue),))
+                             :
+                              SizedBox(),
+                           ],
+                         )
+                         :
+                            (colors_red == false &&  colors_blue == false   &&  size_l == true)
+                              ?
+                              Row(
+                                children: [
+                                  Container(
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                                  child: Text("Large",style: TextStyle(color: Colors.blue),)),
+                                ],
+                              ) 
+                              :
+                              SizedBox(),
+
+
+
+                         
+                       (colors_blue == true)?
+                           Row(
+                           children: [
+                            (colors_blue == true && (text_fields == true && size_l == true) )?
+                             Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                              child: Text("Blue",style: TextStyle(color: Colors.blue),))
+                               :
+                               SizedBox(),
+                              (size_l == true && text_fields == true)
+                              ?
+                              Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
+                              child: Text("Large",style: TextStyle(color: Colors.blue),))
+                             :
+                              SizedBox(),
+                           ],
+                         )
+                        :
+                              SizedBox(),
+
+                       ],
+                     )    
+                    :
+                    SizedBox()  
+
                  ],
                ),   
                    
@@ -1216,8 +1603,6 @@ return downloadURL.toString();
                                   ),
                                 ),
                                 TableCell(
-                                  //
-                                  ///
                                   verticalAlignment: TableCellVerticalAlignment.middle,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
