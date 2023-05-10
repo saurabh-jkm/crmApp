@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:crm_demo/screens/product/update_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/generated/google/firestore/v1/document.pb.dart';
@@ -852,7 +851,7 @@ return downloadURL.toString();
         ]),
 
 
-    /////////  ROw For Rate MRP +++++++++++++++++++++++++++++++++++++++++++++
+    /////////  ROw For Rate MRP +++++++++++++++++++++++
         (basic_Product == true)
         ?                   
                   Column(
@@ -1014,7 +1013,7 @@ return downloadURL.toString();
                      ),
                    ),
 
-               (Product_Size == true || Product_colors == true)
+            (Product_Size == true || Product_colors == true)
                ?
               Container(
                 padding: EdgeInsets.all(5), 
@@ -1054,7 +1053,6 @@ return downloadURL.toString();
                                                },
                                               ),
                                 Text("Red",style: TextStyle(color: Colors.black)),       
-                 
                           ],),),
                             Container(
                           child:
@@ -1236,20 +1234,18 @@ return downloadURL.toString();
                               :
                               SizedBox(),
 
-
-
-
-
-                          (colors_blue == true)?
+                          (colors_blue == true)
+                          ?
                            Row(
                            children: [
-                            (colors_blue == true && text_fields == true)?
-                             Container(
+                              (colors_blue == true && text_fields == true)?
+                              Container(
                               padding: EdgeInsets.all(5),
                               decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
-                              child: Text("Blue",style: TextStyle(color: Colors.blue),))
-                               :
-                               SizedBox(),
+                              child: Text("Blue",style: TextStyle(color: Colors.blue),)
+                              )
+                              :
+                              SizedBox(),
                               (size_s == true && text_fields == true)
                               ?
                               Container(
@@ -1261,16 +1257,11 @@ return downloadURL.toString();
                            ],
                          )
                          :
-                              SizedBox(),
-
+                          SizedBox(),
                        ],
                      )    
                     :
                     SizedBox()  ,
-
-
-
-
 
                  SizedBox(height: 10,),
                    (text_fields == true)
@@ -1293,7 +1284,7 @@ return downloadURL.toString();
                               padding: EdgeInsets.all(5),
                               decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(10)),
                               child: Text("Medium",style: TextStyle(color: Colors.blue),))
-                             :
+                              :
                               SizedBox(),
                            ],
                          )
@@ -1661,7 +1652,7 @@ return downloadURL.toString();
                                  "${StoreDocs[index]["date_at"]}",
                                  "${StoreDocs[index]["id"]}"
                                  )
-                             :
+                              :
                               tableRowWidget( 
                                    "${index + 1}",
                                   "${StoreDocs[index]["image"]}",

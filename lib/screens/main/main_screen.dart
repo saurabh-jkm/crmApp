@@ -8,6 +8,7 @@ import '../../admin/login_screen.dart';
 import '../../admin/signup_screen.dart';
 import '../../controllers/MenuAppController.dart';
 import '../../responsive.dart';
+import '../Attributes/attribute_add.dart';
 import '../Profile/profile_details.dart';
 import '../category/category_add.dart';
 import '../dashboard/dashboard_screen.dart';
@@ -52,23 +53,34 @@ class _MainScreenState extends State<MainScreen> {
             else if (sidemenu == 3)
               Expanded(
                 flex: 5,
-                child: ProductAdd(),
+                child: AttributeAdd(),
               )
             else if (sidemenu == 4)
               Expanded(
                 flex: 5,
+                child: ProductAdd(),
+              )  
+
+            else if (sidemenu == 5)
+              Expanded(
+                flex: 5,
+                child: ProductAdd(),
+              )
+            else if (sidemenu == 6)
+              Expanded(
+                flex: 5,
                 child: CategoryAdd(),
               )
-            else if (sidemenu == 5)
+            else if (sidemenu == 7)
               Expanded(
                 flex: 5,
                 child: OrderList(),
               )
-            else if (sidemenu == 6)
-              Expanded(flex: 5, child: InventryList())
-            else if (sidemenu == 7)
-              Expanded(flex: 5, child: ProfileDetails())
             else if (sidemenu == 8)
+              Expanded(flex: 5, child: InventryList())
+            else if (sidemenu == 9)
+              Expanded(flex: 5, child: ProfileDetails())
+            else if (sidemenu == 10)
               Expanded(flex: 5, child: SignupScreen())
           ],
         ),
@@ -117,10 +129,44 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(color: Colors.white54),
             ),
           ),
-          ListTile(
+            ListTile(
             onTap: () {
               setState(() {
                 sidemenu = 3;
+              });
+            },
+            horizontalTitleGap: 0.0,
+            leading: SvgPicture.asset(
+              "assets/icons/menu_task.svg",
+              color: Colors.white54,
+              height: 16,
+            ),
+            title: Text(
+              "Attribute",
+              style: TextStyle(color: Colors.white54),
+            ),
+          ),
+           ListTile(
+            onTap: () {
+              setState(() {
+                sidemenu = 4;
+              });
+            },
+            horizontalTitleGap: 0.0,
+            leading: SvgPicture.asset(
+              "assets/icons/menu_task.svg",
+              color: Colors.white54,
+              height: 16,
+            ),
+            title: Text(
+              "Brand",
+              style: TextStyle(color: Colors.white54),
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              setState(() {
+                sidemenu = 5;
               });
             },
             horizontalTitleGap: 0.0,
@@ -137,7 +183,7 @@ class _MainScreenState extends State<MainScreen> {
           ListTile(
             onTap: () {
               setState(() {
-                sidemenu = 4;
+                sidemenu = 6;
               });
             },
             horizontalTitleGap: 0.0,
@@ -154,7 +200,7 @@ class _MainScreenState extends State<MainScreen> {
           ListTile(
             onTap: () {
               setState(() {
-                sidemenu = 5;
+                sidemenu = 7;
               });
             },
             horizontalTitleGap: 0.0,
@@ -172,7 +218,7 @@ class _MainScreenState extends State<MainScreen> {
           ListTile(
             onTap: () {
               setState(() {
-                sidemenu = 6;
+                sidemenu = 8;
               });
             },
             horizontalTitleGap: 0.0,
@@ -190,7 +236,7 @@ class _MainScreenState extends State<MainScreen> {
           ListTile(
             onTap: () {
               setState(() {
-                sidemenu = 7;
+                sidemenu = 9;
               });
             },
             horizontalTitleGap: 0.0,
@@ -207,7 +253,7 @@ class _MainScreenState extends State<MainScreen> {
           ListTile(
             onTap: () {
               setState(() {
-                sidemenu = 8;
+                sidemenu = 10;
               });
             },
             horizontalTitleGap: 0.0,
