@@ -8,6 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/generated/google/firestore/v1/document.pb.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants.dart';
@@ -31,12 +32,18 @@ class ProductAdd extends StatefulWidget {
 }
 
 class _ProductAddState extends State<ProductAdd> {
-  final _formKey = GlobalKey<FormState>();
-  final offerController = TextEditingController();
+
+  ////// rate_cate
   final mrpController = TextEditingController();
-  final NoitemController = TextEditingController();
-  final SlugUrlController = TextEditingController();
+  final offerController = TextEditingController();
   final DiscountController = TextEditingController();
+  final SellingPriController = TextEditingController();
+  final NoitemController = TextEditingController();
+  final ShippingController = TextEditingController();
+  ///////
+  final _formKey = GlobalKey<FormState>();
+  
+  final SlugUrlController = TextEditingController();
   final NameController = TextEditingController();
   String? _PerentCate;
   String? _StatusValue;
@@ -337,7 +344,6 @@ return downloadURL.toString();
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
-
           return 
           Scaffold(
               body: Container(
@@ -347,7 +353,6 @@ return downloadURL.toString();
                   title: "Product Info",
                 ),
                 SizedBox(height: defaultPadding),
-
 //////////   TaBar  for Product add Form And List ++++++++++++++++++++++++++++++++++++++
 
                 DefaultTabController(
@@ -1213,8 +1218,7 @@ return downloadURL.toString();
                                   SizedBox()
                                ],
                              ),
-
-                            Text_field_up(context, "ini_value", "lebel", "hint")
+                             Rate_category(context)
                             ],
                          )
                          :
@@ -1337,9 +1341,6 @@ return downloadURL.toString();
                      )    
                     :
                     SizedBox()  ,
-
-
-
 
                     SizedBox(height: 10,),
                     (text_fields == true)
@@ -1543,6 +1544,9 @@ return downloadURL.toString();
                   ])
                 ],
               )),
+
+
+        //  Rate_category(context)      
         ]));
   }
 
@@ -3243,6 +3247,226 @@ Widget Update_product(BuildContext context,id) {
                 
 }
 ///////////////////////////
+Discount_cal()
+{
+  if(SellingPriController.text.isNotEmpty && mrpController.text.isNotEmpty)
+  {
+    var mrpp = int.parse(mrpController.text);
+    var sellpp = int.parse(SellingPriController.text);
+   
+   setState(() {
+     var DiscountPP = (( (mrpp - sellpp) /mrpp*100 ));
+     DiscountController.text = DiscountPP.toStringAsFixed(2);
+   });
+  }
+}
+
+Widget Rate_category(BuildContext context)
+{
+return
+    Container(
+      color: Colors.grey,
+      child: Column(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: 
+                                  Container(
+                                      child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                      Text("MRP (₹)",
+                                              style: themeTextStyle(
+                                              color: Colors.black,
+                                              size: 15,
+                                              fw: FontWeight.bold)),
+                                               //Text_field(context, mrpController, "MRP", "Enter MRP"),                                     
+                                      Text_rate(context,mrpController,"MRP")
+                                       ],
+                                  )),
+                                 
+                            ),
+                           SizedBox(width: defaultPadding),
+                              Expanded(
+                                flex: 2,
+                                child: Container(
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Selling Price (₹)",
+                                        style: themeTextStyle(
+                                            color: Colors.black,
+                                            size: 15,
+                                            fw: FontWeight.bold)),
+                                        Text_rate(context,SellingPriController,"Selling Price")    
+                                  ],
+                                )),
+                              ),
+                          
+                              SizedBox(width: defaultPadding),
+                            // // On Mobile means if the screen is less than 850 we dont want to show it
+                            // if (!Responsive.isMobile(context))
+                              Expanded(
+                                flex: 2,
+                                child: Container(
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Discount (%)",
+                                        style: themeTextStyle(
+                                            color: Colors.black,
+                                            size: 15,
+                                            fw: FontWeight.bold)),
+                                 Container(
+                                  alignment: Alignment.centerLeft,
+                                 width: double.infinity,
+                                 height: 40,
+                                 margin: EdgeInsets.only(top: 10, bottom: 10,left:10),
+                                 padding: EdgeInsets.only(left:10),
+                                 decoration: BoxDecoration(
+                                 color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                   ),
+                                 child: Text("${DiscountController.text} %",style: themeTextStyle(
+                                            color: Colors.black,
+                                            size: 15,
+                                            fw: FontWeight.bold)))
+                                  ],
+                                )),
+                              ),
+                          ],
+                        ),
+
+                 Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: 
+                                  Container(
+                                      child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                      Text("Shiping Price(₹)",
+                                              style: themeTextStyle(
+                                              color: Colors.black,
+                                              size: 15,
+                                              fw: FontWeight.bold)),                                  
+                                      Text_rate(context,ShippingController,"MRP")
+                                       ],
+                                  )),
+                                 
+                            ),
+                           SizedBox(width: defaultPadding),
+                              Expanded(
+                                flex: 2,
+                                child: Container(
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Stock (No. item)",
+                                        style: themeTextStyle(
+                                            color: Colors.black,
+                                            size: 15,
+                                            fw: FontWeight.bold)),
+                                            Text_rate(context,NoitemController,"Selling Price")    
+                                  ],
+                                )),
+                              ),
+                          
+                          
+                          ],
+                        ),
+                      ],
+                    ),
+    );
+}
+
+Widget Text_rate(BuildContext context,ctro_name,_hint){
+  return
+     Container(
+          height: 40,
+          margin: EdgeInsets.only(top: 10, bottom: 10,),
+          decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child:                              
+            TextFormField(
+           controller: ctro_name, 
+           onChanged: (value) async {
+              if (SellingPriController.text.isNotEmpty) {
+      
+                 Discount_cal();
+        
+              } 
+           },
+            validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please Enter value';
+            }
+          },
+          
+              decoration: InputDecoration(
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            hintText: '$_hint',
+            hintStyle: TextStyle(
+              color: Colors.grey,
+              fontSize: 16,
+            ),
+            
+        suffixIcon:  Container(
+          height: 10,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                GestureDetector(
+                  onTap:(){
+                     var mrpIncre = int.parse(ctro_name.text);
+                     setState(() {
+                        mrpIncre ++;
+                        ctro_name.text = mrpIncre.toString();
+                   });
+                  },
+                  child:  Icon(
+                      Icons.expand_less_rounded ,size: 20,color:Colors.black),
+                ),
+                  GestureDetector(
+                    onTap: (){
+                       var mrpIncre = int.parse(ctro_name.text);
+                     setState(() {
+                        mrpIncre --;
+                       ctro_name.text = mrpIncre.toString();
+                   });
+                    },
+                    child: Icon(
+                      Icons.expand_more_outlined,size: 20,color:Colors.black),
+                  )
+              ],
+            ),
+        ),
+        
+                ),
+                style: 
+               TextStyle(color: Colors.black),
+                keyboardType: TextInputType.number,
+                inputFormatters: 
+                  <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ], // Only numbers can be entered
+              ),
+          );
+
+}
+
+
+
 
 //////////////////   popup Box for Image selection ++++++++++++++++++++++++++++++++++++++ 
 
