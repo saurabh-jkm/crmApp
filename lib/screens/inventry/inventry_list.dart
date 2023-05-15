@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, deprecated_member_use, sort_child_properties_last, non_constant_identifier_names, no_leading_underscores_for_local_identifiers, unnecessary_string_interpolations
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, deprecated_member_use, sort_child_properties_last, non_constant_identifier_names, no_leading_underscores_for_local_identifiers, unnecessary_string_interpolations, unused_field, prefer_final_fields, unnecessary_cast
 
 import 'dart:convert';
 import 'dart:io';
@@ -479,7 +479,7 @@ Widget RowFor_Mobile_web(BuildContext context,label,descSell,colorrSell, descBuy
                   )
                 ],
               ),
-              content: Container(
+              content: SizedBox(
                 height: 400,
                 width: MediaQuery.of(context).size.width - 400,
                 child: SingleChildScrollView(

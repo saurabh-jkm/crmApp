@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types, avoid_print, unused_catch_clause
+// ignore_for_file: camel_case_types, avoid_print, unused_catch_clause, depend_on_referenced_packages
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;

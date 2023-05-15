@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_new, prefer_equal_for_default_values, unused_local_variable, avoid_function_literals_in_foreach_calls, prefer_collection_literals
+// ignore_for_file: non_constant_identifier_names, unnecessary_new, prefer_equal_for_default_values, unused_local_variable, avoid_function_literals_in_foreach_calls, prefer_collection_literals, depend_on_referenced_packages, deprecated_colon_for_default_value
 
 import 'package:intl/intl.dart';
 // import 'package:url_launcher/url_launcher.dart';

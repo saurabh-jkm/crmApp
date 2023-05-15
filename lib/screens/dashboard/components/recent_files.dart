@@ -36,7 +36,7 @@ class RecentFiles extends StatelessWidget {
               children: [
                Row(
                 children: [
-                  Container(
+                  SizedBox(
                   width: 150,
                   child: Text("File Name",style: TextStyle(fontWeight: FontWeight.bold),),),
                   Expanded(child: Text("Date",style: TextStyle(fontWeight: FontWeight.bold)),),
@@ -69,7 +69,7 @@ class RecentFiles extends StatelessWidget {
           children: [
          
             
-                 Container(
+                 SizedBox(
                   width: 150,
                    child: Row(
                     children: [

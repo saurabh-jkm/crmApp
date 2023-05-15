@@ -1,5 +1,5 @@
 
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -1193,8 +1193,7 @@ Widget Update_Category(BuildContext context,id) {
                                                       color: Colors.black,
                                                       size: 15,
                                                       fw: FontWeight.bold)),
-                                          
-
+  
                                                 Container(
                                                    height: 40,
                                                     margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
@@ -1614,6 +1613,7 @@ Widget Update_Category(BuildContext context,id) {
 
                                                 GestureDetector(
                                                   onTap:(){
+                                                   // return  "Image Removed Successfully";
                                                     print("Image Removed Successfully");
                                                   },
                                                   child: Container(
@@ -1999,14 +1999,15 @@ Widget All_media_mobile(BuildContext context, setStatee)
            (ctr_name == CategoryController)
            ?
            (value){
-            Slug_gen("${value}");
+            Slug_gen("$value");
            }
            :
            (value){}, 
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please Enter value';
+               return 'Please Enter value';
             }
+            return null;
           },
           style: TextStyle(color: Colors.black),
           decoration: InputDecoration(

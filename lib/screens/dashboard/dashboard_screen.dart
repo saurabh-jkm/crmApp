@@ -18,8 +18,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   //////Crosss file picker
   final GlobalKey exportKey = GlobalKey();
 
-var hhh ;
-
 @override
 void initState() {
     super.initState();

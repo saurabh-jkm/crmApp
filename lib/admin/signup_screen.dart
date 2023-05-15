@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -23,7 +22,7 @@ class _SignupScreenState extends State<SignupScreen> {
       child: Container(
         width: 700,
         height: 700,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Color.fromARGB(255, 0, 0, 0),
           boxShadow: [
             BoxShadow(blurRadius: 30, color: Colors.red, offset: Offset(10, 20))
@@ -35,7 +34,7 @@ class _SignupScreenState extends State<SignupScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              TextField(
+              const TextField(
                 obscureText: false,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -43,39 +42,39 @@ class _SignupScreenState extends State<SignupScreen> {
                   labelText: 'Name',
                 ),
               ),
-              SizedBox(height: 8.0),
-              TextField(
+              const SizedBox(height: 8.0),
+              const TextField(
                 obscureText: false,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'EMAIL',
                 ),
               ),
-              SizedBox(height: 8.0),
-              TextField(
+              const SizedBox(height: 8.0),
+              const TextField(
                 obscureText: false,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'PHONE NO.',
                 ),
               ),
-              SizedBox(height: 8.0),
-              TextField(
+              const SizedBox(height: 8.0),
+              const TextField(
                 obscureText: true,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'password',
                 ),
               ),
-              SizedBox(height: 8.0),
-              TextField(
+              const SizedBox(height: 8.0),
+              const TextField(
                 obscureText: true,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'CONFORM PASSWORD',
                 ),
               ),
-              SizedBox(height: 24.0),
+              const SizedBox(height: 24.0),
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: Stack(

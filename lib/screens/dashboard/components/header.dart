@@ -1,5 +1,5 @@
 
-// ignore_for_file: prefer_const_constructors, deprecated_member_use
+// ignore_for_file: prefer_const_constructors, deprecated_member_use, prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,7 +10,7 @@ import '../../../controllers/MenuAppController.dart';
 import '../../../responsive.dart';
 
 class Header extends StatefulWidget {
-  const Header( {@required this.title}): super();
+  const Header( {super.key, @required this.title});
   final title;
 
   @override

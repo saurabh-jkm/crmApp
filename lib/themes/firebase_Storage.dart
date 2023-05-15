@@ -13,7 +13,6 @@ Future<void> UploadFile(
   String fileName,
 ) 
 async {
-  var url;
 File file = File(filepath);
 try{
      await storage.ref('media/$fileName').putFile(file);

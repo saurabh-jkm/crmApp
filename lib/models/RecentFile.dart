@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 class RecentFile {
   final String? icon, title, date, size;
 

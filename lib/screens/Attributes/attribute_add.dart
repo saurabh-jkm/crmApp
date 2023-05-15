@@ -1,21 +1,18 @@
 
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, unused_import, body_might_complete_normally_nullable, no_leading_underscores_for_local_identifiers, unused_field, depend_on_referenced_packages
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:slug_it/slug_it.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
-import '../../themes/firebase_Storage.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+
 
 class AttributeAdd extends StatefulWidget {
   const AttributeAdd({super.key});
@@ -25,49 +22,28 @@ class AttributeAdd extends StatefulWidget {
 
 class _AttributeAddState extends State<AttributeAdd> {
   final _formKey = GlobalKey<FormState>();
-
-  var cate_name = "";
-  var slug__url = "";
-  var image_logo = "";
-
-  String? _dropDownValue;
+//////
+  final AttributeController = TextEditingController();
+   final Sub_AttributeController = TextEditingController();
   String? _StatusValue ;
   String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
-
-  // Create a text controller and use it to retrieve the current value
-  // of the TextField.
-  final CategoryController = TextEditingController();
-  final SlugUrlController = TextEditingController();
-  bool Tranding = false;
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    CategoryController.dispose();
-    SlugUrlController.dispose();
-    super.dispose();
-  }
+/////
 
   clearText() {
-    SlugUrlController.clear();
-    CategoryController.clear();
-    _dropDownValue = null;
-    _StatusValue =null;
+     AttributeController.clear();
+    _StatusValue = null;
   }
 
 
 ///////////  firebase property Database access  +++++++++++++++++++++++++++
     final Stream<QuerySnapshot> _crmStream =
-      FirebaseFirestore.instance.collection('category').snapshots();
-      CollectionReference _category = FirebaseFirestore.instance.collection('category');
-////////
-
-/////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
+    FirebaseFirestore.instance.collection('attribute').snapshots();
+    CollectionReference _attribute = FirebaseFirestore.instance.collection('attribute');
 
     List StoreDocs = [];
-   _CateData() async {
-    var collection = FirebaseFirestore.instance.collection('category');
-    var querySnapshot = await collection.get();
+   _AttributeData() async {
+    // var collection = FirebaseFirestore.instance.collection('category');
+    var querySnapshot = await _attribute.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
       // ignore: unnecessary_cast
       Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
@@ -81,26 +57,20 @@ class _AttributeAddState extends State<AttributeAdd> {
 
 /////////////
 
-  var Perent_cat ;
-  var slugUrl ;
-  var image ;
   var _Status ;
-  var Catename ;
+  var Attribute_name ;
 //////
   Map<String, dynamic>? data;
  Future Update_initial(id)async{
-    DocumentSnapshot pathData = await FirebaseFirestore.instance
-       .collection('category')
+        DocumentSnapshot pathData = await FirebaseFirestore.instance
+       .collection('attribute')
        .doc(id)
        .get();
       if (pathData.exists) {
        data = pathData.data() as Map<String, dynamic>?;
        setState(() {                   
-        Perent_cat = data!['parent_cate'];
-        slugUrl = data!['slug_url'];
-        image = data!["image"];
         _Status = data!['status'];
-        Catename = data!['category_name'];
+        Attribute_name = data!['attribute_name'];
        });
      }
 
@@ -113,13 +83,10 @@ class _AttributeAddState extends State<AttributeAdd> {
  
  Future<void> addList() {
     return
-     _category
+     _attribute
         .add({
-          'category_name': "$cate_name",
-          'slug_url': "$slug__url",
-          'parent_cate': "$_dropDownValue",
+          'attribute_name': "${AttributeController.text}",
           'status': "$_StatusValue",
-       
           "date_at": "$Date_at"
         })
         .then((value) => themeAlert(context, "Successfully Submit"))
@@ -133,7 +100,7 @@ class _AttributeAddState extends State<AttributeAdd> {
 ////////// delete Category Data ++++++++++++++++++
 
   Future<void> deleteUser(id) {
-    return _category
+    return _attribute
         .doc(id)
         .delete()
         .then((value){
@@ -146,20 +113,17 @@ class _AttributeAddState extends State<AttributeAdd> {
   }
 
   ////////////
-  ///
-/////// Update
 
-  Future<void> updatelist(id, Catename,slugUrl, _Status,_perentCate, image) 
+
+/////// Update
+  Future<void> updatelist(id, Catename,_Status) 
     {
     return 
-        _category
+        _attribute
         .doc(id)
         .update({
-          'category_name': "$Catename",
-          "parent_cate":"$_perentCate",
-          'slug_url': "$slugUrl",
+          'attribute_name': "$Catename",
           'status': "$_Status",
-          "image":"$image",
           "date_at": "$Date_at"
         })
         .then((value) {
@@ -173,28 +137,50 @@ class _AttributeAddState extends State<AttributeAdd> {
   }
 
   ///
+  ///
   
-
-///////////    Creating SLug Url Function +++++++++++++++++++++++++++++++++++++++
-    Slug_gen(String text){
-    var slus_string;
-    String slug = SlugIT().makeSlug(text);
-    setState(() {
-    slus_string = slug;
-    SlugUrlController.text = slus_string;
-    });
+/////// Update
+  Future<void> AddNew_subAttribute(id, SubAttribute_name,_Status) 
+  
+    {
+  
+    return 
+        _attribute
+        .doc(id)
+        .update({
+         // 'value': "$SubAttribute_name",
+       "value": {
+       "$SubAttribute_name": {
+        "name" : "$SubAttribute_name",
+        "status" : "$_Status",
+       "date_at": "$Date_at" ,
     }
-///// ++++++++++++++++++++++++++++++++++++++
+            } 
+        })
+        .then((value) {
+          themeAlert(context, "Successfully Update");
+          setState(() {
+            updateWidget = false;
+          });
+        } )
+        .catchError(
+            (error) => themeAlert(context, 'Failed to update', type: "error"));
+  }
+
+  ///
+  ///
+  
 
 
   @override
   void initState() {
-    _CateData();
+    _AttributeData();
     super.initState();
   }
 
 
   bool updateWidget = false;
+  bool update_subAttribute = false;
   var update_id ;
   @override
   Widget build(BuildContext context) {
@@ -253,7 +239,15 @@ class _AttributeAddState extends State<AttributeAdd> {
                               child: TabBarView(
                             children: [
                               listCon(context, 'tab1'),
+                              (updateWidget == false)
+                              ? 
+                              (update_subAttribute == true && updateWidget == false)
+                              ?
+                              Update_Sub_Attribute(context,update_id)
+                              :
                               listList(context, 'tab2')
+                              :
+                              Update_Attribute(context,update_id)
                             ],
                           )),
                         ],
@@ -280,74 +274,25 @@ class _AttributeAddState extends State<AttributeAdd> {
                 children: [
                   Form(
                     key: _formKey,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            children: [
+                    child: 
+                      
+
+
                               Container(
                                   child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Category Name*",
+                                  Text("Attribute Name*",
                                       style: themeTextStyle(
                                           color: Colors.black,
                                           size: 15,
                                           fw: FontWeight.bold)),
-                                  Text_field(context, CategoryController,"Category Name", "Enter Category Name"),
+                                  Text_field(context, AttributeController,"Attribute Name", "Enter Category Name"),
                                 ],
-                              )),
-                              SizedBox(height: defaultPadding),
-                              if (Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                              if (Responsive.isMobile(context))
-                                Container(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                        Text("Slug Url",
-                                            style: themeTextStyle(
-                                            color: Colors.black,
-                                            size: 15,
-                                            fw: FontWeight.bold)),
-                                            Text_field(context, SlugUrlController,"Slug Url", "Enter Slug Url"),
-                                  ],
-                                )),
-                            ],
-                          ),
-                        ),
-                        if (!Responsive.isMobile(context))
-                          SizedBox(width: defaultPadding),
-                        if (!Responsive.isMobile(context))
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                                child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Slug Url",
-                                    style: themeTextStyle(
-                                        color: Colors.black,
-                                        size: 15,
-                                        fw: FontWeight.bold)),
-                                        Text_field(context, SlugUrlController,"Slug Url", "Enter Slug Url"),
-                              ],
-                            )),
-                          ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
+                              ))),
+                  
+
+                              Container(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -407,150 +352,20 @@ class _AttributeAddState extends State<AttributeAdd> {
                                 ],
                               ),
                             ),
-                            SizedBox(height: defaultPadding),
-                            if (Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            if (Responsive.isMobile(context))
-                              Container(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                        child: Text("Parent Category",
-                                            style: themeTextStyle(
-                                                color: Colors.black,
-                                                size: 15,
-                                                fw: FontWeight.bold))),
-                                    Container(
-                                      height: 40,
-                                      margin: EdgeInsets.only(
-                                          top: 10, bottom: 10, right: 10),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding:
-                                          EdgeInsets.only(left: 10, right: 10),
-                                      child: DropdownButton(
-                                        dropdownColor:
-                                            Colors.white,
-                                        hint: _dropDownValue == null
-                                            ?Text('Select',style: TextStyle(color:Colors.black),)
-                                            : Text(
-                                                _dropDownValue!,
-                                                style: TextStyle(
-                                                    color: Colors.black),
-                                              ),
-                                        underline: Container(),
-                                        isExpanded: true,
-                                        icon: Icon(
-                                          Icons.arrow_drop_down,
-                                          color: Colors.black,
-                                        ),
-                                        iconSize: 35,
-                                        style: TextStyle(color: Colors.blue),
-                                        items: ['Select', 'Two', 'Three']
-                                            .map(
-                                          (val) {
-                                            return DropdownMenuItem<String>(
-                                              value: val,
-                                              child: Text(val),
-                                            );
-                                          },
-                                        ).toList(),
-                                        onChanged: (val) {
-                                          setState(
-                                            () {
-                                              _dropDownValue = val!;
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                          ],
-                        ),
-                      ),
-                      if (!Responsive.isMobile(context))
-                        SizedBox(width: defaultPadding),
-                      // On Mobile means if the screen is less than 850 we dont want to show it
-                      if (!Responsive.isMobile(context))
-                        Expanded(
-                            flex: 2,
-                            child: Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                      child: Text("Parent Category",
-                                          style: themeTextStyle(
-                                              color: Colors.black,
-                                              size: 15,
-                                              fw: FontWeight.bold))),
-                                  Container(
-                                    height: 40,
-                                    margin: EdgeInsets.only(
-                                        top: 10, bottom: 10, right: 10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    padding:
-                                        EdgeInsets.only(left: 10, right: 10),
-                                    child: DropdownButton(
-                                      dropdownColor:
-                                          Colors.white,
-                                      hint: _dropDownValue == null
-                                          ?
-                                          Text('Select',style: TextStyle(color:Colors.black),)
-                                          : Text(
-                                              _dropDownValue!,
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            ),
-                                      isExpanded: true,
-                                      underline: Container(),
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.black,
-                                      ),
-                                      iconSize: 35,
-                                      style: TextStyle(
-                                          color: Color.fromARGB(255, 4, 6, 7)),
-                                      items:
-                                          ['Select','One', 'Two', 'Three'].map(
-                                        (val) {
-                                          return DropdownMenuItem<String>(
-                                            value: val,
-                                            child: Text(val),
-                                          );
-                                        },
-                                      ).toList(),
-                                      onChanged: (val) {
-                                        setState(
-                                          () {
-                                            _dropDownValue = val!;
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )),
-                    ],
-                  ),
-        
+
+
+
+
+                      
+              
                 
                   SizedBox(
                     height: 20,
                   ),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     themeButton3(context, () {
-                   
-                        
+                          addList();
+                          clearText();
                     }, buttonColor: Colors.green, label: "Submit"),
                     SizedBox(
                       width: 10,
@@ -564,7 +379,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                   ])
                 ],
               )),
-          SizedBox(height: 100,)      
+            SizedBox(height: 100,)      
         ]));
   }
 
@@ -579,9 +394,10 @@ class _AttributeAddState extends State<AttributeAdd> {
         color: secondaryColor,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
-      child: ListView(
-        children: [
-          ClipRRect(
+      child: 
+      ListView(
+          children: [
+             ClipRRect(
                       borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(10),
                             topRight: Radius.circular(10)),
@@ -624,33 +440,17 @@ class _AttributeAddState extends State<AttributeAdd> {
                                        style: TextStyle(fontWeight: FontWeight.bold)),
                                   ),
                                 ),
-                                TableCell(
-                                  verticalAlignment: TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: SizedBox(
-                                      child: Text(
-                                      'Logo',
-                                       style: TextStyle(fontWeight: FontWeight.bold)),
-                                      width: 40,
-                                    ),
-                                  ),
-                                ),
+                               
                                 TableCell(
                                   verticalAlignment: TableCellVerticalAlignment.middle,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      "Category Name",
+                                      "Name",
                                        style: TextStyle(fontWeight: FontWeight.bold)),
                                   ),
                                 ),
-                                TableCell(
-                                  verticalAlignment: TableCellVerticalAlignment.middle,
-                                  child: Text(
-                                      "Parent Category",
-                                       style: TextStyle(fontWeight: FontWeight.bold)),
-                                ),
+                               
                                 TableCell(
                                   verticalAlignment: TableCellVerticalAlignment.middle,
                                   child:Text("Status",
@@ -673,9 +473,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                                (Responsive.isMobile(context)) 
                               ?
                                  tableRowWidget_mobile(
-                                "${StoreDocs[index]["image"]}",
-                                 "${StoreDocs[index]["category_name"]}",
-                                 "${StoreDocs[index]["parent_cate"]}",
+                                 "${StoreDocs[index]["attribute_name"]}",
                                  "${StoreDocs[index]["status"]}",
                                  "${StoreDocs[index]["date_at"]}",
                                  "${StoreDocs[index]["id"]}"
@@ -683,9 +481,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                              :
                               tableRowWidget( 
                             "${index + 1}",
-                            "${StoreDocs[index]["image"]}",
-                            "${StoreDocs[index]["category_name"]}",
-                            "${StoreDocs[index]["parent_cate"]}",
+                            "${StoreDocs[index]["attribute_name"]}",
                             "${StoreDocs[index]["status"]}",
                             "${StoreDocs[index]["date_at"]}",
                             "${StoreDocs[index]["id"]}"),
@@ -697,53 +493,23 @@ class _AttributeAddState extends State<AttributeAdd> {
             );
 }
 
-  TableRow tableRowWidget( sno, Iimage, name, pName, status, date, iid) {
+  TableRow tableRowWidget( sno, name, status, date, iid) {
     return TableRow(children: [
        TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(10.0),
           child: Text("$sno",style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ),
       TableCell(
-      verticalAlignment: TableCellVerticalAlignment.middle,
-       // horizentalAlignment: TableCellVerticalAlignment.middle,
-        child:  
-        Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: 
-           Container(
-            alignment: Alignment.topLeft,
-                          height: 60,
-                          width: 60,
-                          child:
-                           Image(
-                            image:
-                            (Iimage != "null" && Iimage.isNotEmpty)
-                                    ?  
-                                    NetworkImage(
-                                      Iimage,
-                                    )
-                                    :
-                                    NetworkImage(
-                                      "https://shopnguyenlieumypham.com/wp-content/uploads/no-image/product-456x456.jpg",
-                                      )
-                                    ,fit: BoxFit.contain),
-                        )
-        ),
-    ),
-      TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(10.0),
           child: Text("$name",style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$pName",style: TextStyle(fontWeight: FontWeight.bold)),
-      ),
+    
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Text("$status",style: TextStyle(fontWeight: FontWeight.bold)),
@@ -768,7 +534,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                       child: IconButton(
                           onPressed: () {
                             setState(() {
-                                updateWidget = true;
+                                 updateWidget = true;
                                  update_id = iid;
                                  Update_initial(iid);
                             });
@@ -779,23 +545,30 @@ class _AttributeAddState extends State<AttributeAdd> {
                           )) ////
                       ),
                   SizedBox(width: 10),
-                  Container(
-                      height: 40,
-                      width: 40,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: IconButton(
-                          onPressed: () {
-                            showExitPopup(iid);
-                          },
-                          icon: Icon(
-                            Icons.delete_outline_outlined,
-                            color: Colors.red,
-                          ))),
+                   Container(
+                                  height: 40,
+                                  width: 40,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.withOpacity(0.1),
+                                    borderRadius:
+                                        const BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                  child: IconButton(
+                                      onPressed: () {
+                                           setState(() {
+                                                update_subAttribute = true;
+                                                update_id = iid;
+                                                Update_initial(iid);
+                                                  });
+                                      },
+                                      icon:
+                                       Icon(
+                                        Icons.more_horiz_outlined,
+                                        color: Colors.green,
+                                      )) ////
+                                  ),
+              
                 ],
               )
       ),
@@ -804,7 +577,7 @@ class _AttributeAddState extends State<AttributeAdd> {
   }
 
 
- TableRow tableRowWidget_mobile( Iimage, name, pName, status, date, iid) {
+ TableRow tableRowWidget_mobile(name,status, date, iid) {
     return TableRow(
       children: [
        TableCell(
@@ -812,35 +585,14 @@ class _AttributeAddState extends State<AttributeAdd> {
         child:  
                     Row(
                       children: [
-                        Container(
-                          margin: EdgeInsets.all(5),
-                          height: 100,
-                          width: 100,
-                          decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 214, 214, 214),
-                              image: DecorationImage(
-                                  image:
-                                     (Iimage != "null" && Iimage.isNotEmpty)
-                                      ?  
-                                      NetworkImage(
-                                      Iimage,
-                                    )
-                                    :
-                                      NetworkImage(
-                                      "https://shopnguyenlieumypham.com/wp-content/uploads/no-image/product-456x456.jpg",
-                                    )
-                                    ,fit: BoxFit.contain
-                                    )
-                                    ),
-                        ),
+                       
                         Container(
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                           child: Column(
                             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              themeListRow(context, "Product Name", "$name"),
-                              themeListRow(context, "Category Name","$pName"),
+                              themeListRow(context, "Name", "$name"),
                               themeListRow(context, "Satus","$status"),
                               themeListRow(context, "Date","$date"),
                         SizedBox(height: 10,),
@@ -890,24 +642,31 @@ class _AttributeAddState extends State<AttributeAdd> {
                                         color: Colors.blue,
                                       )) ////
                                   ),
-                              SizedBox(width: 10),
-                              Container(
+                    SizedBox(width: 10),
+                   Container(
                                   height: 40,
                                   width: 40,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
-                                    color: Colors.red.withOpacity(0.1),
+                                    color: Colors.green.withOpacity(0.1),
                                     borderRadius:
                                         const BorderRadius.all(Radius.circular(10)),
                                   ),
                                   child: IconButton(
                                       onPressed: () {
-                                        showExitPopup(iid);
+                                           setState(() {
+                                                update_subAttribute = true;
+                                                update_id = iid;
+                                                Update_initial(iid);
+                                                  });
                                       },
-                                      icon: Icon(
-                                        Icons.delete_outline_outlined,
-                                        color: Colors.red,
-                                      ))),
+                                      icon:
+                                       Icon(
+                                        Icons.more_horiz_outlined,
+                                        color: Colors.green,
+                                      )) ////
+                                  ),
+                 
                             ],
                           )
                            
@@ -928,6 +687,296 @@ class _AttributeAddState extends State<AttributeAdd> {
 /////////
 
 
+/////////////  Update widget for product Update+++++++++++++++++++++++++
+Widget Update_Attribute(BuildContext context,id) {
+  return 
+          Container(
+        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        child: ListView(children: [
+
+            Container(
+                    margin: EdgeInsets.symmetric(vertical: 20),
+                    child:
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                    Container(
+                      child:
+                       Row(
+                        children: [
+                      IconButton(onPressed: (){
+                      setState(() {
+                      updateWidget = false;
+                      });
+                        }, icon:  Icon(Icons.arrow_back,color: Colors.black)),
+ 
+                          SizedBox(width: 10,),
+                          Text("Update Attribute",
+                          style: GoogleFonts.lato(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20
+                          ),),
+                        ],
+                      ),
+                    )
+                  ],)
+                  ),
+           Container(
+              padding: EdgeInsets.all(defaultPadding),
+              decoration: BoxDecoration(
+                color: Colors.black12,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Column(
+                children: [
+      
+
+                              Container(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Attribute Name*",
+                                      style: themeTextStyle(
+                                          color: Colors.black,
+                                          size: 15,
+                                          fw: FontWeight.bold)),
+                                       
+                                  
+                                    Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: Attribute_name,
+                                                              autofocus: false,
+                                                              onChanged: (value) => Attribute_name = value,
+                                                            // controller: ctr_name,
+                                                              validator: (value) {
+                                                                if (value == null || value.isEmpty) {
+                                                                  return "Enter Attribute Name";
+                                                                }
+                                                                return null;
+                                                              },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: "Attibute Name ",
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            )),
+
+                                ],
+                              )),
+                  
+
+                                      Container(
+                                                      height: 40,
+                                                      margin: EdgeInsets.only(
+                                                          top: 10,
+                                                          bottom: 10,
+                                                          right: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      padding: EdgeInsets.only(
+                                                          left: 10, right: 10),
+                                                      child: DropdownButton(
+                                                        dropdownColor:
+                                                            Colors.white,
+                                                        hint: _StatusValue ==
+                                                                null
+                                                            ? Text('$_Status',style: TextStyle(color:Colors.black),)
+                                                            : Text(
+                                                                _StatusValue!,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                        isExpanded: true,
+                                                        underline: Container(),
+                                                        icon: Icon(
+                                                          Icons.arrow_drop_down,
+                                                          color: Colors.black,
+                                                        ),
+                                                        iconSize: 35,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    0,
+                                                                    0,
+                                                                    0)),
+                                                        items: [
+                                                          'Select',
+                                                          'Inactive',
+                                                          'Active'
+                                                        ].map(
+                                                          (val) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value: val,
+                                                              child: Text(val),
+                                                            );
+                                                          },
+                                                        ).toList(),
+                                                        onChanged: (val) {
+                                                          setState(
+                                                            () {
+                                                              _StatusValue =
+                                                                  val!;
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                
+                       SizedBox(
+                        height: 20,
+                        ),
+                       Row(mainAxisAlignment: MainAxisAlignment.center, 
+                       children: [
+                       themeButton3(context, () {
+                            if(Attribute_name.isNotEmpty && (Attribute_name != null && _StatusValue !=null)){
+                               setState(() {
+                                        updatelist(id, Attribute_name,_StatusValue);  
+                                         _Status = null;
+                                         _StatusValue = null;
+                                         Attribute_name = null;
+                                        });
+                               }
+                               else{
+                                 themeAlert(context, 'Please Enter Required value!', type: "error");
+                               }
+                               
+                         }, buttonColor: Colors.green, label: "Update"),
+                       SizedBox(
+                      width: 10,
+                       ),
+                      themeButton3(context, () {
+                      setState(() {
+                        clearText();
+                                         _Status = null;
+                                         _StatusValue = null;
+                                         Attribute_name = null;
+                      });
+                    }, label: "Reset", buttonColor: Colors.black),
+                    SizedBox(width: 20.0),
+                  ])
+                ],
+              )),
+            SizedBox(height: 100,)      
+        ]));            
+}
+///////////////////////////
+
+
+
+/////////////  Update widget for product Update+++++++++++++++++++++++++
+Widget Update_Sub_Attribute(BuildContext context,id) {
+  return 
+          Container(
+        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        child: ListView(children: [
+
+            Container(
+                    margin: EdgeInsets.symmetric(vertical: 20),
+                    child:
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                    Container(
+                      child:
+                       Row(
+                        children: [
+                      IconButton(onPressed: (){
+                      setState(() {
+                     update_subAttribute = false;
+                      });
+                        }, icon:  Icon(Icons.arrow_back,color: Colors.black)),
+ 
+                          SizedBox(width: 10,),
+                          Text("Colours attribute  $id",
+                          style: GoogleFonts.lato(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20
+                          ),),
+                        ],
+                      ),
+                    )
+                  ],)
+                  ),
+
+
+           Container(
+              padding: EdgeInsets.all(defaultPadding),
+              decoration: BoxDecoration(
+                color: Colors.black12,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Column(
+                children: [
+                              Container(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Add New",
+                                      style: themeTextStyle(
+                                          color: Colors.black,
+                                          size: 15,
+                                          fw: FontWeight.bold)),
+                                          Text_field( context, Sub_AttributeController, "Enter Sub Attribute Name", "Sub Attibute Name ")      
+                                ],
+                              )),
+
+                       SizedBox(
+                        height: 20,
+                        ),
+                       Row(mainAxisAlignment: MainAxisAlignment.center, 
+                       children: [
+                       themeButton3(context, () {
+                            if(Sub_AttributeController.text.isNotEmpty){
+                               setState(() {
+                                        AddNew_subAttribute(id, Sub_AttributeController.text,_StatusValue);  
+                                         _Status = null;
+                                         _StatusValue = null;
+                                         Sub_AttributeController.text = "";
+                                        });
+                               }
+                               else{
+                                 themeAlert(context, 'Please Enter Required value!', type: "error");
+                               }
+                               
+                         }, buttonColor: Colors.green, label: "Add New"),
+                       SizedBox(
+                      width: 10,
+                       ),
+              
+                    SizedBox(width: 20.0),
+                  ])
+                ],
+              )),
+            SizedBox(height: 100,)      
+        ]));            
+}
+///////////////////////////
+
+
+
+
 
 
 ///////  Text_field 22 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -942,14 +991,6 @@ class _AttributeAddState extends State<AttributeAdd> {
         ),
         child: TextFormField(
           controller: ctr_name,
-                  onChanged: 
-           (ctr_name == CategoryController)
-           ?
-           (value){
-            Slug_gen("${value}");
-           }
-           :
-           (value){}, 
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please Enter value';
