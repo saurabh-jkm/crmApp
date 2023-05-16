@@ -1,10 +1,11 @@
 
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, unused_import, body_might_complete_normally_nullable, no_leading_underscores_for_local_identifiers, unused_field, depend_on_referenced_packages
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, unused_import, body_might_complete_normally_nullable, no_leading_underscores_for_local_identifiers, unused_field, depend_on_referenced_packages, avoid_print
+
+import 'dart:js_interop';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:slug_it/slug_it.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/style.dart';
@@ -12,7 +13,7 @@ import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
-
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class AttributeAdd extends StatefulWidget {
   const AttributeAdd({super.key});
@@ -26,7 +27,7 @@ class _AttributeAddState extends State<AttributeAdd> {
   final AttributeController = TextEditingController();
    final Sub_AttributeController = TextEditingController();
   String? _StatusValue ;
-  String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  String Date_at = DateFormat('dd-MM-yyyy' "  hh:mm").format(DateTime.now());
 /////
 
   clearText() {
@@ -56,11 +57,14 @@ class _AttributeAddState extends State<AttributeAdd> {
   }
 
 /////////////
-
+ Color mycolor = Colors.lightBlue;
+  var hexString;
   var _Status ;
   var Attribute_name ;
+  Map  value_color = {} ;
+  List Color_list = [];
 //////
-  Map<String, dynamic>? data;
+Map<String, dynamic>? data;
  Future Update_initial(id)async{
         DocumentSnapshot pathData = await FirebaseFirestore.instance
        .collection('attribute')
@@ -68,9 +72,12 @@ class _AttributeAddState extends State<AttributeAdd> {
        .get();
       if (pathData.exists) {
        data = pathData.data() as Map<String, dynamic>?;
+     //  data!.forEach((k,v) => print('${k}: ${v}'));
        setState(() {                   
         _Status = data!['status'];
         Attribute_name = data!['attribute_name'];
+        value_color = data!["value"];
+        value_color.forEach((k,v) => Color_list.add(v) );
        });
      }
 
@@ -114,8 +121,8 @@ class _AttributeAddState extends State<AttributeAdd> {
 
   ////////////
 
-
 /////// Update
+
   Future<void> updatelist(id, Catename,_Status) 
     {
     return 
@@ -132,15 +139,13 @@ class _AttributeAddState extends State<AttributeAdd> {
             updateWidget = false;
           });
         } )
-        .catchError(
-            (error) => themeAlert(context, 'Failed to update', type: "error"));
+        .catchError((error) => themeAlert(context, 'Failed to update', type: "error"));
   }
 
-  ///
-  ///
+/////////
   
 /////// Update
-  Future<void> AddNew_subAttribute(id, SubAttribute_name,_Status) 
+  Future<void> AddNew_subAttribute(id, SubAttribute_name,hexString,_Status) 
   
     {
   
@@ -152,7 +157,8 @@ class _AttributeAddState extends State<AttributeAdd> {
        "value": {
        "$SubAttribute_name": {
         "name" : "$SubAttribute_name",
-        "status" : "$_Status",
+        "color" : hexString,
+       "status" : "$_Status",
        "date_at": "$Date_at" ,
     }
             } 
@@ -731,8 +737,6 @@ Widget Update_Attribute(BuildContext context,id) {
               ),
               child: Column(
                 children: [
-      
-
                               Container(
                                   child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -742,9 +746,7 @@ Widget Update_Attribute(BuildContext context,id) {
                                           color: Colors.black,
                                           size: 15,
                                           fw: FontWeight.bold)),
-                                       
-                                  
-                                    Container(
+                                         Container(
                                                    height: 40,
                                                     margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
                                                     decoration: BoxDecoration(
@@ -886,10 +888,12 @@ Widget Update_Attribute(BuildContext context,id) {
 /////////////  Update widget for product Update+++++++++++++++++++++++++
 Widget Update_Sub_Attribute(BuildContext context,id) {
   return 
-          Container(
+      Container(
         margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
         child: ListView(children: [
 
+
+        /////// Label for head
             Container(
                     margin: EdgeInsets.symmetric(vertical: 20),
                     child:
@@ -897,6 +901,7 @@ Widget Update_Sub_Attribute(BuildContext context,id) {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+
                     Container(
                       child:
                        Row(
@@ -904,11 +909,12 @@ Widget Update_Sub_Attribute(BuildContext context,id) {
                       IconButton(onPressed: (){
                       setState(() {
                      update_subAttribute = false;
+                     Color_list = [];
                       });
                         }, icon:  Icon(Icons.arrow_back,color: Colors.black)),
  
                           SizedBox(width: 10,),
-                          Text("Colours attribute  $id",
+                          Text("Colours Attribute ",
                           style: GoogleFonts.lato(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -919,7 +925,7 @@ Widget Update_Sub_Attribute(BuildContext context,id) {
                     )
                   ],)
                   ),
-
+            /////////
 
            Container(
               padding: EdgeInsets.all(defaultPadding),
@@ -927,32 +933,176 @@ Widget Update_Sub_Attribute(BuildContext context,id) {
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
-              child: Column(
+              child:
+              
+               Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                              Container(
-                                  child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Add New",
-                                      style: themeTextStyle(
-                                          color: Colors.black,
-                                          size: 15,
-                                          fw: FontWeight.bold)),
-                                          Text_field( context, Sub_AttributeController, "Enter Sub Attribute Name", "Sub Attibute Name ")      
-                                ],
-                              )),
+                        
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                             margin: EdgeInsets.symmetric(horizontal: 20),
+                                            child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text("Add New",
+                                                style: themeTextStyle(
+                                                    color: Colors.black,
+                                                    size: 15,
+                                                    fw: FontWeight.bold)),
+                                                    Text_field( context, Sub_AttributeController, "Enter Sub Attribute Name", "Sub Attribute Name ")      
+                                          ],
+                                        )),
+                                      ),
+                                    
+                                     Expanded(
+                                       child: Column(
+                                         children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Text("Attribute List",
+                                                    style: themeTextStyle(
+                                                        color: Colors.black,
+                                                        size: 15,
+                                                        fw: FontWeight.bold)),
+                                            ],
+                                          ),
+                                           Container(
+                                            margin: EdgeInsets.only(top: 10),
+                                             child: Table(
+                                             border: TableBorder.all(color: Colors.black26, width: 1.5),
+                                             children:  [
+                                               TableRow(children: [
+                                                 Padding(
+                                                   padding: const EdgeInsets.all(8.0),
+                                                   child: Text("S.No.", style: themeTextStyle(
+                                                      color: Colors.black,
+                                                      size: 15,
+                                                      fw: FontWeight.bold)),
+                                                 ),
+                                                 Padding(
+                                                   padding: const EdgeInsets.all(8.0),
+                                                   child: Text("Data", style: themeTextStyle(
+                                                      color: Colors.black,
+                                                      size: 15,
+                                                      fw: FontWeight.bold)),
+                                                 ),
+                                                 Padding(
+                                                   padding: const EdgeInsets.all(8.0),
+                                                   child: Text("Indentity", style:themeTextStyle(
+                                                      color: Colors.black,
+                                                      size: 15,
+                                                      fw: FontWeight.bold)),
+                                                 ),
+                                                 Padding(
+                                                   padding: const EdgeInsets.all(8.0),
+                                                   child: Text("Status", style: themeTextStyle(
+                                                      color: Colors.black,
+                                                      size: 15,
+                                                      fw: FontWeight.bold)),
+                                                 ),
+                                               ]),
+                                                
+
+                                              for(var i = 0; i < Color_list.length; i++)
+                                               TableRow(children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(10.0),
+                                                  child: Text("${i + 1}", style: themeTextStyle(
+                                                        color: Colors.black,
+                                                        size: 15,
+                                                        fw: FontWeight.normal)),
+                                                ),
+                                                 Padding(
+                                                   padding: const EdgeInsets.all(10.0),
+                                                   child: Text("${Color_list[i]["name"]}".toUpperCase(), style: themeTextStyle(
+                                                        color: Colors.black,
+                                                        size: 15,
+                                                        fw: FontWeight.normal)),
+                                                 ),
+                                                 Padding(
+                                                   padding: const EdgeInsets.all(5.0),
+                                                   child: GestureDetector(
+                                                    onTap:  () {
+                                                   showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context){
+                                                    return 
+                                                      AlertDialog(
+                                                           title: Text('Pick a color!'),
+                                                           content: SingleChildScrollView(
+                                                           child: ColorPicker(
+                                                           pickerColor: mycolor, //default color
+                                                           onColorChanged: (Color color){ //on color picked
+                                                        setState(() {
+                                                        mycolor = color;
+                                                        hexString = color.value.toRadixString(16).padLeft(9, '0x');
+                                                         });
+                                                 }, 
+                                              ),
+                                             ),
+                                           actions: <Widget>[
+                                           ElevatedButton(
+                                            child: const Text('DONE'),
+                                            onPressed: () {
+                                            Navigator.of(context).pop(); //dismiss the color picker
+                                          },
+                                        ),
+                                      ],
+                                  );
+                              }
+                            ); 
+                                                    },
+                                                     child: Container(
+                                                      margin: EdgeInsets.symmetric(horizontal: 15),
+                                                      height: 30,
+                                                      width: 30,
+                                                      decoration: BoxDecoration( 
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        border: Border.all(color: Colors.white,width: 5.0),
+                                                        color: mycolor   //  mycolor
+                                                        // Color_list[i]["color"])                                                 
+                                                      ),
+                                                     ),
+                                                   )
+                                                 ),
+                                                
+                                                 Padding(
+                                                   padding: const EdgeInsets.all(10.0),
+                                                   child: Text("${Color_list[i]["status"]}", style: themeTextStyle(
+                                                        color: Colors.black,
+                                                        size: 15,
+                                                        fw: FontWeight.normal)),
+                                                 ),
+                                               ]),
+                                             ],
+                                                                                ),
+                                           ),
+                                         ],
+                                       ),
+                                     )
+                                    ],
+                                  ),
 
                        SizedBox(
                         height: 20,
                         ),
-                       Row(mainAxisAlignment: MainAxisAlignment.center, 
+                       Row(mainAxisAlignment: MainAxisAlignment.start, 
                        children: [
-                       themeButton3(context, () {
+                        SizedBox(
+                        width: 20,
+                        ),
+                           themeButton3(context, () {
                             if(Sub_AttributeController.text.isNotEmpty){
                                setState(() {
-                                        AddNew_subAttribute(id, Sub_AttributeController.text,_StatusValue);  
+                                        AddNew_subAttribute(id, Sub_AttributeController.text,hexString,_Status);  
                                          _Status = null;
-                                         _StatusValue = null;
                                          Sub_AttributeController.text = "";
                                         });
                                }
@@ -964,17 +1114,16 @@ Widget Update_Sub_Attribute(BuildContext context,id) {
                        SizedBox(
                       width: 10,
                        ),
-              
                     SizedBox(width: 20.0),
                   ])
                 ],
               )),
             SizedBox(height: 100,)      
-        ]));            
+
+       ])        
+        );            
 }
 ///////////////////////////
-
-
 
 
 
@@ -1011,85 +1160,4 @@ Widget Update_Sub_Attribute(BuildContext context,id) {
 ///////////
 
 
- Future<bool> showExitPopup(iid_delete) async {
-      return await showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              backgroundColor: Colors.white,
-              title: Row(
-                children: [
-                  Icon(Icons.delete_forever_outlined,color: Colors.red,size: 35,),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                  Text(
-                    'CRM App says',
-                    style: themeTextStyle(
-                        size: 20.0,
-                        ftFamily: 'ms',
-                        fw: FontWeight.bold,
-                        color: themeBG2),
-                  ),
-                ],
-              ),
-              content: Text(
-                'Are you sure to delete this Categorys ?',
-                style: themeTextStyle(
-                    size: 16.0,
-                    ftFamily: 'ms',
-                    fw: FontWeight.normal,
-                    color: Colors.black87),
-              ),
-              actions: [     
-               Container(
-                      height: 30,
-                      width: 60,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child:  TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(
-                    'No',
-                    style: themeTextStyle(
-                        size: 16.0,
-                        ftFamily: 'ms',
-                        fw: FontWeight.normal,
-                        color: Colors.red),
-                  ),
-                ),
-                ),
-                Container(
-                      height: 30,
-                      width: 60,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child:  TextButton(
-                  onPressed: () {
-                   setState(() {
-                     deleteUser(iid_delete);
-                      Navigator.of(context).pop(false);
-                   });
-                  } ,
-                  child: Text(
-                    'Yes',
-                    style: themeTextStyle(
-                        size: 16.0,
-                        ftFamily: 'ms',
-                        fw: FontWeight.normal,
-                        color: themeBG4),
-                  ),),
-                ),
-              ],
-            ),
-          ) ??
-          false; //if showDialouge had returned null, then return false
-    }
 }/// Class CLose

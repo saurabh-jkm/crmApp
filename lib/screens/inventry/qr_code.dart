@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, deprecated_member_use
 
 import 'package:flutter/material.dart';
  import 'package:qr_flutter/qr_flutter.dart';
@@ -18,7 +18,6 @@ class QRCode extends StatelessWidget {
     this.qrBackgroundColor,
     this.qrForegroundColor,
   }) : super(key: key);
-
   final double? width;
   final double? height;
   final double? qrSize;
@@ -30,22 +29,32 @@ class QRCode extends StatelessWidget {
   final String? semanticsLabel;
   final Color? qrBackgroundColor;
   final Color? qrForegroundColor;
-
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(qrBorderRadius ?? 0),
-      child: QrImage(
-        size: qrSize,
-        data: qrData,
-        gapless: gapLess ?? true,
-        version: qrVersion ?? QrVersions.auto,
-        padding: EdgeInsets.all(qrPadding ?? 10),
-        semanticsLabel: semanticsLabel ?? '',
-        backgroundColor: qrBackgroundColor ?? Colors.transparent,
-        foregroundColor:
-            qrForegroundColor ?? Color.fromARGB(255, 253, 251, 251),
-      ),
+      child: 
+          QrImageView(
+          data: qrData,
+          version: qrVersion ?? QrVersions.auto,
+          size: qrSize,
+          padding: EdgeInsets.all(qrPadding ?? 10),
+          semanticsLabel: semanticsLabel ?? '',
+          backgroundColor: qrBackgroundColor ?? Colors.transparent,
+          foregroundColor: qrForegroundColor ?? Color.fromARGB(255, 253, 251, 251),
+        ),
+      
+      // QrImage(
+      //   size: qrSize,
+      //   data: qrData,
+      //   gapless: gapLess ?? true,
+      //   version: qrVersion ?? QrVersions.auto,
+      //   padding: EdgeInsets.all(qrPadding ?? 10),
+      //   semanticsLabel: semanticsLabel ?? '',
+      //   backgroundColor: qrBackgroundColor ?? Colors.transparent,
+      //   foregroundColor:
+      //       qrForegroundColor ?? Color.fromARGB(255, 253, 251, 251),
+      // ),
     );
   }
 }
