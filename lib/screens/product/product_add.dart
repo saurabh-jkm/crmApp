@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field
 
 import 'dart:convert';
 import 'dart:io';
@@ -150,12 +150,13 @@ return downloadURL.toString();
   ///////////  firebase property
   final Stream<QuerySnapshot> _crmStream =
       FirebaseFirestore.instance.collection('product').snapshots();
-  final List StoreDocs = [];
   var db = FirebaseFirestore.instance;
   CollectionReference _product =
       FirebaseFirestore.instance.collection('product');
   ////////////+++++
+  List StoreDocs = [];
   Pro_Data() async {
+    StoreDocs = [];
     var collection = _product;
     var querySnapshot = await collection.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
@@ -188,7 +189,13 @@ return downloadURL.toString();
           'image': "$url_img",
           "date_at": "$Date_at"
         })
-        .then((value) => themeAlert(context, "Successfully Submit"))
+        .then((value) {
+
+          setState(() {
+            themeAlert(context, "Successfully Submit");
+            Pro_Data();
+          });
+        } )
         .catchError(
             (error) => themeAlert(context, 'Failed to Submit', type: "error"));
   }
@@ -199,7 +206,12 @@ return downloadURL.toString();
     return _product
         .doc(id)
         .delete()
-        .then((value) => themeAlert(context, "Deleted Successfully "))
+        .then((value) {
+          setState(() {
+            themeAlert(context, "Deleted Successfully ");
+             Pro_Data();
+          });
+        } )
         .catchError(
             (error) => themeAlert(context, 'Not find Data', type: "error"));
   }
@@ -276,6 +288,7 @@ return downloadURL.toString();
           themeAlert(context, "Successfully Update");
           setState(() {
             updateWidget = false;
+             Pro_Data();
           });
         } )
         .catchError(

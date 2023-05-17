@@ -152,6 +152,7 @@ return downloadURL.toString();
 
     List StoreDocs = [];
    _CateData() async {
+    StoreDocs = [];
     var collection = FirebaseFirestore.instance.collection('category');
     var querySnapshot = await collection.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
@@ -208,7 +209,12 @@ return downloadURL.toString();
           'image': "$url_img",
           "date_at": "$Date_at"
         })
-        .then((value) => themeAlert(context, "Successfully Submit"))
+        .then((value) {
+          setState(() {
+             themeAlert(context, "Submitted Successfully ");    
+              _CateData();     
+          });
+        })
         .catchError(
         (error) => themeAlert(context, 'Failed to Submit', type: "error"));
   }
@@ -224,7 +230,8 @@ return downloadURL.toString();
         .delete()
         .then((value){
           setState(() {
-             themeAlert(context, "Deleted Successfully ");         
+             themeAlert(context, "Deleted Successfully ");    
+              _CateData();     
           });
         }
         )
@@ -252,6 +259,7 @@ return downloadURL.toString();
           themeAlert(context, "Successfully Update");
           setState(() {
             updateWidget = false;
+             _CateData();    
           });
         } )
         .catchError(
@@ -744,6 +752,7 @@ return downloadURL.toString();
                           addList();
                           clearText();
                           clear_imageData();
+                         
                         });
                       }
                       else{
@@ -2088,6 +2097,7 @@ Widget All_media_mobile(BuildContext context, setStatee)
                   onPressed: () {
                    setState(() {
                      deleteUser(iid_delete);
+                     
                       Navigator.of(context).pop(false);
                    });
                   } ,
