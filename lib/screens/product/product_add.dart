@@ -166,6 +166,7 @@ return downloadURL.toString();
    setState(() {
      listExample();
      _CateData();
+     _AttributeData();
    });
   }
 
@@ -330,7 +331,57 @@ return downloadURL.toString();
   ////// next >>>
   bool text_fields = false;
   ///
+///////////  firebase property Database access  +++++++++++++++++++++++++++
+
+  CollectionReference _attribute =
+      FirebaseFirestore.instance.collection('attribute');
+
+  List Attri_data =  [];
+  _AttributeData() async {
+    Attri_data = [];
+    // var collection = FirebaseFirestore.instance.collection('category');
+    var querySnapshot = await _attribute.get();
+    for (var queryDocumentSnapshot in querySnapshot.docs) {
+      Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
+      Attri_data.add(data);
+      data["id"] = queryDocumentSnapshot.id;
+    }
+    setState(() {
+      
+    });
+  }
+
+  var Attribute_name;
+  Map value_color = {};
+  List Color_list = [];
   
+  var Size_value = [];
+  var Color_value = [];
+//////
+  Map<String, dynamic>? dbData;
+  Future Sub_attribute(id) async {
+     Color_list = [];
+    DocumentSnapshot pathData =
+        await FirebaseFirestore.instance.collection('attribute').doc(id).get();
+    if (pathData.exists) {
+      dbData = pathData.data() as Map<String, dynamic>?;
+      setState(() {
+        _Status = dbData!['status'];
+        Attribute_name = dbData!['attribute_name'];
+        value_color = dbData!["value"];
+        value_color.forEach((k, v) => Color_list.add(v));
+      
+      
+       //print("$Color_list  ++++++");
+      });
+    }
+  }
+
+  ///
+
+/////////////
+
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -407,7 +458,7 @@ return downloadURL.toString();
   }
 
  ///////////   Widget for Product Add Form  ++++++++++++++++++++++++++++++++++++++++++
-
+List<String> _selectOption_attri = [];
   Widget listCon(BuildContext context, tab) {
     return Container(
         // color: themeBG,
@@ -958,6 +1009,10 @@ return downloadURL.toString();
                                   SizedBox(height: 10,)   , 
                                   Row(
                                   children: [
+                                     for (var index = 0; index < Attri_data.length; index++)
+
+                                    // Text( "${Attri_data[index]["attribute_name"]}  ++++++++++++++  ${Attri_data[index]["id"]}"),
+                                       
                                     Container(
                                       height: 25,
                                     margin: EdgeInsets.symmetric(horizontal:5),
@@ -967,42 +1022,98 @@ return downloadURL.toString();
                                     ),
                                     child:
                                      Row(children: [
+                        
+                                      
                                       Checkbox(
-                                        activeColor: Colors.green,
+                                      activeColor: Colors.green,
                                         side:
                                            BorderSide(width: 2, color: Colors.black),
-                                         value: Product_colors,
+                                         value:
+                                         (Attri_data[index]["attribute_name"] == "Colors") ?
+                                           Product_colors
+                                           :
+                                           Product_Size, // _selectOption_attri.contains(Attri_data[index]["id"]),   // 
                                          onChanged: (value) {
+                                        
                                           setState(() {  
-                                               Product_colors = value!;  
+                                               if(Attri_data[index]["attribute_name"] == "Colors") {
+                                               Product_colors = value!; 
+                                                setState(() {
+                                                   Color_value = Color_list;
+                                                }); 
+                                              
+                                               }
+                                               else{
+                                                Product_Size = value!;  
+                                                setState(() 
+                                                {
+                                                  Size_value = Color_list;
+                                                });
+                                               }
+                                               Sub_attribute(Attri_data[index]["id"]);
                                               });  
+                                              
                                            },
                                           ),
-                                      Text("Color",style: TextStyle(color: Colors.black),)
-                                    ],)
-                                     ),
-                                    Container(
-                                      height: 25,
-                                      padding: EdgeInsets.symmetric(horizontal: 10),
-                                      margin: EdgeInsets.symmetric(horizontal:5), 
-                                      decoration: BoxDecoration(color: Colors.white,
-                                       borderRadius: BorderRadius.circular(10)
-                                      ),
-                                      child: 
-                                       Row(children: [
-                                      Checkbox(
-                                        activeColor: Colors.green,
-                                        side:
-                                           BorderSide(width: 2, color: Colors.black),
-                                         value: Product_Size,
-                                         onChanged: (value) {
-                                          setState(() {  
-                                               Product_Size = value!;  
-                                              });  
-                                           },
-                                          ),
-                                      Text("Size",style: TextStyle(color: Colors.black))
-                                    ],)),
+                                      Text("${Attri_data[index]["attribute_name"]}",style: TextStyle(color: Colors.black),)
+                                    ],) ),
+
+
+            //          setState(() {
+            //          if (value != null && _selectOption_attri.isEmpty ) {
+            //           setState(() {
+            //            if(_selectOption_attri.length < Attri_data.length ){
+            //               _selectOption_attri.add(Attri_data[index]["attribute_name"]);
+            //            } 
+            //          //   url_img = _selectOption_attri[0];
+            //          print("${_selectOption_attri}  +++++++");
+            //         });
+            //        }
+            //        else if(_selectOption_attri.isNotEmpty &&  _selectOption_attri[0] == Attri_data[index]["attribute_name"])
+            //        {
+            //          setState(() {
+            //           _selectOption_attri[0] == null;
+            //          } );
+            //        }
+            //     else if(_selectOption_attri != null && _selectOption_attri.length < Attri_data.length){
+            //      setState(() {
+            //       _selectOption_attri.add(Attri_data[index]["attribute_name"]);
+            //        print("${_selectOption_attri}  +++++++");
+                  
+            //      });
+            //   }  
+            //   // else if (_selectOption_attri.length == Attri_data.length){
+            //   //   print(" more than value +++++++++++++");
+
+            //   // }
+            
+            // });
+
+
+                                    // Container(
+                                    //   height: 25,
+                                    //   padding: EdgeInsets.symmetric(horizontal: 10),
+                                    //   margin: EdgeInsets.symmetric(horizontal:5), 
+                                    //   decoration: BoxDecoration(color: Colors.white,
+                                    //    borderRadius: BorderRadius.circular(10)
+                                    //   ),
+                                    //   child: 
+                                    //    Row(children: [
+                                    //   Checkbox(
+                                    //     activeColor: Colors.green,
+                                    //     side:
+                                    //        BorderSide(width: 2, color: Colors.black),
+                                    //      value: Product_Size,
+                                    //      onChanged: (value) {
+                                    //       setState(() {  
+                                    //            Product_Size = value!;  
+                                    //           });  
+                                    //        },
+                                    //       ),
+                                    //   Text("Size",style: TextStyle(color: Colors.black))
+                                   
+                                    // ],)
+                                    // ),
                          
                                   ],)          
                          
@@ -1036,7 +1147,9 @@ return downloadURL.toString();
                                SizedBox(width: 5,),
                                Text("Colour",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
                              ],
-                           ),          
+                           ), 
+
+                       for (var i = 0; i < Color_value.length; i++)             
                        Container(
                           child:
                           Row(
@@ -1052,25 +1165,9 @@ return downloadURL.toString();
                                                   });  
                                                },
                                               ),
-                                Text("Red",style: TextStyle(color: Colors.black)),       
+                                Text("${Color_value[i]["name"]}",style: TextStyle(color: Colors.black)),       
                           ],),),
-                            Container(
-                          child:
-                         Row(
-                          children: [
-                                Checkbox(
-                                          activeColor: Colors.green,
-                                            side:BorderSide(width: 2, color: Colors.black),
-                                             value: colors_blue,
-                                             onChanged: (value) {
-                                              setState(() {  
-                                                   colors_blue = value!;  
-                                                   text_fields = false;
-                                                  });  
-                                               },
-                                              ),
-                                  Text("Blue",style: TextStyle(color: Colors.black)),       
-                          ],),),
+                          
                          ],
                        )
                        :
@@ -1090,6 +1187,8 @@ return downloadURL.toString();
                                Text("Size",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
                              ],
                            ),
+
+                          for (var i = 0; i < Size_value.length; i++)     
                            Container(
                           child:
                          Row(
@@ -1105,44 +1204,10 @@ return downloadURL.toString();
                                                   });  
                                                },
                                               ),
-                                  Text("Small",style: TextStyle(color: Colors.black)),       
+                                  Text("${Size_value[i]["name"]}",style: TextStyle(color: Colors.black)),       
                           ],),),
-                            
-                            Container(
-                          child:
-                         Row(
-                          children: [
-                                Checkbox(
-                                          activeColor: Colors.green,
-                                            side:BorderSide(width: 2, color: Colors.black),
-                                             value: size_m,
-                                             onChanged: (value) {
-                                              setState(() {  
-                                                   size_m = value!;  
-                                                   text_fields = false;
-                                                  });  
-                                               },
-                                              ),
-                                  Text("Medium",style: TextStyle(color: Colors.black)),       
-                          ],),),
-                        Container(
-                          child:
-                         Row(
-                          children: [
-                                Checkbox(
-                                          activeColor: Colors.green,
-                                            side:BorderSide(width: 2, color: Colors.black),
-                                             value: size_l,
-                                             onChanged: (value) {
-                                              setState(() {  
-                                                   size_l = value!;  
-                                                   text_fields = false;
-                                                  });  
-                                               },
-                                              ),
-                                  Text("Large",style: TextStyle(color: Colors.black)),       
-                          ],),),
-                        
+
+
                           ],
                         )
                        :
@@ -1372,9 +1437,6 @@ return downloadURL.toString();
                               :
                               SizedBox(),
 
-
-
-                         
                        (colors_blue == true)?
                            Row(
                            children: [
@@ -3457,8 +3519,6 @@ Widget Text_rate(BuildContext context,ctro_name,_hint){
 }
 
 
-
-
 //////////////////   popup Box for Image selection ++++++++++++++++++++++++++++++++++++++ 
 
   void _ImageSelect_Alert(BuildContext context) {
@@ -3665,42 +3725,6 @@ Widget All_media_mobile(BuildContext context, setStatee)
         ),
     );
   }
-////////////// update text widget ++++++++++++++++
- Widget Text_field_up(BuildContext context, ini_value, lebel, hint) {
-    return
-     Container(
-        height: 40,
-        margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: TextFormField(
-          initialValue: ini_value,
-          autofocus: false,
-          onChanged: (value) => ini_value = value,
-        // controller: ctr_name,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please $hint';
-            }
-             return null;
-          },
-          style: TextStyle(color: Colors.black),
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            hintText: '$hint',
-            hintStyle: TextStyle(
-              color: Colors.grey,
-              fontSize: 16,
-            ),
-          ),
-        ));
-
-  
-        }
-//////
 
 ///////////// New Add text widget +++++++++++++++++++++
   Widget Text_field(BuildContext context, ctr_name, lebel, hint) {
@@ -3740,6 +3764,46 @@ Widget All_media_mobile(BuildContext context, setStatee)
           ),
         ));
   }
+
+////////////// update text widget ++++++++++++++++
+//  Widget Text_field_up(BuildContext context, ini_value, lebel, hint) {
+//     return
+//      Container(
+//         height: 40,
+//         margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(10),
+//         ),
+//         child: TextFormField(
+//           initialValue: ini_value,
+//           autofocus: false,
+//           onChanged: (value) => ini_value = value,
+//         // controller: ctr_name,
+//           validator: (value) {
+//             if (value == null || value.isEmpty) {
+//               return 'Please $hint';
+//             }
+//              return null;
+//           },
+//           style: TextStyle(color: Colors.black),
+//           decoration: InputDecoration(
+//             border: InputBorder.none,
+//             contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+//             hintText: '$hint',
+//             hintStyle: TextStyle(
+//               color: Colors.grey,
+//               fontSize: 16,
+//             ),
+//           ),
+//         ));
+
+  
+//         }
+// //////
+
+
+
 
 
  Future<bool> showExitPopup(iid_delete) async {
