@@ -405,80 +405,94 @@ class _ProductAddState extends State<ProductAdd> {
             return Center(child: CircularProgressIndicator());
           }
           return Scaffold(
-              body: Container(
+              body:
+               Container(
             child: ListView(
               children: [
                 Header(
-                  title: "Product Info",
+                  title: "Product",
                 ),
-                SizedBox(height: defaultPadding),
-//////////   TaBar  for Product add Form And List ++++++++++++++++++++++++++++++++++++++
-
-                DefaultTabController(
-                    length: 2,
-                    child: Container(
-                      height: MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            // padding: EdgeInsets.all(defaultPadding),
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                            height: 50,
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(5.0)),
-                            child: TabBar(
-                              indicator: BoxDecoration(
-                                  color: themeBG3,
-                                  borderRadius: BorderRadius.circular(5.0)),
-                              labelColor: Colors.white,
-                              unselectedLabelColor: Colors.white,
-                              tabs: [
-                                Tab(text: "Add New Product"),
-                                Tab(text: "All Products List"),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                              child: TabBarView(
-                            children: [
-                              listCon(context, 'tab1'),
-                              (updateWidget == false)
-                                  ? listList(context, 'tab2')
-                                  : Update_product(context, update_id)
-                            ],
-                          )),
-                        ],
-                      ),
-                    )),
-
-                /// Tabbar End Here ++++++
+                             (  Add_product != true )
+                             ?
+                              (updateWidget != true)
+                                ?
+                               listList(context,"Add / Edit")
+                               :
+                               Update_product(context, update_id,"Edit")
+                               :
+                               listCon(context,"Add New Product")
               ],
             ),
-          ));
+          )   
+          );
         });
   }
 
   ///////////   Widget for Product Add Form  ++++++++++++++++++++++++++++++++++++++++++
   List<String> _selectOption_attri = [];
-  Widget listCon(BuildContext context, tab) {
+  Widget listCon(BuildContext context, sub_text) {
     return Container(
-        // color: themeBG,
-        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-        child: ListView(children: [
-          Container(
+               margin: EdgeInsets.symmetric( horizontal: 5.0),
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child:  ListView(children: [
+            Container(
+              height: 100,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal:10 ),
+              child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                   Add_product = false;
+                });
+
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+               Icon(Icons.arrow_back,color: Colors.blue,size:25),
+                SizedBox(width: 10,),
+              Text(
+                       'Product',
+                       style: themeTextStyle(
+                  size: 18.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.bold,
+                  color: Colors.blue),
+                   ),
+                      SizedBox(width: 5,),
+              Text(
+                       '$sub_text',
+               style: themeTextStyle(
+                  size: 12.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.normal,
+                  color: Colors.black45),
+                   ),
+                ],
+              ),
+            ), 
+
+       
+                      ],
+                    ),
+            )   
+            ,          
+           Container(
               padding: EdgeInsets.all(defaultPadding),
+              margin: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
-              child: Column(
+              child:  Column(
                 children: [
                   Form(
                     key: _formKey,
@@ -1259,123 +1273,203 @@ class _ProductAddState extends State<ProductAdd> {
     );
   }
 
-  Widget listList(BuildContext context, tab) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
-      // padding: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
-      child: ListView(
+
+////////////////  Product List  +++++++++++++++++++++++++++++++++++++++++++++++++++
+bool  Add_product = false;
+ var _number_select = 10;
+
+  Widget listList(BuildContext context,sub_text) {
+    return  Container(
+          margin: EdgeInsets.symmetric( horizontal: 5.0),
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: 
+       ListView(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-            child: Table(
-              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              border: TableBorder(
-                horizontalInside: BorderSide(width: .5, color: Colors.grey),
+          HeadLine(context,
+             Icons.production_quantity_limits,
+             "Product",
+              "$sub_text",
+             () {
+              setState(() {
+               Add_product = true;
+              });
+             },
+               buttonColor: Colors.blue,
+              iconColor: Colors.black
               ),
+         
+           Container(
+            margin: EdgeInsets.all(10),
+             decoration: BoxDecoration(
+            color: secondaryColor,
+            ),
+            child: Column(
               children: [
-                (Responsive.isMobile(context))
-                    ? TableRow(
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).secondaryHeaderColor),
-                        children: [
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text("Product Details",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                            ),
-                          ])
-                    : TableRow(
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).secondaryHeaderColor),
-                        children: [
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('S.No.',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                            ),
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  child: Text('Logo',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  width: 40,
+                  Container(
+                          padding: EdgeInsets.all(10),
+                          color:Theme.of(context).secondaryHeaderColor,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                            Column(
+                            crossAxisAlignment: CrossAxisAlignment.start, 
+                        
+                              children: [
+
+                            Text("Product List",style: themeTextStyle(fw: FontWeight.bold,color: Colors.white,size: 15),),
+                            SizedBox(height: 20,),
+                            Row(children: [
+                              Text("Show",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
+
+                              
+                                  Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 5),
+                                    padding: EdgeInsets.all(2) ,
+                                    height: 20,
+                                    color: Colors.white,
+                                    child: DropdownButton<int>(
+                                       dropdownColor:Colors.white,
+                                       iconEnabledColor: Colors.black,
+                                       hint: Text("$_number_select",style: TextStyle(color:Colors.black,fontSize: 12),),
+                                      value: _number_select,
+                                      items: <int>[10,25, 50, 100].map((int value) {
+                                      return new DropdownMenuItem<int>(
+                                      value: value,
+                                      child: new Text(value.toString(),style: TextStyle(color:Colors.black,fontSize: 12),),
+                                        );
+                                      }).toList(),
+                                      onChanged: (newVal) {
+                                       setState(() {
+                                      _number_select = newVal!;
+                                         });
+                                       }),
+                                  ),
+                            
+
+                              Text("entries",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
+                            ],)
+                            ],),
+                            
+
+                           Container(
+                            height: 40,
+                            width: 300,
+                            child: SearchField())  
+                            ],
+                          )), 
+                          
+                          SizedBox(height: 5,),
+                Table(
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  border: TableBorder(
+                    horizontalInside: BorderSide(width: .5, color: Colors.grey),
+                  ),
+                  children: [
+                    (Responsive.isMobile(context))
+                        ? TableRow(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).secondaryHeaderColor),
+                            children: [
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text("Product Details",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold))),
                                 ),
-                              ),
-                            ),
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('Product Name',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                            ),
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Text('Category Name',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                            ),
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Text("Status",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                            ),
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Text("Date",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                            ),
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Text("Actions",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                            ),
-                          ]),
-                for (var index = 0; index < StoreDocs.length; index++)
-                  (Responsive.isMobile(context))
-                      ? tableRowWidget_mobile(
-                          "${StoreDocs[index]["image"]}",
-                          "${StoreDocs[index]["name"]}",
-                          "${StoreDocs[index]["parent_cate"]}",
-                          "${StoreDocs[index]["status"]}",
-                          "${StoreDocs[index]["date_at"]}",
-                          "${StoreDocs[index]["id"]}")
-                      : tableRowWidget(
-                          "${index + 1}",
-                          "${StoreDocs[index]["image"]}",
-                          "${StoreDocs[index]["name"]}",
-                          "${StoreDocs[index]["parent_cate"]}",
-                          "${StoreDocs[index]["status"]}",
-                          "${StoreDocs[index]["date_at"]}",
-                          "${StoreDocs[index]["id"]}"),
+                              ])
+                        : TableRow(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).secondaryHeaderColor),
+                            children: [
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('S.No.',
+                                        style:
+                                            TextStyle(fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      child: Text('Logo',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                      width: 40,
+                                    ),
+                                  ),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('Product Name',
+                                        style:
+                                            TextStyle(fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Text('Category Name',
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Text("Status",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Text("Date",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Text("Actions",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                              ]),
+                    for (var index = 0; index < StoreDocs.length; index++)
+                      (Responsive.isMobile(context))
+                          ? tableRowWidget_mobile(
+                              "${StoreDocs[index]["image"]}",
+                              "${StoreDocs[index]["name"]}",
+                              "${StoreDocs[index]["parent_cate"]}",
+                              "${StoreDocs[index]["status"]}",
+                              "${StoreDocs[index]["date_at"]}",
+                              "${StoreDocs[index]["id"]}")
+                          : tableRowWidget(
+                              "${index + 1}",
+                              "${StoreDocs[index]["image"]}",
+                              "${StoreDocs[index]["name"]}",
+                              "${StoreDocs[index]["parent_cate"]}",
+                              "${StoreDocs[index]["status"]}",
+                              "${StoreDocs[index]["date_at"]}",
+                              "${StoreDocs[index]["id"]}"),
+                  ],
+                ),
               ],
             ),
           ),
@@ -1588,42 +1682,59 @@ class _ProductAddState extends State<ProductAdd> {
   }
 
 /////////////  Update widget for product Update+++++++++++++++++++++++++
-  Widget Update_product(BuildContext context, id) {
-    return Container(
-        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-        child: ListView(children: [
-          // Text("${id}",style: TextStyle(color: Colors.black),),
-          Container(
-              margin: EdgeInsets.symmetric(vertical: 20),
+  Widget Update_product(BuildContext context, id,sub_text) {
+    return      Container(
+               margin: EdgeInsets.symmetric( horizontal: 5.0),
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
+                      ),
+                  child:   ListView(children: [
+
+                   Container(
+              height: 100,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal:10 ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                            onPressed: () {
-                              setState(() {
-                                updateWidget = false;
-                              });
-                            },
-                            icon: Icon(Icons.arrow_back, color: Colors.black)),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Update Product",
-                          style: GoogleFonts.lato(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
-                        ),
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  updateWidget = false;
+                });
+
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                Icon(Icons.arrow_back,color: Colors.blue,size:25),
+                SizedBox(width: 10,),
+              Text(
+                       'Product',
+                       style: themeTextStyle(
+                  size: 18.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.bold,
+                  color: Colors.blue),
+                   ),
+                      SizedBox(width: 5,),
+              Text(
+                       '$sub_text',
+               style: themeTextStyle(
+                  size: 12.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.normal,
+                  color: Colors.black45),
+                   ),
+                ],
+              ),
+            ), 
                       ],
                     ),
-                  )
-                ],
-              )),
+            ) ,
 
           Container(
               padding: EdgeInsets.all(defaultPadding),

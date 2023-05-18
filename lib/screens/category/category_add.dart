@@ -357,7 +357,7 @@ return downloadURL.toString();
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                Icon(Icons.category_outlined,color: Colors.blue,size:30),
+              Icon(Icons.arrow_back,color: Colors.blue,size:25),
                 SizedBox(width: 10,),
               Text(
                        'Category',
@@ -1260,7 +1260,7 @@ Widget Update_Category(BuildContext context,id,sub_text) {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                Icon(Icons.category_outlined,color: Colors.blue,size:30),
+                Icon(Icons.arrow_back,color: Colors.blue,size:25),
                 SizedBox(width: 10,),
               Text(
                        'Category',

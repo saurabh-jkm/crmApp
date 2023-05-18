@@ -157,7 +157,7 @@ class _AttributeAddState extends State<AttributeAdd> {
              ListView(
               children: [
                 Header(
-                  title: "Category",
+                  title: "Attribute",
                 ),
                              (Add_Attribute != true )
                               ?
@@ -206,7 +206,7 @@ class _AttributeAddState extends State<AttributeAdd> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                Icon(Icons.line_style_sharp,color: Colors.blue,size:30),
+               Icon(Icons.arrow_back,color: Colors.blue,size:25),
                 SizedBox(width: 10,),
               Text(
                        'Attribute',
@@ -709,44 +709,6 @@ class _AttributeAddState extends State<AttributeAdd> {
 /////////////  Update widget for product Update+++++++++++++++++++++++++
   Widget Update_Attribute(BuildContext context, id,sub_text) {
     return
-    
-    
-    
-    //  Container(
-    //     margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-    //     child: ListView(children: [
-    //       Container(
-    //           margin: EdgeInsets.symmetric(vertical: 20),
-    //           child: Row(
-    //             crossAxisAlignment: CrossAxisAlignment.center,
-    //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //             children: [
-    //               Container(
-    //                 child: Row(
-    //                   children: [
-    //                     IconButton(
-    //                         onPressed: () {
-    //                           setState(() {
-    //                             updateWidget = false;
-    //                             Head_Name = null;
-    //                           });
-    //                         },
-    //                         icon: Icon(Icons.arrow_back, color: Colors.black)),
-    //                     SizedBox(
-    //                       width: 10,
-    //                     ),
-    //                     Text(
-    //                       "Update Attribute",
-    //                       style: GoogleFonts.lato(
-    //                           color: Colors.black,
-    //                           fontWeight: FontWeight.bold,
-    //                           fontSize: 20),
-    //                     ),
-    //                   ],
-    //                 ),
-    //               )
-    //             ],
-    //           )),
 
              Container(
                margin: EdgeInsets.symmetric( horizontal: 5.0),
@@ -776,7 +738,7 @@ class _AttributeAddState extends State<AttributeAdd> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                Icon(Icons.line_style_sharp,color: Colors.blue,size:30),
+               Icon(Icons.arrow_back,color: Colors.blue,size:25),
                 SizedBox(width: 10,),
               Text(
                   'Attribute',
@@ -963,7 +925,7 @@ class _AttributeAddState extends State<AttributeAdd> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                Icon(Icons.line_style_sharp,color: Colors.blue,size:30),
+               Icon(Icons.arrow_back,color: Colors.blue,size:25),
                 SizedBox(width: 10,),
               Text(
                        '$Head_Name Attribute',
