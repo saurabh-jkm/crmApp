@@ -4,7 +4,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:slug_it/slug_it.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
