@@ -174,46 +174,38 @@ class _ProductAddState extends State<ProductAdd> {
 
   /// add list
   Future<void> addList() {
-    return _product
-        .add({
-          'name': "${NameController.text}",
-          "Offer": "${offerController.text}",
-          'discount': "${DiscountController.text}",
-          "mrp": "${mrpController.text}",
-          "No_Of_Item": "${NoitemController.text}",
-          'slug_url': "${SlugUrlController.text}",
-          'parent_cate': "$_PerentCate",
-          'status': "$_StatusValue",
-          'size': "$_sizeValue",
-          'brand': "$_brandValue",
-          'image': "$url_img",
-          "date_at": "$Date_at"
-        })
-        .then((value) {
-
-          setState(() {
-            themeAlert(context, "Successfully Submit");
-            Pro_Data();
-          });
-        } )
-        .catchError(
-            (error) => themeAlert(context, 'Failed to Submit', type: "error"));
+    return _product.add({
+      'name': "${NameController.text}",
+      "Offer": "${offerController.text}",
+      'discount': "${DiscountController.text}",
+      "mrp": "${mrpController.text}",
+      "No_Of_Item": "${NoitemController.text}",
+      'slug_url': "${SlugUrlController.text}",
+      'parent_cate': "$_PerentCate",
+      'status': "$_StatusValue",
+      'size': "$_sizeValue",
+      'brand': "$_brandValue",
+      'image': "$url_img",
+      "date_at": "$Date_at"
+    }).then((value) {
+      setState(() {
+        themeAlert(context, "Successfully Submit");
+        Pro_Data();
+      });
+    }).catchError(
+        (error) => themeAlert(context, 'Failed to Submit', type: "error"));
   }
 
   ///
   ///delete
   Future<void> deleteUser(id) {
-    return _product
-        .doc(id)
-        .delete()
-        .then((value) {
-          setState(() {
-            themeAlert(context, "Deleted Successfully ");
-             Pro_Data();
-          });
-        } )
-        .catchError(
-            (error) => themeAlert(context, 'Not find Data', type: "error"));
+    return _product.doc(id).delete().then((value) {
+      setState(() {
+        themeAlert(context, "Deleted Successfully ");
+        Pro_Data();
+      });
+    }).catchError(
+        (error) => themeAlert(context, 'Not find Data', type: "error"));
   }
 
   ///
@@ -264,15 +256,75 @@ class _ProductAddState extends State<ProductAdd> {
   }
 
   Map<String, bool> selectedCheck = {};
+  Map<String, dynamic> subProduDetailList = {};
+  List<dynamic> subProductBox = [];
 
   // change check box value
-  _fnChangeCheckVal(key, Value) {
+  _fnChangeCheckVal(key, Value, checkType) {
     if (this.mounted)
       setState(() {
+        subProductBox = [];
         selectedCheck[key.toLowerCase()] = Value;
+        if (checkType == 'main') {
+          if (subProduDetailList[key] != null) {
+            subProduDetailList[key].forEach((k, v) {
+              if (selectedCheck[k] != null) {
+                selectedCheck.remove(k.toLowerCase());
+              }
+            });
+            subProduDetailList.remove(key);
+          }
+        } else {
+          var temp = (subProduDetailList[checkType] == null)
+              ? {}
+              : subProduDetailList[checkType];
+          if (Value == true) {
+            temp[key.toLowerCase()] = Value;
+          } else {
+            temp.remove(key.toLowerCase());
+          }
+          subProduDetailList[checkType] = temp;
+        }
 
+        // print(subProduDetailList.length);
 
-        print("$selectedCheck  ++++++");
+        if (subProduDetailList.length == 1) {
+          subProduDetailList.forEach((key, value) {
+            value.forEach((k, v) {
+              subProductBox.add(Container(
+                padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
+                decoration: BoxDecoration(color: Colors.blue),
+                child: Text("$k"),
+              ));
+            });
+          });
+        } else if (subProduDetailList.length > 1) {
+          var i = 1;
+          var tempList = [];
+          subProduDetailList.forEach((key, value) {
+            var tempKey;
+            var tempList2 = [];
+            value.forEach((k, v) {
+              tempKey = (tempKey == null) ? k : '$tempKey + $k';
+              if (i == 1) {
+                tempList.add(k);
+              } else {
+                tempList.forEach((val) {
+                  tempList2.add('$val + $k');
+                });
+              }
+            });
+            tempList = (tempList2.isEmpty) ? tempList : tempList2;
+            i++;
+          });
+          tempList.forEach((val) {
+            subProductBox.add(Container(
+              padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text("$val"),
+            ));
+          });
+        }
       });
   }
 
@@ -281,37 +333,28 @@ class _ProductAddState extends State<ProductAdd> {
 
 //////// Update Product Function +++++++++++++++++++++++++++++
 
-  Future<void> updatelist(
-    id, Name, Noitem, slugUrl, _Status,
-     _Category, Mrp, Discount, Offer, _Size, 
-     _Brand, image
-     ) 
-    {
-    return 
-        _product
-        .doc(id)
-        .update({
-          'name': "$Name",
-          "No_Of_Item": "$Noitem",
-          'slug_url': "$slugUrl",
-          'status': "$_Status",
-          'parent_cate': "$_Category",
-          "mrp": "$Mrp",
-          'discount': "$Discount",
-          "Offer": "$Offer",
-          'size': "$_Size",
-          'brand': "$_Brand",
-          "image":"$image",
-          "date_at": "$Date_at"
-        })
-        .then((value) {
-          themeAlert(context, "Successfully Update");
-          setState(() {
-            updateWidget = false;
-          });
-        } )
-        .catchError(
-            (error) => themeAlert(context, 'Failed to update', type: "error"));
+  Future<void> updatelist(id, Name, Noitem, slugUrl, _Status, _Category, Mrp,
+      Discount, Offer, _Size, _Brand, image) {
+    return _product.doc(id).update({
+      'name': "$Name",
+      "No_Of_Item": "$Noitem",
+      'slug_url': "$slugUrl",
+      'status': "$_Status",
+      'parent_cate': "$_Category",
+      "mrp": "$Mrp",
+      'discount': "$Discount",
+      "Offer": "$Offer",
+      'size': "$_Size",
+      'brand': "$_Brand",
+      "image": "$image",
+      "date_at": "$Date_at"
+    }).then((value) {
+      themeAlert(context, "Successfully Update");
+      setState(() {
+        updateWidget = false;
+      });
+    }).catchError(
+        (error) => themeAlert(context, 'Failed to update', type: "error"));
   }
 
 /////
@@ -1056,11 +1099,22 @@ class _ProductAddState extends State<ProductAdd> {
                                                     side: BorderSide(
                                                         width: 2,
                                                         color: Colors.black),
-                                                    value: (selectedCheck[Attri_data[index]["attribute_name"].toLowerCase()] == null)
+                                                    value: (selectedCheck[Attri_data[
+                                                                        index][
+                                                                    "attribute_name"]
+                                                                .toLowerCase()] ==
+                                                            null)
                                                         ? false
-                                                        : selectedCheck[Attri_data[index]["attribute_name"].toLowerCase()],
-                                                      onChanged: (Value) {
-                                                      _fnChangeCheckVal( Attri_data[index]["attribute_name"],Value);
+                                                        : selectedCheck[Attri_data[
+                                                                    index][
+                                                                "attribute_name"]
+                                                            .toLowerCase()],
+                                                    onChanged: (Value) {
+                                                      _fnChangeCheckVal(
+                                                          Attri_data[index][
+                                                              "attribute_name"],
+                                                          Value,
+                                                          'main');
                                                     },
                                                   ),
                                                   Text(
@@ -1088,13 +1142,13 @@ class _ProductAddState extends State<ProductAdd> {
                               children: [
                                 for (var i = 0; i < myAttr.length; i++)
                                   wd_subAttr_Row(context, myAttr[i], i),
-                                  
                               ],
                             ),
                           ),
 
-                          ////  Text Field ++++
-                           Rate_category(context)
+                          //// sub product list =======================================================
+                          for (var title in subProductBox)
+                            wd_sub_product_details(context, title)
                           /////==========
                           // sub attribute ---------------------------------
                         ]),
@@ -1225,7 +1279,7 @@ class _ProductAddState extends State<ProductAdd> {
                 ],
               )),
 
-          //  Rate_category(context)
+          //  wd_sub_product_details(context)
         ]));
   }
 
@@ -1233,8 +1287,7 @@ class _ProductAddState extends State<ProductAdd> {
   Widget wd_subAttr_Row(context, data, i) {
     var innerArr = data['value'];
     if (selectedCheck[data['attribute_name'].toLowerCase()] == true) {
-      return 
-      Container(
+      return Container(
         width: 150.0,
         padding: EdgeInsets.only(left: 10.0),
         child: Column(
@@ -1242,17 +1295,16 @@ class _ProductAddState extends State<ProductAdd> {
           children: [
             Text('${data['attribute_name']}'),
             for (String key in innerArr.keys)
-             wd_subAttr_Column(context, key)
+              wd_subAttr_Column(context, key, data['attribute_name'])
           ],
         ),
       );
-    }
-     else {
+    } else {
       return SizedBox();
     }
   }
 
-  Widget wd_subAttr_Column(context, data) {
+  Widget wd_subAttr_Column(context, data, type) {
     return Container(
       child: Row(
         children: [
@@ -1263,7 +1315,7 @@ class _ProductAddState extends State<ProductAdd> {
                 ? false
                 : selectedCheck[data.toLowerCase()],
             onChanged: (Value) {
-              _fnChangeCheckVal(data, Value);
+              _fnChangeCheckVal(data, Value, type);
             },
           ),
           // end check box
@@ -2958,9 +3010,15 @@ class _ProductAddState extends State<ProductAdd> {
     }
   }
 
-  Widget Rate_category(BuildContext context) {
+  Widget wd_sub_product_details(BuildContext context, title) {
     return Container(
-      color: Colors.grey,
+      margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
+      padding: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 219, 219, 219),
+        border:
+            Border.all(width: 1.0, color: Color.fromARGB(255, 187, 187, 187)),
+      ),
       child: Column(
         children: [
           Row(
@@ -2972,6 +3030,7 @@ class _ProductAddState extends State<ProductAdd> {
                     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    title,
                     Text("MRP (₹)",
                         style: themeTextStyle(
                             color: Colors.black,
@@ -3405,7 +3464,6 @@ class _ProductAddState extends State<ProductAdd> {
 //             ),
 //           ),
 //         ));
-
 
 //         }
 // //////
