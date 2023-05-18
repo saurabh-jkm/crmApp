@@ -265,9 +265,70 @@ class _ProductAddState extends State<ProductAdd> {
       setState(() {
         subProductBox = [];
         selectedCheck[key.toLowerCase()] = Value;
+        if (checkType == 'main') {
+          if (subProduDetailList[key] != null) {
+            subProduDetailList[key].forEach((k, v) {
+              if (selectedCheck[k] != null) {
+                selectedCheck.remove(k.toLowerCase());
+              }
+            });
+            subProduDetailList.remove(key);
+          }
+        } else {
+          var temp = (subProduDetailList[checkType] == null)
+              ? {}
+              : subProduDetailList[checkType];
+          if (Value == true) {
+            temp[key.toLowerCase()] = Value;
+          } else {
+            temp.remove(key.toLowerCase());
+          }
+          subProduDetailList[checkType] = temp;
+        }
+
+        // print(subProduDetailList.length);
+
+        if (subProduDetailList.length == 1) {
+          subProduDetailList.forEach((key, value) {
+            value.forEach((k, v) {
+              subProductBox.add(Container(
+                padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
+                decoration: BoxDecoration(color: Colors.blue),
+                child: Text("$k"),
+              ));
+            });
+          });
+        } else if (subProduDetailList.length > 1) {
+          var i = 1;
+          var tempList = [];
+          subProduDetailList.forEach((key, value) {
+            var tempKey;
+            var tempList2 = [];
+            value.forEach((k, v) {
+              tempKey = (tempKey == null) ? k : '$tempKey + $k';
+              if (i == 1) {
+                tempList.add(k);
+              } else {
+                tempList.forEach((val) {
+                  tempList2.add('$val + $k');
+                });
+              }
+            });
+            tempList = (tempList2.isEmpty) ? tempList : tempList2;
+            i++;
+          });
+          tempList.forEach((val) {
+            subProductBox.add(Container(
+              padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text("$val"),
+            ));
+          });
+        }
       });
   }
 
+  /// ======================================================
   /// ======================================================
 
 //////// Update Product Function +++++++++++++++++++++++++++++
@@ -427,10 +488,11 @@ class _ProductAddState extends State<ProductAdd> {
           );
         });
   }
-
+  
   ///////////   Widget for Product Add Form  ++++++++++++++++++++++++++++++++++++++++++
+  ///
   List<String> _selectOption_attri = [];
-  Widget listCon(BuildContext context, sub_text) {
+  Widget listCon(BuildContext context,sub_text) {
     return Container(
                margin: EdgeInsets.symmetric( horizontal: 5.0),
                       height: MediaQuery.of(context).size.height,
@@ -1095,10 +1157,15 @@ class _ProductAddState extends State<ProductAdd> {
                               children: [
                                 for (var i = 0; i < myAttr.length; i++)
                                   wd_subAttr_Row(context, myAttr[i], i),
-                                  
                               ],
                             ),
                           ),
+
+                          //// sub product list =======================================================
+                          for (var title in subProductBox)
+                            wd_sub_product_details(context, title)
+                          /////==========
+                          // sub attribute ---------------------------------
                         ]),
 
                   Row(
@@ -1273,12 +1340,11 @@ class _ProductAddState extends State<ProductAdd> {
     );
   }
 
-
 ////////////////  Product List  +++++++++++++++++++++++++++++++++++++++++++++++++++
 bool  Add_product = false;
  var _number_select = 10;
 
-  Widget listList(BuildContext context,sub_text) {
+   Widget listList(BuildContext context,sub_text) {
     return  Container(
           margin: EdgeInsets.symmetric( horizontal: 5.0),
                       height: MediaQuery.of(context).size.height,
@@ -1680,6 +1746,7 @@ bool  Add_product = false;
       )
     ]);
   }
+
 
 /////////////  Update widget for product Update+++++++++++++++++++++++++
   Widget Update_product(BuildContext context, id,sub_text) {
@@ -3041,6 +3108,8 @@ bool  Add_product = false;
               ),
         ]));
   }
+
+///////////////////////////
 
 ///////////////////////////
   Discount_cal() {
