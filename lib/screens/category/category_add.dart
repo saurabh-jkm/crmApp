@@ -1,5 +1,5 @@
 
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -281,6 +281,10 @@ return downloadURL.toString();
 ///// ++++++++++++++++++++++++++++++++++++++
 
 
+ bool Add_Category = false;
+
+
+
   @override
   void initState() {
     _CateData();
@@ -311,52 +315,15 @@ return downloadURL.toString();
                 Header(
                   title: "Category",
                 ),
-                SizedBox(height: defaultPadding),
-                DefaultTabController(
-                    length: 2,
-                    child: Container(
-                      height: MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            // padding: EdgeInsets.all(defaultPadding),
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                            height: 50,
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(5.0)),
-                            child: TabBar(
-                              indicator: BoxDecoration(
-                                  color: themeBG3,
-                                  borderRadius: BorderRadius.circular(5.0)),
-                              labelColor: Colors.white,
-                              unselectedLabelColor: Colors.white,
-                              tabs: [
-                                Tab(text: "Add New"),
-                                Tab(text: "List All"),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                              child: TabBarView(
-                            children: [
-                              listCon(context, 'tab1'),
-                              (updateWidget == false)
-                              ?
-                              listList(context, 'tab2')
-                              :
-                              Update_Category(context,update_id)
-                            ],
-                          )),
-                        ],
-                      ),
-                    )),
+                             (Add_Category != true )
+                             ?
+                              (updateWidget != true)
+                                ?
+                               listList(context,"Add / Edit")
+                               :
+                               Update_Category(context,update_id,"Edit")
+                               :
+                               listCon(context,"Add New Category")
               ],
             ),
           ));
@@ -364,18 +331,71 @@ return downloadURL.toString();
   }
 
 //// Widget for Start_up
-  Widget listCon(BuildContext context, tab) {
-    return Container(
-        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-        child: ListView(children: [
+  Widget listCon(BuildContext context,sub_text) {
+    return   Container(
+               margin: EdgeInsets.symmetric( horizontal: 5.0),
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child:  ListView(children: [
+            Container(
+              height: 100,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal:10 ),
+              child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                   Add_Category = false;
+                });
+
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                Icon(Icons.category_outlined,color: Colors.blue,size:30),
+                SizedBox(width: 10,),
+              Text(
+                       'Category',
+                       style: themeTextStyle(
+                  size: 18.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.bold,
+                  color: Colors.blue),
+                   ),
+                      SizedBox(width: 5,),
+              Text(
+                       '$sub_text',
+               style: themeTextStyle(
+                  size: 12.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.normal,
+                  color: Colors.black45),
+                   ),
+                ],
+              ),
+            ), 
+
+       
+                      ],
+                    ),
+            )   
+            ,          
            Container(
               padding: EdgeInsets.all(defaultPadding),
+              margin: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
               child: Column(
                 children: [
+
                   Form(
                     key: _formKey,
                     child: Row(
@@ -776,128 +796,203 @@ return downloadURL.toString();
   }
 
 ////////////////////////////// List ++++++++++++++++++++++++++++++++++++++++++++
-
-  Widget listList(BuildContext context, tab) {
+ var _number_tickets_total = 10;
+  Widget listList(BuildContext context,sub_text) {
       return
       Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
-      //padding: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
-      child: ListView(
-        children: [
-          ClipRRect(
-                      borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10),
-                            topRight: Radius.circular(10)),
-                      child:
-                       Table(
-                        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                        border: 
-                        TableBorder(
-                         horizontalInside: BorderSide(width: .5, color: Colors.grey),
-                        ),
-                        children: [
-                           (Responsive.isMobile(context)) 
-                            ?
-                              TableRow(
-                              decoration: BoxDecoration(
-                                  color: Theme.of(context).secondaryHeaderColor),
-                              children: [
-                                 TableCell(
-                                  verticalAlignment: TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text("Category Details",
-                                    style: TextStyle(fontWeight: FontWeight.bold))
-                                  ),
-                                ),
-                              
-                              ]
-                              )
-                           : 
-                          TableRow(
-                              decoration: BoxDecoration(
-                                  color: Theme.of(context).secondaryHeaderColor),
-                              children: [
-                                 TableCell(
-                                  verticalAlignment: TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'S.No.',
-                                       style: TextStyle(fontWeight: FontWeight.bold)),
-                                  ),
-                                ),
-                                TableCell(
-                                  verticalAlignment: TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: SizedBox(
-                                      child: Text(
-                                      'Logo',
-                                       style: TextStyle(fontWeight: FontWeight.bold)),
-                                      width: 40,
-                                    ),
-                                  ),
-                                ),
-                                TableCell(
-                                  verticalAlignment: TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "Category Name",
-                                       style: TextStyle(fontWeight: FontWeight.bold)),
-                                  ),
-                                ),
-                                TableCell(
-                                  verticalAlignment: TableCellVerticalAlignment.middle,
-                                  child: Text(
-                                      "Parent Category",
-                                       style: TextStyle(fontWeight: FontWeight.bold)),
-                                ),
-                                TableCell(
-                                  verticalAlignment: TableCellVerticalAlignment.middle,
-                                  child:Text("Status",
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
-                                ),
-                                TableCell(
-                                  verticalAlignment: TableCellVerticalAlignment.middle,
-                                  child: 
-                                      Text("Date",
-                                      style: TextStyle(fontWeight: FontWeight.bold)),
-                                ),
-                                TableCell(
-                                  verticalAlignment: TableCellVerticalAlignment.middle,
-                                  child:  Text("Actions",
-                                             style: TextStyle(fontWeight: FontWeight.bold)),
-                                ),
-                              ]
-                              ),
-                             for (var index = 0; index < StoreDocs.length; index++)
-                               (Responsive.isMobile(context)) 
-                              ?
-                                 tableRowWidget_mobile(
-                                "${StoreDocs[index]["image"]}",
-                                 "${StoreDocs[index]["category_name"]}",
-                                 "${StoreDocs[index]["parent_cate"]}",
-                                 "${StoreDocs[index]["status"]}",
-                                 "${StoreDocs[index]["date_at"]}",
-                                 "${StoreDocs[index]["id"]}"
-                                 )
-                             :
-                              tableRowWidget( 
-                            "${index + 1}",
-                            "${StoreDocs[index]["image"]}",
-                            "${StoreDocs[index]["category_name"]}",
-                            "${StoreDocs[index]["parent_cate"]}",
-                            "${StoreDocs[index]["status"]}",
-                            "${StoreDocs[index]["date_at"]}",
-                            "${StoreDocs[index]["id"]}"),
-                            ],
+          margin: EdgeInsets.symmetric( horizontal: 5.0),
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
                       ),
+                      child: 
+       ListView(
+        children: [
+          HeadLine(context,
+             Icons.category_outlined,
+             "Category",
+              "$sub_text",
+             () {
+              setState(() {
+               Add_Category = true;
+              });
+             },
+               buttonColor: Colors.blue,
+              iconColor: Colors.black
+              ),
+         
+           Container(
+            margin: EdgeInsets.all(10),
+             decoration: BoxDecoration(
+            color: secondaryColor,
+            ),
+            child:
+                       Column(
+                         children: [
+                         Container(
+                          padding: EdgeInsets.all(10),
+                          color:Theme.of(context).secondaryHeaderColor,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                            Column(
+                            crossAxisAlignment: CrossAxisAlignment.start, 
+                        
+                              children: [
+
+                            Text("Category List",style: themeTextStyle(fw: FontWeight.bold,color: Colors.white,size: 15),),
+                            SizedBox(height: 20,),
+                            Row(children: [
+                              Text("Show",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
+
+                              
+                                  Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 5),
+                                    padding: EdgeInsets.all(2) ,
+                                    height: 20,
+                                    color: Colors.white,
+                                    child: DropdownButton<int>(
+                                       dropdownColor:Colors.white,
+                                       iconEnabledColor: Colors.black,
+                                       hint: Text("$_number_tickets_total",style: TextStyle(color:Colors.black,fontSize: 12),),
+                                      value: _number_tickets_total,
+                                      items: <int>[10,25, 50, 100].map((int value) {
+                                      return new DropdownMenuItem<int>(
+                                      value: value,
+                                      child: new Text(value.toString(),style: TextStyle(color:Colors.black,fontSize: 12),),
+                                        );
+                                      }).toList(),
+                                      onChanged: (newVal) {
+                                       setState(() {
+                                      _number_tickets_total = newVal!;
+                                         });
+                                       }),
+                                  ),
+                            
+
+                              Text("entries",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
+                            ],)
+                            ],),
+                            
+
+                           Container(
+                            height: 40,
+                            width: 300,
+                            child: SearchField())  
+                            ],
+                          )), 
+                          
+                          SizedBox(height: 5,),
+
+                           Table(
+                            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                            border: 
+                            TableBorder(
+                             horizontalInside: BorderSide(width: .5, color: Colors.grey),
+                             ),
+                            children: [ 
+                               (Responsive.isMobile(context)) 
+                                ?
+                                  TableRow(
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context).secondaryHeaderColor),
+                                  children: [
+                                     TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text("Category List",
+                                        style: TextStyle(fontWeight: FontWeight.bold))
+                                      ),
+                                    ),
+                                  
+                                  ]
+                                  )
+                               : 
+                              TableRow(
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context).secondaryHeaderColor),
+                                  children: [
+                                     TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          'S.No.',
+                                           style: TextStyle(fontWeight: FontWeight.bold)),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: SizedBox(
+                                          child: Text(
+                                          'Logo',
+                                           style: TextStyle(fontWeight: FontWeight.bold)),
+                                          width: 40,
+                                        ),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "Category Name",
+                                           style: TextStyle(fontWeight: FontWeight.bold)),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: Text(
+                                          "Parent Category",
+                                           style: TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child:Text("Status",
+                                      style: TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child: 
+                                          Text("Date",
+                                          style: TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.middle,
+                                      child:  Text("Actions",
+                                                 style: TextStyle(fontWeight: FontWeight.bold)),
+                                    ),
+                                  ]
+                                  ),
+                                 for (var index = 0; index < StoreDocs.length; index++)
+                                   (Responsive.isMobile(context)) 
+                                  ?
+                                     tableRowWidget_mobile(
+                                    "${StoreDocs[index]["image"]}",
+                                     "${StoreDocs[index]["category_name"]}",
+                                     "${StoreDocs[index]["parent_cate"]}",
+                                     "${StoreDocs[index]["status"]}",
+                                     "${StoreDocs[index]["date_at"]}",
+                                     "${StoreDocs[index]["id"]}"
+                                     )
+                                 :
+                                  tableRowWidget( 
+                                "${index + 1}",
+                                "${StoreDocs[index]["image"]}",
+                                "${StoreDocs[index]["category_name"]}",
+                                "${StoreDocs[index]["parent_cate"]}",
+                                "${StoreDocs[index]["status"]}",
+                                "${StoreDocs[index]["date_at"]}",
+                                "${StoreDocs[index]["id"]}"),
+                                ],
+                      ),
+                         ],
+                       ),
                     ),
         ],
       ),
@@ -975,7 +1070,7 @@ return downloadURL.toString();
                       child: IconButton(
                           onPressed: () {
                             setState(() {
-                                updateWidget = true;
+                                 updateWidget = true;
                                  update_id = iid;
                                  Update_initial(iid);
                             });
@@ -1136,44 +1231,65 @@ return downloadURL.toString();
 
 
 /////////////  Update widget for product Update+++++++++++++++++++++++++
-Widget Update_Category(BuildContext context,id) {
+Widget Update_Category(BuildContext context,id,sub_text) {
  
   return 
-            Container(
-            margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-            child:  ListView(children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 20),
-                    child:
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                    Container(
-                      child:
-                       Row(
-                        children: [
-                      IconButton(onPressed: (){
-                      setState(() {
-                      updateWidget = false;
-                      });
-                        }, icon:  Icon(Icons.arrow_back,color: Colors.black)),
- 
-                          SizedBox(width: 10,),
-                          Text("Update Product",
-                          style: GoogleFonts.lato(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20
-                          ),),
-                        ],
+           Container(
+               margin: EdgeInsets.symmetric( horizontal: 5.0),
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
                       ),
-                    )
-                  ],)
-                  ),
+                  child:   ListView(children: [
+
+                   Container(
+              height: 100,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal:10 ),
+              child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  updateWidget = false;
+                });
+
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                Icon(Icons.category_outlined,color: Colors.blue,size:30),
+                SizedBox(width: 10,),
+              Text(
+                       'Category',
+                       style: themeTextStyle(
+                  size: 18.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.bold,
+                  color: Colors.blue),
+                   ),
+                      SizedBox(width: 5,),
+              Text(
+                       '$sub_text',
+               style: themeTextStyle(
+                  size: 12.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.normal,
+                  color: Colors.black45),
+                   ),
+                ],
+              ),
+            ), 
+                      ],
+                    ),
+            ) ,
 
                   Container(
                       padding: EdgeInsets.all(defaultPadding),
+                      margin: EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
                         color: Colors.black12,
                         borderRadius:

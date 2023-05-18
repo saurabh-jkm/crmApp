@@ -270,13 +270,10 @@ class _ProductAddState extends State<ProductAdd> {
     if (this.mounted)
       setState(() {
         selectedCheck[key.toLowerCase()] = Value;
-
-
         print("$selectedCheck  ++++++");
       });
   }
 
-  /// ======================================================
   /// ======================================================
 
 //////// Update Product Function +++++++++++++++++++++++++++++
@@ -1087,14 +1084,15 @@ class _ProductAddState extends State<ProductAdd> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 for (var i = 0; i < myAttr.length; i++)
-                                  wd_subAttr_Row(context, myAttr[i], i),
-                                  
+                                    wd_subAttr_Row(context, myAttr[i], i),     
                               ],
                             ),
                           ),
 
                           ////  Text Field ++++
+                          
                            Rate_category(context)
+
                           /////==========
                           // sub attribute ---------------------------------
                         ]),

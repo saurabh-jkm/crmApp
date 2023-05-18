@@ -2,218 +2,12 @@
 
 import 'package:flutter/material.dart';
 
+import '../constants.dart';
+import '../responsive.dart';
 import 'style.dart';
 
-Widget myFormField(BuildContext context, controller, label,
-    {readOnly = false,
-    onlyNumber = false,
-    icon = '',
-    fn = '',
-    maxLine = 1,
-    maxLength = 100}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        "$label",
-        style: themeTextStyle(
-            ftFamily: 'montserrat', fw: FontWeight.bold, color: themeBG2),
-      ),
-      SizedBox(height: 8.0),
-      Container(
-        height: (maxLine == 1) ? 50.0 : maxLine * 30.0,
-        padding: EdgeInsets.symmetric(
-            vertical: (maxLine == 1) ? 0.0 : 7.0, horizontal: 10.0),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-                width: 1.0, color: Color.fromARGB(255, 206, 206, 206)),
-            borderRadius: BorderRadius.circular(10.0)),
-        child: TextFormField(
-          textInputAction:
-              (maxLine == 1) ? TextInputAction.go : TextInputAction.newline,
-
-          onChanged: (value) {
-            if (value.length == maxLength) {
-              FocusScope.of(context).nextFocus();
-            }
-          },
-
-          style: TextStyle(fontSize: 16.0),
-          // onTap: () {
-          //   if (fn == 'date_of_admission') {
-          //     datePick('date_of_admission');
-          //   } else if (fn == 'date_of_discharge') {
-          //     datePick('date_of_discharge');
-          //   }
-          // },
-          controller: controller,
-          readOnly: (readOnly) ? true : false,
-          maxLength: (maxLength == 100) ? 200 : maxLength,
-          maxLines: (maxLine == 1) ? 1 : maxLine,
-          keyboardType: (onlyNumber)
-              ? TextInputType.number
-              : (maxLine == 1)
-                  ? TextInputType.text
-                  : TextInputType.multiline,
-
-          obscureText: (label == 'Change PIN - (Optional)') ? true : false,
-          decoration: InputDecoration(
-            counterText: "",
-            hintText: label,
-            filled: true,
-            fillColor: Color.fromARGB(255, 255, 255, 255),
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.0),
-              borderSide: const BorderSide(
-                width: 0,
-                style: BorderStyle.none,
-              ),
-            ),
-            suffixIcon: (icon == '')
-                ? Text("")
-                : Icon(
-                    icon,
-                    color: themeBG2,
-                  ),
-          ),
-        ),
-      ),
-      SizedBox(height: 15.0),
-    ],
-  );
-}
-
-//////demo
 
 
-//////
-
-// // OTP INIPUT
-// Widget boxInput(BuildContext context, label, pin1, pin2, pin3, pin4,
-//     {passwordType = false, borderBottomOnly: false}) {
-//   return Column(
-//     crossAxisAlignment: CrossAxisAlignment.center,
-//     children: [
-//       Text("$label"),
-//       SizedBox(height: 10.0),
-//       Row(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           SizedBox(
-//             height: 45,
-//             width: 45,
-//             child: TextField(
-//               autofocus: true,
-//               textAlign: TextAlign.center,
-//               keyboardType: TextInputType.number,
-//               controller: pin1,
-//               maxLength: 1,
-//               obscureText: passwordType,
-//               style: themeTextStyle(
-//                   size: (passwordType == true) ? 30 : 16, color: themeBG2),
-//               cursorColor: Theme.of(context).primaryColor,
-//               decoration: InputDecoration(
-//                   border: (borderBottomOnly == true)
-//                       ? UnderlineInputBorder()
-//                       : OutlineInputBorder(),
-//                   counterText: '',
-//                   hintStyle: TextStyle(color: Colors.black, fontSize: 20.0)),
-//               onChanged: (value) {
-//                 if (value.length == 1) {
-//                   FocusScope.of(context).nextFocus();
-//                 }
-//               },
-//             ),
-//           ),
-//           SizedBox(width: 10.0),
-//           SizedBox(
-//             height: 45,
-//             width: 45,
-//             child: TextField(
-//               autofocus: false,
-//               textAlign: TextAlign.center,
-//               keyboardType: TextInputType.number,
-//               controller: pin2,
-//               maxLength: 1,
-//               obscureText: passwordType,
-//               style: themeTextStyle(
-//                   size: (passwordType == true) ? 30 : 16, color: themeBG2),
-//               cursorColor: Theme.of(context).primaryColor,
-//               decoration: InputDecoration(
-//                   border: (borderBottomOnly == true)
-//                       ? UnderlineInputBorder()
-//                       : OutlineInputBorder(),
-//                   counterText: '',
-//                   hintStyle: TextStyle(color: Colors.black, fontSize: 20.0)),
-//               onChanged: (value) {
-//                 if (value.length == 1) {
-//                   FocusScope.of(context).nextFocus();
-//                 }
-//               },
-//             ),
-//           ),
-//           SizedBox(width: 10.0),
-//           SizedBox(
-//             height: 45,
-//             width: 45,
-//             child: TextField(
-//               autofocus: false,
-//               textAlign: TextAlign.center,
-//               keyboardType: TextInputType.number,
-//               controller: pin3,
-//               maxLength: 1,
-//               obscureText: passwordType,
-//               style: themeTextStyle(
-//                   size: (passwordType == true) ? 30 : 16, color: themeBG2),
-//               cursorColor: Theme.of(context).primaryColor,
-//               decoration: InputDecoration(
-//                   border: (borderBottomOnly == true)
-//                       ? UnderlineInputBorder()
-//                       : OutlineInputBorder(),
-//                   counterText: '',
-//                   hintStyle: TextStyle(color: Colors.black, fontSize: 20.0)),
-//               onChanged: (value) {
-//                 if (value.length == 1) {
-//                   FocusScope.of(context).nextFocus();
-//                 }
-//               },
-//             ),
-//           ),
-//           SizedBox(width: 10.0),
-//           SizedBox(
-//             height: 45,
-//             width: 45,
-//             child: TextField(
-//               autofocus: false,
-//               textAlign: TextAlign.center,
-//               keyboardType: TextInputType.number,
-//               controller: pin4,
-//               maxLength: 1,
-//               obscureText: passwordType,
-//               cursorColor: Theme.of(context).primaryColor,
-//               style: themeTextStyle(
-//                   size: (passwordType == true) ? 30 : 16, color: themeBG2),
-//               decoration: InputDecoration(
-//                   border: (borderBottomOnly == true)
-//                       ? UnderlineInputBorder()
-//                       : OutlineInputBorder(),
-//                   counterText: '',
-//                   hintStyle: TextStyle(color: Colors.black, fontSize: 20.0)),
-//               onChanged: (value) {
-//                 if (value.length == 1) {
-//                   FocusScope.of(context).nextFocus();
-//                 }
-//               },
-//             ),
-//           ),
-//         ],
-//       ),
-//     ],
-//   );
-// }
 
 // Button
 Widget themeButton3(BuildContext context, fn,
@@ -654,4 +448,67 @@ pleaseWait(BuildContext context, {containerHeight: 300.0}) {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [progress(), SizedBox(height: 20.0), Text("wait")]),
   );
+}
+
+
+HeadLine(BuildContext context,icon_def, head_text,Sub_text, fn,{arg: 0, buttonColor: '' ,Buttonlabel: "Update",iconColor: ""}){
+  return
+  Container(
+              height: 100,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal:10 ),
+              child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+
+              Icon(icon_def,color: iconColor,size:30),
+              SizedBox(width: 10,),
+            Text(
+           '$head_text',
+           style: themeTextStyle(
+                size: 18.0,
+                ftFamily: 'ms',
+                fw: FontWeight.bold,
+                color: Colors.black),
+                 ),
+          SizedBox(width: 5,),
+            Text(
+           '$Sub_text',
+             style: themeTextStyle(
+                size: 12.0,
+                ftFamily: 'ms',
+                fw: FontWeight.normal,
+                color: Colors.black45),
+
+                 ),
+
+              ],
+            ), 
+
+              ElevatedButton.icon(
+                style: TextButton.styleFrom(
+                  backgroundColor: buttonColor,
+                  padding:
+                   EdgeInsets.symmetric(
+                    horizontal: defaultPadding * 1.5,
+                    vertical:
+                        defaultPadding / (Responsive.isMobile(context) ? 2 : 1),
+                  ),
+                ),
+                onPressed: () {
+          if (arg == 0) {
+            fn();
+          } else {
+            fn(arg);
+          }
+        },
+                icon: Icon(Icons.add),
+                label: Text("Add New"),
+              ),
+                      ],
+                    ),
+            );
 }

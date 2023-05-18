@@ -64,105 +64,10 @@ void initState() {
                 //   ),
               ],
             ),
-
-
-
-      //     ElevatedButton(onPressed: ()async{
-      //         pickFile();
-      //  //  listFiles();
-      //          }, child: Text("Upload ImAGE")),
-
-
-
           ],
         ),
       ),
     );
   }
-
-  // pickFile() async {
-  //  if(!kIsWeb){
-  //   final results = await FilePicker.platform.pickFiles(
-  //         allowMultiple: false,
-  //         type: FileType.custom,
-  //         allowedExtensions: ['png','jpg'],
-  //              );
-  //         if(results == null){
-  //           themeAlert(context, 'Not find selected', type: "error");
-  //           return null;
-  //         }    
-  //         final path = results.files.single.path;
-  //         final fileName = results.files.single.name;
-  //         setState(() {
-  //         print("$path+++++");
-  //         print("$fileName------");
-  //          UploadFile(path!,fileName).then((value) => themeAlert(context, "Upload Successfully ")); 
-  //         });
-  //  }
-  //  else if (kIsWeb){
-
-  //     // final ImagePicker _picker = ImagePicker();
-  //     // XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-  //     //     if(image != null){
-  //     //     String filePath = path.dirname(image.path);
-  //     //     String filename = path.basename(image.name); 
-  //     //     setState(() 
-  //     //     {
-           
-  //     //      UploadFile(filePath,filename).then((value) => themeAlert(context, "Upload Successfully ")); 
-  //     //     });
-  //     //     }   
-  //     //     else{  
-  //     //     themeAlert(context, 'Not find selected', type: "error");
-  //     //       return null;
-  //     //     }
-    
-  //   //  final ImagePicker _picker = ImagePicker();
-  //   //   XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-  //   //   if (image != null) {
-  //   //     var f = await image.readAsBytes();
-
-  //   //       String filePath = path.dirname(image.path);
-  //   //       String filename = path.basename(image.name); 
-  //   //       String imgPath = image.path;
-          
-  //   //     setState(() {
-  //   //       // print("$filePath+++++");
-  //   //       // print("$filename------");
-  //   //       // print("${image.path}oo");
-  //   //      // print("$f*******");
-  //   //        UploadFile(imgPath,filename).then((value) => themeAlert(context, "Upload Successfully ")); 
-  //   //     });
-  //   //   }
-     
-  //    final results = await FilePicker.platform.pickFiles(
-  //         allowMultiple: false,
-  //         type: FileType.custom,
-  //         allowedExtensions: ['png','jpg'],
-  //              );
-  //         if(results != null){
-  //            Uint8List? UploadImage =  results.files.single.bytes;
-  //            String fileName = results.files.single.name;
-  //            Reference reference = FirebaseStorage.instance
-  //            .ref('media/$fileName');
-  //            final UploadTask uploadTask = reference.putData(UploadImage!);
-  //            uploadTask.whenComplete(() =>  themeAlert(context, "Upload Successfully "));
-  //         //    String? filePath = results.files.single.path;
-  //         // setState(() {
-  //         // print("$fileName+++++");
-  //         // print("$filePath------");
-  //         //  UploadFile(filePath!,fileName).then((value) => themeAlert(context, "Upload Successfully ")); 
-  //         // });
-
-  //         }
-  //         else{
-  //               themeAlert(context, 'Not find selected', type: "error");
-  //           return null;
-
-  //         }    
-
-  //   }
-
-   // }
 }
  

@@ -40,7 +40,7 @@ class _HeaderState extends State<Header> {
           ),
         if (!Responsive.isMobile(context))
           Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
-        // Expanded(child: SearchField()),
+        
         ProfileCard()
       ],
     );
@@ -102,7 +102,6 @@ class SearchField extends StatelessWidget {
         ),
         suffixIcon: InkWell(
           onTap: () {
-
           },
           child: Container(
             padding: EdgeInsets.all(defaultPadding * 0.75),
