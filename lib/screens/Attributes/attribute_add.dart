@@ -153,58 +153,25 @@ class _AttributeAddState extends State<AttributeAdd> {
           ////////
           return Scaffold(
               body: Container(
-            child: ListView(
+            child:
+             ListView(
               children: [
                 Header(
-                  title: "Attibute",
+                  title: "Category",
                 ),
-                SizedBox(height: defaultPadding),
-                DefaultTabController(
-                    length: 2,
-                    child: Container(
-                      height: MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            // padding: EdgeInsets.all(defaultPadding),
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                            height: 50,
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(5.0)),
-                            child: TabBar(
-                              indicator: BoxDecoration(
-                                  color: themeBG3,
-                                  borderRadius: BorderRadius.circular(5.0)),
-                              labelColor: Colors.white,
-                              unselectedLabelColor: Colors.white,
-                              tabs: [
-                                Tab(text: "Add New"),
-                                Tab(text: "List All"),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                              child: TabBarView(
-                            children: [
-                              listCon(context, 'tab1'),
-                              (updateWidget == false)
-                                  ? (update_subAttribute == true &&
-                                          updateWidget == false)
-                                      ? Update_Sub_Attribute(context, update_id)
-                                      : listList(context, 'tab2')
-                                      : Update_Attribute(context, update_id)
-                            ],
-                          )),
-                        ],
-                      ),
-                    )),
+                             (Add_Attribute != true )
+                              ?
+                               (updateWidget != true )
+                                  ?
+                                   (update_subAttribute == true && updateWidget == false)
+                                    ? 
+                                     Update_Sub_Attribute(context, update_id,"View/Add")
+                                    : 
+                                    listList(context,"Add / Edit")
+                                  :
+                                 Update_Attribute(context, update_id,"Edit")
+                               :
+                               listCon(context,"Add New Attribute")
               ],
             ),
           ));
@@ -212,17 +179,69 @@ class _AttributeAddState extends State<AttributeAdd> {
   }
 
 //// Widget for Start_up
-  Widget listCon(BuildContext context, tab) {
+  Widget listCon(BuildContext context, sub_text) {
     return Container(
-        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-        child: ListView(children: [
-          Container(
+               margin: EdgeInsets.symmetric( horizontal: 5.0),
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child:  ListView(children: [
+            Container(
+              height: 100,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal:10 ),
+              child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                   Add_Attribute = false;
+                });
+
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                Icon(Icons.line_style_sharp,color: Colors.blue,size:30),
+                SizedBox(width: 10,),
+              Text(
+                       'Attribute',
+                       style: themeTextStyle(
+                  size: 18.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.bold,
+                  color: Colors.blue),
+                   ),
+                      SizedBox(width: 5,),
+              Text(
+                       '$sub_text',
+               style: themeTextStyle(
+                  size: 12.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.normal,
+                  color: Colors.black45),
+                   ),
+                ],
+              ),
+            ), 
+
+       
+                      ],
+                    ),
+            )   
+            ,          
+           Container(
               padding: EdgeInsets.all(defaultPadding),
+              margin: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
-              child: Column(
+              child:  Column(
                 children: [
                   Form(
                       key: _formKey,
@@ -327,103 +346,185 @@ class _AttributeAddState extends State<AttributeAdd> {
   }
 
 ////////////////////////////// List ++++++++++++++++++++++++++++++++++++++++++++
-
-  Widget listList(BuildContext context, tab) {
+  bool Add_Attribute = false;
+   var _number_select = 10;
+  Widget listList(BuildContext context, sub_text) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
-      //padding: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
-      child: ListView(
+          margin: EdgeInsets.symmetric( horizontal: 5.0),
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: 
+       ListView(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-            child: Table(
-              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              border: TableBorder(
-                horizontalInside: BorderSide(width: .5, color: Colors.grey),
+          HeadLine(context,
+             Icons.line_style_sharp,
+             "Attribute",
+              "$sub_text",
+             () {
+              setState(() {
+               Add_Attribute = true;
+              });
+             },
+               buttonColor: Colors.blue,
+              iconColor: Colors.black
               ),
-              children: [
-                (Responsive.isMobile(context))
-                    ? TableRow(
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).secondaryHeaderColor),
-                        children: [
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text("Category Details",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                            ),
-                          ])
-                    :
-                     TableRow(
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).secondaryHeaderColor),
-                        children: [
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('S.No.',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                            ),
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Name",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                            ),
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Text("Status",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                            ),
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Text("Date",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                            ),
-                            TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Text("Actions",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                            ),
-                          ]),
-                for (var index = 0; index < StoreDocs.length; index++)
-                  (Responsive.isMobile(context))
-                      ? tableRowWidget_mobile(
-                          "${StoreDocs[index]["attribute_name"]}",
-                          "${StoreDocs[index]["status"]}",
-                          "${StoreDocs[index]["date_at"]}",
-                          "${StoreDocs[index]["id"]}")
-                      : tableRowWidget(
-                          "${index + 1}",
-                          "${StoreDocs[index]["attribute_name"]}",
-                          "${StoreDocs[index]["status"]}",
-                          "${StoreDocs[index]["date_at"]}",
-                          "${StoreDocs[index]["id"]}"),
-              ],
+               Container(
+            margin: EdgeInsets.all(10),
+             decoration: BoxDecoration(
+            color: secondaryColor,
             ),
+            child:
+            
+            
+            
+             Column(
+               children: [
+                  Container(
+                          padding: EdgeInsets.all(10),
+                          color:Theme.of(context).secondaryHeaderColor,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                            Column(
+                            crossAxisAlignment: CrossAxisAlignment.start, 
+                        
+                              children: [
+
+                            Text("Attribute List",style: themeTextStyle(fw: FontWeight.bold,color: Colors.white,size: 15),),
+                            SizedBox(height: 20,),
+                            Row(children: [
+                              Text("Show",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
+
+                              
+                                  Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 5),
+                                    padding: EdgeInsets.all(2) ,
+                                    height: 20,
+                                    color: Colors.white,
+                                    child: DropdownButton<int>(
+                                       dropdownColor:Colors.white,
+                                       iconEnabledColor: Colors.black,
+                                       hint: Text("$_number_select",style: TextStyle(color:Colors.black,fontSize: 12),),
+                                      value: _number_select,
+                                      items: <int>[10,25, 50, 100].map((int value) {
+                                      return new DropdownMenuItem<int>(
+                                      value: value,
+                                      child: new Text(value.toString(),style: TextStyle(color:Colors.black,fontSize: 12),),
+                                        );
+                                      }).toList(),
+                                      onChanged: (newVal) {
+                                       setState(() {
+                                      _number_select = newVal!;
+                                         });
+                                       }),
+                                  ),
+                            
+
+                              Text("entries",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
+                            ],)
+                            ],),
+                            
+
+                           Container(
+                            height: 40,
+                            width: 300,
+                            child: SearchField())  
+                            ],
+                          )), 
+                          
+                          SizedBox(height: 5,),
+
+
+
+                 Table(
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  border: TableBorder(
+                    horizontalInside: BorderSide(width: .5, color: Colors.grey),
+                  ),
+                  children: [
+                    (Responsive.isMobile(context))
+                        ? TableRow(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).secondaryHeaderColor),
+                            children: [
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text("Category Details",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold))),
+                                ),
+                              ])
+                        :
+                         TableRow(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).secondaryHeaderColor),
+                            children: [
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('S.No.',
+                                        style:
+                                            TextStyle(fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text("Name",
+                                        style:
+                                            TextStyle(fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Text("Status",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Text("Date",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Text("Actions",
+                                      style:
+                                          TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                              ]),
+                    for (var index = 0; index < StoreDocs.length; index++)
+                      (Responsive.isMobile(context))
+                          ? tableRowWidget_mobile(
+                              "${StoreDocs[index]["attribute_name"]}",
+                              "${StoreDocs[index]["status"]}",
+                              "${StoreDocs[index]["date_at"]}",
+                              "${StoreDocs[index]["id"]}")
+                          : tableRowWidget(
+                              "${index + 1}",
+                              "${StoreDocs[index]["attribute_name"]}",
+                              "${StoreDocs[index]["status"]}",
+                              "${StoreDocs[index]["date_at"]}",
+                              "${StoreDocs[index]["id"]}"),
+                  ],
+            ),
+               ],
+             ),
           ),
         ],
       ),
@@ -606,44 +707,104 @@ class _AttributeAddState extends State<AttributeAdd> {
 /////////
 
 /////////////  Update widget for product Update+++++++++++++++++++++++++
-  Widget Update_Attribute(BuildContext context, id) {
-    return Container(
-        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-        child: ListView(children: [
-          Container(
-              margin: EdgeInsets.symmetric(vertical: 20),
+  Widget Update_Attribute(BuildContext context, id,sub_text) {
+    return
+    
+    
+    
+    //  Container(
+    //     margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+    //     child: ListView(children: [
+    //       Container(
+    //           margin: EdgeInsets.symmetric(vertical: 20),
+    //           child: Row(
+    //             crossAxisAlignment: CrossAxisAlignment.center,
+    //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //             children: [
+    //               Container(
+    //                 child: Row(
+    //                   children: [
+    //                     IconButton(
+    //                         onPressed: () {
+    //                           setState(() {
+    //                             updateWidget = false;
+    //                             Head_Name = null;
+    //                           });
+    //                         },
+    //                         icon: Icon(Icons.arrow_back, color: Colors.black)),
+    //                     SizedBox(
+    //                       width: 10,
+    //                     ),
+    //                     Text(
+    //                       "Update Attribute",
+    //                       style: GoogleFonts.lato(
+    //                           color: Colors.black,
+    //                           fontWeight: FontWeight.bold,
+    //                           fontSize: 20),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               )
+    //             ],
+    //           )),
+
+             Container(
+               margin: EdgeInsets.symmetric( horizontal: 5.0),
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
+                      ),
+                  child:   ListView(children: [
+
+                   Container(
+              height: 100,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal:10 ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                            onPressed: () {
-                              setState(() {
-                                updateWidget = false;
-                                Head_Name = null;
-                              });
-                            },
-                            icon: Icon(Icons.arrow_back, color: Colors.black)),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "Update Attribute",
-                          style: GoogleFonts.lato(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
-                        ),
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                updateWidget = false;
+                 Head_Name = null;
+                });
+
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                Icon(Icons.line_style_sharp,color: Colors.blue,size:30),
+                SizedBox(width: 10,),
+              Text(
+                  'Attribute',
+                       style: themeTextStyle(
+                  size: 18.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.bold,
+                  color: Colors.blue),
+                   ),
+                      SizedBox(width: 5,),
+              Text(
+                       '$sub_text',
+               style: themeTextStyle(
+                  size: 12.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.normal,
+                  color: Colors.black45),
+                   ),
+                ],
+              ),
+            ), 
                       ],
                     ),
-                  )
-                ],
-              )),
+            ) ,
+
           Container(
               padding: EdgeInsets.all(defaultPadding),
+               margin: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -775,45 +936,64 @@ class _AttributeAddState extends State<AttributeAdd> {
 ///////////////////////////
 
 /////////////  Update widget for product Update++++++++++++++++++++++
-  Widget Update_Sub_Attribute(BuildContext context, id) {
+  Widget Update_Sub_Attribute(BuildContext context, id,sub_text) {
     return Container(
-        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-        child: ListView(children: [
-          /////// Label for head
-          Container(
-              margin: EdgeInsets.symmetric(vertical: 20),
+               margin: EdgeInsets.symmetric( horizontal: 5.0),
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child:  ListView(children: [
+            Container(
+              height: 100,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal:10 ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                            onPressed: () {
-                              setState(() {
-                                update_subAttribute = false;
-                                Color_list = [];
-                              });
-                            },
-                            icon: Icon(Icons.arrow_back, color: Colors.black)),
-                            SizedBox(  width: 10,),
-                           Text(
-                          "$Head_Name Attribute",
-                          style: GoogleFonts.lato(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
-                        ),
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                   update_subAttribute = false;
+                });
+
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                Icon(Icons.line_style_sharp,color: Colors.blue,size:30),
+                SizedBox(width: 10,),
+              Text(
+                       '$Head_Name Attribute',
+                       style: themeTextStyle(
+                  size: 18.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.bold,
+                  color: Colors.blue),
+                   ),
+                      SizedBox(width: 5,),
+              Text(
+                       '$sub_text',
+               style: themeTextStyle(
+                  size: 12.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.normal,
+                  color: Colors.black45),
+                   ),
+                ],
+              ),
+            ), 
+
+       
                       ],
                     ),
-                  )
-                ],
-              )),
-          /////////
-
-          Container(
+            )   
+            ,          
+           Container(
               padding: EdgeInsets.all(defaultPadding),
+              margin: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),

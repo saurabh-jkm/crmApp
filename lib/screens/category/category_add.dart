@@ -795,7 +795,7 @@ return downloadURL.toString();
   }
 
 ////////////////////////////// List ++++++++++++++++++++++++++++++++++++++++++++
- var _number_tickets_total = 10;
+ var _number_select = 10;
   Widget listList(BuildContext context,sub_text) {
       return
       Container(
@@ -855,8 +855,8 @@ return downloadURL.toString();
                                     child: DropdownButton<int>(
                                        dropdownColor:Colors.white,
                                        iconEnabledColor: Colors.black,
-                                       hint: Text("$_number_tickets_total",style: TextStyle(color:Colors.black,fontSize: 12),),
-                                      value: _number_tickets_total,
+                                       hint: Text("$_number_select",style: TextStyle(color:Colors.black,fontSize: 12),),
+                                      value: _number_select,
                                       items: <int>[10,25, 50, 100].map((int value) {
                                       return new DropdownMenuItem<int>(
                                       value: value,
@@ -865,7 +865,7 @@ return downloadURL.toString();
                                       }).toList(),
                                       onChanged: (newVal) {
                                        setState(() {
-                                      _number_tickets_total = newVal!;
+                                      _number_select = newVal!;
                                          });
                                        }),
                                   ),
