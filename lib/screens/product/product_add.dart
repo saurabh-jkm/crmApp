@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new
 
 import 'dart:convert';
 import 'dart:io';
@@ -67,8 +67,12 @@ class _ProductAddState extends State<ProductAdd> {
     clear_imageData();
   }
 
-  ///// File Picker ==========================================================
+  
+//////// advance product Controller++++++++++++++++
+ Map<String, TextEditingController> _controllers = new Map();
+/////================================================
 
+ ///// File Picker +++++++++++++++++++++++++++++++++++++++++
   var url_img;
   String? fileName;
 
@@ -174,17 +178,37 @@ class _ProductAddState extends State<ProductAdd> {
 
   /// add list
   Future<void> addList() {
-    return _product.add({
+
+    var arrData = new Map();
+    var alert = '';
+    // Featured Product
+    _controllers.forEach((k, val) {
+      var tempVar = _controllers['$k']?.text;
+      alert = (tempVar!.length < 1)
+          ? 'Please Enter valid ${k.toUpperCase()}'
+          : alert;
+      var temp = (arrData['first_party'] == null) ? {} : arrData['first_party'];
+      temp[k] = tempVar;
+      arrData['first_party'] = temp;
+    });
+     var tempFormData = {
+      'basic_product': arrData['first_party'],
+      'featured_product': arrData['second_party']
+    };
+    arrData['price_details'] = jsonEncode(tempFormData);
+    
+       return _product.add({
       'name': "${NameController.text}",
-      "Offer": "${offerController.text}",
-      'discount': "${DiscountController.text}",
-      "mrp": "${mrpController.text}",
-      "No_Of_Item": "${NoitemController.text}",
+      "price_details": "${arrData['price_details']}",
+      // "Offer": "${offerController.text}",
+      // 'discount': "${DiscountController.text}",
+      // "mrp": "${mrpController.text}",
+      // "No_Of_Item": "${NoitemController.text}",
       'slug_url': "${SlugUrlController.text}",
       'parent_cate': "$_PerentCate",
       'status': "$_StatusValue",
-      'size': "$_sizeValue",
-      'brand': "$_brandValue",
+      // 'size': "$_sizeValue",
+     ///   'brand': "$_brandValue",
       'image': "$url_img",
       "date_at": "$Date_at"
     }).then((value) {
@@ -488,7 +512,7 @@ class _ProductAddState extends State<ProductAdd> {
           );
         });
   }
-  
+
   ///////////   Widget for Product Add Form  ++++++++++++++++++++++++++++++++++++++++++
   ///
   List<String> _selectOption_attri = [];
@@ -542,7 +566,6 @@ class _ProductAddState extends State<ProductAdd> {
               ),
             ), 
 
-       
                       ],
                     ),
             )   
@@ -581,89 +604,152 @@ class _ProductAddState extends State<ProductAdd> {
                             ],
                           ),
                         ),
-                        SizedBox(height: defaultPadding),
-                        if (Responsive.isMobile(context))
-                          SizedBox(width: defaultPadding),
-                        if (Responsive.isMobile(context))
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                                child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("No Item",
-                                    style: themeTextStyle(
-                                        color: Colors.black,
-                                        size: 15,
-                                        fw: FontWeight.bold)),
-                                Text_field(context, NoitemController,
-                                    " No Item", "Enter No Item"),
-                              ],
-                            )),
-                          ),
+
+
+                     
                         if (!Responsive.isMobile(context))
                           SizedBox(width: defaultPadding),
                         // On Mobile means if the screen is less than 850 we dont want to show it
                         if (!Responsive.isMobile(context))
                           Expanded(
                             flex: 2,
-                            child: Container(
-                                child: Column(
+                            child:  Container(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("No Item",
-                                    style: themeTextStyle(
-                                        color: Colors.black,
-                                        size: 15,
-                                        fw: FontWeight.bold)),
-                                Text_field(context, NoitemController, "No Item",
-                                    "Enter No Item"),
+                                Container(
+                                    child: Text("Category",
+                                        style: themeTextStyle(
+                                            color: Colors.black,
+                                            size: 15,
+                                            fw: FontWeight.bold))),
+                                Container(
+                                  height: 40,
+                                  margin: EdgeInsets.only(top: 10, bottom: 10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  child: DropdownButton(
+                                    dropdownColor: Colors.white,
+                                    hint: _PerentCate == null
+                                        ? Text(
+                                            'Select',
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          )
+                                        : Text(
+                                            _PerentCate!,
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          ),
+                                    underline: Container(),
+                                    isExpanded: true,
+                                    icon: Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Colors.black,
+                                    ),
+                                    iconSize: 35,
+                                    style: TextStyle(
+                                        color: Color.fromARGB(255, 5, 8, 10)),
+                                    items: Cate_Name_list.map(
+                                      (val) {
+                                        return DropdownMenuItem<String>(
+                                          value: val,
+                                          child: Text(val),
+                                        );
+                                      },
+                                    ).toList(),
+                                    onChanged: (val) {
+                                      setState(
+                                        () {
+                                          _PerentCate = val!;
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
                               ],
-                            )),
+                            ),
                           ),
-
-                        if (!Responsive.isMobile(context))
-                          SizedBox(width: defaultPadding),
-                        // On Mobile means if the screen is less than 850 we dont want to show it
-
-                        if (!Responsive.isMobile(context))
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                                child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Slug Url",
-                                    style: themeTextStyle(
-                                        color: Colors.black,
-                                        size: 15,
-                                        fw: FontWeight.bold)),
-                                Text_field(context, SlugUrlController,
-                                    "Slug Url", "Enter Slug Url"),
-                              ],
-                            )),
                           ),
                       ],
                     ),
                   ),
-
-                  if (Responsive.isMobile(context))
-                    SizedBox(width: defaultPadding),
-                  if (Responsive.isMobile(context))
-                    Container(
-                        child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Slug Url",
-                            style: themeTextStyle(
-                                color: Colors.black,
-                                size: 15,
-                                fw: FontWeight.bold)),
-                        Text_field(context, SlugUrlController, "Slug Url",
-                            "Enter Slug Url")
-                      ],
-                    )),
-                  SizedBox(height: defaultPadding),
+                SizedBox(height: defaultPadding),
+                        if (Responsive.isMobile(context))
+                          SizedBox(width: defaultPadding),
+                        if (Responsive.isMobile(context))
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child:  Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        child: Text("Category",
+                                            style: themeTextStyle(
+                                                color: Colors.black,
+                                                size: 15,
+                                                fw: FontWeight.bold))),
+                                    Container(
+                                      height: 40,
+                                      margin: EdgeInsets.only(top: 10, bottom: 10),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      padding: EdgeInsets.only(left: 10, right: 10),
+                                      child: DropdownButton(
+                                        dropdownColor: Colors.white,
+                                        hint: _PerentCate == null
+                                            ? Text(
+                                                'Select',
+                                                style:
+                                                    TextStyle(color: Colors.black),
+                                              )
+                                            : Text(
+                                                _PerentCate!,
+                                                style:
+                                                    TextStyle(color: Colors.black),
+                                              ),
+                                        underline: Container(),
+                                        isExpanded: true,
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.black,
+                                        ),
+                                        iconSize: 35,
+                                        style: TextStyle(
+                                            color: Color.fromARGB(255, 5, 8, 10)),
+                                        items: Cate_Name_list.map(
+                                          (val) {
+                                            return DropdownMenuItem<String>(
+                                              value: val,
+                                              child: Text(val),
+                                            );
+                                          },
+                                        ).toList(),
+                                        onChanged: (val) {
+                                          setState(
+                                            () {
+                                              _PerentCate = val!;
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ),
+                            ],
+                          ),
+            ///////////// status ++++++++++++++++++++++++++++++++
+                SizedBox(height: defaultPadding),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -729,216 +815,52 @@ class _ProductAddState extends State<ProductAdd> {
                           ),
                         ),
                       ),
-                      SizedBox(width: defaultPadding),
+
+
+
+                       if (!Responsive.isMobile(context))
+                       SizedBox(width: defaultPadding),
+                       if (!Responsive.isMobile(context))
                       Expanded(
                           flex: 2,
-                          child: Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    child: Text("Category Name",
-                                        style: themeTextStyle(
-                                            color: Colors.black,
-                                            size: 15,
-                                            fw: FontWeight.bold))),
-                                Container(
-                                  height: 40,
-                                  margin: EdgeInsets.only(top: 10, bottom: 10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: EdgeInsets.only(left: 10, right: 10),
-                                  child: DropdownButton(
-                                    dropdownColor: Colors.white,
-                                    hint: _PerentCate == null
-                                        ? Text(
-                                            'Select',
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          )
-                                        : Text(
-                                            _PerentCate!,
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          ),
-                                    underline: Container(),
-                                    isExpanded: true,
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors.black,
-                                    ),
-                                    iconSize: 35,
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 5, 8, 10)),
-                                    items: Cate_Name_list.map(
-                                      (val) {
-                                        return DropdownMenuItem<String>(
-                                          value: val,
-                                          child: Text(val),
-                                        );
-                                      },
-                                    ).toList(),
-                                    onChanged: (val) {
-                                      setState(
-                                        () {
-                                          _PerentCate = val!;
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
+                          child:  Container(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Slug Url",
+                            style: themeTextStyle(
+                                color: Colors.black,
+                                size: 15,
+                                fw: FontWeight.bold)),
+                        Text_field(context, SlugUrlController, "Slug Url",
+                            "Enter Slug Url")
+                      ],
+                    ))),
                     ],
                   ),
+            ///    
 
-                  // Size option
-
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                          flex: 2,
-                          child: Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    child: Text("Size",
-                                        style: themeTextStyle(
-                                            color: Colors.black,
-                                            size: 15,
-                                            fw: FontWeight.bold))),
-                                Container(
-                                  height: 40,
-                                  margin: EdgeInsets.only(
-                                    top: 10,
-                                    bottom: 20,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: EdgeInsets.only(left: 10, right: 10),
-                                  child: DropdownButton(
-                                    dropdownColor: Colors.white,
-                                    hint: _sizeValue == null
-                                        ? Text(
-                                            'Select',
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          )
-                                        : Text(
-                                            _sizeValue!,
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          ),
-                                    underline: Container(),
-                                    isExpanded: true,
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors.black,
-                                    ),
-                                    iconSize: 35,
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 6, 8, 10)),
-                                    items: [
-                                      'Select',
-                                      'small',
-                                      'large',
-                                      'extralarge'
-                                    ].map(
-                                      (val) {
-                                        return DropdownMenuItem<String>(
-                                          value: val,
-                                          child: Text(val),
-                                        );
-                                      },
-                                    ).toList(),
-                                    onChanged: (val) {
-                                      setState(
-                                        () {
-                                          _sizeValue = val!;
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
-                      SizedBox(width: defaultPadding),
-                      Expanded(
-                          flex: 2,
-                          child: Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    child: Text("Select Brand",
-                                        style: themeTextStyle(
-                                            color: Colors.black,
-                                            size: 15,
-                                            fw: FontWeight.bold))),
-                                Container(
-                                  height: 40,
-                                  margin: EdgeInsets.only(
-                                    top: 10,
-                                    bottom: 20,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: EdgeInsets.only(left: 10, right: 10),
-                                  child: DropdownButton(
-                                    dropdownColor: Colors.white,
-                                    hint: _brandValue == null
-                                        ? Text(
-                                            'Select',
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          )
-                                        : Text(
-                                            _brandValue!,
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          ),
-                                    underline: Container(),
-                                    isExpanded: true,
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Colors.black,
-                                    ),
-                                    iconSize: 35,
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 9, 12, 15)),
-                                    items:
-                                        ['Select', 'Apple', 'Dell', 'HP'].map(
-                                      (val) {
-                                        return DropdownMenuItem<String>(
-                                          value: val,
-                                          child: Text(val),
-                                        );
-                                      },
-                                    ).toList(),
-                                    onChanged: (val) {
-                                      setState(
-                                        () {
-                                          _brandValue = val!;
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
-                    ],
-                  ),
+          ////////  Slug +++++++++++++++ web & Mobile +++++++++++++++++++++++++++++++++++++++
+          
+                  if (Responsive.isMobile(context))
+                    SizedBox(height: defaultPadding),
+                  if (Responsive.isMobile(context))
+                    Container(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Slug Url",
+                            style: themeTextStyle(
+                                color: Colors.black,
+                                size: 15,
+                                fw: FontWeight.bold)),
+                        Text_field(context, SlugUrlController, "Slug Url",
+                            "Enter Slug Url")
+                      ],
+                    )),
+          //////////  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                 
+            
 
                   Row(children: [
                     GestureDetector(
@@ -984,90 +906,218 @@ class _ProductAddState extends State<ProductAdd> {
 
                   /////////  ROw For Rate MRP +++++++++++++++++++++++
                   (basic_Product == true)
-                      ? Column(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                      child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("MRP",
-                                          style: themeTextStyle(
-                                              color: Colors.black,
-                                              size: 15,
-                                              fw: FontWeight.bold)),
-                                      Text_field(context, mrpController, "MRP",
-                                          "Enter MRP"),
-                                    ],
-                                  )),
-                                ),
-                                SizedBox(width: defaultPadding),
-                                Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                      child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Discount",
-                                          style: themeTextStyle(
-                                              color: Colors.black,
-                                              size: 15,
-                                              fw: FontWeight.bold)),
-                                      Text_field(context, DiscountController,
-                                          "Discount", "Enter Discount"),
-                                    ],
-                                  )),
+                      ? 
+                    //    wd_sub_product_details(context,"")
+                      Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          border:  Border.all(color: Colors.black38 ,width: 2.0)
+                        ),
+                        child: Column(
+                            children: [
+                            
+                             Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                 
+                             Text("MRP (₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          //Text_field(context, mrpController, "MRP", "Enter MRP"),
+                                         Text_rate(context, mrpController, "MRP")
+                                         // Text_field_rate( context,"MRP","MRP") ,
+                                        // ElevatedButton(onPressed: (){print("$_controllers ++++++++");}, child: Text("daat")),
+                                        ],
+                                      )),
+                                    ),
+                                    SizedBox(width: defaultPadding),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Selling Price (₹)",
+                             style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                        Text_rate(context, SellingPriController, "Selling Price")
+                                         // Text_field_rate( context,"selling_price","Selling Price"),
+                                        ],
+                                      )),
+                                    ),
+                      
+                                    SizedBox(width: defaultPadding),
+                                    // // On Mobile means if the screen is less than 850 we dont want to show it
+                                    // if (!Responsive.isMobile(context))
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Discount (%)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          Container(
+                          alignment: Alignment.centerLeft,
+                          width: double.infinity,
+                          height: 40,
+                          margin: EdgeInsets.only(top: 10, bottom: 10, left: 10),
+                          padding: EdgeInsets.only(left: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text("${DiscountController.text} %",
+                              style: themeTextStyle(
+                                  color: Colors.black,
+                                  size: 15,
+                                  fw: FontWeight.bold)))
+                                        ],
+                                      )),
+                                    ),
+                               if (!Responsive.isMobile(context))
+                                    SizedBox(width: defaultPadding),
+                                    if (!Responsive.isMobile(context))      
+                              Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Shiping Price(₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          Text_rate(context, ShippingController, "MRP")
+                                        ],
+                                      )),
+                                    ),
+                                    if (!Responsive.isMobile(context))
+                                    SizedBox(width: defaultPadding),
+                                    if (!Responsive.isMobile(context))
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Stock (No. item)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          Text_rate(context, NoitemController, "Selling Price")          
+                                        ],
+                                      )),
+                                    ),          
+                                    
+                                  ],
                                 ),
 
-                                if (!Responsive.isMobile(context))
-                                  SizedBox(width: defaultPadding),
-                                // On Mobile means if the screen is less than 850 we dont want to show it
-                                if (!Responsive.isMobile(context))
-                                  Expanded(
-                                    flex: 2,
-                                    child: Container(
-                                        child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text("Offer Price",
-                                            style: themeTextStyle(
-                                                color: Colors.black,
-                                                size: 15,
-                                                fw: FontWeight.bold)),
-                                        Text_field(context, offerController,
-                                            "Offer Price", "Enter Offer Price"),
-                                      ],
-                                    )),
-                                  ),
-                              ],
-                            ),
-                            SizedBox(height: defaultPadding),
-                            if (Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            if (Responsive.isMobile(context))
-                              Container(
-                                  child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Offer Price",
-                                      style: themeTextStyle(
-                                          color: Colors.black,
-                                          size: 15,
-                                          fw: FontWeight.bold)),
-                                  Text_field(context, offerController,
-                                      "Offer Price", "Enter Offer Price"),
-                                ],
-                              )),
-                          ],
-                        )
-                      : Column(children: [
+                  if (Responsive.isMobile(context))
+                    SizedBox(height: defaultPadding),
+                  if (Responsive.isMobile(context))
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Shiping Price(₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          Text_rate(context, ShippingController, "MRP")
+                                        ],
+                                      )),
+                                    ),
+                                    SizedBox(width: defaultPadding),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Stock (No. item)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          Text_rate(context, NoitemController, "Selling Price")          
+                                        ],
+                                      )),
+                                    ),
+                                  ],
+                                ),
+                      
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+
+                            Container(
+                              height: 50,
+                              width: 50,
+                              child:
+                               IconButton(
+                                onPressed: ()
+                                {
+                                _ImageSelect_Alert(context);
+                                }
+                                ,
+                               icon: Icon(Icons.drive_folder_upload,size:50,color:Colors.blue)),
+                            ),    
+
+                        SizedBox(width: 20,),   
+                        ( url_img == null)
+                            ? 
+                            SizedBox()
+                            : 
+                         Container(
+                                alignment: Alignment.topRight,
+                                margin: EdgeInsets.all(10),
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: Colors.grey),
+                                 image: DecorationImage(image:  NetworkImage("$url_img"))
+                          ),
+                         child: 
+                         GestureDetector(
+                          onTap: (){
+                            setState(() {
+                              url_img = null;
+                            });
+                          },
+                          child: Icon(Icons.cancel_outlined,color:Colors.red ,size:15))
+                      ),
+                    ],
+                  ),
+                      
+                            ],
+                          ),
+                      )
+                      : 
+                      Column(children: [
                           Container(
                             padding: EdgeInsets.all(5),
                             decoration: BoxDecoration(
@@ -1090,12 +1140,7 @@ class _ProductAddState extends State<ProductAdd> {
                                     ),
                                     Row(
                                       children: [
-                                        for (var index = 0;
-                                            index < myAttr.length;
-                                            index++)
-
-                                          // Text( "${Attri_data[index]["attribute_name"]}  ++++++++++++++  ${Attri_data[index]["id"]}"),
-
+                                        for (var index = 0; index < myAttr.length; index++)
                                           Container(
                                               height: 25,
                                               margin: EdgeInsets.symmetric(
@@ -1114,28 +1159,19 @@ class _ProductAddState extends State<ProductAdd> {
                                                     side: BorderSide(
                                                         width: 2,
                                                         color: Colors.black),
-                                                    value: (selectedCheck[Attri_data[
-                                                                        index][
-                                                                    "attribute_name"]
-                                                                .toLowerCase()] ==
-                                                            null)
-                                                        ? false
-                                                        : selectedCheck[Attri_data[
-                                                                    index][
-                                                                "attribute_name"]
-                                                            .toLowerCase()],
-                                                    onChanged: (Value) {
-                                                      _fnChangeCheckVal(
-                                                          Attri_data[index][
-                                                              "attribute_name"],
-                                                          Value,
-                                                          'main');
-                                                    },
-                                                  ),
-                                                  Text(
-                                                    "${Attri_data[index]["attribute_name"]}",
-                                                    style: TextStyle(
-                                                        color: Colors.black),
+                                                    value: 
+                                                    (selectedCheck[Attri_data[index]["attribute_name"].toLowerCase()] == null)
+                                                    ? 
+                                                    false
+                                                    :
+                                                     selectedCheck[Attri_data[index]["attribute_name"].toLowerCase()],
+                                                    onChanged:
+                                                     (Value) 
+                                                     {
+                                                      _fnChangeCheckVal(Attri_data[index]["attribute_name"],Value,'main');
+                                                      },
+                                                      ),
+                                                      Text("${Attri_data[index]["attribute_name"]}",style: TextStyle(color: Colors.black),
                                                   )
                                                 ],
                                               )),
@@ -1146,7 +1182,6 @@ class _ProductAddState extends State<ProductAdd> {
                               ],
                             ),
                           ),
-
                           // sub attribute ---------------------------------
                           Container(
                             decoration: BoxDecoration(
@@ -1167,106 +1202,6 @@ class _ProductAddState extends State<ProductAdd> {
                           /////==========
                           // sub attribute ---------------------------------
                         ]),
-
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Icon Image",
-                                style: themeTextStyle(
-                                    size: 15, fw: FontWeight.bold)),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              height: 45,
-                              margin: EdgeInsets.only(top: 10, bottom: 10),
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                              child: Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      _ImageSelect_Alert(context);
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(2),
-                                      decoration:
-                                          BoxDecoration(color: Colors.grey),
-                                      child: Text(
-                                        "Choose File",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  (url_img == null || url_img.isEmpty)
-                                      ? Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text("No file choosen",
-                                                style: themeTextStyle(
-                                                    size: 15,
-                                                    color: Colors.black38)),
-                                          ],
-                                        )
-                                      : Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              "file selected",
-                                              style: themeTextStyle(
-                                                  size: 12,
-                                                  fw: FontWeight.w400,
-                                                  color: themeBG4),
-                                            ),
-                                          ],
-                                        ),
-                                ],
-                              ),
-                            ),
-                            ////
-                            SizedBox(height: defaultPadding),
-                          ],
-                        ),
-                      ),
-
-                      if (!Responsive.isMobile(context))
-                        SizedBox(width: defaultPadding),
-                      // On Mobile means if the screen is less than 850 we dont want to show it
-                      if (!Responsive.isMobile(context))
-                        Expanded(
-                          flex: 2,
-                          child: SizedBox(width: defaultPadding),
-                        ),
-                    ],
-                  ),
-                  // image preview section
-                  Row(
-                    children: [
-                      Expanded(
-                        child: url_img == null
-                            ? Icon(Icons.photo, size: 12)
-                            : Image.network(
-                                url_img,
-                                height: 80,
-                                width: 100,
-                              ),
-                      ),
-                    ],
-                  ),
 
                   SizedBox(
                     height: 20,
@@ -1293,8 +1228,6 @@ class _ProductAddState extends State<ProductAdd> {
                   ])
                 ],
               )),
-
-          //  wd_sub_product_details(context)
         ]));
   }
 
@@ -1341,7 +1274,7 @@ class _ProductAddState extends State<ProductAdd> {
   }
 
 ////////////////  Product List  +++++++++++++++++++++++++++++++++++++++++++++++++++
-bool  Add_product = false;
+ bool  Add_product = false;
  var _number_select = 10;
 
    Widget listList(BuildContext context,sub_text) {
@@ -1366,7 +1299,7 @@ bool  Add_product = false;
               });
              },
                buttonColor: Colors.blue,
-              iconColor: Colors.black
+               iconColor: Colors.black
               ),
          
            Container(
@@ -1384,15 +1317,11 @@ bool  Add_product = false;
                             children: [
                             Column(
                             crossAxisAlignment: CrossAxisAlignment.start, 
-                        
-                              children: [
-
+                            children: [
                             Text("Product List",style: themeTextStyle(fw: FontWeight.bold,color: Colors.white,size: 15),),
                             SizedBox(height: 20,),
                             Row(children: [
                               Text("Show",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
-
-                              
                                   Container(
                                     margin: EdgeInsets.symmetric(horizontal: 5),
                                     padding: EdgeInsets.all(2) ,
@@ -3123,7 +3052,22 @@ bool  Add_product = false;
       });
     }
   }
-
+////
+////// 
+///////////////////////////
+  Mp_Discount_cal(mrp,sell) {
+                  var mrpp = int.parse(mrp);
+                  var sellpp = int.parse(sell);
+                  setState(() {
+                     var DiscountPP = (((mrpp - sellpp) / mrpp * 100));
+                      DiscountController.text = DiscountPP.toStringAsFixed(2);
+                      _controllers["discount"] = DiscountController;
+                        // print("${DiscountController.text} ==++++++++++++");
+                        print("${_controllers["discount"]} =++++++++++++");
+                       });
+  }
+/// 
+///  
   Widget wd_sub_product_details(BuildContext context, title) {
     return Container(
       margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
@@ -3133,119 +3077,224 @@ bool  Add_product = false;
         border:
             Border.all(width: 1.0, color: Color.fromARGB(255, 187, 187, 187)),
       ),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Container(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    title,
-                    Text("MRP (₹)",
-                        style: themeTextStyle(
-                            color: Colors.black,
-                            size: 15,
-                            fw: FontWeight.bold)),
-                    //Text_field(context, mrpController, "MRP", "Enter MRP"),
-                    Text_rate(context, mrpController, "MRP")
-                  ],
-                )),
-              ),
-              SizedBox(width: defaultPadding),
-              Expanded(
-                flex: 2,
-                child: Container(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Selling Price (₹)",
-                        style: themeTextStyle(
-                            color: Colors.black,
-                            size: 15,
-                            fw: FontWeight.bold)),
-                    Text_rate(context, SellingPriController, "Selling Price")
-                  ],
-                )),
-              ),
+      child: 
+      
+      
+       Column(
+                            children: [
+                            
+                             Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                 
+                             Text("MRP (₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          //Text_field(context, mrpController, "MRP", "Enter MRP"),
+                                        // Text_rate(context, mrpController, "MRP")
+                                          Text_field_rate( context,"mrp_price","MRP") ,
+                                         ElevatedButton(onPressed: (){
+                                          setState(() {
+                                           _controllers["product_images"]!.text = "$url_img";
+                                          });
+                                          print("$_controllers ++++++++");
+                                          
+                                          }, child: Text("daat")),
+                                        ],
+                                      )),
+                                    ),
+                                    SizedBox(width: defaultPadding),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Selling Price (₹)",
+                             style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                //Text_rate(context, SellingPriController, "Selling Price")
+                                Text_field_rate( context,"selling_price","Selling Price") ,
+                                        ],
+                                      )),
+                                    ),
+                      
+                                    SizedBox(width: defaultPadding),
+                                    // // On Mobile means if the screen is less than 850 we dont want to show it
+                                    // if (!Responsive.isMobile(context))
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Discount (%)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          Container(
+                          alignment: Alignment.centerLeft,
+                          width: double.infinity,
+                          height: 40,
+                          margin: EdgeInsets.only(top: 10, bottom: 10, left: 10),
+                          padding: EdgeInsets.only(left: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text("${DiscountController.text} %",
+                              style: themeTextStyle(
+                                  color: Colors.black,
+                                  size: 15,
+                                  fw: FontWeight.bold)))
+                                        ],
+                                      )),
+                                    ),
+                               if (!Responsive.isMobile(context))
+                                    SizedBox(width: defaultPadding),
+                                    if (!Responsive.isMobile(context))      
+                              Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Shiping Price(₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                              // Text_rate(context, ShippingController, "MRP")
+                              Text_field_rate( context,"shiping_price","Shiping Price") ,
+                                        ],
+                                      )),
+                                    ),
+                                    if (!Responsive.isMobile(context))
+                                    SizedBox(width: defaultPadding),
+                                    if (!Responsive.isMobile(context))
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Stock (No. item)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                            // Text_rate(context, NoitemController, "Selling Price")
+                                Text_field_rate( context,"stock_item","Stock (No. item)") , 
+                                        ],
+                                      )),
+                                    ),          
+                                    
+                                  ],
+                                ),
 
-              SizedBox(width: defaultPadding),
-              // // On Mobile means if the screen is less than 850 we dont want to show it
-              // if (!Responsive.isMobile(context))
-              Expanded(
-                flex: 2,
-                child: Container(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Discount (%)",
-                        style: themeTextStyle(
-                            color: Colors.black,
-                            size: 15,
-                            fw: FontWeight.bold)),
-                    Container(
-                        alignment: Alignment.centerLeft,
-                        width: double.infinity,
-                        height: 40,
-                        margin: EdgeInsets.only(top: 10, bottom: 10, left: 10),
-                        padding: EdgeInsets.only(left: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text("${DiscountController.text} %",
-                            style: themeTextStyle(
-                                color: Colors.black,
-                                size: 15,
-                                fw: FontWeight.bold)))
-                  ],
-                )),
-              ),
-            ],
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Container(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Shiping Price(₹)",
-                        style: themeTextStyle(
-                            color: Colors.black,
-                            size: 15,
-                            fw: FontWeight.bold)),
-                    Text_rate(context, ShippingController, "MRP")
-                  ],
-                )),
-              ),
-              SizedBox(width: defaultPadding),
-              Expanded(
-                flex: 2,
-                child: Container(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Stock (No. item)",
-                        style: themeTextStyle(
-                            color: Colors.black,
-                            size: 15,
-                            fw: FontWeight.bold)),
-                    Text_rate(context, NoitemController, "Selling Price")
-                  ],
-                )),
-              ),
-            ],
-          ),
-        ],
-      ),
+                  if (Responsive.isMobile(context))
+                    SizedBox(height: defaultPadding),
+                  if (Responsive.isMobile(context))
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Shiping Price(₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                              Text_field_rate( context,"shiping_price","Shiping Price") ,
+                                        ],
+                                      )),
+                                    ),
+                                    SizedBox(width: defaultPadding),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Stock (No. item)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                              // Text_rate(context, NoitemController, "Selling Price")
+                              Text_field_rate( context,"stock_item","Stock (No. item)") ,   
+                                        ],
+                                      )),
+                                    ),
+                                  ],
+                                ),
+                      
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                            Container(
+                              height: 50,
+                              width: 50,
+                              child:
+                               IconButton(
+                                onPressed: ()
+                                {
+                                _ImageSelect_Alert(context);
+                                }
+                                ,
+                               icon: Icon(Icons.drive_folder_upload,size:50,color:Colors.blue)),
+                            ),    
+
+                        SizedBox(width: 20,),   
+                        ( url_img == null)
+                            ? 
+                            SizedBox()
+                            : 
+                         Container(
+                                alignment: Alignment.topRight,
+                                margin: EdgeInsets.all(10),
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: Colors.grey),
+                                 image: DecorationImage(image:  NetworkImage("$url_img"))
+                          ),
+                         child: 
+                         GestureDetector(
+                          onTap: (){
+                            setState(() {
+                              url_img = null;
+                            });
+                          },
+                          child: Icon(Icons.cancel_outlined,color:Colors.red ,size:15))
+                      ),
+                    ],
+                  ),
+                      
+                            ],
+                          ),
     );
   }
+
+
+
 
   Widget Text_rate(BuildContext context, ctro_name, _hint) {
     return Container(
@@ -3318,6 +3367,88 @@ bool  Add_product = false;
       ),
     );
   }
+
+///////////  Map text field   ++++++++++++++++++++++++++++ 
+  Widget Text_field_rate(BuildContext context, controller_name,hint) {
+
+      var tempStr = (_controllers["$controller_name"]?.text == null)
+          ?
+           ''
+          :
+           _controllers["$controller_name"]?.text;
+            _controllers["$controller_name"] = TextEditingController();
+             _controllers["$controller_name"]?.text = tempStr.toString();
+      return 
+       Container(
+      height: 40,
+      margin: EdgeInsets.only(top: 10,bottom: 10,),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child:  TextFormField(
+        obscureText: false,
+        controller:  _controllers["$controller_name"],
+         onChanged: (value) async {
+
+          if (_controllers["mrp_price"]!.text.isNotEmpty && _controllers["$controller_name"]!.text == _controllers["selling_price"]!.text) {
+           // Discount_cal();
+            Mp_Discount_cal(_controllers["mrp_price"]!.text,_controllers["selling_price"]!.text);
+          }
+        },
+          validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please Enter value';
+          }
+        },
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          hintText: '$hint',
+          hintStyle: TextStyle(
+            color: Colors.grey,
+            fontSize: 16,
+          ),
+          suffixIcon: Container(
+            height: 10,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    var mrpIncre = int.parse(_controllers["$controller_name"]!.text);
+                    setState(() {
+                      mrpIncre++;
+                      _controllers["$controller_name"]!.text = mrpIncre.toString();
+                    });
+                  },
+                  child: Icon(Icons.expand_less_rounded,
+                      size: 20, color: Colors.black),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    var mrpIncre = int.parse(_controllers["$controller_name"]!.text);
+                    setState(() {
+                      mrpIncre--;
+                      _controllers["$controller_name"]!.text = mrpIncre.toString();
+                    });
+                  },
+                  child: Icon(Icons.expand_more_outlined,
+                      size: 20, color: Colors.black),
+                )
+              ],
+            ),
+          ),
+        ),
+        style: TextStyle(color: Colors.black),
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ], // Onl
+      ),
+    );
+  }
+////////////==============================================
 
 //////////////////   popup Box for Image selection ++++++++++++++++++++++++++++++++++++++
 
