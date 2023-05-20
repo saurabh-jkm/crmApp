@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, deprecated_member_use, sort_child_properties_last, non_constant_identifier_names, no_leading_underscores_for_local_identifiers, unnecessary_string_interpolations, unused_field, prefer_final_fields, unnecessary_cast
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, deprecated_member_use, sort_child_properties_last, non_constant_identifier_names, no_leading_underscores_for_local_identifiers, unnecessary_string_interpolations, unused_field, prefer_final_fields, unnecessary_cast, unnecessary_new
 
 import 'dart:convert';
 import 'dart:io';
@@ -27,12 +27,15 @@ class InventryList extends StatefulWidget {
 class _InventryListState extends State<InventryList> {
 
 ////// Firebase fn   +++
-  final List StoreDocs = [];
   var db = FirebaseFirestore.instance;
+    final Stream<QuerySnapshot> _crmStream =
+      FirebaseFirestore.instance.collection('product').snapshots();
   CollectionReference _product =
       FirebaseFirestore.instance.collection('product');
   ////////////+++++++++++++++++++++++++++++++++++++++++++++++++
-  Pro_Data() async {
+     List StoreDocs = [];
+  Inventory_list() async {
+     StoreDocs = [];
     var collection = FirebaseFirestore.instance.collection('product');
     var querySnapshot = await collection.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
@@ -40,53 +43,135 @@ class _InventryListState extends State<InventryList> {
       StoreDocs.add(data);
       data["id"] = queryDocumentSnapshot.id;
     }
-
   }
 ///
 
   @override
     void initState() {
-    Pro_Data();
+    Inventory_list();
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+     StreamBuilder<QuerySnapshot>(
+        stream: _crmStream,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          //////
+          if (snapshot.hasError) {
+             themeAlert(context, "Something went wrong");
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          return
+     Scaffold(
         body: Container(
 
           child: ListView(
               children: [
           Header(
-            title: "Product Inventry",
+            title: "Inventory",
           ),
           SizedBox(height: defaultPadding),
            listList(context),
               ],
             ),
         ));
+         });
   }
 
 
-////////             List        ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 
+////////   List       ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ var _number_select = 10;
     Widget listList(BuildContext context) {
       return
        Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5.0),
-      // padding: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
-      child:  Column(
-        children: [
-          ClipRRect(
-                      
-                      borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10)),
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
+                      ),
                       child:
-                       Table(
+                        ListView(
+        children: [
+         Container(
+          margin: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+           child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                 Icon(Icons.inventory_outlined,color: Colors.blue,size:25),
+                  SizedBox(width: 10,),
+                Text(
+                    'Product Inventory',
+                    style: themeTextStyle(
+                    size: 18.0,
+                    ftFamily: 'ms',
+                    fw: FontWeight.bold,
+                    color: Colors.black),
+                     ),
+                  ],
+                ),
+         ),
+         
+           Container(
+            margin: EdgeInsets.all(10),
+             decoration: BoxDecoration(
+            color: secondaryColor,
+            ),
+            child: Column(
+              children: [
+                  Container(
+                          padding: EdgeInsets.all(10),
+                          color:Theme.of(context).secondaryHeaderColor,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                            Column(
+                            crossAxisAlignment: CrossAxisAlignment.start, 
+                            children: [
+                            Text("Inventory List",style: themeTextStyle(fw: FontWeight.bold,color: Colors.white,size: 15),),
+                            SizedBox(height: 20,),
+                            Row(children: [
+                              Text("Show",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
+                                  Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 5),
+                                    padding: EdgeInsets.all(2) ,
+                                    height: 20,
+                                    color: Colors.white,
+                                    child: DropdownButton<int>(
+                                       dropdownColor:Colors.white,
+                                       iconEnabledColor: Colors.black,
+                                       hint: Text("$_number_select",style: TextStyle(color:Colors.black,fontSize: 12),),
+                                      value: _number_select,
+                                      items: <int>[10,25, 50, 100].map((int value) {
+                                      return new DropdownMenuItem<int>(
+                                      value: value,
+                                      child: new Text(value.toString(),style: TextStyle(color:Colors.black,fontSize: 12),),
+                                        );
+                                      }).toList(),
+                                      onChanged: (newVal) {
+                                       setState(() {
+                                      _number_select = newVal!;
+                                         });
+                                       }),
+                                  ),
+                            
+
+                              Text("entries",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
+                            ],)
+                            ],),
+                           Container(
+                            height: 40,
+                            width: 300,
+                            child: SearchField())  
+                            ],
+                          )), 
+                          
+                          SizedBox(height: 5,),
+                           Table(
                         defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                         border: 
                         TableBorder(
@@ -123,8 +208,7 @@ class _InventryListState extends State<InventryList> {
                                     child: 
                                    Text(
                                       'S.No.',
-                                       style: TextStyle(fontWeight: FontWeight.bold)),)
-                                  
+                                       style: TextStyle(fontWeight: FontWeight.bold)),)                                 
                                 ),
                                 TableCell(
                                   verticalAlignment: TableCellVerticalAlignment.middle,
@@ -212,11 +296,12 @@ class _InventryListState extends State<InventryList> {
                               )
                             ],
                       ),
-                    ),
+              ],
+            ),
+          ),
         ],
-      ),
-              
-            );
+      ),      
+   );
 }
 
   TableRow tableRowWidget(String  index, name , category ,_Status ,_Item ) {
@@ -328,7 +413,6 @@ class _InventryListState extends State<InventryList> {
                               themeListRow(context, "Name", "$name"),
                               themeListRow(context, "Category Name","$category"),
                               themeListRow(context, "Quantity Left","$_Item"),
-
                               Row(
                                 children: [
                                   SizedBox(
@@ -355,9 +439,6 @@ class _InventryListState extends State<InventryList> {
                                    RowFor_Mobile_web( context,"","Sell",Colors.green,"Buy",Colors.red),
                                 ],
                               ),
-          
-                        
-
                               themeListRow(context, "Status","$_Status"),
                             ///  themeListRow(context, "Product QR","Product QR"),
                             Divider(thickness:2 ,)
@@ -372,12 +453,14 @@ class _InventryListState extends State<InventryList> {
   
   }/////////
 
+
+
+
 Widget RowFor_Mobile_web(BuildContext context,label,descSell,colorrSell, descBuy,colorrBuy){
   return
   Padding(
     padding: EdgeInsets.only(bottom: 4.0,),
     child:
-
        Row(
                 children: [
                   Container(
@@ -391,7 +474,7 @@ Widget RowFor_Mobile_web(BuildContext context,label,descSell,colorrSell, descBuy
                       child: TextButton(
                           onPressed: () {
                             setState(() {
-                             _ImageSelect_Alert(context);
+                             _Action_Alert(context);
                             });
                           },
                           child: Text(
@@ -412,7 +495,7 @@ Widget RowFor_Mobile_web(BuildContext context,label,descSell,colorrSell, descBuy
                       child: TextButton(
                           onPressed: () {
                             setState(() {
-                             _ImageSelect_Alert(context);
+                             _Action_Alert(context);
                             });
                           },
                           child: Text(
@@ -437,7 +520,7 @@ Widget RowFor_Mobile_web(BuildContext context,label,descSell,colorrSell, descBuy
 
 //////////////////   popup Box for Image selection ++++++++++++++++++++++++++++++++++++++ 
 
-  void _ImageSelect_Alert(BuildContext context) {
+  void _Action_Alert(BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext context) {

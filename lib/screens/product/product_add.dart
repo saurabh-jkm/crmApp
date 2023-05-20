@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals
 
 import 'dart:convert';
 import 'dart:io';
@@ -158,7 +158,8 @@ class _ProductAddState extends State<ProductAdd> {
   // var db = FirebaseFirestore.instance;
   CollectionReference _product =
       FirebaseFirestore.instance.collection('product');
-  ////////////+++++
+
+  ////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
   List StoreDocs = [];
   Pro_Data() async {
     StoreDocs = [];
@@ -175,10 +176,11 @@ class _ProductAddState extends State<ProductAdd> {
       _AttributeData();
     });
   }
+/////////////=====================================================================  
 
-  /// add list
+////////////////////  add list   ++++++++++++++++++++++++++++++++++++++++++++++
+
   Future<void> addList() {
-
     var arrData = new Map();
     var alert = '';
     // Featured Product
@@ -219,9 +221,10 @@ class _ProductAddState extends State<ProductAdd> {
     }).catchError(
         (error) => themeAlert(context, 'Failed to Submit', type: "error"));
   }
+///////////===================================================================
 
-  ///
-  ///delete
+////////  delete  Product ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
   Future<void> deleteUser(id) {
     return _product.doc(id).delete().then((value) {
       setState(() {
@@ -232,10 +235,11 @@ class _ProductAddState extends State<ProductAdd> {
         (error) => themeAlert(context, 'Not find Data', type: "error"));
   }
 
-  ///
-/////// Update
+////////  ================================================================================= 
 
-/////////
+
+
+///////     Update data collection ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   var Name;
   var Noitem;
@@ -271,9 +275,10 @@ class _ProductAddState extends State<ProductAdd> {
     }
   }
 
-  /// ======================================================
-  /// ======================================================
-// get attribute list
+///////////////////       ======================================================
+
+
+// get attribute list+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   _fnGetAttr() async {
     Map<String, dynamic> where = {'table': "attribute", 'status': '1'};
     myAttr = await dbFindDynamic(db, where);
@@ -283,7 +288,8 @@ class _ProductAddState extends State<ProductAdd> {
   Map<String, dynamic> subProduDetailList = {};
   List<dynamic> subProductBox = [];
 
-  // change check box value
+/////////  change check box value  +++++++++++++++++++++++++++++++++++++++++++++++
+
   _fnChangeCheckVal(key, Value, checkType) {
     if (this.mounted)
       setState(() {
@@ -309,9 +315,7 @@ class _ProductAddState extends State<ProductAdd> {
           }
           subProduDetailList[checkType] = temp;
         }
-
         // print(subProduDetailList.length);
-
         if (subProduDetailList.length == 1) {
           subProduDetailList.forEach((key, value) {
             value.forEach((k, v) {
@@ -352,8 +356,8 @@ class _ProductAddState extends State<ProductAdd> {
       });
   }
 
-  /// ======================================================
-  /// ======================================================
+/////// ================================================================================
+
 
 //////// Update Product Function +++++++++++++++++++++++++++++
 
@@ -376,6 +380,7 @@ class _ProductAddState extends State<ProductAdd> {
       themeAlert(context, "Successfully Update");
       setState(() {
         updateWidget = false;
+         Pro_Data(); 
       });
     }).catchError(
         (error) => themeAlert(context, 'Failed to update', type: "error"));
@@ -518,7 +523,6 @@ class _ProductAddState extends State<ProductAdd> {
   List<String> _selectOption_attri = [];
   Widget listCon(BuildContext context,sub_text) {
     return Container(
-               margin: EdgeInsets.symmetric( horizontal: 5.0),
                       height: MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -1279,7 +1283,6 @@ class _ProductAddState extends State<ProductAdd> {
 
    Widget listList(BuildContext context,sub_text) {
     return  Container(
-          margin: EdgeInsets.symmetric( horizontal: 5.0),
                       height: MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -1680,7 +1683,7 @@ class _ProductAddState extends State<ProductAdd> {
 /////////////  Update widget for product Update+++++++++++++++++++++++++
   Widget Update_product(BuildContext context, id,sub_text) {
     return      Container(
-               margin: EdgeInsets.symmetric( horizontal: 5.0),
+             
                       height: MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -1690,6 +1693,7 @@ class _ProductAddState extends State<ProductAdd> {
                   child:   ListView(children: [
 
                    Container(
+                   
               height: 100,
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal:10 ),
@@ -1700,6 +1704,7 @@ class _ProductAddState extends State<ProductAdd> {
               onTap: (){
                 setState(() {
                   updateWidget = false;
+                  Pro_Data();
                 });
 
               },
@@ -1733,6 +1738,7 @@ class _ProductAddState extends State<ProductAdd> {
             ) ,
 
           Container(
+               margin: EdgeInsets.symmetric( horizontal: 10.0),
               padding: EdgeInsets.all(defaultPadding),
               decoration: BoxDecoration(
                 color: Colors.black12,
@@ -3081,7 +3087,7 @@ class _ProductAddState extends State<ProductAdd> {
       
       
        Column(
-                            children: [
+              children: [
                             
                              Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -3103,7 +3109,8 @@ class _ProductAddState extends State<ProductAdd> {
                                           Text_field_rate( context,"mrp_price","MRP") ,
                                          ElevatedButton(onPressed: (){
                                           setState(() {
-                                           _controllers["product_images"]!.text = "$url_img";
+                          
+                                           _controllers["product_images"]!.text = url_img.toString();
                                           });
                                           print("$_controllers ++++++++");
                                           
@@ -3138,7 +3145,7 @@ class _ProductAddState extends State<ProductAdd> {
                                           child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text("Discount (%)",
+                                          Text( "Discount (%)",
                           style: themeTextStyle(
                               color: Colors.black,
                               size: 15,

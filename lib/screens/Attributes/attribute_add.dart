@@ -181,7 +181,6 @@ class _AttributeAddState extends State<AttributeAdd> {
 //// Widget for Start_up
   Widget listCon(BuildContext context, sub_text) {
     return Container(
-               margin: EdgeInsets.symmetric( horizontal: 5.0),
                       height: MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -350,7 +349,6 @@ class _AttributeAddState extends State<AttributeAdd> {
    var _number_select = 10;
   Widget listList(BuildContext context, sub_text) {
     return Container(
-          margin: EdgeInsets.symmetric( horizontal: 5.0),
                       height: MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -711,7 +709,6 @@ class _AttributeAddState extends State<AttributeAdd> {
     return
 
              Container(
-               margin: EdgeInsets.symmetric( horizontal: 5.0),
                       height: MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -900,7 +897,6 @@ class _AttributeAddState extends State<AttributeAdd> {
 /////////////  Update widget for product Update++++++++++++++++++++++
   Widget Update_Sub_Attribute(BuildContext context, id,sub_text) {
     return Container(
-               margin: EdgeInsets.symmetric( horizontal: 5.0),
                       height: MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         color: Colors.white,

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, sort_child_properties_last
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -38,7 +38,6 @@ class _MainScreenState extends State<MainScreen> {
               Expanded(
                 child: WdSideMenu(context),
               ),
-
             if (sidemenu == 1)
               Expanded(
                 flex: 5,
@@ -54,33 +53,41 @@ class _MainScreenState extends State<MainScreen> {
                 flex: 5,
                 child: AttributeAdd(),
               )
+            // else if (sidemenu == 4)
+            //   Expanded(
+            //     flex: 5,
+            //     child: ProductAdd(),
+            //   )  
             else if (sidemenu == 4)
               Expanded(
                 flex: 5,
                 child: ProductAdd(),
-              )  
-
-            else if (sidemenu == 5)
-              Expanded(
-                flex: 5,
-                child: ProductAdd(),
               )
-            else if (sidemenu == 6)
+            else if (sidemenu == 5)
               Expanded(
                 flex: 5,
                 child: CategoryAdd(),
               )
-            else if (sidemenu == 7)
+            else if (sidemenu == 6)
               Expanded(
                 flex: 5,
                 child: OrderList(),
               )
+            else if (sidemenu == 7)
+              Expanded(
+                flex: 5,
+                child: InventryList()
+                )
             else if (sidemenu == 8)
-              Expanded(flex: 5, child: InventryList())
+              Expanded(
+                flex: 5, 
+                child: ProfileDetails()
+                )
             else if (sidemenu == 9)
-              Expanded(flex: 5, child: ProfileDetails())
-            else if (sidemenu == 10)
-              Expanded(flex: 5, child: SignupScreen())
+              Expanded(
+                flex: 5, 
+                child: SignupScreen()
+                )
           ],
         ),
       ),
@@ -88,182 +95,203 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget WdSideMenu(BuildContext context) {
-    return Drawer(
-      child: ListView(
+    return
+     Drawer(
+      child: 
+      ListView(
         children: [
           DrawerHeader(
             child: Image.asset("assets/images/logo.png"),
+             decoration: BoxDecoration(
+           //  color: const Color.fromARGB(127, 33, 149, 243)
+          ),
           ),
           ListTile(
+            tileColor:(sidemenu == 1)?const Color.fromARGB(127, 33, 149, 243)  : const Color.fromARGB(0, 255, 255, 255),
             onTap: () {
               setState(() {
                 sidemenu = 1;
+                 if (Responsive.isMobile(context))
+                     {
+                      Navigator.of(context).pop();
+                     }
               });
             },
             horizontalTitleGap: 0.0,
-            leading: SvgPicture.asset(
-              "assets/icons/menu_dashbord.svg",
-              color: Colors.white54,
-              height: 16,
-            ),
+            leading: Icon(Icons.dashboard_outlined,color: Colors.white),
             title: Text(
               "Dashboard",
-              style: TextStyle(color: Colors.white54),
+              style: TextStyle(color: Colors.white),
             ),
           ),
           ListTile(
+             tileColor:(sidemenu == 2)? const Color.fromARGB(127, 33, 149, 243)  : const Color.fromARGB(0, 255, 255, 255),
             onTap: () {
               setState(() {
                 sidemenu = 2;
+                     if (Responsive.isMobile(context))
+                     {
+                      Navigator.of(context).pop();
+                     }
+
               });
             },
             horizontalTitleGap: 0.0,
-            leading: SvgPicture.asset(
-              "assets/icons/menu_tran.svg",
-              color: Colors.white54,
-              height: 16,
-            ),
+            leading: Icon(Icons.category_outlined,color: Colors.white),
             title: Text(
               "Category",
-              style: TextStyle(color: Colors.white54),
+              style: TextStyle(color: Colors.white),
             ),
           ),
             ListTile(
+            tileColor:(sidemenu == 3)? const Color.fromARGB(127, 33, 149, 243)  : const Color.fromARGB(0, 255, 255, 255),
             onTap: () {
               setState(() {
                 sidemenu = 3;
+                 if (Responsive.isMobile(context))
+                     {
+                      Navigator.of(context).pop();
+                     }
               });
             },
             horizontalTitleGap: 0.0,
-            leading: SvgPicture.asset(
-              "assets/icons/menu_task.svg",
-              color: Colors.white54,
-              height: 16,
-            ),
+            leading: Icon(Icons.account_tree_outlined,color: Colors.white),
             title: Text(
               "Attribute",
-              style: TextStyle(color: Colors.white54),
+              style: TextStyle(color: Colors.white),
             ),
           ),
-           ListTile(
+          //  ListTile(
+          //   onTap: () {
+          //     setState(() {
+          //       sidemenu = 4;
+          //     });
+          //   },
+          //   horizontalTitleGap: 0.0,
+          //   leading: SvgPicture.asset(
+          //     "assets/icons/menu_task.svg",
+          //     color: Colors.white54,
+          //     height: 16,
+          //   ),
+          //   title: Text(
+          //     "Brand",
+          //     style: TextStyle(color: Colors.white54),
+          //   ),
+          // ),
+          ListTile(
+             tileColor:(sidemenu == 4)? const Color.fromARGB(127, 33, 149, 243)  : const Color.fromARGB(0, 255, 255, 255),
             onTap: () {
               setState(() {
                 sidemenu = 4;
+                 if (Responsive.isMobile(context))
+                     {
+                      Navigator.of(context).pop();
+                     }
               });
             },
             horizontalTitleGap: 0.0,
-            leading: SvgPicture.asset(
-              "assets/icons/menu_task.svg",
-              color: Colors.white54,
-              height: 16,
-            ),
+            leading:  Icon(Icons.production_quantity_limits_outlined,color: Colors.white),
+            //  SvgPicture.asset(
+            //   "assets/icons/menu_task.svg",
+            //   color: Colors.white54,
+            //   height: 16,
+            // ),
             title: Text(
-              "Brand",
-              style: TextStyle(color: Colors.white54),
+              "Products",
+              style: TextStyle(color: Colors.white),
             ),
           ),
           ListTile(
+            tileColor:(sidemenu == 5)? const Color.fromARGB(127, 33, 149, 243)  : const Color.fromARGB(0, 255, 255, 255), 
             onTap: () {
               setState(() {
                 sidemenu = 5;
+                 if (Responsive.isMobile(context))
+                     {
+                      Navigator.of(context).pop();
+                     }
               });
             },
             horizontalTitleGap: 0.0,
-            leading: SvgPicture.asset(
-              "assets/icons/menu_task.svg",
-              color: Colors.white54,
-              height: 16,
-            ),
+            leading:   Icon(Icons.collections_bookmark_outlined,color: Colors.white), 
+
             title: Text(
-              "Product / Items",
-              style: TextStyle(color: Colors.white54),
+              "Stock List",
+              style: TextStyle(color: Colors.white),
             ),
           ),
           ListTile(
+             tileColor:(sidemenu == 6)?const Color.fromARGB(127, 33, 149, 243)  : const Color.fromARGB(0, 255, 255, 255),
             onTap: () {
               setState(() {
                 sidemenu = 6;
+                 if (Responsive.isMobile(context))
+                     {
+                      Navigator.of(context).pop();
+                     }
               });
             },
             horizontalTitleGap: 0.0,
-            leading: SvgPicture.asset(
-              "assets/icons/menu_doc.svg",
-              color: Colors.white54,
-              height: 16,
-            ),
+            leading:  Icon(Icons.view_list_outlined,color: Colors.white),
             title: Text(
-              "Stock List",
-              style: TextStyle(color: Colors.white54),
-            ),
-          ),
-          ListTile(
-            onTap: () {
-              setState(() {
-                sidemenu = 7;
-              });
-            },
-            horizontalTitleGap: 0.0,
-            leading: SvgPicture.asset(
-              "assets/icons/menu_store.svg",
-              color: Colors.white54,
-              height: 16,
-            ),
-            title: Text(
-              "Order List",
-              style: TextStyle(color: Colors.white54),
+              "Order",
+              style: TextStyle(color: Colors.white),
             ),
           ),
           
           ListTile(
+             tileColor:(sidemenu == 7)? const Color.fromARGB(127, 33, 149, 243)  : const Color.fromARGB(0, 255, 255, 255),
             onTap: () {
               setState(() {
-                sidemenu = 8;
+                sidemenu = 7;
+                 if (Responsive.isMobile(context))
+                     {
+                      Navigator.of(context).pop();
+                     }
               });
             },
             horizontalTitleGap: 0.0,
-            leading: SvgPicture.asset(
-              "assets/icons/menu_doc.svg",
-              color: Colors.white54,
-              height: 16,
-            ),
+            leading: Icon(Icons.inventory_outlined,color: Colors.white), 
             title: Text(
-              "Inventry Managment",
-              style: TextStyle(color: Colors.white54),
+              "Inventory Manage",
+              style: TextStyle(color: Colors.white),
             ),
           ),
 
           ListTile(
+            tileColor:(sidemenu == 8)? const Color.fromARGB(127, 33, 149, 243)  : const Color.fromARGB(0, 255, 255, 255), 
             onTap: () {
               setState(() {
-                sidemenu = 9;
+                sidemenu = 8;
+                 if (Responsive.isMobile(context))
+                     {
+                      Navigator.of(context).pop();
+                     }
               });
             },
             horizontalTitleGap: 0.0,
-            leading: SvgPicture.asset(
-              "assets/icons/menu_profile.svg",
-              color: Colors.white54,
-              height: 16,
-            ),
+            leading: Icon(Icons.person_pin_sharp,color: Colors.white), 
             title: Text(
               "Profile",
-              style: TextStyle(color: Colors.white54),
+              style: TextStyle(color: Colors.white),
             ),
           ),
           ListTile(
+             tileColor:(sidemenu == 9)? const Color.fromARGB(127, 33, 149, 243)  : const Color.fromARGB(0, 255, 255, 255),
             onTap: () {
               setState(() {
-                sidemenu = 10;
+                sidemenu = 9;
+                 if (Responsive.isMobile(context))
+                     {
+                      Navigator.of(context).pop();
+                     }
               });
             },
             horizontalTitleGap: 0.0,
-            leading: SvgPicture.asset(
-              "assets/icons/menu_setting.svg",
-              color: Colors.white54,
-              height: 16,
-            ),
+            leading: Icon(Icons.description_sharp,color: Colors.white), 
             title: Text(
               "About Us",
-              style: TextStyle(color: Colors.white54),
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ],

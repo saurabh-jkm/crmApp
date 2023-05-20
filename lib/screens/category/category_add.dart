@@ -332,7 +332,6 @@ return downloadURL.toString();
 //// Widget for Start_up
   Widget listCon(BuildContext context,sub_text) {
     return   Container(
-               margin: EdgeInsets.symmetric( horizontal: 5.0),
                       height: MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -799,7 +798,6 @@ return downloadURL.toString();
   Widget listList(BuildContext context,sub_text) {
       return
       Container(
-          margin: EdgeInsets.symmetric( horizontal: 5.0),
                       height: MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -1234,7 +1232,6 @@ Widget Update_Category(BuildContext context,id,sub_text) {
  
   return 
            Container(
-               margin: EdgeInsets.symmetric( horizontal: 5.0),
                       height: MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         color: Colors.white,
