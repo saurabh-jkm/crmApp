@@ -88,13 +88,13 @@ class SearchField extends StatelessWidget {
   const SearchField({
     Key? key,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return TextField(
       decoration: InputDecoration(
         hintText: "Search",
-        fillColor: secondaryColor,
+        hintStyle: TextStyle(color: Colors.black),
+        fillColor: Colors.white,
         filled: true,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,

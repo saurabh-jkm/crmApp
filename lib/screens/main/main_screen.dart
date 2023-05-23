@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, sort_child_properties_last
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, sort_child_properties_last, unused_import
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

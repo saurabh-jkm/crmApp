@@ -35,43 +35,36 @@ class _ProductAddState extends State<ProductAdd> {
   var db = FirebaseFirestore.instance;
   var myAttr;
 
-  ////// rate_cate
-  final mrpController = TextEditingController();
-  final offerController = TextEditingController();
-  final DiscountController = TextEditingController();
-  final SellingPriController = TextEditingController();
-  final NoitemController = TextEditingController();
-  final ShippingController = TextEditingController();
-  ///////
   final _formKey = GlobalKey<FormState>();
 
-  final SlugUrlController = TextEditingController();
-  final NameController = TextEditingController();
+
   String? _PerentCate;
   String? _StatusValue;
-  String? _sizeValue;
-  String? _brandValue;
+  // String? _sizeValue;
+  // String? _brandValue;
+
+
+
+  
+////////  Map advance product Controller++++++++++++++++
+ Map<String, TextEditingController> _controllers = new Map();
+ Map<String, TextEditingController> _controllers2 = new Map();
+ /// imple text controller
+  final SlugUrlController = TextEditingController();
+  final NameController = TextEditingController();
+  final imageController = TextEditingController();
+  final DiscountController = TextEditingController();
   String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
+/////================================================
   @override
   clearText() {
     NameController.clear();
     SlugUrlController.clear();
-    mrpController.clear();
-    offerController.clear();
     DiscountController.clear();
-    NoitemController.clear();
     _PerentCate;
     _StatusValue;
-    _sizeValue;
-    _brandValue;
     clear_imageData();
   }
-
-  
-//////// advance product Controller++++++++++++++++
- Map<String, TextEditingController> _controllers = new Map();
-/////================================================
-
  ///// File Picker +++++++++++++++++++++++++++++++++++++++++
   var url_img;
   String? fileName;
@@ -130,27 +123,7 @@ class _ProductAddState extends State<ProductAdd> {
     }
   }
 
-/////////// firebase Storage +++++++++++++++++++
-  ///
-  String? downloadURL;
-  List<String> myList = [];
-  Future listExample() async {
-    firebase_storage.ListResult result =
-        await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
-    result.items.forEach((firebase_storage.Reference ref) async {
-      var uri = await downloadURLExample("${ref.fullPath}");
-      myList.add(uri);
-    });
-    return myList;
-  }
 
-  Future downloadURLExample(image_path) async {
-    downloadURL =
-        await FirebaseStorage.instance.ref().child(image_path).getDownloadURL();
-    return downloadURL.toString();
-  }
-
-////
 
   ///////////  firebase property
   final Stream<QuerySnapshot> _crmStream =
@@ -161,6 +134,10 @@ class _ProductAddState extends State<ProductAdd> {
 
   ////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
   List StoreDocs = [];
+  //var temp ;
+   var temp  ;
+  List basic_list = [];
+  List Featured_list = [];
   Pro_Data() async {
     StoreDocs = [];
     var collection = _product;
@@ -169,23 +146,91 @@ class _ProductAddState extends State<ProductAdd> {
       Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
       StoreDocs.add(data);
       data["id"] = queryDocumentSnapshot.id;
-    }
     setState(() {
-      listExample();
-      _CateData();
+     for(var i = 0; i< StoreDocs.length; i++)
+     {
+     temp = StoreDocs[i]["price_details"];
+     }
+     Map<String, dynamic> myMap = jsonDecode(temp);
+        basic_list.add(myMap["basic_product"]);
+        Featured_list.add(myMap["featured_product"]); 
+    });
+    }
+
+    setState(() {
+        Image_data();
+       _CateData();
       _AttributeData();
     });
   }
 /////////////=====================================================================  
+
+///////////  Calling Category data +++++++++++++++++++++++++++
+  List<String> Cate_Name_list = ["Select"];
+  _CateData() async {
+    var collection = FirebaseFirestore.instance.collection('category');
+    var querySnapshot = await collection.get();
+    for (var queryDocumentSnapshot in querySnapshot.docs) {
+      Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
+      Cate_Name_list.add(data["category_name"]);
+    }
+
+  }
+ ///////============================================================ 
+
+///////////  firebase  Attribute data access  ++++++++++++++++
+  List Attri_data = [];
+  _AttributeData() async {
+    Attri_data = [];
+    var collection = FirebaseFirestore.instance.collection('attribute');
+    var querySnapshot = await collection.get();
+    for (var queryDocumentSnapshot in querySnapshot.docs) {
+      Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
+      Attri_data.add(data);
+      data["id"] = queryDocumentSnapshot.id;
+    }
+  }
+
+/////////////==================================================================
+
+/////////// firebase Storage Image data calll   +++++++++++++++++++
+  String? downloadURL;
+  List<String> myList = [];
+  Future Image_data() async {
+    firebase_storage.ListResult result =
+        await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
+    result.items.forEach((firebase_storage.Reference ref) async {
+      var uri = await downloadURLExample("${ref.fullPath}");
+      myList.add(uri);
+    });
+    return myList;
+  }
+
+  Future downloadURLExample(image_path) async {
+    downloadURL = await FirebaseStorage.instance.ref().child(image_path).getDownloadURL();
+    return downloadURL.toString();
+  }
+
+////  +===============================================================================
+
+
+
 
 ////////////////////  add list   ++++++++++++++++++++++++++++++++++++++++++++++
 
   Future<void> addList() {
     var arrData = new Map();
     var alert = '';
-    // Featured Product
+
+   ///// featured Product++++++
+     if(basic_Product != true){
+              setState(() {
+                   imageController.text = url_img.toString();
+                   _controllers["product_images"] = imageController;
+                   });
     _controllers.forEach((k, val) {
       var tempVar = _controllers['$k']?.text;
+      print("$tempVar ++++++++++++++++++++++++++++++");
       alert = (tempVar!.length < 1)
           ? 'Please Enter valid ${k.toUpperCase()}'
           : alert;
@@ -194,24 +239,43 @@ class _ProductAddState extends State<ProductAdd> {
       arrData['first_party'] = temp;
     });
      var tempFormData = {
-      'basic_product': arrData['first_party'],
-      'featured_product': arrData['second_party']
+      'featured_product': arrData['first_party']
     };
     arrData['price_details'] = jsonEncode(tempFormData);
-    
-       return _product.add({
+    ////
+     }
+
+  ///// basic Product++++++
+    if(basic_Product == true){
+        setState(() {
+                   imageController.text = url_img.toString();
+                   _controllers2["product_images"] = imageController;
+                   });
+    _controllers2.forEach((k, val) {
+      var tempVar = _controllers2['$k']?.text;
+        print("$tempVar ++++++++++++22++++++++++++++++++");
+      alert = (tempVar!.length < 1)
+          ? 'Please Enter valid ${k.toUpperCase()}'
+          : alert;
+      var temp =
+          (arrData['second_party'] == null) ? {} : arrData['second_party'];
+      temp[k] = tempVar;
+      arrData['second_party'] = temp;
+    });
+      var tempFormData = {
+      'basic_product': arrData['second_party']
+    };
+    arrData['price_details'] = jsonEncode(tempFormData);
+    }
+ ///    
+       return 
+       _product.add({
       'name': "${NameController.text}",
-      "price_details": "${arrData['price_details']}",
-      // "Offer": "${offerController.text}",
-      // 'discount': "${DiscountController.text}",
-      // "mrp": "${mrpController.text}",
-      // "No_Of_Item": "${NoitemController.text}",
       'slug_url': "${SlugUrlController.text}",
+      'product_type' :(basic_Product == true)?"Basic Product": "Featured Product",
+      "price_details":arrData['price_details'],
       'parent_cate': "$_PerentCate",
       'status': "$_StatusValue",
-      // 'size': "$_sizeValue",
-     ///   'brand': "$_brandValue",
-      'image': "$url_img",
       "date_at": "$Date_at"
     }).then((value) {
       setState(() {
@@ -239,43 +303,7 @@ class _ProductAddState extends State<ProductAdd> {
 
 
 
-///////     Update data collection ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  var Name;
-  var Noitem;
-  var slugUrl;
-  var Discount;
-  var Offer;
-  var Mrp;
-  var image;
-  var _Status;
-  var _Size;
-  var _Brand;
-  var _PerentC;
-//////
-  Map<String, dynamic>? data;
-  Future Update_initial(id) async {
-    DocumentSnapshot pathData =
-        await FirebaseFirestore.instance.collection('product').doc(id).get();
-    if (pathData.exists) {
-      data = pathData.data() as Map<String, dynamic>?;
-      setState(() {
-        Name = data!['name'];
-        Noitem = data!['No_Of_Item'];
-        slugUrl = data!['slug_url'];
-        Discount = data!['discount'];
-        Offer = data!['Offer'];
-        Mrp = data!['mrp'];
-        image = data!["image"];
-        _Status = data!['status'];
-        _Size = data!['size'];
-        _Brand = data!['brand'];
-        _PerentC = data!['parent_cate'];
-      });
-    }
-  }
-
-///////////////////       ======================================================
 
 
 // get attribute list+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -321,7 +349,9 @@ class _ProductAddState extends State<ProductAdd> {
             value.forEach((k, v) {
               subProductBox.add(Container(
                 padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
-                decoration: BoxDecoration(color: Colors.blue),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.blue),
                 child: Text("$k"),
               ));
             });
@@ -348,7 +378,9 @@ class _ProductAddState extends State<ProductAdd> {
           tempList.forEach((val) {
             subProductBox.add(Container(
               padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 6.0),
-              decoration: BoxDecoration(color: Colors.blue),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.blue),
               child: Text("$val"),
             ));
           });
@@ -358,23 +390,43 @@ class _ProductAddState extends State<ProductAdd> {
 
 /////// ================================================================================
 
+///////     Update data collection ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+  var Name;
+  var slugUrl;
+  var _Status;
+  var _PerentC;
+  var product_type;
+  var price_data;
+//////
+  Map<String, dynamic>? data;
+  Future Update_initial(id) async {
+    DocumentSnapshot pathData =
+        await FirebaseFirestore.instance.collection('product').doc(id).get();
+    if (pathData.exists) {
+      data = pathData.data() as Map<String, dynamic>?;
+      setState(() {
+         Name = data!['name'];
+         slugUrl = data!['slug_url'];
+         price_data = data!['price_details'];
+         product_type = data!['product_type'];
+        _Status = data!['status'];
+        _PerentC = data!['parent_cate'];
+      });
+    }
+  }
+
+///////////////////       ======================================================
 //////// Update Product Function +++++++++++++++++++++++++++++
 
-  Future<void> updatelist(id, Name, Noitem, slugUrl, _Status, _Category, Mrp,
-      Discount, Offer, _Size, _Brand, image) {
+  Future<void> updatelist(id, Name, slugUrl, _Status, _Category) {
     return _product.doc(id).update({
       'name': "$Name",
-      "No_Of_Item": "$Noitem",
       'slug_url': "$slugUrl",
       'status': "$_Status",
       'parent_cate': "$_Category",
-      "mrp": "$Mrp",
-      'discount': "$Discount",
-      "Offer": "$Offer",
-      'size': "$_Size",
-      'brand': "$_Brand",
-      "image": "$image",
+      'price_details': "",
+      "product_type" : "Basic Product",
       "date_at": "$Date_at"
     }).then((value) {
       themeAlert(context, "Successfully Update");
@@ -386,18 +438,8 @@ class _ProductAddState extends State<ProductAdd> {
         (error) => themeAlert(context, 'Failed to update', type: "error"));
   }
 
-/////
+/////////// ===============================================================
 
-///////////  Calling Category data +++++++++++++++++++++++++++
-  List<String> Cate_Name_list = ["Select"];
-  _CateData() async {
-    var collection = FirebaseFirestore.instance.collection('category');
-    var querySnapshot = await collection.get();
-    for (var queryDocumentSnapshot in querySnapshot.docs) {
-      Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
-      Cate_Name_list.add(data["category_name"]);
-    }
-  }
 
 ///////////    Creating SLug Url Function +++++++++++++++++++++++++++++++++++++++
   Slug_gen(String text) {
@@ -408,7 +450,9 @@ class _ProductAddState extends State<ProductAdd> {
       SlugUrlController.text = slus_string;
     });
   }
-///// ++++++++++++++++++++++++++++++++++++++
+/////
+
+///// Initiate Calll +++++++++++++++
 
   @override
   void initState() {
@@ -416,71 +460,13 @@ class _ProductAddState extends State<ProductAdd> {
     Pro_Data();
     super.initState();
   }
+/////
 
   ///////   LOcal widget change variable
   bool updateWidget = false;
   var update_id;
   var basic_Product = true;
-  var fectured_Product;
-  ////////// colors ++++++++++++
-  bool Product_colors = false;
-  bool colors_red = false;
-  bool colors_blue = false;
-  ////// Size ++++++++++++++++++
-  bool Product_Size = false;
-  bool size_s = false;
-  bool size_m = false;
-  bool size_l = false;
-  ////// next >>>
-  bool text_fields = false;
-
-  ///
-///////////  firebase property Database access  +++++++++++++++++++++++++++
-
-  CollectionReference _attribute =
-      FirebaseFirestore.instance.collection('attribute');
-
-  List Attri_data = [];
-  _AttributeData() async {
-    Attri_data = [];
-    // var collection = FirebaseFirestore.instance.collection('category');
-    var querySnapshot = await _attribute.get();
-    for (var queryDocumentSnapshot in querySnapshot.docs) {
-      Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
-      Attri_data.add(data);
-      data["id"] = queryDocumentSnapshot.id;
-    }
-    setState(() {});
-  }
-
-  var Attribute_name;
-  Map value_color = {};
-  List Color_list = [];
-
-  var Size_value = [];
-  var Color_value = [];
-//////
-  Map<String, dynamic>? dbData;
-  Future Sub_attribute(id) async {
-    Color_list = [];
-    DocumentSnapshot pathData =
-        await FirebaseFirestore.instance.collection('attribute').doc(id).get();
-    if (pathData.exists) {
-      dbData = pathData.data() as Map<String, dynamic>?;
-      setState(() {
-        _Status = dbData!['status'];
-        Attribute_name = dbData!['attribute_name'];
-        value_color = dbData!["value"];
-        value_color.forEach((k, v) => Color_list.add(v));
-
-        //print("$Color_list  ++++++");
-      });
-    }
-  }
-
-  ///
-
-/////////////
+  /////
 
   @override
   Widget build(BuildContext context) {
@@ -820,8 +806,6 @@ class _ProductAddState extends State<ProductAdd> {
                         ),
                       ),
 
-
-
                        if (!Responsive.isMobile(context))
                        SizedBox(width: defaultPadding),
                        if (!Responsive.isMobile(context))
@@ -908,219 +892,15 @@ class _ProductAddState extends State<ProductAdd> {
                             child: Text("Fetured Product")))
                   ]),
 
-                  /////////  ROw For Rate MRP +++++++++++++++++++++++
+                  /////////  Basic Product Rate Deatils +++++++++++++++++++++++
+                  
                   (basic_Product == true)
                       ? 
-                    //    wd_sub_product_details(context,"")
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          border:  Border.all(color: Colors.black38 ,width: 2.0)
-                        ),
-                        child: Column(
-                            children: [
-                            
-                             Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                          child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                 
-                             Text("MRP (₹)",
-                              style: themeTextStyle(
-                              color: Colors.black,
-                              size: 15,
-                              fw: FontWeight.bold)),
-                                          //Text_field(context, mrpController, "MRP", "Enter MRP"),
-                                         Text_rate(context, mrpController, "MRP")
-                                         // Text_field_rate( context,"MRP","MRP") ,
-                                        // ElevatedButton(onPressed: (){print("$_controllers ++++++++");}, child: Text("daat")),
-                                        ],
-                                      )),
-                                    ),
-                                    SizedBox(width: defaultPadding),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                          child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Selling Price (₹)",
-                             style: themeTextStyle(
-                              color: Colors.black,
-                              size: 15,
-                              fw: FontWeight.bold)),
-                                        Text_rate(context, SellingPriController, "Selling Price")
-                                         // Text_field_rate( context,"selling_price","Selling Price"),
-                                        ],
-                                      )),
-                                    ),
-                      
-                                    SizedBox(width: defaultPadding),
-                                    // // On Mobile means if the screen is less than 850 we dont want to show it
-                                    // if (!Responsive.isMobile(context))
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                          child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Discount (%)",
-                          style: themeTextStyle(
-                              color: Colors.black,
-                              size: 15,
-                              fw: FontWeight.bold)),
-                                          Container(
-                          alignment: Alignment.centerLeft,
-                          width: double.infinity,
-                          height: 40,
-                          margin: EdgeInsets.only(top: 10, bottom: 10, left: 10),
-                          padding: EdgeInsets.only(left: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text("${DiscountController.text} %",
-                              style: themeTextStyle(
-                                  color: Colors.black,
-                                  size: 15,
-                                  fw: FontWeight.bold)))
-                                        ],
-                                      )),
-                                    ),
-                               if (!Responsive.isMobile(context))
-                                    SizedBox(width: defaultPadding),
-                                    if (!Responsive.isMobile(context))      
-                              Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                          child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Shiping Price(₹)",
-                              style: themeTextStyle(
-                              color: Colors.black,
-                              size: 15,
-                              fw: FontWeight.bold)),
-                                          Text_rate(context, ShippingController, "MRP")
-                                        ],
-                                      )),
-                                    ),
-                                    if (!Responsive.isMobile(context))
-                                    SizedBox(width: defaultPadding),
-                                    if (!Responsive.isMobile(context))
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                          child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Stock (No. item)",
-                          style: themeTextStyle(
-                              color: Colors.black,
-                              size: 15,
-                              fw: FontWeight.bold)),
-                                          Text_rate(context, NoitemController, "Selling Price")          
-                                        ],
-                                      )),
-                                    ),          
-                                    
-                                  ],
-                                ),
-
-                  if (Responsive.isMobile(context))
-                    SizedBox(height: defaultPadding),
-                  if (Responsive.isMobile(context))
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                          child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Shiping Price(₹)",
-                              style: themeTextStyle(
-                              color: Colors.black,
-                              size: 15,
-                              fw: FontWeight.bold)),
-                                          Text_rate(context, ShippingController, "MRP")
-                                        ],
-                                      )),
-                                    ),
-                                    SizedBox(width: defaultPadding),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                          child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Stock (No. item)",
-                          style: themeTextStyle(
-                              color: Colors.black,
-                              size: 15,
-                              fw: FontWeight.bold)),
-                                          Text_rate(context, NoitemController, "Selling Price")          
-                                        ],
-                                      )),
-                                    ),
-                                  ],
-                                ),
-                      
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-
-                            Container(
-                              height: 50,
-                              width: 50,
-                              child:
-                               IconButton(
-                                onPressed: ()
-                                {
-                                _ImageSelect_Alert(context);
-                                }
-                                ,
-                               icon: Icon(Icons.drive_folder_upload,size:50,color:Colors.blue)),
-                            ),    
-
-                        SizedBox(width: 20,),   
-                        ( url_img == null)
-                            ? 
-                            SizedBox()
-                            : 
-                         Container(
-                                alignment: Alignment.topRight,
-                                margin: EdgeInsets.all(10),
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                border: Border.all(color: Colors.grey),
-                                 image: DecorationImage(image:  NetworkImage("$url_img"))
-                          ),
-                         child: 
-                         GestureDetector(
-                          onTap: (){
-                            setState(() {
-                              url_img = null;
-                            });
-                          },
-                          child: Icon(Icons.cancel_outlined,color:Colors.red ,size:15))
-                      ),
-                    ],
-                  ),
-                      
-                            ],
-                          ),
-                      )
+                      wd_sub_Basic_product_details(context,)
                       : 
+
+                   /////////  Featured Product Rate Deatils +++++++++++++++++++++++
+                  
                       Column(children: [
                           Container(
                             padding: EdgeInsets.all(5),
@@ -1139,9 +919,11 @@ class _ProductAddState extends State<ProductAdd> {
                                             color: Colors.black,
                                             size: 15,
                                             fw: FontWeight.bold)),
+
                                     SizedBox(
                                       height: 10,
                                     ),
+
                                     Row(
                                       children: [
                                         for (var index = 0; index < myAttr.length; index++)
@@ -1215,7 +997,7 @@ class _ProductAddState extends State<ProductAdd> {
                     themeButton3(context, () {
                       if (_formKey.currentState!.validate()) {
                         setState(() {
-                          addList();
+                            addList();
                           clearText();
                         });
                       }
@@ -1347,13 +1129,10 @@ class _ProductAddState extends State<ProductAdd> {
                                          });
                                        }),
                                   ),
-                            
-
+                                  
                               Text("entries",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
                             ],)
                             ],),
-                            
-
                            Container(
                             height: 40,
                             width: 300,
@@ -1361,7 +1140,7 @@ class _ProductAddState extends State<ProductAdd> {
                             ],
                           )), 
                           
-                          SizedBox(height: 5,),
+                SizedBox(height: 5,),
                 Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   border: TableBorder(
@@ -1452,7 +1231,7 @@ class _ProductAddState extends State<ProductAdd> {
                     for (var index = 0; index < StoreDocs.length; index++)
                       (Responsive.isMobile(context))
                           ? tableRowWidget_mobile(
-                              "${StoreDocs[index]["image"]}",
+                              "${basic_list[index]["product_images"]}",
                               "${StoreDocs[index]["name"]}",
                               "${StoreDocs[index]["parent_cate"]}",
                               "${StoreDocs[index]["status"]}",
@@ -1460,6 +1239,7 @@ class _ProductAddState extends State<ProductAdd> {
                               "${StoreDocs[index]["id"]}")
                           : tableRowWidget(
                               "${index + 1}",
+                              "${basic_list[index]["product_images"]}"
                               "${StoreDocs[index]["image"]}",
                               "${StoreDocs[index]["name"]}",
                               "${StoreDocs[index]["parent_cate"]}",
@@ -1748,32 +1528,31 @@ class _ProductAddState extends State<ProductAdd> {
                   ? Center(child: CircularProgressIndicator())
                   : Column(
                       children: [
-                        //first row
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Column(
+
+                       Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            children: [
+                              Container(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
-                                      child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Name*",
-                                          style: themeTextStyle(
-                                              color: Colors.black,
-                                              size: 15,
-                                              fw: FontWeight.bold)),
-                                      //   Text_field_up(context, Name,"Name", "Enter Name"),
-                                      Container(
+                                  Text("Name*",
+                                      style: themeTextStyle(
+                                          color: Colors.black,
+                                          size: 15,
+                                          fw: FontWeight.bold)),
+
+                                        Container(
                                           height: 40,
                                           margin: EdgeInsets.only(
                                               top: 10,
                                               bottom: 10,
-                                              left: 10,
-                                              right: 10),
+                                             
+                                             ),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
@@ -1806,285 +1585,177 @@ class _ProductAddState extends State<ProductAdd> {
                                               ),
                                             ),
                                           ))
-                                    ],
-                                  )),
-                                  SizedBox(height: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    SizedBox(width: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    Container(
-                                        child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text("Slug Url",
-                                            style: themeTextStyle(
-                                                color: Colors.black,
-                                                size: 15,
-                                                fw: FontWeight.bold)),
-                                        // Text_field_up(
-                                        //     context,
-                                        //     slugUrl,
-                                        //     "Slug Url",
-                                        //     "Enter Slug Url"),
-
-                                        Container(
+                                ],
+                              )),
+                            ],
+                          ),
+                        ),
+               ///////////////// Category for web ++++++++++++++++++++++++++++++++++++
+                        if (!Responsive.isMobile(context))
+                          SizedBox(width: defaultPadding),
+                        if (!Responsive.isMobile(context))
+                          Expanded(
+                            flex: 2,
+                            child:  Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    child: Text("Category",
+                                        style: themeTextStyle(
+                                            color: Colors.black,
+                                            size: 15,
+                                            fw: FontWeight.bold))),
+                                       Container(
                                             height: 40,
                                             margin: EdgeInsets.only(
-                                                top: 10,
-                                                bottom: 10,
-                                                left: 10,
-                                                right: 10),
+                                                top: 10, bottom: 10,),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
-                                            child: TextFormField(
-                                              initialValue: slugUrl,
-                                              autofocus: false,
-                                              onChanged: (value) =>
-                                                  slugUrl = value,
-                                              // controller: ctr_name,
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return 'Please Enter Slug Url';
-                                                }
-                                                return null;
-                                              },
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                              decoration: InputDecoration(
-                                                border: InputBorder.none,
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 20,
-                                                        vertical: 15),
-                                                hintText: 'Enter Slug Url',
-                                                hintStyle: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 16,
-                                                ),
+                                            padding: EdgeInsets.only(
+                                                left: 10, right: 10),
+                                            child: DropdownButton(
+                                              dropdownColor: Colors.white,
+                                              hint: (_PerentCate == null)
+                                                  ? Text(
+                                                      '$_PerentC',
+                                                      style: TextStyle(
+                                                          color: Colors.black),
+                                                    )
+                                                  : Text(
+                                                      _PerentCate!,
+                                                      style: TextStyle(
+                                                          color: Colors.black),
+                                                    ),
+                                              underline: Container(),
+                                              isExpanded: true,
+                                              icon: Icon(
+                                                Icons.arrow_drop_down,
+                                                color: Colors.black,
                                               ),
-                                            ))
-                                      ],
-                                    )),
-                                ],
-                              ),
+                                              iconSize: 35,
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 4, 6, 7)),
+                                              items: Cate_Name_list.map(
+                                                (val) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: val,
+                                                    child: Text(val),
+                                                  );
+                                                },
+                                              ).toList(),
+                                              onChanged: (val) {
+                                                setState(
+                                                  () {
+                                                    _PerentCate = val!;
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          ),
+                              ],
                             ),
-
-                            SizedBox(height: defaultPadding),
-                            if (Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            if (Responsive.isMobile(context))
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("No Item",
+                          ),
+                          ),
+                      ],
+                    ), 
+              ///////////////// Category for Mobile ++++++++++++++++++++++++++++++++++++
+                        if (Responsive.isMobile(context))
+                          SizedBox(height: defaultPadding),
+                        if (Responsive.isMobile(context))
+                        Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    child: Text("Category",
                                         style: themeTextStyle(
                                             color: Colors.black,
                                             size: 15,
-                                            fw: FontWeight.bold)),
-                                    // Text_field_up(
-                                    //     context,
-                                    //     Noitem,
-                                    //     "No Item",
-                                    //     "Enter No Item"),
-
-                                    Container(
-                                        height: 40,
-                                        margin: EdgeInsets.only(
-                                            top: 10,
-                                            bottom: 10,
-                                            left: 10,
-                                            right: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: TextFormField(
-                                          initialValue: Noitem,
-                                          autofocus: false,
-                                          onChanged: (value) => Noitem = value,
-                                          // controller: ctr_name,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please Enter No Item';
-                                            }
-                                            return null;
-                                          },
-                                          style: TextStyle(color: Colors.black),
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 15),
-                                            hintText: 'Enter No Item',
-                                            hintStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ))
-                                  ],
-                                )),
-                              ),
-                            if (!Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            // On Mobile means if the screen is less than 850 we dont want to show it
-                            if (!Responsive.isMobile(context))
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("No Item",
-                                        style: themeTextStyle(
-                                            color: Colors.black,
-                                            size: 15,
-                                            fw: FontWeight.bold)),
-                                    // Text_field_up(context, Noitem,
-                                    //     "No Item", "Enter No Item"),
-
-                                    Container(
-                                        height: 40,
-                                        margin: EdgeInsets.only(
-                                            top: 10,
-                                            bottom: 10,
-                                            left: 10,
-                                            right: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: TextFormField(
-                                          initialValue: Noitem,
-                                          autofocus: false,
-                                          onChanged: (value) => Noitem = value,
-                                          // controller: ctr_name,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please Enter No Item';
-                                            }
-                                            return null;
-                                          },
-                                          style: TextStyle(color: Colors.black),
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 15),
-                                            hintText: 'Enter No Item',
-                                            hintStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ))
-                                  ],
-                                )),
-                              ),
-
-                            if (!Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            // On Mobile means if the screen is less than 850 we dont want to show it
-
-                            if (!Responsive.isMobile(context))
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Slug Url",
-                                        style: themeTextStyle(
-                                            color: Colors.black,
-                                            size: 15,
-                                            fw: FontWeight.bold)),
-                                    // Text_field_up(
-                                    //     context,
-                                    //     slugUrl,
-                                    //     "Slug Url",
-                                    //     "Enter Slug Url"),
-                                    Container(
-                                        height: 40,
-                                        margin: EdgeInsets.only(
-                                            top: 10,
-                                            bottom: 10,
-                                            left: 10,
-                                            right: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: TextFormField(
-                                          initialValue: slugUrl,
-                                          autofocus: false,
-                                          onChanged: (value) => slugUrl = value,
-                                          // controller: ctr_name,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Please Enter Slug Url";
-                                            }
-                                            return null;
-                                          },
-                                          style: TextStyle(color: Colors.black),
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 15),
-                                            hintText: '"Enter Slug Url"',
-                                            hintStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ))
-                                  ],
-                                )),
-                              ),
-                          ],
-                        ),
-
-                        //status
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            child: Text("Status",
-                                                style: themeTextStyle(
-                                                    color: Colors.black,
-                                                    size: 15,
-                                                    fw: FontWeight.bold))),
-                                        Container(
+                                            fw: FontWeight.bold))),
+                                       Container(
                                             height: 40,
                                             margin: EdgeInsets.only(
-                                                top: 10, bottom: 10, right: 10),
+                                                top: 10, bottom: 10,),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            padding: EdgeInsets.only(
+                                                left: 10, right: 10),
+                                            child: DropdownButton(
+                                              dropdownColor: Colors.white,
+                                              hint: (_PerentCate == null)
+                                                  ? Text(
+                                                      '$_PerentC',
+                                                      style: TextStyle(
+                                                          color: Colors.black),
+                                                    )
+                                                  : Text(
+                                                      _PerentCate!,
+                                                      style: TextStyle(
+                                                          color: Colors.black),
+                                                    ),
+                                              underline: Container(),
+                                              isExpanded: true,
+                                              icon: Icon(
+                                                Icons.arrow_drop_down,
+                                                color: Colors.black,
+                                              ),
+                                              iconSize: 35,
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 4, 6, 7)),
+                                              items: Cate_Name_list.map(
+                                                (val) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: val,
+                                                    child: Text(val),
+                                                  );
+                                                },
+                                              ).toList(),
+                                              onChanged: (val) {
+                                                setState(
+                                                  () {
+                                                    _PerentCate = val!;
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          ),
+                              ],
+                            ),
+                          ),
+///////////////////////////////===================================
+                   
+///////////// status ++++++++++++++++++++++++++++++++
+                SizedBox(height: defaultPadding),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                  child: Text("Status",
+                                      style: themeTextStyle(
+                                          color: Colors.black,
+                                          size: 15,
+                                          fw: FontWeight.bold))),
+                                            Container(
+                                            height: 40,
+                                            margin: EdgeInsets.only(
+                                                top: 10, bottom: 10,),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
@@ -2136,279 +1807,46 @@ class _ProductAddState extends State<ProductAdd> {
                                                 );
                                               },
                                             )),
-                                      ],
-                                    ),
-                                  ),
-
-                                  // Text_field(context,"category_name","Category Name","Enter Category Name"),
-                                  SizedBox(height: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    SizedBox(width: defaultPadding),
-                                  if (Responsive.isMobile(context))
-
-                                    //   Text_field(context,"slug_url","Slug Url","Enter Slug Url"),
-
-                                    Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                              child: Text("Category Name",
-                                                  style: themeTextStyle(
-                                                      color: Colors.black,
-                                                      size: 15,
-                                                      fw: FontWeight.bold))),
-                                          Container(
-                                            height: 40,
-                                            margin: EdgeInsets.only(
-                                                top: 10, bottom: 10, right: 10),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            padding: EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            child: DropdownButton(
-                                              dropdownColor: Colors.white,
-                                              hint: (_PerentCate == null)
-                                                  ? Text(
-                                                      '$_PerentC',
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    )
-                                                  : Text(
-                                                      _PerentCate!,
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    ),
-                                              underline: Container(),
-                                              isExpanded: true,
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                                color: Colors.black,
-                                              ),
-                                              iconSize: 35,
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 4, 6, 7)),
-                                              items:
-                                                  //  [
-                                                  //   'Select',
-                                                  //   'One',
-                                                  //   'Two',
-                                                  //   'Three'
-                                                  // ]
-                                                  Cate_Name_list.map(
-                                                (val) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: val,
-                                                    child: Text(val),
-                                                  );
-                                                },
-                                              ).toList(),
-                                              onChanged: (val) {
-                                                setState(
-                                                  () {
-                                                    _PerentCate = val!;
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                ],
-                              ),
-                            ),
-                            if (!Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            // On Mobile means if the screen is less than 850 we dont want to show it
-                            if (!Responsive.isMobile(context))
-                              Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            child: Text("Category Name",
-                                                style: themeTextStyle(
-                                                    color: Colors.black,
-                                                    size: 15,
-                                                    fw: FontWeight.bold))),
-                                        Container(
-                                            height: 40,
-                                            margin: EdgeInsets.only(
-                                                top: 10, bottom: 10, right: 10),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            padding: EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            child: DropdownButton(
-                                              dropdownColor: Colors.white,
-                                              hint: (_PerentCate == null)
-                                                  ? Text(
-                                                      '$_PerentC',
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    )
-                                                  : Text(
-                                                      _PerentCate!,
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    ),
-                                              underline: Container(),
-                                              isExpanded: true,
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                                color: Colors.black,
-                                              ),
-                                              iconSize: 35,
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 4, 6, 7)),
-                                              items:
-                                                  // [
-                                                  //   'Select',
-                                                  //   'One',
-                                                  //   'Two',
-                                                  //   'Three'
-                                                  // ]
-                                                  Cate_Name_list.map(
-                                                (val) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: val,
-                                                    child: Text(val),
-                                                  );
-                                                },
-                                              ).toList(),
-                                              onChanged: (val) {
-                                                setState(
-                                                  () {
-                                                    _PerentCate = val!;
-                                                  },
-                                                );
-                                              },
-                                            )),
-                                      ],
-                                    ),
-                                  )),
-                          ],
+                            ],
+                          ),
                         ),
+                      ),
 
-                        ///mrp
-
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Column(
-                                children: [
-                                  Container(
-                                      child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("MRP",
-                                          style: themeTextStyle(
-                                              color: Colors.black,
-                                              size: 15,
-                                              fw: FontWeight.bold)),
-                                      // Text_field_up(context, Mrp,
-                                      //     "MRP", "Enter MRP"),
-
-                                      Container(
-                                          height: 40,
-                                          margin: EdgeInsets.only(
-                                              top: 10,
-                                              bottom: 10,
-                                              left: 10,
-                                              right: 10),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: TextFormField(
-                                            initialValue: Mrp,
-                                            autofocus: false,
-                                            onChanged: (value) => Mrp = value,
-                                            // controller: ctr_name,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return "Please Enter MRP";
-                                              }
-                                              return null;
-                                            },
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 15),
-                                              hintText: '"Enter MRP"',
-                                              hintStyle: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ))
-                                    ],
-                                  )),
-                                  SizedBox(height: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    SizedBox(width: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    Container(
-                                        child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text("Offer Price",
-                                            style: themeTextStyle(
-                                                color: Colors.black,
-                                                size: 15,
-                                                fw: FontWeight.bold)),
-                                        // Text_field_up(
-                                        //     context,
-                                        //     Offer,
-                                        //     "Offer Price",
-                                        //     "Enter Offer Price"),
-                                        Container(
+                       if (!Responsive.isMobile(context))
+                       SizedBox(width: defaultPadding),
+                       if (!Responsive.isMobile(context))
+                      Expanded(
+                          flex: 2,
+                          child:  Container(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Slug Url",
+                            style: themeTextStyle(
+                                color: Colors.black,
+                                size: 15,
+                                fw: FontWeight.bold)),
+                                     Container(
                                             height: 40,
                                             margin: EdgeInsets.only(
                                                 top: 10,
                                                 bottom: 10,
-                                                left: 10,
-                                                right: 10),
+                                            ),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
                                             child: TextFormField(
-                                              initialValue: Offer,
+                                              initialValue: slugUrl,
                                               autofocus: false,
                                               onChanged: (value) =>
-                                                  Offer = value,
+                                                  slugUrl = value,
                                               // controller: ctr_name,
                                               validator: (value) {
                                                 if (value == null ||
                                                     value.isEmpty) {
-                                                  return "Please Enter Offer Price";
+                                                  return 'Please Enter Slug Url';
                                                 }
                                                 return null;
                                               },
@@ -2420,501 +1858,133 @@ class _ProductAddState extends State<ProductAdd> {
                                                     EdgeInsets.symmetric(
                                                         horizontal: 20,
                                                         vertical: 15),
-                                                hintText: '"Enter Offer Price"',
+                                                hintText: 'Enter Slug Url',
                                                 hintStyle: TextStyle(
                                                   color: Colors.grey,
                                                   fontSize: 16,
                                                 ),
                                               ),
                                             ))
-                                      ],
-                                    )),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: defaultPadding),
-                            if (Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            if (Responsive.isMobile(context))
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Discount",
-                                        style: themeTextStyle(
-                                            color: Colors.black,
-                                            size: 15,
-                                            fw: FontWeight.bold)),
-                                    // Text_field_up(
-                                    //     context,
-                                    //     Discount,
-                                    //     "Discount",
-                                    //     "Enter Discount"),
+                      ],
+                    ))),
+                    ],
+                  ),
+            ///    
 
-                                    Container(
-                                        height: 40,
-                                        margin: EdgeInsets.only(
-                                            top: 10,
-                                            bottom: 10,
-                                            left: 10,
-                                            right: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: TextFormField(
-                                          initialValue: Discount,
-                                          autofocus: false,
-                                          onChanged: (value) =>
-                                              Discount = value,
-                                          // controller: ctr_name,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Please Enter Discount";
-                                            }
-                                            return null;
-                                          },
-                                          style: TextStyle(color: Colors.black),
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 15),
-                                            hintText: '"Enter Discount"',
-                                            hintStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ))
-                                  ],
-                                )),
-                              ),
-                            if (!Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            // On Mobile means if the screen is less than 850 we dont want to show it
-                            if (!Responsive.isMobile(context))
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Discount",
-                                        style: themeTextStyle(
-                                            color: Colors.black,
-                                            size: 15,
-                                            fw: FontWeight.bold)),
-                                    // Text_field_up(
-                                    //     context,
-                                    //     Discount,
-                                    //     "Discount",
-                                    //     "Enter Discount"),
-                                    Container(
-                                        height: 40,
-                                        margin: EdgeInsets.only(
-                                            top: 10,
-                                            bottom: 10,
-                                            left: 10,
-                                            right: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: TextFormField(
-                                          initialValue: Discount,
-                                          autofocus: false,
-                                          onChanged: (value) =>
-                                              Discount = value,
-                                          // controller: ctr_name,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Please Enter Discount";
-                                            }
-                                            return null;
-                                          },
-                                          style: TextStyle(color: Colors.black),
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 15),
-                                            hintText: '"Enter Discount"',
-                                            hintStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ))
-                                  ],
-                                )),
-                              ),
-
-                            if (!Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            // On Mobile means if the screen is less than 850 we dont want to show it
-                            if (!Responsive.isMobile(context))
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Offer Price",
-                                        style: themeTextStyle(
-                                            color: Colors.black,
-                                            size: 15,
-                                            fw: FontWeight.bold)),
-                                    // Text_field_up(
-                                    //     context,
-                                    //     Offer,
-                                    //     "Offer Price",
-                                    //     "Enter Offer Price"),
-
-                                    Container(
-                                        height: 40,
-                                        margin: EdgeInsets.only(
-                                            top: 10,
-                                            bottom: 10,
-                                            left: 10,
-                                            right: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: TextFormField(
-                                          initialValue: Offer,
-                                          autofocus: false,
-                                          onChanged: (value) => Offer = value,
-                                          // controller: ctr_name,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Please Enter Offer";
-                                            }
-                                            return null;
-                                          },
-                                          style: TextStyle(color: Colors.black),
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 15),
-                                            hintText: '"Enter Offer"',
-                                            hintStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        ))
-                                  ],
-                                )),
-                              ),
-                          ],
-                        ),
-
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            child: Text("Size",
-                                                style: themeTextStyle(
-                                                    color: Colors.black,
-                                                    size: 15,
-                                                    fw: FontWeight.bold))),
-                                        Container(
-                                          height: 40,
-                                          margin: EdgeInsets.only(
-                                              top: 10, bottom: 10, right: 10),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          padding: EdgeInsets.only(
-                                              left: 10, right: 10),
-                                          child: DropdownButton(
-                                            dropdownColor: Colors.white,
-                                            hint: _sizeValue == null
-                                                ? Text(
-                                                    '$_Size',
-                                                    style: TextStyle(
-                                                        color: Colors.black),
-                                                  )
-                                                : Text(
-                                                    _sizeValue!,
-                                                    style: TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-                                            underline: Container(),
-                                            isExpanded: true,
-                                            icon: Icon(
-                                              Icons.arrow_drop_down,
-                                              color: Colors.black,
-                                            ),
-                                            iconSize: 35,
-                                            style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 4, 7, 9)),
-                                            items: [
-                                              'Select',
-                                              'Small',
-                                              'Medium',
-                                              "Large"
-                                            ].map(
-                                              (val) {
-                                                return DropdownMenuItem<String>(
-                                                  value: val,
-                                                  child: Text(val),
-                                                );
-                                              },
-                                            ).toList(),
-                                            onChanged: (val) {
-                                              setState(
-                                                () {
-                                                  _sizeValue = val!;
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  // Text_field(context,"category_name","Category Name","Enter Category Name"),
-                                  SizedBox(height: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    SizedBox(width: defaultPadding),
-                                  if (Responsive.isMobile(context))
-
-                                    // Text_field_up(context,slug_url,"Slug Url","Enter Slug Url"),
-
-                                    Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                              child: Text("Select Brand",
-                                                  style: themeTextStyle(
-                                                      color: Colors.black,
-                                                      size: 15,
-                                                      fw: FontWeight.bold))),
-                                          Container(
+          ////////  Slug +++++++++++++++ web & Mobile +++++++++++++++++++++++++++++++++++++++
+          
+                  if (Responsive.isMobile(context))
+                    SizedBox(height: defaultPadding),
+                  if (Responsive.isMobile(context))
+                    Container(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Slug Url",
+                            style: themeTextStyle(
+                                color: Colors.black,
+                                size: 15,
+                                fw: FontWeight.bold)),
+                                                             Container(
                                             height: 40,
                                             margin: EdgeInsets.only(
-                                                top: 10, bottom: 10, right: 10),
+                                                top: 10,
+                                                bottom: 10,
+                                            ),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
-                                            padding: EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            child: DropdownButton(
-                                              dropdownColor: Colors.white,
-                                              hint: _brandValue == null
-                                                  ? Text(
-                                                      '$_Brand',
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    )
-                                                  : Text(
-                                                      _brandValue!,
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    ),
-                                              underline: Container(),
-                                              isExpanded: true,
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                                color: Colors.black,
-                                              ),
-                                              iconSize: 35,
+                                            child: TextFormField(
+                                              initialValue: slugUrl,
+                                              autofocus: false,
+                                              onChanged: (value) =>
+                                                  slugUrl = value,
+                                              // controller: ctr_name,
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Please Enter Slug Url';
+                                                }
+                                                return null;
+                                              },
                                               style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 5, 6, 7)),
-                                              items: [
-                                                'Select',
-                                                'One',
-                                                'Two',
-                                                'Three'
-                                              ].map(
-                                                (val) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: val,
-                                                    child: Text(val),
-                                                  );
-                                                },
-                                              ).toList(),
-                                              onChanged: (val) {
-                                                setState(
-                                                  () {
-                                                    _brandValue = val!;
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                ],
-                              ),
-                            ),
-                            if (!Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            // On Mobile means if the screen is less than 850 we dont want to show it
-                            if (!Responsive.isMobile(context))
-                              Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            child: Text("Select Brand",
-                                                style: themeTextStyle(
-                                                    color: Colors.black,
-                                                    size: 15,
-                                                    fw: FontWeight.bold))),
-                                        Container(
-                                          height: 40,
-                                          margin: EdgeInsets.only(
-                                              top: 10, bottom: 10, right: 10),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          padding: EdgeInsets.only(
-                                              left: 10, right: 10),
-                                          child: DropdownButton(
-                                            dropdownColor: Colors.white,
-                                            hint: _brandValue == null
-                                                ? Text(
-                                                    '$_Brand',
-                                                    style: TextStyle(
-                                                        color: Colors.black),
-                                                  )
-                                                : Text(
-                                                    _brandValue!,
-                                                    style: TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-                                            underline: Container(),
-                                            isExpanded: true,
-                                            icon: Icon(
-                                              Icons.arrow_drop_down,
-                                              color: Colors.black,
-                                            ),
-                                            iconSize: 35,
-                                            style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 5, 6, 7)),
-                                            items: [
-                                              'Select',
-                                              'One',
-                                              'Two',
-                                              'Three'
-                                            ].map(
-                                              (val) {
-                                                return DropdownMenuItem<String>(
-                                                  value: val,
-                                                  child: Text(val),
-                                                );
-                                              },
-                                            ).toList(),
-                                            onChanged: (val) {
-                                              setState(
-                                                () {
-                                                  _brandValue = val!;
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                          ],
-                        ),
-                        (url_img == null && image == "null")
-                            ? SizedBox()
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 10),
-                                      width: 100,
-                                      child: Column(
-                                        children: [
-                                          (url_img == null || url_img.isEmpty)
-                                              ? (image != null)
-                                                  ? Image.network(
-                                                      "$image",
-                                                      height: 100,
-                                                      fit: BoxFit.contain,
-                                                    )
-                                                  : Image.network(
-                                                      "https://cdn.vectorstock.com/i/preview-1x/65/30/default-image-icon-missing-picture-page-vector-40546530.jpg",
-                                                      height: 100,
-                                                      fit: BoxFit.contain,
-                                                    )
-                                              : Image.network(
-                                                  url_img,
-                                                  height: 100,
-                                                  fit: BoxFit.contain,
+                                                  color: Colors.black),
+                                              decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 20,
+                                                        vertical: 15),
+                                                hintText: 'Enter Slug Url',
+                                                hintStyle: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 16,
                                                 ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                url_img = null;
-                                                image = null;
-                                              });
-                                            },
-                                            child: Container(
-                                                alignment: Alignment.center,
-                                                width: double.infinity,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: Colors.black),
-                                                    color: Colors.red),
-                                                child: Text(
-                                                  "Remove Image",
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 11),
-                                                )),
-                                          )
-                                        ],
-                                      )),
-                                ],
-                              ),
+                                              ),
+                                            ))
+                      ],
+                    )),
+
+                     Text("$Name , $slugUrl ,  $_Status , $_PerentC , $product_type , $price_data   ++++++++++++++++",style: TextStyle(color:Colors.red),),
+                   
+                    
+
+                       
+                        // (url_img == null && image == "null")
+                        //     ? SizedBox()
+                        //     : Row(
+                        //         mainAxisAlignment: MainAxisAlignment.start,
+                        //         children: [
+                        //           Container(
+                        //               margin:
+                        //                   EdgeInsets.symmetric(horizontal: 10),
+                        //               width: 100,
+                        //               child: Column(
+                        //                 children: [
+                        //                   (url_img == null || url_img.isEmpty)
+                        //                       ? (image != null)
+                        //                           ? Image.network(
+                        //                               "$image",
+                        //                               height: 100,
+                        //                               fit: BoxFit.contain,
+                        //                             )
+                        //                           : Image.network(
+                        //                               "https://cdn.vectorstock.com/i/preview-1x/65/30/default-image-icon-missing-picture-page-vector-40546530.jpg",
+                        //                               height: 100,
+                        //                               fit: BoxFit.contain,
+                        //                             )
+                        //                       : Image.network(
+                        //                           url_img,
+                        //                           height: 100,
+                        //                           fit: BoxFit.contain,
+                        //                         ),
+                        //                   GestureDetector(
+                        //                     onTap: () {
+                        //                       setState(() {
+                        //                         url_img = null;
+                        //                         image = null;
+                        //                       });
+                        //                     },
+                        //                     child: Container(
+                        //                         alignment: Alignment.center,
+                        //                         width: double.infinity,
+                        //                         decoration: BoxDecoration(
+                        //                             border: Border.all(
+                        //                                 color: Colors.black),
+                        //                             color: Colors.red),
+                        //                         child: Text(
+                        //                           "Remove Image",
+                        //                           style: TextStyle(
+                        //                               color: Colors.white,
+                        //                               fontSize: 11),
+                        //                         )),
+                        //                   )
+                        //                 ],
+                        //               )),
+                        //         ],
+                        //       ),
                         SizedBox(
                           height: 10,
                         ),
@@ -3015,18 +2085,13 @@ class _ProductAddState extends State<ProductAdd> {
                                 updatelist(
                                     id,
                                     Name,
-                                    Noitem,
                                     slugUrl,
                                     _StatusValue,
-                                    _PerentC,
-                                    Mrp,
-                                    Discount,
-                                    Offer,
-                                    _Size,
-                                    _Brand,
-                                    (url_img == null || url_img.isEmpty)
-                                        ? image
-                                        : url_img);
+                                    _PerentC
+                                    // (url_img == null || url_img.isEmpty)
+                                    //     ? image
+                                    //     : url_img
+                                        );
                               },
                                   buttonColor: Colors.blueAccent,
                                   label: "Update"),
@@ -3034,46 +2099,31 @@ class _ProductAddState extends State<ProductAdd> {
                                 width: 10,
                               ),
                             ])
+
+
                       ],
                     )
-              // }
-              // )
-              //)
-
               ),
         ]));
   }
 
 ///////////////////////////
 
-///////////////////////////
-  Discount_cal() {
-    if (SellingPriController.text.isNotEmpty && mrpController.text.isNotEmpty) {
-      var mrpp = int.parse(mrpController.text);
-      var sellpp = int.parse(SellingPriController.text);
-
-      setState(() {
-        var DiscountPP = (((mrpp - sellpp) / mrpp * 100));
-        DiscountController.text = DiscountPP.toStringAsFixed(2);
-      });
-    }
-  }
-////
-////// 
-///////////////////////////
+/////////// Discount  ++++++++ 
   Mp_Discount_cal(mrp,sell) {
                   var mrpp = int.parse(mrp);
                   var sellpp = int.parse(sell);
                   setState(() {
                      var DiscountPP = (((mrpp - sellpp) / mrpp * 100));
                       DiscountController.text = DiscountPP.toStringAsFixed(2);
+                      (basic_Product == true)
+                      ?
+                      _controllers2["discount"] = DiscountController
+                      :
                       _controllers["discount"] = DiscountController;
-                        // print("${DiscountController.text} ==++++++++++++");
-                        print("${_controllers["discount"]} =++++++++++++");
                        });
   }
-/// 
-///  
+/////////////   Featured Product   +++++++++++++++++++++++++++++++++++++++
   Widget wd_sub_product_details(BuildContext context, title) {
     return Container(
       margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
@@ -3084,10 +2134,11 @@ class _ProductAddState extends State<ProductAdd> {
             Border.all(width: 1.0, color: Color.fromARGB(255, 187, 187, 187)),
       ),
       child: 
-      
-      
        Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                 title,
+                 SizedBox(height: 10),
                             
                              Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -3104,17 +2155,7 @@ class _ProductAddState extends State<ProductAdd> {
                               color: Colors.black,
                               size: 15,
                               fw: FontWeight.bold)),
-                                          //Text_field(context, mrpController, "MRP", "Enter MRP"),
-                                        // Text_rate(context, mrpController, "MRP")
-                                          Text_field_rate( context,"mrp_price","MRP") ,
-                                         ElevatedButton(onPressed: (){
-                                          setState(() {
-                          
-                                           _controllers["product_images"]!.text = url_img.toString();
-                                          });
-                                          print("$_controllers ++++++++");
-                                          
-                                          }, child: Text("daat")),
+                                          Text_field_rate( context,"1","mrp_price","MRP") ,
                                         ],
                                       )),
                                     ),
@@ -3131,7 +2172,7 @@ class _ProductAddState extends State<ProductAdd> {
                               size: 15,
                               fw: FontWeight.bold)),
                                 //Text_rate(context, SellingPriController, "Selling Price")
-                                Text_field_rate( context,"selling_price","Selling Price") ,
+                                Text_field_rate( context,"1","selling_price","Selling Price") ,
                                         ],
                                       )),
                                     ),
@@ -3183,7 +2224,7 @@ class _ProductAddState extends State<ProductAdd> {
                               size: 15,
                               fw: FontWeight.bold)),
                               // Text_rate(context, ShippingController, "MRP")
-                              Text_field_rate( context,"shiping_price","Shiping Price") ,
+                              Text_field_rate( context,"1","shiping_price","Shiping Price") ,
                                         ],
                                       )),
                                     ),
@@ -3202,7 +2243,7 @@ class _ProductAddState extends State<ProductAdd> {
                               size: 15,
                               fw: FontWeight.bold)),
                             // Text_rate(context, NoitemController, "Selling Price")
-                                Text_field_rate( context,"stock_item","Stock (No. item)") , 
+                                Text_field_rate( context,"1","stock_item","Stock (No. item)") , 
                                         ],
                                       )),
                                     ),          
@@ -3227,7 +2268,7 @@ class _ProductAddState extends State<ProductAdd> {
                               color: Colors.black,
                               size: 15,
                               fw: FontWeight.bold)),
-                              Text_field_rate( context,"shiping_price","Shiping Price") ,
+                              Text_field_rate( context,"1","shiping_price","Shiping Price") ,
                                         ],
                                       )),
                                     ),
@@ -3244,7 +2285,7 @@ class _ProductAddState extends State<ProductAdd> {
                               size: 15,
                               fw: FontWeight.bold)),
                               // Text_rate(context, NoitemController, "Selling Price")
-                              Text_field_rate( context,"stock_item","Stock (No. item)") ,   
+                              Text_field_rate( context,"1","stock_item","Stock (No. item)") ,   
                                         ],
                                       )),
                                     ),
@@ -3299,92 +2340,242 @@ class _ProductAddState extends State<ProductAdd> {
                           ),
     );
   }
+ ////////////// 
 
+/////////////   Featured Product   +++++++++++++++++++++++++++++++++++++++
+  Widget wd_sub_Basic_product_details(BuildContext context) {
+    return     Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          border:  Border.all(color: Colors.black38 ,width: 2.0)
+                        ),
+                        child: Column(
+                            children: [
+                            
+                             Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                 
+                             Text("MRP (₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          //Text_field(context, mrpController, "MRP", "Enter MRP"),
+                                        Text_field_rate( context,"2","mrp_price","MRP"),
+                                         // Text_field_rate( context,"MRP","MRP") ,
+                                        ],
+                                      )),
+                                    ),
+                                    SizedBox(width: defaultPadding),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Selling Price (₹)",
+                             style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                        Text_field_rate( context,"2","selling_price","Selling Price") ,
+                                        ],
+                                      )),
+                                    ),
+                      
+                                    SizedBox(width: defaultPadding),
+                                    // // On Mobile means if the screen is less than 850 we dont want to show it
+                                    // if (!Responsive.isMobile(context))
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Discount (%)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          Container(
+                          alignment: Alignment.centerLeft,
+                          width: double.infinity,
+                          height: 40,
+                          margin: EdgeInsets.only(top: 10, bottom: 10, left: 10),
+                          padding: EdgeInsets.only(left: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text("${DiscountController.text} %",
+                              style: themeTextStyle(
+                                  color: Colors.black,
+                                  size: 15,
+                                  fw: FontWeight.bold)))
+                                        ],
+                                      )),
+                                    ),
+                               if (!Responsive.isMobile(context))
+                                    SizedBox(width: defaultPadding),
+                                    if (!Responsive.isMobile(context))      
+                              Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Shiping Price(₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                           Text_field_rate( context,"2","shiping_price","Shiping Price") ,
+                                        ],
+                                      )),
+                                    ),
+                                    if (!Responsive.isMobile(context))
+                                    SizedBox(width: defaultPadding),
+                                    if (!Responsive.isMobile(context))
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Stock (No. item)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                           Text_field_rate( context,"2","stock","Stock") ,
+      
+                                        ],
+                                      )),
+                                    ),          
+                                    
+                                  ],
+                                ),
 
+                  if (Responsive.isMobile(context))
+                    SizedBox(height: defaultPadding),
+                  if (Responsive.isMobile(context))
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Shiping Price(₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                           Text_field_rate( context,"2","shiping_price","Shiping Price") ,
+                                        ],
+                                      )),
+                                    ),
+                                    SizedBox(width: defaultPadding),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Stock (No. item)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                         Text_field_rate( context,"2","Stock","Stock (No. item)") ,        
+                                        ],
+                                      )),
+                                    ),
+                                  ],
+                                ),
+                      
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
 
+                            Container(
+                              height: 50,
+                              width: 50,
+                              child:
+                               IconButton(
+                                onPressed: ()
+                                {
+                                _ImageSelect_Alert(context);
+                                }
+                                ,
+                               icon: Icon(Icons.drive_folder_upload,size:50,color:Colors.blue)),
+                            ),    
 
-  Widget Text_rate(BuildContext context, ctro_name, _hint) {
-    return Container(
-      height: 40,
-      margin: EdgeInsets.only(
-        top: 10,
-        bottom: 10,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: TextFormField(
-        controller: ctro_name,
-        onChanged: (value) async {
-          if (SellingPriController.text.isNotEmpty) {
-            Discount_cal();
-          }
-        },
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please Enter value';
-          }
-        },
-
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          hintText: '$_hint',
-          hintStyle: TextStyle(
-            color: Colors.grey,
-            fontSize: 16,
-          ),
-          suffixIcon: Container(
-            height: 10,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    var mrpIncre = int.parse(ctro_name.text);
-                    setState(() {
-                      mrpIncre++;
-                      ctro_name.text = mrpIncre.toString();
-                    });
-                  },
-                  child: Icon(Icons.expand_less_rounded,
-                      size: 20, color: Colors.black),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    var mrpIncre = int.parse(ctro_name.text);
-                    setState(() {
-                      mrpIncre--;
-                      ctro_name.text = mrpIncre.toString();
-                    });
-                  },
-                  child: Icon(Icons.expand_more_outlined,
-                      size: 20, color: Colors.black),
-                )
-              ],
-            ),
-          ),
-        ),
-        style: TextStyle(color: Colors.black),
-        keyboardType: TextInputType.number,
-        inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.digitsOnly
-        ], // Only numbers can be entered
-      ),
-    );
+                        SizedBox(width: 20,),   
+                        ( url_img == null)
+                            ? 
+                            SizedBox()
+                            : 
+                         Container(
+                                alignment: Alignment.topRight,
+                                margin: EdgeInsets.all(10),
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: Colors.grey),
+                                 image: DecorationImage(image:  NetworkImage("$url_img"))
+                          ),
+                         child: 
+                         GestureDetector(
+                          onTap: (){
+                            setState(() {
+                              url_img = null;
+                            });
+                          },
+                          child: Icon(Icons.cancel_outlined,color:Colors.red ,size:15))
+                      ),
+                    ],
+                  ),
+                      
+                            ],
+                          ),
+                      );
   }
+ ////////////// 
+
+
+
+
+
+
 
 ///////////  Map text field   ++++++++++++++++++++++++++++ 
-  Widget Text_field_rate(BuildContext context, controller_name,hint) {
-
+  Widget Text_field_rate(BuildContext context,ctr_type,controller_name,hint) {
+    if (ctr_type == '1') {
       var tempStr = (_controllers["$controller_name"]?.text == null)
-          ?
-           ''
-          :
-           _controllers["$controller_name"]?.text;
-            _controllers["$controller_name"] = TextEditingController();
-             _controllers["$controller_name"]?.text = tempStr.toString();
+          ? ''
+          : _controllers["$controller_name"]?.text;
+      _controllers["$controller_name"] = TextEditingController();
+      _controllers["$controller_name"]?.text = tempStr.toString();
+    } 
+    else {
+      var tempStr = (_controllers2["$controller_name"]?.text == null)
+          ? ''
+          : _controllers2["$controller_name"]?.text;
+      _controllers2["$controller_name"] = TextEditingController();
+      _controllers2["$controller_name"]?.text = tempStr.toString();
+    }
       return 
        Container(
       height: 40,
@@ -3395,12 +2586,25 @@ class _ProductAddState extends State<ProductAdd> {
       ),
       child:  TextFormField(
         obscureText: false,
-        controller:  _controllers["$controller_name"],
-         onChanged: (value) async {
+        controller: (ctr_type == '1')
+            ?
+             _controllers["$controller_name"]
+            :
+             _controllers2["$controller_name"],
 
-          if (_controllers["mrp_price"]!.text.isNotEmpty && _controllers["$controller_name"]!.text == _controllers["selling_price"]!.text) {
-           // Discount_cal();
+         onChanged:
+          (value)
+           async {
+            if(ctr_type == '1'){
+          if ( _controllers["mrp_price"]!.text.isNotEmpty && _controllers["$controller_name"]!.text == _controllers["selling_price"]!.text) {
             Mp_Discount_cal(_controllers["mrp_price"]!.text,_controllers["selling_price"]!.text);
+          }
+            }
+          if(ctr_type == '2'){  
+          if(_controllers2["mrp_price"]!.text.isNotEmpty && _controllers2["$controller_name"]!.text == _controllers2["selling_price"]!.text )
+          {
+            Mp_Discount_cal(_controllers2["mrp_price"]!.text,_controllers2["selling_price"]!.text);
+          }
           }
         },
           validator: (value) {
@@ -3423,22 +2627,43 @@ class _ProductAddState extends State<ProductAdd> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    var mrpIncre = int.parse(_controllers["$controller_name"]!.text);
+                    if(ctr_type == '1'){
+                          var mrpIncre = int.parse(_controllers["$controller_name"]!.text);
                     setState(() {
                       mrpIncre++;
                       _controllers["$controller_name"]!.text = mrpIncre.toString();
                     });
+                    }
+                    if(ctr_type == '2'){
+                    var mrpIncre = int.parse(_controllers2["$controller_name"]!.text);
+                    setState(() {
+                      mrpIncre++;
+                      _controllers2["$controller_name"]!.text = mrpIncre.toString();
+                    });
+                    }
+
+                 
                   },
                   child: Icon(Icons.expand_less_rounded,
                       size: 20, color: Colors.black),
                 ),
                 GestureDetector(
                   onTap: () {
+                     if(ctr_type == '1'){
                     var mrpIncre = int.parse(_controllers["$controller_name"]!.text);
                     setState(() {
                       mrpIncre--;
                       _controllers["$controller_name"]!.text = mrpIncre.toString();
                     });
+                     }
+                    if(ctr_type == '2'){
+                    var mrpIncre = int.parse(_controllers2["$controller_name"]!.text);
+                    setState(() {
+                      mrpIncre--;
+                      _controllers2["$controller_name"]!.text = mrpIncre.toString();
+                    });
+                     }
+
                   },
                   child: Icon(Icons.expand_more_outlined,
                       size: 20, color: Colors.black),
