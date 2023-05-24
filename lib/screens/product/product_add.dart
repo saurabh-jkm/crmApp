@@ -34,18 +34,9 @@ class ProductAdd extends StatefulWidget {
 class _ProductAddState extends State<ProductAdd> {
   var db = FirebaseFirestore.instance;
   var myAttr;
-
   final _formKey = GlobalKey<FormState>();
-
-
   String? _PerentCate;
   String? _StatusValue;
-  // String? _sizeValue;
-  // String? _brandValue;
-
-
-
-  
 ////////  Map advance product Controller++++++++++++++++
  Map<String, TextEditingController> _controllers = new Map();
  Map<String, TextEditingController> _controllers2 = new Map();
@@ -66,14 +57,12 @@ class _ProductAddState extends State<ProductAdd> {
     clear_imageData();
   }
  ///// File Picker +++++++++++++++++++++++++++++++++++++++++
-  var url_img;
-  String? fileName;
-
   void clear_imageData() {
     fileName = null;
     url_img = null;
   }
-
+  var url_img;
+  String? fileName;
   pickFile() async {
     if (!kIsWeb) {
       final results = await FilePicker.platform.pickFiles(
@@ -123,8 +112,6 @@ class _ProductAddState extends State<ProductAdd> {
     }
   }
 
-
-
   ///////////  firebase property
   final Stream<QuerySnapshot> _crmStream =
       FirebaseFirestore.instance.collection('product').snapshots();
@@ -168,6 +155,7 @@ class _ProductAddState extends State<ProductAdd> {
 ///////////  Calling Category data +++++++++++++++++++++++++++
   List<String> Cate_Name_list = ["Select"];
   _CateData() async {
+    Cate_Name_list = ["Select"];
     var collection = FirebaseFirestore.instance.collection('category');
     var querySnapshot = await collection.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
@@ -213,24 +201,25 @@ class _ProductAddState extends State<ProductAdd> {
 
 ////  +===============================================================================
 
-
-
-
 ////////////////////  add list   ++++++++++++++++++++++++++++++++++++++++++++++
 
   Future<void> addList() {
     var arrData = new Map();
     var alert = '';
-
    ///// featured Product++++++
      if(basic_Product != true){
+             for(var i = 0; i < Submit_subProductBox.length; i++)
+       {
+      print("${Submit_subProductBox[i]}  +++++HHHHH+++");
+       }
+    //   print("$Submit_subProductBox +++Locall++");
               setState(() {
                    imageController.text = url_img.toString();
                    _controllers["product_images"] = imageController;
                    });
     _controllers.forEach((k, val) {
       var tempVar = _controllers['$k']?.text;
-      print("$tempVar ++++++++++++++++++++++++++++++");
+     /// print("$tempVar ++++++++++++++++++++++++++++++");
       alert = (tempVar!.length < 1)
           ? 'Please Enter valid ${k.toUpperCase()}'
           : alert;
@@ -239,21 +228,26 @@ class _ProductAddState extends State<ProductAdd> {
       arrData['first_party'] = temp;
     });
      var tempFormData = {
-      'featured_product': arrData['first_party']
+       for(var i = 0; i < Submit_subProductBox.length; i++)
+       {
+        '${Submit_subProductBox[i]}': arrData['first_party']
+       }
+     
     };
     arrData['price_details'] = jsonEncode(tempFormData);
     ////
      }
 
   ///// basic Product++++++
-    if(basic_Product == true){
+    if(basic_Product == true)
+    {
         setState(() {
                    imageController.text = url_img.toString();
                    _controllers2["product_images"] = imageController;
                    });
     _controllers2.forEach((k, val) {
       var tempVar = _controllers2['$k']?.text;
-        print("$tempVar ++++++++++++22++++++++++++++++++");
+       // print("$tempVar ++++++++++++22++++++++++++++++++");
       alert = (tempVar!.length < 1)
           ? 'Please Enter valid ${k.toUpperCase()}'
           : alert;
@@ -302,10 +296,6 @@ class _ProductAddState extends State<ProductAdd> {
 ////////  ================================================================================= 
 
 
-
-
-
-
 // get attribute list+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   _fnGetAttr() async {
     Map<String, dynamic> where = {'table': "attribute", 'status': '1'};
@@ -315,13 +305,14 @@ class _ProductAddState extends State<ProductAdd> {
   Map<String, bool> selectedCheck = {};
   Map<String, dynamic> subProduDetailList = {};
   List<dynamic> subProductBox = [];
-
+  List<dynamic> Submit_subProductBox = [];
 /////////  change check box value  +++++++++++++++++++++++++++++++++++++++++++++++
 
   _fnChangeCheckVal(key, Value, checkType) {
     if (this.mounted)
       setState(() {
         subProductBox = [];
+        Submit_subProductBox = [];
         selectedCheck[key.toLowerCase()] = Value;
         if (checkType == 'main') {
           if (subProduDetailList[key] != null) {
@@ -354,8 +345,10 @@ class _ProductAddState extends State<ProductAdd> {
                   color: Colors.blue),
                 child: Text("$k"),
               ));
+            Submit_subProductBox.add("$k");
             });
           });
+
         } else if (subProduDetailList.length > 1) {
           var i = 1;
           var tempList = [];
@@ -364,9 +357,11 @@ class _ProductAddState extends State<ProductAdd> {
             var tempList2 = [];
             value.forEach((k, v) {
               tempKey = (tempKey == null) ? k : '$tempKey + $k';
-              if (i == 1) {
+              if (i == 1)
+               {
                 tempList.add(k);
-              } else {
+              }
+               else {
                 tempList.forEach((val) {
                   tempList2.add('$val + $k');
                 });
@@ -383,7 +378,11 @@ class _ProductAddState extends State<ProductAdd> {
                 color: Colors.blue),
               child: Text("$val"),
             ));
+       
+              Submit_subProductBox.add("$val");
+         
           });
+
         }
       });
   }
@@ -398,20 +397,45 @@ class _ProductAddState extends State<ProductAdd> {
   var _PerentC;
   var product_type;
   var price_data;
+
+  ///
+  var mrp;
+  var sell;
+  var disc;
+   var stock;
+  var ship;
+   var pro_img;
+  //
 //////
-  Map<String, dynamic>? data;
+  Map<String, dynamic>? update_data;
   Future Update_initial(id) async {
     DocumentSnapshot pathData =
         await FirebaseFirestore.instance.collection('product').doc(id).get();
     if (pathData.exists) {
-      data = pathData.data() as Map<String, dynamic>?;
+      update_data = pathData.data() as Map<String, dynamic>?;
       setState(() {
-         Name = data!['name'];
-         slugUrl = data!['slug_url'];
-         price_data = data!['price_details'];
-         product_type = data!['product_type'];
-        _Status = data!['status'];
-        _PerentC = data!['parent_cate'];
+         Name = update_data!['name'];
+         slugUrl = update_data!['slug_url'];
+         price_data = update_data!['price_details'];
+         product_type = update_data!['product_type'];
+        _Status = update_data!['status'];
+        _PerentC = update_data!['parent_cate'];
+         SlugUrlController.text = slugUrl;
+        if(product_type == "Basic Product")
+        {
+        Map<String, dynamic> myMap = jsonDecode(price_data);
+          mrp  =  myMap["basic_product"]["mrp_price"];
+          sell =  myMap["basic_product"]["selling_price"]; 
+          disc =  myMap["basic_product"]["discount"]; 
+          stock = myMap["basic_product"]["stock"]; 
+          ship  = myMap["basic_product"]["shiping_price"]; 
+          pro_img = myMap["basic_product"]["product_images"]; 
+          basic_Product = true;
+          url_img = pro_img;
+        }
+        if(product_type == "Featured Product"){
+          basic_Product = false;
+        }
       });
     }
   }
@@ -528,24 +552,20 @@ class _ProductAddState extends State<ProductAdd> {
                 setState(() {
                    Add_product = false;
                 });
-
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                Icon(Icons.arrow_back,color: Colors.blue,size:25),
                 SizedBox(width: 10,),
-              Text(
-                       'Product',
-                       style: themeTextStyle(
+              Text('Product',style: themeTextStyle(
                   size: 18.0,
                   ftFamily: 'ms',
                   fw: FontWeight.bold,
                   color: Colors.blue),
                    ),
                       SizedBox(width: 5,),
-              Text(
-                       '$sub_text',
+              Text('$sub_text',
                style: themeTextStyle(
                   size: 12.0,
                   ftFamily: 'ms',
@@ -842,13 +862,11 @@ class _ProductAddState extends State<ProductAdd> {
                                 color: Colors.black,
                                 size: 15,
                                 fw: FontWeight.bold)),
-                        Text_field(context, SlugUrlController, "Slug Url",
-                            "Enter Slug Url")
+                        Text_field(context, SlugUrlController, "Slug Url","Enter Slug Url")
                       ],
                     )),
+
           //////////  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                 
-            
 
                   Row(children: [
                     GestureDetector(
@@ -892,14 +910,13 @@ class _ProductAddState extends State<ProductAdd> {
                             child: Text("Fetured Product")))
                   ]),
 
-                  /////////  Basic Product Rate Deatils +++++++++++++++++++++++
+          /////////  Basic Product Rate Deatils +++++++++++++++++++++++
                   
                   (basic_Product == true)
                       ? 
                       wd_sub_Basic_product_details(context,)
                       : 
-
-                   /////////  Featured Product Rate Deatils +++++++++++++++++++++++
+          /////////  Featured Product Rate Deatils +++++++++++++++++++++++
                   
                       Column(children: [
                           Container(
@@ -951,9 +968,7 @@ class _ProductAddState extends State<ProductAdd> {
                                                     false
                                                     :
                                                      selectedCheck[Attri_data[index]["attribute_name"].toLowerCase()],
-                                                    onChanged:
-                                                     (Value) 
-                                                     {
+                                                    onChanged:(Value){
                                                       _fnChangeCheckVal(Attri_data[index]["attribute_name"],Value,'main');
                                                       },
                                                       ),
@@ -997,11 +1012,12 @@ class _ProductAddState extends State<ProductAdd> {
                     themeButton3(context, () {
                       if (_formKey.currentState!.validate()) {
                         setState(() {
-                            addList();
-                          clearText();
+                             addList();
+                            clearText();
                         });
                       }
-                    }, buttonColor: Colors.green, label: "Submit"),
+                    },
+                     buttonColor: Colors.green, label: "Submit"),
                     SizedBox(
                       width: 10,
                     ),
@@ -1129,7 +1145,7 @@ class _ProductAddState extends State<ProductAdd> {
                                          });
                                        }),
                                   ),
-                                  
+
                               Text("entries",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
                             ],)
                             ],),
@@ -1484,6 +1500,7 @@ class _ProductAddState extends State<ProductAdd> {
               onTap: (){
                 setState(() {
                   updateWidget = false;
+                  update_data = {};
                   Pro_Data();
                 });
 
@@ -1524,7 +1541,7 @@ class _ProductAddState extends State<ProductAdd> {
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
-              child: (data == null)
+              child: (update_data == null)
                   ? Center(child: CircularProgressIndicator())
                   : Column(
                       children: [
@@ -1561,9 +1578,15 @@ class _ProductAddState extends State<ProductAdd> {
                                           child: TextFormField(
                                             initialValue: Name,
                                             autofocus: false,
-                                            onChanged: (value) => Name = value,
+                                            onChanged:
+                                               (value) {
+                                                Name = value;
+                                                Slug_gen("$value");
+                                                print("${SlugUrlController.text} +++====");
+                                               },
+                                            //  onChanged: (value) => Name = value,
                                             // controller: ctr_name,
-                                            validator: (value) {
+                                              validator: (value) {
                                               if (value == null ||
                                                   value.isEmpty) {
                                                 return 'Please Enter Name';
@@ -1838,12 +1861,12 @@ class _ProductAddState extends State<ProductAdd> {
                                                   BorderRadius.circular(10),
                                             ),
                                             child: TextFormField(
-                                              initialValue: slugUrl,
+                                              //initialValue: SlugUrlController.text,
                                               autofocus: false,
-                                              onChanged: (value) =>
-                                                  slugUrl = value,
-                                              // controller: ctr_name,
-                                              validator: (value) {
+                                             //  onChanged: (value) => Name = value,
+                                              onChanged: (value) => SlugUrlController.text = value.toString(),
+                                                 controller: SlugUrlController,
+                                                 validator: (value) {
                                                 if (value == null ||
                                                     value.isEmpty) {
                                                   return 'Please Enter Slug Url';
@@ -1897,11 +1920,10 @@ class _ProductAddState extends State<ProductAdd> {
                                                   BorderRadius.circular(10),
                                             ),
                                             child: TextFormField(
-                                              initialValue: slugUrl,
+                                                 // initialValue: SlugUrlController.text,
                                               autofocus: false,
-                                              onChanged: (value) =>
-                                                  slugUrl = value,
-                                              // controller: ctr_name,
+                                              onChanged: (value) => SlugUrlController.text = value,
+                                               controller: SlugUrlController,
                                               validator: (value) {
                                                 if (value == null ||
                                                     value.isEmpty) {
@@ -1927,11 +1949,358 @@ class _ProductAddState extends State<ProductAdd> {
                       ],
                     )),
 
-                     Text("$Name , $slugUrl ,  $_Status , $_PerentC , $product_type , $price_data   ++++++++++++++++",style: TextStyle(color:Colors.red),),
+   //////////  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+                  Row(children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          basic_Product = true;
+                        });
+                      },
+                      child: Container(
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                          height: 40,
+                          decoration: BoxDecoration(
+                              color: (basic_Product == true)
+                                  ? Colors.green
+                                  : Colors.grey,
+                              border: Border.all(color: Colors.black38),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Text("Basic Product")),
+                    ),
+                    GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            basic_Product = false;
+                          });
+                        },
+                        child: Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 20),
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: (basic_Product == false)
+                                    ? Colors.green
+                                    : Colors.grey,
+                                border: Border.all(color: Colors.black38),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Text("Fetured Product")))
+                  ]),
                    
+          /////////  Basic Product Rate Deatils +++++++++++++++++++++++
+                  
+                  (basic_Product == true)
+                      ? 
+                    // Text("$Name , $slugUrl ,  $_Status , $_PerentC , $product_type , $Name ,  $mrp, $sell , $disc , $stock, $ship , $pro_img   ++++++++++++++++",style: TextStyle(color:Colors.red),),
+
+                     Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          border:  Border.all(color: Colors.black38 ,width: 2.0)
+                        ),
+                        child: Column(
+                            children: [
+                            
+                             Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                 
+                             Text("MRP (₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          //Text_field(context, mrpController, "MRP", "Enter MRP"),
+                                         Text_field_rate( context,"2","mrp_price","MRP"),
+                                       //Text_field_up( context,mrp, "mrp price", "MRP")
+                                         // Text_field_rate( context,"MRP","MRP") ,
+                                         
+                                        ],
+                                      )),
+                                    ),
+                                    SizedBox(width: defaultPadding),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Selling Price (₹)",
+                             style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                        Text_field_rate( context,"2","selling_price","Selling Price") ,
+                                        ],
+                                      )),
+                                    ),
+                      
+                                    SizedBox(width: defaultPadding),
+                                    // // On Mobile means if the screen is less than 850 we dont want to show it
+                                    // if (!Responsive.isMobile(context))
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Discount (%)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                          Container(
+                          alignment: Alignment.centerLeft,
+                          width: double.infinity,
+                          height: 40,
+                          margin: EdgeInsets.only(top: 10, bottom: 10, left: 10),
+                          padding: EdgeInsets.only(left: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text("${DiscountController.text} %",
+                              style: themeTextStyle(
+                                  color: Colors.black,
+                                  size: 15,
+                                  fw: FontWeight.bold)))
+                                        ],
+                                      )),
+                                    ),
+                               if (!Responsive.isMobile(context))
+                                    SizedBox(width: defaultPadding),
+                                    if (!Responsive.isMobile(context))      
+                              Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Shiping Price(₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                           Text_field_rate( context,"2","shiping_price","Shiping Price") ,
+                                        ],
+                                      )),
+                                    ),
+                                    if (!Responsive.isMobile(context))
+                                    SizedBox(width: defaultPadding),
+                                    if (!Responsive.isMobile(context))
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Stock (No. item)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                           Text_field_rate( context,"2","stock","Stock") ,
+      
+                                        ],
+                                      )),
+                                    ),          
+                                    
+                                  ],
+                                ),
+
+                  if (Responsive.isMobile(context))
+                    SizedBox(height: defaultPadding),
+                  if (Responsive.isMobile(context))
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Shiping Price(₹)",
+                              style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                           Text_field_rate( context,"2","shiping_price","Shiping Price") ,
+                                        ],
+                                      )),
+                                    ),
+                                    SizedBox(width: defaultPadding),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Stock (No. item)",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                                         Text_field_rate( context,"2","Stock","Stock (No. item)") ,        
+                                        ],
+                                      )),
+                                    ),
+                                  ],
+                                ),
+                      
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+
+                            Container(
+                              height: 50,
+                              width: 50,
+                              child:
+                               IconButton(
+                                onPressed: ()
+                                {
+                                _ImageSelect_Alert(context);
+                                }
+                                ,
+                               icon: Icon(Icons.drive_folder_upload,size:50,color:Colors.blue)),
+                            ),    
+
+                        SizedBox(width: 20,),   
+                        ( url_img == null)
+                            ? 
+                            SizedBox()
+                            : 
+                         Container(
+                                alignment: Alignment.topRight,
+                                margin: EdgeInsets.all(10),
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: Colors.grey),
+                                 image: DecorationImage(image:  NetworkImage("$url_img"))
+                          ),
+                         child: 
+                         GestureDetector(
+                          onTap: (){
+                            setState(() {
+                              url_img = null;
+                            });
+                          },
+                          child: Icon(Icons.cancel_outlined,color:Colors.red ,size:15))
+                      ),
+                    ],
+                  ),
+                      
+                            ],
+                          ),
+                      )
+ 
+                      : 
+          /////////  Featured Product Rate Deatils +++++++++++++++++++++++
+                  
+                      Column(children: [
+                          Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.5),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Attribute",
+                                        style: themeTextStyle(
+                                            color: Colors.black,
+                                            size: 15,
+                                            fw: FontWeight.bold)),
+
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+
+                                    Row(
+                                      children: [
+                                        for (var index = 0; index < myAttr.length; index++)
+                                          Container(
+                                              height: 25,
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 5),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: Row(
+                                                children: [
+                                                  Checkbox(
+                                                    activeColor: Colors.green,
+                                                    side: BorderSide(
+                                                        width: 2,
+                                                        color: Colors.black),
+                                                    value: 
+                                                    (selectedCheck[Attri_data[index]["attribute_name"].toLowerCase()] == null)
+                                                    ? 
+                                                    false
+                                                    :
+                                                     selectedCheck[Attri_data[index]["attribute_name"].toLowerCase()],
+                                                    onChanged:(Value){
+                                                      _fnChangeCheckVal(Attri_data[index]["attribute_name"],Value,'main');
+                                                      },
+                                                      ),
+                                                      Text("${Attri_data[index]["attribute_name"]}",style: TextStyle(color: Colors.black),
+                                                  )
+                                                ],
+                                              )),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          // sub attribute ---------------------------------
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 113, 174, 234),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                for (var i = 0; i < myAttr.length; i++)
+                                  wd_subAttr_Row(context, myAttr[i], i),
+                              ],
+                            ),
+                          ),
+
+                          //// sub product list =======================================================
+                          for (var title in subProductBox)
+                            wd_sub_product_details(context, title)
+                          /////==========
+                          // sub attribute ---------------------------------
+                        ]),
+
+
                     
 
-                       
                         // (url_img == null && image == "null")
                         //     ? SizedBox()
                         //     : Row(
@@ -1988,91 +2357,91 @@ class _ProductAddState extends State<ProductAdd> {
                         SizedBox(
                           height: 10,
                         ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Upload Image Here",
-                                      style: themeTextStyle(
-                                          size: 15, fw: FontWeight.bold)),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[200],
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    height: 45,
-                                    margin: EdgeInsets.only(
-                                        top: 10, bottom: 10, right: 10),
-                                    padding:
-                                        EdgeInsets.only(left: 10, right: 10),
-                                    child: Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            _ImageSelect_Alert(context);
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(2),
-                                            decoration: BoxDecoration(
-                                                color: Colors.grey),
-                                            child: Text("Choose File",
-                                                style: TextStyle(
-                                                    color: Colors.black)),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        (url_img == null || url_img.isEmpty)
-                                            ? Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Text("No file choosen",
-                                                      style: themeTextStyle(
-                                                          size: 15,
-                                                          color:
-                                                              Colors.black38)),
-                                                ],
-                                              )
-                                            : Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Text(
-                                                    "file selected",
-                                                    style: themeTextStyle(
-                                                        size: 12,
-                                                        fw: FontWeight.w400,
-                                                        color: themeBG4),
-                                                  ),
-                                                ],
-                                              ),
-                                      ],
-                                    ),
-                                  ),
-                                  ////
-                                  SizedBox(height: defaultPadding),
-                                ],
-                              ),
-                            ),
+                        // Row(
+                        //   crossAxisAlignment: CrossAxisAlignment.start,
+                        //   children: [
+                        //     Expanded(
+                        //       flex: 2,
+                        //       child: Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           Text("Upload Image Here",
+                        //               style: themeTextStyle(
+                        //                   size: 15, fw: FontWeight.bold)),
+                        //           Container(
+                        //             decoration: BoxDecoration(
+                        //               color: Colors.grey[200],
+                        //               borderRadius: BorderRadius.circular(10),
+                        //             ),
+                        //             height: 45,
+                        //             margin: EdgeInsets.only(
+                        //                 top: 10, bottom: 10, right: 10),
+                        //             padding:
+                        //                 EdgeInsets.only(left: 10, right: 10),
+                        //             child: Row(
+                        //               children: [
+                        //                 GestureDetector(
+                        //                   onTap: () {
+                        //                     _ImageSelect_Alert(context);
+                        //                   },
+                        //                   child: Container(
+                        //                     padding: EdgeInsets.all(2),
+                        //                     decoration: BoxDecoration(
+                        //                         color: Colors.grey),
+                        //                     child: Text("Choose File",
+                        //                         style: TextStyle(
+                        //                             color: Colors.black)),
+                        //                   ),
+                        //                 ),
+                        //                 SizedBox(
+                        //                   height: 10,
+                        //                 ),
+                        //                 (url_img == null || url_img.isEmpty)
+                        //                     ? Row(
+                        //                         children: [
+                        //                           SizedBox(
+                        //                             width: 10,
+                        //                           ),
+                        //                           Text("No file choosen",
+                        //                               style: themeTextStyle(
+                        //                                   size: 15,
+                        //                                   color:
+                        //                                       Colors.black38)),
+                        //                         ],
+                        //                       )
+                        //                     : Row(
+                        //                         children: [
+                        //                           SizedBox(
+                        //                             width: 10,
+                        //                           ),
+                        //                           Text(
+                        //                             "file selected",
+                        //                             style: themeTextStyle(
+                        //                                 size: 12,
+                        //                                 fw: FontWeight.w400,
+                        //                                 color: themeBG4),
+                        //                           ),
+                        //                         ],
+                        //                       ),
+                        //               ],
+                        //             ),
+                        //           ),
+                        //           ////
+                        //           SizedBox(height: defaultPadding),
+                        //         ],
+                        //       ),
+                        //     ),
 
-                            if (!Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            // On Mobile means if the screen is less than 850 we dont want to show it
-                            if (!Responsive.isMobile(context))
-                              Expanded(
-                                flex: 2,
-                                child: SizedBox(width: defaultPadding),
-                              ),
-                          ],
-                        ),
+                        //     if (!Responsive.isMobile(context))
+                        //       SizedBox(width: defaultPadding),
+                        //     // On Mobile means if the screen is less than 850 we dont want to show it
+                        //     if (!Responsive.isMobile(context))
+                        //       Expanded(
+                        //         flex: 2,
+                        //         child: SizedBox(width: defaultPadding),
+                        //       ),
+                        //   ],
+                        // ),
 
                         SizedBox(
                           height: 20,
@@ -2125,6 +2494,10 @@ class _ProductAddState extends State<ProductAdd> {
   }
 /////////////   Featured Product   +++++++++++++++++++++++++++++++++++++++
   Widget wd_sub_product_details(BuildContext context, title) {
+    print( "$subProduDetailList ++++++++++");
+    // print( "$subProductBox ==============");
+    print( "$Submit_subProductBox ==============");
+  
     return Container(
       margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
       padding: EdgeInsets.all(8.0),
@@ -2591,7 +2964,6 @@ class _ProductAddState extends State<ProductAdd> {
              _controllers["$controller_name"]
             :
              _controllers2["$controller_name"],
-
          onChanged:
           (value)
            async {
@@ -2641,8 +3013,6 @@ class _ProductAddState extends State<ProductAdd> {
                       _controllers2["$controller_name"]!.text = mrpIncre.toString();
                     });
                     }
-
-                 
                   },
                   child: Icon(Icons.expand_less_rounded,
                       size: 20, color: Colors.black),
@@ -2681,6 +3051,120 @@ class _ProductAddState extends State<ProductAdd> {
     );
   }
 ////////////==============================================
+
+
+//////////// update text widget ++++++++++++++++
+ Widget Text_field_up(BuildContext context,ini_value, lebel, hint) {
+    return
+     Container(
+        height: 40,
+        margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child:
+   
+         TextFormField(
+        obscureText: false,
+        controller: ini_value,
+         onChanged:
+          (value)
+           async {
+          if ( mrp.isNotEmpty && ini_value  == sell) {
+            Mp_Discount_cal(mrp,sell);
+          }
+   
+        },
+          validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please Enter value';
+          }
+        },
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          hintText: '$hint',
+          hintStyle: TextStyle(
+            color: Colors.grey,
+            fontSize: 16,
+          ),
+          suffixIcon: Container(
+            height: 10,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                GestureDetector(
+                  onTap: () {
+     
+                          var mrpIncre = int.parse(ini_value!.text);
+                    setState(() {
+                      mrpIncre++;
+                     ini_value = mrpIncre.toString();
+                    });
+             
+                    
+                  },
+                  child: Icon(Icons.expand_less_rounded,
+                      size: 20, color: Colors.black),
+                ),
+                GestureDetector(
+                  onTap: () {
+             
+                     var mrpIncre = int.parse(ini_value!.text);
+                    setState(() {
+                      mrpIncre--;
+                      ini_value = mrpIncre.toString();
+                    });
+
+                  
+
+                  },
+                  child: Icon(Icons.expand_more_outlined,
+                      size: 20, color: Colors.black),
+                )
+              ],
+            ),
+          ),
+        ),
+        style: TextStyle(color: Colors.black),
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ], // Onl
+      )
+        
+        //  TextFormField(
+        //   initialValue: ini_value,
+        //   autofocus: false,
+        //   onChanged: (value) => ini_value = value,
+        // // controller: ctr_name,
+        //   validator: (value) {
+        //     if (value == null || value.isEmpty) {
+        //       return 'Please $hint';
+        //     }
+        //      return null;
+        //   },
+        //   style: TextStyle(color: Colors.black),
+        //   decoration: InputDecoration(
+        //     border: InputBorder.none,
+        //     contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        //     hintText: '$hint',
+        //     hintStyle: TextStyle(
+        //       color: Colors.grey,
+        //       fontSize: 16,
+        //     ),
+        //   ),
+        // )
+        
+        
+        );
+        }
+//////
+
+
+
+
 
 //////////////////   popup Box for Image selection ++++++++++++++++++++++++++++++++++++++
 
@@ -2888,7 +3372,7 @@ class _ProductAddState extends State<ProductAdd> {
           controller: ctr_name,
           onChanged: (ctr_name == NameController)
               ? (value) {
-                  Slug_gen("${value}");
+                  Slug_gen("$value");
                 }
               : (value) {}, // => slus_string = value,
           validator: (value) {
@@ -2909,41 +3393,6 @@ class _ProductAddState extends State<ProductAdd> {
         ));
   }
 
-////////////// update text widget ++++++++++++++++
-//  Widget Text_field_up(BuildContext context, ini_value, lebel, hint) {
-//     return
-//      Container(
-//         height: 40,
-//         margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-//         decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.circular(10),
-//         ),
-//         child: TextFormField(
-//           initialValue: ini_value,
-//           autofocus: false,
-//           onChanged: (value) => ini_value = value,
-//         // controller: ctr_name,
-//           validator: (value) {
-//             if (value == null || value.isEmpty) {
-//               return 'Please $hint';
-//             }
-//              return null;
-//           },
-//           style: TextStyle(color: Colors.black),
-//           decoration: InputDecoration(
-//             border: InputBorder.none,
-//             contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-//             hintText: '$hint',
-//             hintStyle: TextStyle(
-//               color: Colors.grey,
-//               fontSize: 16,
-//             ),
-//           ),
-//         ));
-
-//         }
-// //////
 
   Future<bool> showExitPopup(iid_delete) async {
     return await showDialog(
