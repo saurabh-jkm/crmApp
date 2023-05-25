@@ -162,7 +162,6 @@ class _ProductAddState extends State<ProductAdd> {
       Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
       Cate_Name_list.add(data["category_name"]);
     }
-
   }
  ///////============================================================ 
 

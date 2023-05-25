@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'constants.dart';
 import 'controllers/MenuAppController.dart';
+import 'screens/Login_Reg/Login_user.dart';
 import 'screens/main/main_screen.dart';
 
 void main() async {
@@ -29,7 +30,6 @@ void main() async {
   else {
     await Firebase.initializeApp();
   }
-
   runApp(MyApp());
 }
 
@@ -55,14 +55,7 @@ class MyApp extends StatelessWidget {
                         .apply(bodyColor: Colors.white),
                 canvasColor: secondaryColor,
               ),
-              home: MultiProvider(
-                providers: [
-                  ChangeNotifierProvider(
-                    create: (context) => MenuAppController(),
-                  ),
-                ],
-                child: MainScreen(),
-              ),
+              home: LoginPage()
             );
           }
           return CircularProgressIndicator();
