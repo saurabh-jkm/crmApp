@@ -8,6 +8,7 @@ import '../../admin/signup_screen.dart';
 import '../../controllers/MenuAppController.dart';
 import '../../responsive.dart';
 import '../Attributes/attribute_add.dart';
+import '../Login_Reg/Login_user.dart';
 import '../Profile/profile_details.dart';
 import '../category/category_add.dart';
 import '../dashboard/dashboard_screen.dart';
@@ -86,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
             else if (sidemenu == 9)
               Expanded(
                 flex: 5, 
-                child: SignupScreen()
+                child: LoginPage()      ///SignupScreen()
                 )
           ],
         ),

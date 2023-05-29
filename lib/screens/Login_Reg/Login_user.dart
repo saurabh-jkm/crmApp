@@ -58,7 +58,8 @@ AuthService authService = AuthService();
                   ),
                 ],
                 child:   MainScreen() // MainScreen(),          
-              ),);
+              ),
+              );
         } 
         else {
           showSnackbar(context, Colors.red, value);
@@ -91,8 +92,6 @@ AuthService authService = AuthService();
           ),
           child: ListView(
        children: [
-
-
          Expanded(
            child:
             Row(
@@ -124,56 +123,79 @@ AuthService authService = AuthService();
                       Text("Sign In",style: GoogleFonts.akayaKanadaka(fontWeight: FontWeight.bold,fontSize: 30,color: Colors.black),),
                     ],
                   ), 
-                  SizedBox(height: 20,),
+                  SizedBox(height: 30,),
 
-                       TextFormField(
-                            decoration: textInputDecoration.copyWith(
-                                labelText: "Email",
-                               hoverColor: Colors.black,
-                                prefixIcon: Icon(
-                                  Icons.email,
-                                  color: Theme.of(context).primaryColor,
-                                )),
-                            onChanged: (val) {
-                              setState(() {
-                                email = val;
-                              });
-                            },
-                     
-                            // check tha validation
-                            validator: (val) {
-                              return RegExp(
-                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                      .hasMatch(val!)
-                                  ? null
-                                  : "Please enter a valid email";
-                            },
-                          ),
+                       SizedBox(
+                        height: 45,
+                         child: TextFormField(
+                            style: TextStyle(color: Colors.black),
+                              decoration: textInputDecoration.copyWith(
+                                  labelText: "Email",
+                                 hoverColor: Colors.black,
+                                 
+                                  prefixIcon: Icon(
+                                    Icons.email,
+                                    color: Theme.of(context).primaryColor,
+                                  )),
+                              onChanged: (val) {
+                                setState(() {
+                                  email = val;
+                                });
+                              },
+                                            
+                              // check tha validation
+                              validator: (val) {
+                                return RegExp(
+                                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                        .hasMatch(val!)
+                                    ? null
+                                    : "Please enter a valid email";
+                              },
+                            ),
+                       ),
                   
-                        const SizedBox(height: 15),
-                         TextFormField(
-                            obscureText: true,
-                            decoration: textInputDecoration.copyWith(
-                                labelText: "Password",
-                                prefixIcon: Icon(
-                                  Icons.lock,
-                                  color: Theme.of(context).primaryColor,
-                                )),
-                            validator: (val) {
-                              if (val!.length < 6) {
-                                return "Password must be at least 6 characters";
-                              } else {
-                                return null;
-                              }
-                            },
-                            onChanged: (val) {
-                              setState(() {
-                                password = val;
-                              });
-                            },
-                          ),
-                    
-                         
+                        const SizedBox(height: 20),
+                         SizedBox(
+                          height: 45,
+                           child: TextFormField(
+                            style: TextStyle(color: Colors.black),
+                              obscureText: passwordVisible,
+                              decoration: textInputDecoration.copyWith(
+                                  labelText: "Password",
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                 suffixIcon:IconButton(
+                      icon: Icon(passwordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off   ,color: Colors.blue,size: 20,),
+                      onPressed: () {
+                        setState(
+                          () {
+                            passwordVisible = !passwordVisible;
+                          },
+                        );
+                      },
+                    )  
+                                  
+                                  
+                                  ),
+                            
+                              validator: (val) {
+                                if (val!.length < 6) {
+                                  return "Password must be at least 6 characters";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              onChanged: (val) {
+                                setState(() {
+                                  password = val;
+                                });
+                              },
+                            ),
+                         ),                         
 
                   // Text_field(context, EmailController,"Enter Your Email","Email",Icons.email_rounded,"1"),
                   // Text_field(context, PassController,"Enter Password","Password",Icons.lock_person_rounded,"2"),
@@ -183,15 +205,15 @@ AuthService authService = AuthService();
                        children: [
                              themeButton3(context, () {
                               nextScreenReplace(context,  
-          MultiProvider(
-                providers: [
-                  ChangeNotifierProvider(
+                      MultiProvider(
+                     providers: [
+                     ChangeNotifierProvider(
                     create: (context) => MenuAppController(),
                   ),
                 ],
-                child:   MainScreen() // MainScreen(),          
+                child: MainScreen() // MainScreen(),          
               ),);
-                               }, buttonColor: Colors.green, label: "Log In"),
+                    }, buttonColor: Colors.green, label: "Log In"),
                        ],
                      )   ,    
             SizedBox(height: 10,),           
@@ -331,7 +353,7 @@ AuthService authService = AuthService();
     );
   }
 
-  bool passwordVisible=false;
+  bool passwordVisible=true;
 ///////  Text_field 22 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ///
   Widget Text_field(BuildContext context, ctr_name, lebel, hint ,icons,type) {

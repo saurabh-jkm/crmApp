@@ -55,7 +55,14 @@ class MyApp extends StatelessWidget {
                         .apply(bodyColor: Colors.white),
                 canvasColor: secondaryColor,
               ),
-              home: LoginPage()
+              home:  MultiProvider(
+                providers: [
+                  ChangeNotifierProvider(
+                    create: (context) => MenuAppController(),
+                  ),
+                ],
+                child:   MainScreen() // MainScreen(),          
+              ),
             );
           }
           return CircularProgressIndicator();
