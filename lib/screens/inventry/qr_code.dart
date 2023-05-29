@@ -35,27 +35,27 @@ class QRCode extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(qrBorderRadius ?? 0),
       child:
-          //   QrImageView(
-          //   data: qrData,
-          //   version: qrVersion ?? QrVersions.auto,
-          //   size: qrSize,
-          //   padding: EdgeInsets.all(qrPadding ?? 10),
-          //   semanticsLabel: semanticsLabel ?? '',
-          //   backgroundColor: qrBackgroundColor ?? Colors.transparent,
-          //   foregroundColor: qrForegroundColor ?? Color.fromARGB(255, 253, 251, 251),
-          // ),
+            QrImageView(
+            data: qrData,
+            version: qrVersion ?? QrVersions.auto,
+            size: qrSize,
+            padding: EdgeInsets.all(qrPadding ?? 10),
+            semanticsLabel: semanticsLabel ?? '',
+            backgroundColor: qrBackgroundColor ?? Colors.transparent,
+            foregroundColor: qrForegroundColor ?? Color.fromARGB(255, 253, 251, 251),
+          ),
 
-          QrImage(
-        size: qrSize,
-        data: qrData,
-        gapless: gapLess ?? true,
-        version: qrVersion ?? QrVersions.auto,
-        padding: EdgeInsets.all(qrPadding ?? 10),
-        semanticsLabel: semanticsLabel ?? '',
-        backgroundColor: qrBackgroundColor ?? Colors.transparent,
-        foregroundColor:
-            qrForegroundColor ?? Color.fromARGB(255, 253, 251, 251),
-      ),
+      //     QrImage(
+      //   size: qrSize,
+      //   data: qrData,
+      //   gapless: gapLess ?? true,
+      //   version: qrVersion ?? QrVersions.auto,
+      //   padding: EdgeInsets.all(qrPadding ?? 10),
+      //   semanticsLabel: semanticsLabel ?? '',
+      //   backgroundColor: qrBackgroundColor ?? Colors.transparent,
+      //   foregroundColor:
+      //       qrForegroundColor ?? Color.fromARGB(255, 253, 251, 251),
+      // ),
     );
   }
 }

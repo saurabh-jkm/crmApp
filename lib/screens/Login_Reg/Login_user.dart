@@ -1,13 +1,18 @@
 
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants.dart';
 import '../../controllers/MenuAppController.dart';
+import '../../helper/helper_function.dart';
 import '../../responsive.dart';
+import '../../themes/auth_service.dart';
+import '../../themes/database_service.dart';
 import '../../themes/theme_widgets.dart';
 import '../main/main_screen.dart';
 
@@ -19,8 +24,60 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-final EmailController = TextEditingController();
-final PassController = TextEditingController();
+final formKey = GlobalKey<FormState>();
+String email = "";
+String password = "";
+AuthService authService = AuthService();
+ bool _isLoading = false;
+
+
+///////// Login  Fuction +++++++++++++++++++++++
+
+ login() async {
+    if (formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      await
+       authService
+       .loginWithUserNameandPassword(email, password)
+       .then((value)async {
+        if (value == true) {
+          QuerySnapshot snapshot =
+          await 
+          DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).gettingUserData(email);
+          // saving the values to our shared preferences
+          await HelperFunctions.saveUserLoggedInStatus(true);
+          await HelperFunctions.saveUserEmailSF(email);
+          await HelperFunctions.saveUserNameSF(snapshot.docs[0]['fullName']);
+          nextScreenReplace(context,  
+          MultiProvider(
+                providers: [
+                  ChangeNotifierProvider(
+                    create: (context) => MenuAppController(),
+                  ),
+                ],
+                child:   MainScreen() // MainScreen(),          
+              ),);
+        } 
+        else {
+          showSnackbar(context, Colors.red, value);
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      });
+    }
+  }
+
+
+
+///  
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +111,10 @@ final PassController = TextEditingController();
               Expanded(
                 child: Container(
                 margin: EdgeInsets.symmetric(vertical:20,horizontal:20),
-                child: Column(
+                child: Form(
+                    key: formKey,
+                    child:
+                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -65,24 +125,72 @@ final PassController = TextEditingController();
                     ],
                   ), 
                   SizedBox(height: 20,),
-                  Text_field(context, EmailController,"Enter Your Email","Email",Icons.email_rounded,"1"),
-                  Text_field(context, PassController,"Enter Password","Password",Icons.lock_person_rounded,"2"),
+
+                       TextFormField(
+                            decoration: textInputDecoration.copyWith(
+                                labelText: "Email",
+                               hoverColor: Colors.black,
+                                prefixIcon: Icon(
+                                  Icons.email,
+                                  color: Theme.of(context).primaryColor,
+                                )),
+                            onChanged: (val) {
+                              setState(() {
+                                email = val;
+                              });
+                            },
+                     
+                            // check tha validation
+                            validator: (val) {
+                              return RegExp(
+                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                      .hasMatch(val!)
+                                  ? null
+                                  : "Please enter a valid email";
+                            },
+                          ),
+                  
+                        const SizedBox(height: 15),
+                         TextFormField(
+                            obscureText: true,
+                            decoration: textInputDecoration.copyWith(
+                                labelText: "Password",
+                                prefixIcon: Icon(
+                                  Icons.lock,
+                                  color: Theme.of(context).primaryColor,
+                                )),
+                            validator: (val) {
+                              if (val!.length < 6) {
+                                return "Password must be at least 6 characters";
+                              } else {
+                                return null;
+                              }
+                            },
+                            onChanged: (val) {
+                              setState(() {
+                                password = val;
+                              });
+                            },
+                          ),
+                    
+                         
+
+                  // Text_field(context, EmailController,"Enter Your Email","Email",Icons.email_rounded,"1"),
+                  // Text_field(context, PassController,"Enter Password","Password",Icons.lock_person_rounded,"2"),
                      SizedBox(height: 20,),
                      Row(
                          mainAxisAlignment: MainAxisAlignment.start,  
                        children: [
                              themeButton3(context, () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-                                         MultiProvider(
+                              nextScreenReplace(context,  
+          MultiProvider(
                 providers: [
                   ChangeNotifierProvider(
                     create: (context) => MenuAppController(),
                   ),
                 ],
                 child:   MainScreen() // MainScreen(),          
-              ),
-                                 
-                                 ));
+              ),);
                                }, buttonColor: Colors.green, label: "Log In"),
                        ],
                      )   ,    
@@ -103,6 +211,7 @@ final PassController = TextEditingController();
                   ],
                 ) 
                 )
+                )
                 ),
            ],),
          ),
@@ -115,7 +224,11 @@ final PassController = TextEditingController();
       Expanded(
                 child: Container(
                 margin: EdgeInsets.symmetric(vertical:20,horizontal:20),
-                child: Column(
+                child:
+                Form(
+                    key: formKey,
+                    child:
+                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -126,21 +239,68 @@ final PassController = TextEditingController();
                     ],
                   ), 
                   SizedBox(height: 20,),
-                  Text_field(context, EmailController,"Enter Your Email","Email",Icons.email_rounded,"1"),
-                  Text_field(context, PassController,"Enter Password","Password",Icons.lock_person_rounded,"2"),
+                   TextFormField(
+                          decoration: textInputDecoration.copyWith(
+                              labelText: "Email",
+                              prefixIcon: Icon(
+                                Icons.email,
+                                color: Theme.of(context).primaryColor,
+                              )),
+                          onChanged: (val) {
+                            setState(() {
+                              email = val;
+                            });
+                          },
+
+                          // check tha validation
+                          validator: (val) {
+                            return RegExp(
+                                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                    .hasMatch(val!)
+                                ? null
+                                : "Please enter a valid email";
+                          },
+                        ),
+                        const SizedBox(height: 15),
+
+                        TextFormField(
+                          obscureText: true,
+                          decoration: textInputDecoration.copyWith(
+                              labelText: "Password",
+                              prefixIcon: Icon(
+                                Icons.lock,
+                                color: Theme.of(context).primaryColor,
+                              )),
+                          validator: (val) {
+                            if (val!.length < 6) {
+                              return "Password must be at least 6 characters";
+                            } else {
+                              return null;
+                            }
+                          },
+                          onChanged: (val) {
+                            setState(() {
+                              password = val;
+                            });
+                          },
+                        ),
+                         
+                  // Text_field(context, EmailController,"Enter Your Email","Email",Icons.email_rounded,"1"),
+                  // Text_field(context, PassController,"Enter Password","Password",Icons.lock_person_rounded,"2"),
                      SizedBox(height: 20,),
                      Row(
                          mainAxisAlignment: MainAxisAlignment.start,  
                        children: [
                              themeButton3(context, () {
-                               MultiProvider(
+                                nextScreenReplace(context,  
+          MultiProvider(
                 providers: [
                   ChangeNotifierProvider(
                     create: (context) => MenuAppController(),
                   ),
                 ],
                 child:   MainScreen() // MainScreen(),          
-              );
+              ),);
                                }, buttonColor: Colors.green, label: "Log In"),
                        ],
                      )   , 
@@ -161,6 +321,7 @@ final PassController = TextEditingController();
    
                   ],
                 ) 
+                )
                 )
                 ),
 
