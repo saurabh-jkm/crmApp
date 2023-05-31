@@ -96,9 +96,7 @@ class _ProductAddState extends State<ProductAdd> {
               .ref()
               .child('media/$fileName')
               .getDownloadURL();
-               setState(() {
-                 url_img = downloadURL.toString(); 
-              });
+          url_img = downloadURL.toString();
         });
       } else {
         themeAlert(context, 'Not find selected', type: "error");
@@ -120,9 +118,7 @@ class _ProductAddState extends State<ProductAdd> {
               .ref()
               .child('media/$fileName')
               .getDownloadURL();
-              setState(() {
-                 url_img = downloadURL.toString(); 
-              });
+          url_img = downloadURL.toString();
         });
       } else {
         themeAlert(context, 'Not find selected', type: "error");
@@ -130,7 +126,7 @@ class _ProductAddState extends State<ProductAdd> {
       }
     }
   }
-///////////////
+
   ///////////  firebase property
   final Stream<QuerySnapshot> _crmStream =
       FirebaseFirestore.instance.collection('product').snapshots();
