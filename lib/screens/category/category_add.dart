@@ -210,7 +210,7 @@ return downloadURL.toString();
           'category_name': "$cate_name",
           'slug_url': "$slug__url",
           'parent_cate': "$_dropDownValue",
-          'status': "$_StatusValue",
+          'status': (_StatusValue == "Active")?"1": (_StatusValue == "Inactive")?"2":"0",
           'image': "$url_img",
           "date_at": "$Date_at"
         })
@@ -256,7 +256,7 @@ return downloadURL.toString();
           'category_name': "$Catename",
           "parent_cate":"$_perentCate",
           'slug_url': "$slugUrl",
-          'status': "$_Status",
+          'status': (_Status == "Active")?"1": (_Status == "Inactive")?"2":"0",
           "image":"$image",
           "date_at": "$Date_at"
         })
@@ -983,7 +983,7 @@ return downloadURL.toString();
                                     "${StoreDocs[index]["image"]}",
                                      "${StoreDocs[index]["category_name"]}",
                                      "${StoreDocs[index]["parent_cate"]}",
-                                     "${StoreDocs[index]["status"]}",
+                                     (StoreDocs[index]["status"] == "1")?"Active":(StoreDocs[index]["status"] == "2")?"Inactive":"Select",
                                      "${StoreDocs[index]["date_at"]}",
                                      "${StoreDocs[index]["id"]}"
                                      )
@@ -993,7 +993,7 @@ return downloadURL.toString();
                                 "${StoreDocs[index]["image"]}",
                                 "${StoreDocs[index]["category_name"]}",
                                 "${StoreDocs[index]["parent_cate"]}",
-                                "${StoreDocs[index]["status"]}",
+                                (StoreDocs[index]["status"] == "1")?"Active":(StoreDocs[index]["status"] == "2")?"Inactive":"Select",
                                 "${StoreDocs[index]["date_at"]}",
                                 "${StoreDocs[index]["id"]}"),
                                 ],
@@ -1486,8 +1486,7 @@ Widget Update_Category(BuildContext context,id,sub_text) {
                                                       child: DropdownButton(
                                                         dropdownColor:
                                                             Colors.white,
-                                                        hint: _StatusValue ==
-                                                                null
+                                                        hint: _StatusValue ==null
                                                             ? Text('$_Status',style: TextStyle(color:Colors.black),)
                                                             : Text(
                                                                 _StatusValue!,

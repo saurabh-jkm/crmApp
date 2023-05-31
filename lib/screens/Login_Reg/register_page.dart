@@ -3,6 +3,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/MenuAppController.dart';
@@ -26,41 +27,43 @@ class _RegisterPageState extends State<RegisterPage> {
   String email = "";
   String password = "";
   String fullName = "";
+  String status = "Active";
+    String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
   AuthService authService = AuthService();
 ////////////////////////////////////////////////////
 
- register() async {
-    if (formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-      await authService
-          .registerUserWithEmailandPassword(fullName, email, password)
-          .then((value) async {
-        if (value == true) {
-         // saving the shared preference state
-          await HelperFunctions.saveUserLoggedInStatus(true);
-          await HelperFunctions.saveUserEmailSF(email);
-          await HelperFunctions.saveUserNameSF(fullName);
-          nextScreenReplace(context,  
-          MultiProvider(
-                providers: [
-                  ChangeNotifierProvider(
-                    create: (context) => MenuAppController(),
-                  ),
-                ],
-                child:   MainScreen() // MainScreen(),          
-              ),
-              );
-        } else {
-          showSnackbar(context, Colors.red, value);
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      });
-    }
-  }
+//  register() async {
+//     if (formKey.currentState!.validate()) {
+//       setState(() {
+//         _isLoading = true;
+//       });
+//       await authService
+//           .registerUserWithEmailandPassword(fullName, email, password,status,Date_at)
+//           .then((value) async {
+//         if (value == true) {
+//          // saving the shared preference state
+//           await HelperFunctions.saveUserLoggedInStatus(true);
+//           await HelperFunctions.saveUserEmailSF(email);
+//           await HelperFunctions.saveUserNameSF(fullName);
+//           nextScreenReplace(context,  
+//           MultiProvider(
+//                 providers: [
+//                   ChangeNotifierProvider(
+//                     create: (context) => MenuAppController(),
+//                   ),
+//                 ],
+//                 child:   MainScreen() // MainScreen(),          
+//               ),
+//               );
+//         } else {
+//           showSnackbar(context, Colors.red, value);
+//           setState(() {
+//             _isLoading = false;
+//           });
+//         }
+//       });
+//     }
+//   }
 
 
 
@@ -148,7 +151,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                   prefixIcon: Icon(
                                     Icons.email,
                                     color: Theme.of(context).primaryColor,
-                                  )),
+                                  )
+                                  ),
                               onChanged: (val) {
                                 setState(() {
                                   email = val;
@@ -217,7 +221,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     TextStyle(color: Colors.white, fontSize: 16),
                               ),
                               onPressed: () {
-                                register();
+                               // register();
                               },
                             ),                         
                           ),
@@ -228,10 +232,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
               
               /////   Send to Login page
-                        Row(children: [
 
-                          
-                        ],),
                           Text.rich(TextSpan(
                             text: "Already have an account? ",
                             style: const TextStyle(

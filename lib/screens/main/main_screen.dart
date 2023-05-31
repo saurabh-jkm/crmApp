@@ -3,13 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-
-import '../../admin/signup_screen.dart';
 import '../../controllers/MenuAppController.dart';
 import '../../responsive.dart';
 import '../Attributes/attribute_add.dart';
 import '../Login_Reg/Login_user.dart';
 import '../Profile/profile_details.dart';
+import '../Sub Admin/Add_SubAdmin.dart';
 import '../category/category_add.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../inventry/inventry_list.dart';
@@ -92,7 +91,7 @@ class _MainScreenState extends State<MainScreen> {
             else if (sidemenu == 10)
               Expanded(
                 flex: 5, 
-                child: LoginPage()      ///SignupScreen()
+                child: SubAdmin()      ///SignupScreen()
                 )
           ],
         ),

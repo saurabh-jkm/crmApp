@@ -15,11 +15,15 @@ class DatabaseService {
 
 /////// saving the userdata   +++++++++++++++++++++++++++++++++++++++++++++
 
-  Future savingUserData(String fullName, String email) async {
+  Future savingUserData(String fName,String lName, String email, String Mobile,String pass,String status, String date) async {
     return await userCollection.doc(uid).set({
-      "fullName": fullName,
+      "first_name": fName,
+      "last_name": lName,
       "email": email,
-      "profilePic": "",
+      "mobile_no": Mobile,
+      "password": pass,
+      "status": status,
+      "date_at": date,
       "uid": uid,
     });
   }

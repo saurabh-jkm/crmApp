@@ -1,20 +1,19 @@
 
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new, unused_field, unused_label, unrelated_type_equality_checks
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:slug_it/slug_it.dart';
+import 'package:provider/provider.dart';
 import '../../constants.dart';
+import '../../controllers/MenuAppController.dart';
+import '../../helper/helper_function.dart';
 import '../../responsive.dart';
-import '../../themes/firebase_Storage.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import '../../themes/auth_service.dart';
+import '../main/main_screen.dart';
 
 class SubAdmin extends StatefulWidget {
   const SubAdmin({super.key});
@@ -23,170 +22,88 @@ class SubAdmin extends StatefulWidget {
 }
 
 class _SubAdminState extends State<SubAdmin> {
+
+////////// variable of Sub Admin +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
+  bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
-
-  var cate_name = "";
-  var slug__url = "";
-  var image_logo = "";
-
-  String? _dropDownValue;
+  String email = "";
+  String password = "";
+  String fname = "";
+  String lname = "";
+  String fullName = "";
+  String Mobile = "";
   String? _StatusValue ;
   String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  AuthService authService = AuthService(); 
+  ///////////====================================================================== 
+  String? _dropDownValue;
 
-  // Create a text controller and use it to retrieve the current value
-  // of the TextField.
-  final CategoryController = TextEditingController();
-  final SlugUrlController = TextEditingController();
-  bool Tranding = false;
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    CategoryController.dispose();
-    SlugUrlController.dispose();
-    super.dispose();
-  }
 
   clearText() {
-    SlugUrlController.clear();
-    CategoryController.clear();
-    _dropDownValue = null;
-    _StatusValue =null;
+    setState(() {
+      fname = "";
+      lname = "";
+      email = "";
+      fullName = "";
+      password = "";
+      Mobile = "";
+    _StatusValue = "";
+    });
   }
 //////
 
- 
-
- ///// File Picker ==========================================================
-  var url_img; 
-  String? fileName;
-
-  void clear_imageData() {
-    fileName = null;
-    url_img = null;
-  }
-
-  pickFile() async {
-    if (!kIsWeb) {
-         final results = await FilePicker.platform.pickFiles(
-          type: FileType.custom,
-          allowedExtensions: ['png','jpg'],
-          allowMultiple: false,
-          );
-        if (results != null) {
-          final path = results.files.single.path;
-          final fileName = results.files.single.name;
-           UploadFile(path!,fileName).then((value) 
-           {
-            print("image selected");
-           });
-            setState(() async{
-              downloadURL = await FirebaseStorage.instance.ref().child('media/$fileName').getDownloadURL();
-              url_img = downloadURL.toString();
-            });
-
-        }
-        else {
-            themeAlert(context, 'Not find selected', type: "error");
-      }
-    } 
-    else if (kIsWeb) {
-      final results = await FilePicker.platform.pickFiles(
-          allowMultiple: false,
-          type: FileType.custom,
-          allowedExtensions: ['png','jpg'],
-          );
-          if(results != null){
-             Uint8List? UploadImage =  results.files.single.bytes;
-             fileName = results.files.single.name;
-             Reference reference = FirebaseStorage.instance.ref('media/$fileName');
-             final UploadTask uploadTask = reference.putData(UploadImage!);
-             uploadTask.whenComplete(() => print("selected image"));
-              setState(() async{
-              downloadURL = await FirebaseStorage.instance.ref().child('media/$fileName').getDownloadURL();
-              url_img = downloadURL.toString(); 
-              // print("$url_img  +++++++88888888+++++++++");
-            });
-          }
-          else{
-                themeAlert(context, 'Not find selected', type: "error");
-            return null;
-          }    
-       }
-  }
-
-/////////// firebase Storage +++++++++++++++++++
-///
-String?  downloadURL;
-List<String> myList = [];
-Future listExample() async {
-    firebase_storage.ListResult result =
-        await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
-        result.items.forEach((firebase_storage.Reference ref)
-        async {
-        var uri = await downloadURLExample("${ref.fullPath}");
-        myList.add(uri);
-    });
-    return myList;
-}
-
-Future downloadURLExample(image_path) async{
-downloadURL = await FirebaseStorage.instance
-.ref()
-.child(image_path)
-.getDownloadURL();
-return downloadURL.toString();
-}
-
-////
- 
 
 ///////////  firebase property Database access  +++++++++++++++++++++++++++
     final Stream<QuerySnapshot> _crmStream =
-      FirebaseFirestore.instance.collection('category').snapshots();
-      CollectionReference _category = FirebaseFirestore.instance.collection('category');
+      FirebaseFirestore.instance.collection('users').snapshots();
+      CollectionReference _UsersSubAdmin = FirebaseFirestore.instance.collection('users');
 ////////
 
 /////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
 
     List StoreDocs = [];
-   _CateData() async {
+   _SubAdmin_ListData() async {
     StoreDocs = [];
-    var collection = FirebaseFirestore.instance.collection('category');
+    var collection = FirebaseFirestore.instance.collection('users');
     var querySnapshot = await collection.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
       // ignore: unnecessary_cast
       Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
       StoreDocs.add(data);
-      data["id"] = queryDocumentSnapshot.id;
+     // data["id"] = queryDocumentSnapshot.id;
     }
-     setState(() {
-         listExample();
-       });   
+    setState(() {
+     print("$StoreDocs ++++++++"); 
+    });
   }
 
 /////////////
 
-  var Perent_cat ;
-  var slugUrl ;
-  var image ;
+  var firstName ;
+  var lastName ;
+  var _email ;
+  var _passwd ;
+  var _mobile ;
   var _Status ;
-  var Catename ;
+  var _date ;
+
 //////
   Map<String, dynamic>? data;
  Future Update_initial(id)async{
     DocumentSnapshot pathData = await FirebaseFirestore.instance
-       .collection('category')
+       .collection('users')
        .doc(id)
        .get();
       if (pathData.exists) {
        data = pathData.data() as Map<String, dynamic>?;
        setState(() {                   
-        Perent_cat = data!['parent_cate'];
-        slugUrl = data!['slug_url'];
-        image = data!["image"];
-        _Status = data!['status'];
-        Catename = data!['category_name'];
+        firstName = data!['first_name'];
+        lastName = data!['last_name'];
+        _email = data!["email"];
+        _mobile = data!['mobile_no'];
+        _passwd = data!['password'];
+        _date = data!['date_at'];
+        _Status = (data!['status'] == "1")?"Active":(data!['status'] == "2")?"Inactive":"Select";
        });
      }
 
@@ -195,42 +112,56 @@ return downloadURL.toString();
 
 
 
-/////// add Category Data  =+++++++++++++++++++
- 
- Future<void> addList() {
-    return
-     _category
-        .add({
-          'category_name': "$cate_name",
-          'slug_url': "$slug__url",
-          'parent_cate': "$_dropDownValue",
-          'status': "$_StatusValue",
-          'image': "$url_img",
-          "date_at": "$Date_at"
-        })
-        .then((value) {
+// /////// add Sub_Admin User Data  =+++++++++++++++++++
+////////////////////////////////////////////////////
+
+   Add_SubAdmin() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      await authService
+          .registerUserWithEmailandPassword(fname,lname, email, Mobile, password,_StatusValue!,Date_at)
+          .then((value) async {
+        if (value == true) {
+         // saving the shared preference state
+          await HelperFunctions.saveUserLoggedInStatus(true);
+          await HelperFunctions.saveUserEmailSF(email);
+          await HelperFunctions.saveUserNameSF(fname);
+          nextScreenReplace(context,  
+          MultiProvider(
+                providers: [
+                  ChangeNotifierProvider(
+                    create: (context) => MenuAppController(),
+                  ),
+                ],
+                child:   MainScreen() // MainScreen(),          
+              ),
+              );
+        } else {
+          showSnackbar(context, Colors.red, value);
           setState(() {
-             themeAlert(context, "Submitted Successfully ");    
-              _CateData();     
+            _isLoading = false;
           });
-        })
-        .catchError(
-        (error) => themeAlert(context, 'Failed to Submit', type: "error"));
+        }
+      });
+    }
   }
 
-//////////
 
+
+// //////////
 
 ////////// delete Category Data ++++++++++++++++++
 
   Future<void> deleteUser(id) {
-    return _category
+    return _UsersSubAdmin
         .doc(id)
         .delete()
         .then((value){
           setState(() {
              themeAlert(context, "Deleted Successfully ");    
-              _CateData();     
+              _SubAdmin_ListData();     
           });
         }
         )
@@ -239,45 +170,47 @@ return downloadURL.toString();
 
   ////////////
   ///
+  ///
+  ///
 /////// Update
 
-  Future<void> updatelist(id, Catename,slugUrl, _Status,_perentCate, image) 
-    {
-    return 
-        _category
+  Future<void> updatelist(id,f_name,l_name,_email,_mobile,_passwd,_Status) async{  
+        if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+    await
+        _UsersSubAdmin
         .doc(id)
         .update({
-          'category_name': "$Catename",
-          "parent_cate":"$_perentCate",
-          'slug_url': "$slugUrl",
-          'status': "$_Status",
-          "image":"$image",
-          "date_at": "$Date_at"
+          'first_name': f_name,
+          "last_name": l_name,
+          'email': _email,
+          'mobile_no': "$_mobile",
+          "password": _passwd,
+          "status": (_Status == "Active")?"1":(_Status == "Inactive")?"2":"0",
+          "date_at": Date_at,
         })
         .then((value) {
           themeAlert(context, "Successfully Update");
           setState(() {
             updateWidget = false;
-             _CateData();    
+             _SubAdmin_ListData();    
           });
         } )
         .catchError(
             (error) => themeAlert(context, 'Failed to update', type: "error"));
+        }
+        else {
+         themeAlert(context, 'Fill the Required value!', type: "error");
+          setState(() {
+            _isLoading = false;
+          });
+        }
   }
 
   ///
   
-
-///////////    Creating SLug Url Function +++++++++++++++++++++++++++++++++++++++
-    Slug_gen(String text){
-    var slus_string;
-    String slug = SlugIT().makeSlug(text);
-    setState(() {
-    slus_string = slug;
-    SlugUrlController.text = slus_string;
-    });
-    }
-///// ++++++++++++++++++++++++++++++++++++++
 
 
  bool Add_Category = false;
@@ -286,7 +219,7 @@ return downloadURL.toString();
 
   @override
   void initState() {
-    _CateData();
+    _SubAdmin_ListData();
     super.initState();
   }
 
@@ -312,17 +245,21 @@ return downloadURL.toString();
             child: ListView(
               children: [
                 Header(
-                  title: "Category",
+                  title: "Sub Admin",
                 ),
-                             (Add_Category != true )
-                             ?
+                             (view_SubAdmin_info != true )
+                              ?
+                              (Add_Category != true )
+                              ?
                               (updateWidget != true)
-                                ?
+                              ?
                                listList(context,"Add / Edit")
                                :
-                               Update_Category(context,update_id,"Edit")
+                               Update_SubAdmin_Data(context,update_id,"Edit")
                                :
-                               listCon(context,"Add New Category")
+                               listCon(context,"Add New Sub Admin")
+                               :
+                               View_SubAdmin_Data(context,"Veiw Details")
               ],
             ),
           ));
@@ -359,7 +296,7 @@ return downloadURL.toString();
               Icon(Icons.arrow_back,color: Colors.blue,size:25),
                 SizedBox(width: 10,),
               Text(
-                       'Category',
+                       'Sub Admin',
                        style: themeTextStyle(
                   size: 18.0,
                   ftFamily: 'ms',
@@ -378,8 +315,6 @@ return downloadURL.toString();
                 ],
               ),
             ), 
-
-       
                       ],
                     ),
             )   
@@ -391,12 +326,14 @@ return downloadURL.toString();
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
-              child: Column(
+              child:
+              Form(
+                    key: _formKey,
+                    child:
+               Column(
                 children: [
 
-                  Form(
-                    key: _formKey,
-                    child: Row(
+                   Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
@@ -407,12 +344,35 @@ return downloadURL.toString();
                                   child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Category Name*",
+                                  Text("First name*",
                                       style: themeTextStyle(
                                           color: Colors.black,
                                           size: 15,
                                           fw: FontWeight.bold)),
-                                  Text_field(context, CategoryController,"Category Name", "Enter Category Name"),
+                                   SizedBox(
+                            height: 45,
+                            child: TextFormField(
+                              style: TextStyle(color: Colors.black),
+                              decoration: 
+                                textInputDecoration.copyWith(
+                                  labelText: "Full Name",
+                                  prefixIcon: Icon(Icons.person,color: Theme.of(context).primaryColor,)
+                                  ),
+                                 onChanged: (val) {
+                                setState(() {
+                                  fname = val;
+                                });
+                              },
+                              validator: (val) {
+                                if (val!.isNotEmpty) {
+                                  return null;
+                                } 
+                                else {
+                                  return "Name cannot be empty";
+                                }
+                              },
+                            ),
+                          ),
                                 ],
                               )),
                               SizedBox(height: defaultPadding),
@@ -423,12 +383,35 @@ return downloadURL.toString();
                                     child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                        Text("Slug Url",
+                                        Text("Last name",
                                             style: themeTextStyle(
                                             color: Colors.black,
                                             size: 15,
                                             fw: FontWeight.bold)),
-                                            Text_field(context, SlugUrlController,"Slug Url", "Enter Slug Url"),
+                                           SizedBox(
+                            height: 45,
+                            child: TextFormField(
+                              style: TextStyle(color: Colors.black),
+                              decoration: 
+                                textInputDecoration.copyWith(
+                                  labelText: "Last Name",
+                                  prefixIcon: Icon(Icons.person,color: Theme.of(context).primaryColor,)
+                                  ),
+                                 onChanged: (val) {
+                                setState(() {
+                                  lname = val;
+                                });
+                              },
+                              validator: (val) {
+                                if (val!.isNotEmpty) {
+                                  return null;
+                                } 
+                                else {
+                                  return "Name cannot be empty";
+                                }
+                              },
+                            ),
+                          ),
                                   ],
                                 )),
                             ],
@@ -443,18 +426,33 @@ return downloadURL.toString();
                                 child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Slug Url",
+                                Text("Last name",
                                     style: themeTextStyle(
                                         color: Colors.black,
                                         size: 15,
                                         fw: FontWeight.bold)),
-                                        Text_field(context, SlugUrlController,"Slug Url", "Enter Slug Url"),
+                                         SizedBox(
+                            height: 45,
+                            child: TextFormField(
+                              style: TextStyle(color: Colors.black),
+                              decoration: 
+                                textInputDecoration.copyWith(
+                                  labelText: "Last Name",
+                                  prefixIcon: Icon(Icons.person,color: Theme.of(context).primaryColor,)
+                                  ),
+                                 onChanged: (val) {
+                                setState(() {
+                                  lname = val;
+                                });
+                              },
+                            ),
+                          ),
                               ],
                             )),
                           ),
                       ],
                     ),
-                  ),
+                    SizedBox(height: defaultPadding),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -464,6 +462,260 @@ return downloadURL.toString();
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      child: Text("Email*",
+                                          style: themeTextStyle(
+                                              color: Colors.black,
+                                              size: 15,
+                                              fw: FontWeight.bold))),
+                                 /////////   Email     TextFormField+++++++++++++++
+                  
+                          SizedBox(
+                            height: 45,
+                            child: TextFormField(
+                                style: TextStyle(color: Colors.black),
+                              decoration: textInputDecoration.copyWith(
+                                  labelText: "Email",
+                                  prefixIcon: Icon(
+                                    Icons.email,
+                                    color: Theme.of(context).primaryColor,
+                                  )
+                                  ),
+                              onChanged: (val) {
+                                setState(() {
+                                  email = val;
+                                });
+                              },
+                                        
+                              // check tha validation
+                              validator: (val) {
+                                return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                        .hasMatch(val!)
+                                    ? null
+                                    : "Please enter a valid email";
+                              },
+                            ),
+                          ),
+                      /////
+                                ],
+                              ),
+                            ),
+                            if (Responsive.isMobile(context))
+                              SizedBox(height: defaultPadding),
+                            if (Responsive.isMobile(context))
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        child: Text("Mobile*",
+                                            style: themeTextStyle(
+                                                color: Colors.black,
+                                                size: 15,
+                                                fw: FontWeight.bold))),
+                                   SizedBox(
+                            height: 45,
+                            child: TextFormField(
+                              style: TextStyle(color: Colors.black),
+                              decoration: 
+                                textInputDecoration.copyWith(
+                                  labelText: "Mobile",
+                                  prefixIcon: Icon(Icons.person,color: Theme.of(context).primaryColor,)
+                                  ),
+                                 onChanged: (val) {
+                                setState(() {
+                                  Mobile = val;
+                                });
+                              },
+                              validator: (val) {
+                                if (val!.isNotEmpty) {
+                                  return null;
+                                } 
+                                else {
+                                  return "Name cannot be empty";
+                                }
+                              },
+                            ),
+                          ),
+                                  ],
+                                ),
+                              )
+                          ],
+                        ),
+                      ),
+                      if (!Responsive.isMobile(context))
+                        SizedBox(width: defaultPadding),
+                      // On Mobile means if the screen is less than 850 we dont want to show it
+                      if (!Responsive.isMobile(context))
+                        Expanded(
+                            flex: 2,
+                            child: Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                   Container(
+                                        child: Text("Mobile*",
+                                            style: themeTextStyle(
+                                                color: Colors.black,
+                                                size: 15,
+                                                fw: FontWeight.bold))),
+                                   SizedBox(
+                            height: 45,
+                            child: TextFormField(
+                              style: TextStyle(color: Colors.black),
+                              decoration: 
+                                textInputDecoration.copyWith(
+                                  labelText: "Mobile",
+                                  prefixIcon: Icon(Icons.phone_iphone_rounded,color: Theme.of(context).primaryColor,)
+                                  ),
+                                 onChanged: (val) {
+                                setState(() {
+                                  Mobile = val;
+                                });
+                              },
+                              validator: (val) {
+                                if (val!.isNotEmpty) {
+                                  return null;
+                                } 
+                                else {
+                                  return "Name cannot be empty";
+                                }
+                              },
+                            ),
+                          ),
+                                ],
+                              ),
+                            )),
+                    ],
+                  ),
+
+                   SizedBox(height: defaultPadding),  
+                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                   Container(
+                                        child: Text("Password*",
+                                            style: themeTextStyle(
+                                                color: Colors.black,
+                                                size: 15,
+                                                fw: FontWeight.bold))),
+                        //// Passwd TextFormField ++++++++++++++++++++++++                
+                          SizedBox(
+                            height: 45,
+                            child: TextFormField(
+                                style: TextStyle(color: Colors.black),
+                                  obscureText: true,
+                                  decoration: 
+                                    textInputDecoration.copyWith(
+                                    labelText: "Password",
+                                    prefixIcon: Icon(Icons.lock,color: Theme.of(context).primaryColor,)
+                                    ),
+                                        
+                                  validator: (val) {
+                                   if (val!.length < 6) {
+                                   return "Password must be at least 6 characters";
+                                    } 
+                                    else {
+                                    return null;
+                                    }
+                                  },
+                                 onChanged: (val) {
+                                  setState(() {
+                                  password = val;
+                                  });
+                              },
+                            ),
+                          ),
+                        ////
+              
+                                ],
+                              ),
+                            ),
+                            if (Responsive.isMobile(context))
+                              SizedBox(height: defaultPadding),
+                            if (Responsive.isMobile(context))
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                   Container(
+                                      child: Text("Status",
+                                          style: themeTextStyle(
+                                              color: Colors.black,
+                                              size: 15,
+                                              fw: FontWeight.bold))),
+                                  Container(
+                                    height: 40,
+                                    margin: EdgeInsets.only(
+                                        top: 10, bottom: 10, right: 10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding:
+                                        EdgeInsets.only(left: 10, right: 10),
+                                    child: DropdownButton(
+                                      dropdownColor:
+                                          Colors.white,
+                                      hint: _StatusValue == null
+                                          ? Text('Select',style: TextStyle(color:Colors.black),)
+                                          : Text(
+                                              _StatusValue!,
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 1, 0, 0)),
+                                            ),
+                                      isExpanded: true,
+                                      underline: Container(),
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black,
+                                      ),
+                                      iconSize: 35,
+                                      style: TextStyle(
+                                          color: Color.fromARGB(255, 1, 7, 7)),
+                                      items: ['Select','Inactive', 'Active'].map(
+                                        (val) {
+                                          return DropdownMenuItem<String>(
+                                            value: val,
+                                            child: Text(val),
+                                          );
+                                        },
+                                      ).toList(),
+                                      onChanged: (val) {
+                                        setState(
+                                          () {
+                                            _StatusValue = val!;
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  ],
+                                ),
+                              )
+                          ],
+                        ),
+                      ),
+                      if (!Responsive.isMobile(context))
+                        SizedBox(width: defaultPadding),
+                      // On Mobile means if the screen is less than 850 we dont want to show it
+                      if (!Responsive.isMobile(context))
+                        Expanded(
+                            flex: 2,
+                            child: Container(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -522,260 +774,19 @@ return downloadURL.toString();
                                   ),
                                 ],
                               ),
-                            ),
-                            SizedBox(height: defaultPadding),
-                            if (Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            if (Responsive.isMobile(context))
-                              Container(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                        child: Text("Parent Category",
-                                            style: themeTextStyle(
-                                                color: Colors.black,
-                                                size: 15,
-                                                fw: FontWeight.bold))),
-                                    Container(
-                                      height: 40,
-                                      margin: EdgeInsets.only(
-                                          top: 10, bottom: 10, right: 10),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding:
-                                          EdgeInsets.only(left: 10, right: 10),
-                                      child: DropdownButton(
-                                        dropdownColor:
-                                            Colors.white,
-                                        hint: _dropDownValue == null
-                                            ?Text('Select',style: TextStyle(color:Colors.black),)
-                                            : Text(
-                                                _dropDownValue!,
-                                                style: TextStyle(
-                                                    color: Colors.black),
-                                              ),
-                                        underline: Container(),
-                                        isExpanded: true,
-                                        icon: Icon(
-                                          Icons.arrow_drop_down,
-                                          color: Colors.black,
-                                        ),
-                                        iconSize: 35,
-                                        style: TextStyle(color: Colors.blue),
-                                        items: ['Select', 'Two', 'Three']
-                                            .map(
-                                          (val) {
-                                            return DropdownMenuItem<String>(
-                                              value: val,
-                                              child: Text(val),
-                                            );
-                                          },
-                                        ).toList(),
-                                        onChanged: (val) {
-                                          setState(
-                                            () {
-                                              _dropDownValue = val!;
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                          ],
-                        ),
-                      ),
-                      if (!Responsive.isMobile(context))
-                        SizedBox(width: defaultPadding),
-                      // On Mobile means if the screen is less than 850 we dont want to show it
-                      if (!Responsive.isMobile(context))
-                        Expanded(
-                            flex: 2,
-                            child: Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                      child: Text("Parent Category",
-                                          style: themeTextStyle(
-                                              color: Colors.black,
-                                              size: 15,
-                                              fw: FontWeight.bold))),
-                                  Container(
-                                    height: 40,
-                                    margin: EdgeInsets.only(
-                                        top: 10, bottom: 10, right: 10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    padding:
-                                        EdgeInsets.only(left: 10, right: 10),
-                                    child: DropdownButton(
-                                      dropdownColor:
-                                          Colors.white,
-                                      hint: _dropDownValue == null
-                                          ?
-                                          Text('Select',style: TextStyle(color:Colors.black),)
-                                          : Text(
-                                              _dropDownValue!,
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            ),
-                                      isExpanded: true,
-                                      underline: Container(),
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
-                                        color: Colors.black,
-                                      ),
-                                      iconSize: 35,
-                                      style: TextStyle(
-                                          color: Color.fromARGB(255, 4, 6, 7)),
-                                      items:
-                                          ['Select','One', 'Two', 'Three'].map(
-                                        (val) {
-                                          return DropdownMenuItem<String>(
-                                            value: val,
-                                            child: Text(val),
-                                          );
-                                        },
-                                      ).toList(),
-                                      onChanged: (val) {
-                                        setState(
-                                          () {
-                                            _dropDownValue = val!;
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
                             )),
                     ],
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Icon Image*",
-                                style: themeTextStyle(
-                                    size: 15, fw: FontWeight.bold)),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              height: 45,
-                              margin: EdgeInsets.only(
-                                  top: 10, bottom: 10, right: 10),
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                              child: Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      _ImageSelect_Alert(context);
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(5),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Color.fromARGB(
-                                                  31, 232, 226, 226)),
-                                          color: Color.fromARGB(
-                                              255, 237, 235, 235)),
-                                      child: Text(
-                                        "Choose File",
-                                        style: themeTextStyle(size: 15),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  (url_img == null || url_img.isEmpty)
-                                      ? Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text("No file choosen",
-                                                style: themeTextStyle(
-                                                    size: 15,
-                                                    color: Colors.black38)),
-                                          ],
-                                        )
-                                      : Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              "file selected",
-                                              style: themeTextStyle(
-                                                  size: 12,
-                                                  fw: FontWeight.w400,
-                                                  color: themeBG4),
-                                            ),
-                                          ],
-                                        ),
-                                ],
-                              ),
-                            ),
-                            ////
-                            SizedBox(height: defaultPadding),
-                          ],
-                        ),
-                      ),
-
-                      if (!Responsive.isMobile(context))
-                        SizedBox(width: defaultPadding),
-                      if (!Responsive.isMobile(context))
-                        Expanded(
-                          flex: 2,
-                          child: SizedBox(width: defaultPadding),
-                        ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                         url_img == null
-                            ? Icon(Icons.photo, size: 12)
-                            : Image.network(
-                                url_img,
-                                height: 100,
-                                width: 100,
-                                fit: BoxFit.contain,
-                              ),
-                    ],
-                  ),
+                 
                   SizedBox(
                     height: 20,
                   ),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     themeButton3(context, () {
-                      if (_formKey.currentState!.validate() && url_img != null) {
-                        setState(() {
-                          cate_name = CategoryController.text;
-                          slug__url = SlugUrlController.text;
-                          addList();
-                          clearText();
-                          clear_imageData();
-                         
-                        });
-                      }
-                      else{
-                         themeAlert(context, 'Image value required!', type: "error");
-                      }
+                     setState(() {
+                        Add_SubAdmin();
+                        clearText();
+                      });
                     }, buttonColor: Colors.green, label: "Submit"),
                     SizedBox(
                       width: 10,
@@ -788,7 +799,9 @@ return downloadURL.toString();
                     SizedBox(width: 20.0),
                   ])
                 ],
-              )),
+              ))
+              ),
+
           SizedBox(height: 100,)      
         ]));
   }
@@ -808,8 +821,8 @@ return downloadURL.toString();
        ListView(
         children: [
           HeadLine(context,
-             Icons.category_outlined,
-             "Category",
+             Icons.admin_panel_settings,
+             "Sub Admin",
               "$sub_text",
              () {
               setState(() {
@@ -836,16 +849,12 @@ return downloadURL.toString();
                             children: [
                             Column(
                             crossAxisAlignment: CrossAxisAlignment.start, 
-                        
-                              children: [
-
-                            Text("Category List",style: themeTextStyle(fw: FontWeight.bold,color: Colors.white,size: 15),),
-                            SizedBox(height: 20,),
+                            children: [
+                            Text("Sub Admin List",style: themeTextStyle(fw: FontWeight.bold,color: Colors.white,size: 15),),
+                            SizedBox(height: 20),
                             Row(children: [
-                              Text("Show",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
-
-                              
-                                  Container(
+                            Text("Show",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
+                            Container(
                                     margin: EdgeInsets.symmetric(horizontal: 5),
                                     padding: EdgeInsets.all(2) ,
                                     height: 20,
@@ -867,20 +876,16 @@ return downloadURL.toString();
                                          });
                                        }),
                                   ),
-                            
-
                               Text("entries",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
                             ],)
                             ],),
-                            
-
+  
                            Container(
                             height: 40,
                             width: 300,
                             child: SearchField())  
                             ],
                           )), 
-                          
                           SizedBox(height: 5,),
 
                            Table(
@@ -921,31 +926,20 @@ return downloadURL.toString();
                                            style: TextStyle(fontWeight: FontWeight.bold)),
                                       ),
                                     ),
-                                    TableCell(
-                                      verticalAlignment: TableCellVerticalAlignment.middle,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: SizedBox(
-                                          child: Text(
-                                          'Logo',
-                                           style: TextStyle(fontWeight: FontWeight.bold)),
-                                          width: 40,
-                                        ),
-                                      ),
-                                    ),
+                                   
                                     TableCell(
                                       verticalAlignment: TableCellVerticalAlignment.middle,
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          "Category Name",
+                                          "Name",
                                            style: TextStyle(fontWeight: FontWeight.bold)),
                                       ),
                                     ),
                                     TableCell(
                                       verticalAlignment: TableCellVerticalAlignment.middle,
                                       child: Text(
-                                          "Parent Category",
+                                          "Email",
                                            style: TextStyle(fontWeight: FontWeight.bold)),
                                     ),
                                     TableCell(
@@ -970,22 +964,20 @@ return downloadURL.toString();
                                    (Responsive.isMobile(context)) 
                                   ?
                                      tableRowWidget_mobile(
-                                    "${StoreDocs[index]["image"]}",
-                                     "${StoreDocs[index]["category_name"]}",
-                                     "${StoreDocs[index]["parent_cate"]}",
-                                     "${StoreDocs[index]["status"]}",
+                                     "${StoreDocs[index]["first_name"]} ${StoreDocs[index]["last_name"]}",
+                                     "${StoreDocs[index]["email"]}",
+                                     (StoreDocs[index]["status"] == "1")?"Active":(StoreDocs[index]["status"] == "2")?"Inactive":"",
                                      "${StoreDocs[index]["date_at"]}",
-                                     "${StoreDocs[index]["id"]}"
+                                     "${StoreDocs[index]["uid"]}"
                                      )
-                                 :
-                                  tableRowWidget( 
+                                  :
+                                    tableRowWidget( 
                                 "${index + 1}",
-                                "${StoreDocs[index]["image"]}",
-                                "${StoreDocs[index]["category_name"]}",
-                                "${StoreDocs[index]["parent_cate"]}",
-                                "${StoreDocs[index]["status"]}",
+                                "${StoreDocs[index]["first_name"]} ${StoreDocs[index]["last_name"]}",
+                                "${StoreDocs[index]["email"]}",
+                                (StoreDocs[index]["status"] == "1")?"Active":(StoreDocs[index]["status"] == "2")?"Inactive":"",
                                 "${StoreDocs[index]["date_at"]}",
-                                "${StoreDocs[index]["id"]}"),
+                                "${StoreDocs[index]["uid"]}"),
                                 ],
                       ),
                          ],
@@ -996,114 +988,48 @@ return downloadURL.toString();
             );
 }
 
-  TableRow tableRowWidget( sno, Iimage, name, pName, status, date, iid) {
+  TableRow tableRowWidget( sno, name,email,status, date, iid) {
     return TableRow(children: [
        TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text("$sno",style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text("$sno",style: TextStyle(fontWeight: FontWeight.normal,)),
         ),
       ),
       TableCell(
       verticalAlignment: TableCellVerticalAlignment.middle,
        // horizentalAlignment: TableCellVerticalAlignment.middle,
         child:  
-        Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: 
-           Container(
-            alignment: Alignment.topLeft,
-                          height: 60,
-                          width: 60,
-                          child:
-                           Image(
-                            image:
-                            (Iimage != "null" && Iimage.isNotEmpty)
-                                      ?  
-                                      NetworkImage(
-                                      Iimage,
-                                    )
-                                    :
-                                      NetworkImage(
-                                      "https://shopnguyenlieumypham.com/wp-content/uploads/no-image/product-456x456.jpg",
-                                    )
-                                    ,fit: BoxFit.contain),
-                        )
-        ),
+        Text("$name",style: TextStyle(fontWeight: FontWeight.normal)),
     ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text("$name",style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text("$email",style: TextStyle(fontWeight: FontWeight.normal)),
         ),
       ),
+
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$pName",style: TextStyle(fontWeight: FontWeight.bold)),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$status",style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text("$status",style: TextStyle(fontWeight: FontWeight.normal)),
       ),
        TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child:Text("$date",style: TextStyle(fontWeight: FontWeight.bold)),
+        child:Text("$date",style: TextStyle(fontWeight: FontWeight.normal)),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child:  Row(
-                children: [
-                  Container(
-                      height: 40,
-                      width: 40,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: IconButton(
-                          onPressed: () {
-                            setState(() {
-                                 updateWidget = true;
-                                 update_id = iid;
-                                 Update_initial(iid);
-                            });
-                          },
-                          icon: Icon(
-                            Icons.edit,
-                            color: Colors.blue,
-                          )) ////
-                      ),
-                  SizedBox(width: 10),
-                  Container(
-                      height: 40,
-                      width: 40,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: IconButton(
-                          onPressed: () {
-                            showExitPopup(iid);
-                          },
-                          icon: Icon(
-                            Icons.delete_outline_outlined,
-                            color: Colors.red,
-                          ))),
-                ],
-              )
+        child:  
+         Action_btn(context,iid)    
       ),
      
     ]);
   }
 
 
- TableRow tableRowWidget_mobile( Iimage, name, pName, status, date, iid) {
+ TableRow tableRowWidget_mobile(name,email, status, date, iid) {
     return TableRow(
       children: [
        TableCell(
@@ -1112,35 +1038,14 @@ return downloadURL.toString();
                     Row(
                       children: [
                         Container(
-                          margin: EdgeInsets.all(5),
-                          height: 100,
-                          width: 100,
-                          decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 214, 214, 214),
-                              image: DecorationImage(
-                                  image:
-                                     (Iimage != "null" && Iimage.isNotEmpty)
-                                      ?  
-                                      NetworkImage(
-                                      Iimage,
-                                    )
-                                    :
-                                      NetworkImage(
-                                      "https://shopnguyenlieumypham.com/wp-content/uploads/no-image/product-456x456.jpg",
-                                    )
-                                    ,fit: BoxFit.contain
-                                    )
-                                    ),
-                        ),
-                        Container(
                           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                           child: Column(
                             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              themeListRow(context, "Product Name", "$name"),
-                              themeListRow(context, "Category Name","$pName"),
-                              themeListRow(context, "Satus","$status"),
+                              themeListRow(context, "Name", "$name"),
+                              themeListRow(context, "Email","$email"),
+                              themeListRow(context, "Status","$status"),
                               themeListRow(context, "Date","$date"),
                         SizedBox(height: 10,),
                             Row(
@@ -1166,47 +1071,7 @@ return downloadURL.toString();
                                 ftFamily: 'ms',
                                 fw: FontWeight.normal),
                           ),
-                              Container(
-                                  height: 40,
-                                  width: 40,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.withOpacity(0.1),
-                                    borderRadius:
-                                        const BorderRadius.all(Radius.circular(10)),
-                                  ),
-                                  child: IconButton(
-                                      onPressed: () {
-                                           setState(() {
-                                                updateWidget = true;
-                                                update_id = iid;
-                                                Update_initial(iid);
-                                                  });
-                                      },
-                                      icon:
-                                       Icon(
-                                        Icons.edit,
-                                        color: Colors.blue,
-                                      )) ////
-                                  ),
-                              SizedBox(width: 10),
-                              Container(
-                                  height: 40,
-                                  width: 40,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red.withOpacity(0.1),
-                                    borderRadius:
-                                        const BorderRadius.all(Radius.circular(10)),
-                                  ),
-                                  child: IconButton(
-                                      onPressed: () {
-                                        showExitPopup(iid);
-                                      },
-                                      icon: Icon(
-                                        Icons.delete_outline_outlined,
-                                        color: Colors.red,
-                                      ))),
+                             Action_btn(context,iid)     
                             ],
                           )
                            
@@ -1224,11 +1089,91 @@ return downloadURL.toString();
   
   }
 
-/////////
+/////////    Action Button For Web And Mobile ++++++++++++++++++++++++++++++++
+///
+Widget Action_btn(BuildContext context,iid){
+  return
+           Container(
+            margin: EdgeInsets.all(5),
+            height: 40,
+             child: Row(
+                  children: [
+             ////// view Update Edit  Sub Admin+++++++++ 
+                    Container(
+                        height: 40,
+                        width: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.1),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                   updateWidget = true;
+                                   update_id = iid;
+                                   Update_initial(iid);
+                              });
+                            },
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.blue,
+                            )) ////
+                        ),
+             ////// view delete  Sub Admin+++++++++++++++++++++++
+                    SizedBox(width: 10),
+                    Container(
+                        height: 40,
+                        width: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: IconButton(
+                            onPressed: () {
+                              showExitPopup(iid);
+                            },
+                            icon: Icon(
+                              Icons.delete_outline_outlined,
+                              color: Colors.red,
+                            ))),
+                ///// view details Sub Admin+++++++++++++++++++  
+                               SizedBox(width: 10),
+                                Container(
+                                    height: 40,
+                                    width: 40,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue.withOpacity(0.1),
+                                      borderRadius:
+                                          const BorderRadius.all(Radius.circular(10)),
+                                    ),
+                                    child: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            view_SubAdmin_info = true;
+                                             Update_initial(iid);
+                                          });
+                                          
+                                        },
+                                        icon: Icon(
+                                          Icons.visibility,
+                                          color: Colors.blue,
+                                        ))),
+                  ],
+                ),
+           );
 
+}
+///
+///===============================================================================================
 
+  bool passwordVisible=true;
 /////////////  Update widget for product Update+++++++++++++++++++++++++
-Widget Update_Category(BuildContext context,id,sub_text) {
+Widget Update_SubAdmin_Data(BuildContext context,id,sub_text) {
  
   return 
            Container(
@@ -1240,7 +1185,7 @@ Widget Update_Category(BuildContext context,id,sub_text) {
                       ),
                   child:   ListView(children: [
 
-                   Container(
+              Container(
               height: 100,
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal:10 ),
@@ -1260,7 +1205,7 @@ Widget Update_Category(BuildContext context,id,sub_text) {
                 Icon(Icons.arrow_back,color: Colors.blue,size:25),
                 SizedBox(width: 10,),
               Text(
-                       'Category',
+                       'Sub Admin',
                        style: themeTextStyle(
                   size: 18.0,
                   ftFamily: 'ms',
@@ -1281,41 +1226,42 @@ Widget Update_Category(BuildContext context,id,sub_text) {
             ), 
                       ],
                     ),
-            ) ,
+            ) ,    
 
-                  Container(
-                      padding: EdgeInsets.all(defaultPadding),
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.black12,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: 
-                      (data == null)
-                      ?
-                      Center(
-                             child: CircularProgressIndicator())
-                     :
-                       Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text("Category Name*",
-                                                  style: themeTextStyle(
-                                                      color: Colors.black,
-                                                      size: 15,
-                                                      fw: FontWeight.bold)),
-  
-                                                Container(
+              Container(
+              padding: EdgeInsets.all(defaultPadding),
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: Colors.black12,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              ),
+              child:
+              (data == null)
+              ?
+              Center(child: CircularProgressIndicator())
+              :
+              Form(
+              key: _formKey,
+              child:
+               Column(
+                children: [
+                   Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            children: [
+                              Container(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("First name*",
+                                      style: themeTextStyle(
+                                          color: Colors.black,
+                                          size: 15,
+                                          fw: FontWeight.bold)),
+                                                 Container(
                                                    height: 40,
                                                     margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
                                                     decoration: BoxDecoration(
@@ -1323,143 +1269,407 @@ Widget Update_Category(BuildContext context,id,sub_text) {
                                                         borderRadius: BorderRadius.circular(10),
                                                             ),
                                                             child: TextFormField(
-                                                              initialValue: Catename,
+                                                              initialValue: firstName,
                                                               autofocus: false,
-                                                              onChanged: (value) => Catename = value,
-                                                            // controller: ctr_name,
-                                                              validator: (value) {
-                                                                if (value == null || value.isEmpty) {
-                                                                  return "Enter Category Name";
-                                                                }
-                                                                return null;
+                                                              onChanged: (val) {
+                                                                 setState(() {
+                                                                       firstName = val;
+                                                                      });
                                                               },
+                                                              validator: (val) {
+                                                               if (val!.isNotEmpty) {
+                                                                  return null;
+                                                             } 
+                                                              else {
+                                                              return "Name cannot be empty";
+                                                                   }
+                                                                },
                                                               style: TextStyle(color: Colors.black),
                                                               decoration: InputDecoration(
+                                                              prefixIcon: Icon(
+                                                                         Icons.person,
+                                                                   color: Theme.of(context).primaryColor,
+                                                                       ),
                                                                 border: InputBorder.none,
                                                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                                                hintText: "Category Name",
+                                                                hintText: "First Name",
                                                                 hintStyle: TextStyle(
                                                                   color: Colors.grey,
                                                                   fontSize: 16,
                                                                 ),
                                                               ),
-                                                            )),
-
-
-
-
-                                              SizedBox(height: defaultPadding),
-                                              if (Responsive.isMobile(context))
-                                                SizedBox(width: defaultPadding),
-                                              if (Responsive.isMobile(context))
-                                       
-                                                  Container(
+                                                            )),      
+                                ],
+                              )),
+                              SizedBox(height: defaultPadding),
+                              if (Responsive.isMobile(context))
+                              SizedBox(width: defaultPadding),
+                              if (Responsive.isMobile(context))
+                                Container(
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                  Text("Last name",
+                                            style: themeTextStyle(
+                                            color: Colors.black,
+                                            size: 15,
+                                            fw: FontWeight.bold)),
+                                               Container(
                                                    height: 40,
-                                                    margin: EdgeInsets.only(top: 10, bottom: 10,  right: 10),
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
                                                     decoration: BoxDecoration(
                                                         color: Colors.white,
                                                         borderRadius: BorderRadius.circular(10),
                                                             ),
                                                             child: TextFormField(
-                                                              initialValue: slugUrl,
+                                                              initialValue: lastName,
                                                               autofocus: false,
-                                                              onChanged: (value) => slugUrl = value,
-                                                            // controller: ctr_name,
-                                                              validator: (value) {
-                                                                if (value == null || value.isEmpty) {
-                                                                  return "Enter Slug Url";
-                                                                }
-                                                                return null;
+                                                              onChanged: (val) {
+                                                                 setState(() {
+                                                                       lastName = val;
+                                                                      });
                                                               },
                                                               style: TextStyle(color: Colors.black),
                                                               decoration: InputDecoration(
+                                                              prefixIcon: Icon(
+                                                              Icons.person,
+                                                               color: Theme.of(context).primaryColor,
+                                                                ),
                                                                 border: InputBorder.none,
                                                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                                                hintText: "Slug Url",
+                                                                hintText: "Last Name",
                                                                 hintStyle: TextStyle(
                                                                   color: Colors.grey,
                                                                   fontSize: 16,
                                                                 ),
                                                               ),
-                                                            )),
+                                                            )),      
 
-                                            ],
-                                          ),
-                                        ),
-                                        if (!Responsive.isMobile(context))
-                                          SizedBox(width: defaultPadding),
-                                        if (!Responsive.isMobile(context))
-                                          Expanded(
-                                            flex: 2,
-                                            child: Container(
-                                                child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text("Slug Url",
-                                                    style: themeTextStyle(
-                                                        color: Colors.black,
-                                                        size: 15,
-                                                        fw: FontWeight.bold)),
-                                                  Container(
+                                  ],
+                                )),
+                            ],
+                          ),
+                        ),
+                        if (!Responsive.isMobile(context))
+                          SizedBox(width: defaultPadding),
+                        if (!Responsive.isMobile(context))
+                          Expanded(
+                            flex: 2,
+                            child: 
+                                      Container(
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                  Text("Last name",
+                                            style: themeTextStyle(
+                                            color: Colors.black,
+                                            size: 15,
+                                            fw: FontWeight.bold)),
+                                               Container(
                                                    height: 40,
-                                                    margin: EdgeInsets.only(top: 10, bottom: 10,  right: 10),
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
                                                     decoration: BoxDecoration(
                                                         color: Colors.white,
                                                         borderRadius: BorderRadius.circular(10),
                                                             ),
                                                             child: TextFormField(
-                                                              initialValue: slugUrl,
+                                                              initialValue: lastName,
                                                               autofocus: false,
-                                                              onChanged: (value) => slugUrl = value,
-                                                            // controller: ctr_name,
-                                                              validator: (value) {
-                                                                if (value == null || value.isEmpty) {
-                                                                  return "Enter Slug Url";
-                                                                }
-                                                                return null;
+                                                              onChanged: (val) {
+                                                                 setState(() {
+                                                                       lastName = val;
+                                                                      });
                                                               },
                                                               style: TextStyle(color: Colors.black),
                                                               decoration: InputDecoration(
                                                                 border: InputBorder.none,
                                                                 contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                                                                hintText: "Slug Url",
+                                                                hintText: "Last Name",
                                                                 hintStyle: TextStyle(
                                                                   color: Colors.grey,
                                                                   fontSize: 16,
                                                                 ),
                                                               ),
-                                                            )),
-                                              ],
-                                            )),
-                                          ),
-                                      ],
-                                    ),
-                                    //status
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                        child: Text("Status",
-                                                            style: themeTextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                size: 15,
-                                                                fw: FontWeight
-                                                                    .bold))),
-                                                    Container(
+                                                            )),      
+                              ],
+                            )),
+                          ),
+                      ],
+                    ),
+                    SizedBox(height: defaultPadding),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      child: Text("Email*",
+                                          style: themeTextStyle(
+                                              color: Colors.black,
+                                              size: 15,
+                                              fw: FontWeight.bold))),
+                                 /////////   Email     TextFormField+++++++++++++++
+                  
+                                           Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: _email,
+                                                              autofocus: false,
+                                                              onChanged: (val) {
+                                                                 setState(() {
+                                                                       _email = val;
+                                                                      });
+                                                              },
+                                                                                        //     // check tha validation
+                                                      validator: (val) {
+                                                      return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val!)
+                                                      ? null
+                                                      : "Please enter a valid email";
+                                                       },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                              prefixIcon: Icon(
+                                                               Icons.email,
+                                                                color: Theme.of(context).primaryColor,
+                                                              ),
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: "Email Id",
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            )),                          
+                      /////
+                                ],
+                              ),
+                            ),
+                            if (Responsive.isMobile(context))
+                              SizedBox(height: defaultPadding),
+                            if (Responsive.isMobile(context))
+
+                             Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        child: Text("Mobile*",
+                                            style: themeTextStyle(
+                                                color: Colors.black,
+                                                size: 15,
+                                                fw: FontWeight.bold))),
+                             
+                                            Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: _mobile,
+                                                              autofocus: false,
+                                                              onChanged: (val) {
+                                                                 setState(() {
+                                                                       _mobile = val;
+                                                                      });
+                                                              },
+                                                              validator: (val) {
+                                                               if (val!.isNotEmpty) {
+                                                                  return null;
+                                                             } 
+                                                            else if (val!.length < 10) {
+                                                                     return "Mobile no. must be at least 10 characters";
+                                                                     } 
+                                                              else {
+                                                              return "Mobile cannot be empty";
+                                                                   }
+                                                                },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                              prefixIcon: Icon(
+                                                                         Icons.person,
+                                                                   color: Theme.of(context).primaryColor,
+                                                                       ),
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: "Mobile No.",
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+
+                                  ],
+                                ),
+                              )
+                          ],
+                        ),
+                      ),
+                      if (!Responsive.isMobile(context))
+                        SizedBox(width: defaultPadding),
+                      // On Mobile means if the screen is less than 850 we dont want to show it
+                      if (!Responsive.isMobile(context))
+                        Expanded(
+                            flex: 2,
+                            child: Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                   Container(
+                                        child: Text("Mobile*",
+                                            style: themeTextStyle(
+                                                color: Colors.black,
+                                                size: 15,
+                                                fw: FontWeight.bold))),
+                                   Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              initialValue: _mobile,
+                                                              autofocus: false,
+                                                              onChanged: (val) {
+                                                                 setState(() {
+                                                                       _mobile = val;
+                                                                      });
+                                                              },
+                                                              validator: (val) {
+                                                               if (val!.isNotEmpty) {
+                                                                  return null;
+                                                             } 
+                                                              else if (val!.length < 10) {
+                                                                     return "Mobile no. must be at least 10 characters";
+                                                                     } 
+                                                              else {
+                                                              return "Mobile cannot be empty";
+                                                                   }
+                                                                },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                              prefixIcon: Icon(
+                                                                         Icons.person,
+                                                                   color: Theme.of(context).primaryColor,
+                                                                       ),
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: "Mobile No.",
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+                                ],
+                              ),
+                            )),
+                    ],
+                  ),
+
+                   SizedBox(height: defaultPadding),  
+                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                   Container(
+                                        child: Text("Password*",
+                                            style: themeTextStyle(
+                                                color: Colors.black,
+                                                size: 15,
+                                                fw: FontWeight.bold))),
+                        //// Passwd TextFormField ++++++++++++++++++++++++    
+                                         Container(
+                                                   height: 40,
+                                                    margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(10),
+                                                            ),
+                                                            child: TextFormField(
+                                                              obscureText: passwordVisible,
+                                                              initialValue: _passwd,
+                                                              autofocus: false,
+                                                              onChanged: (val) {
+                                                                 setState(() {
+                                                                       _passwd = val;
+                                                                      });
+                                                              },                                                            
+                                                                 validator: (val) {
+                                                                    if (val!.length < 6) {
+                                                                     return "Password must be at least 6 characters";
+                                                                     } 
+                                                                     else {
+                                                                      return null;
+                                                                     }
+                                                                   },
+                                                              style: TextStyle(color: Colors.black),
+                                                              decoration: InputDecoration(
+                                                              prefixIcon: Icon(
+                                                                         Icons.person,
+                                                                   color: Theme.of(context).primaryColor,
+                                                                       ),
+                                                              suffixIcon:IconButton(
+                                                              icon: Icon(passwordVisible
+                                                              ? Icons.visibility
+                                                               : Icons.visibility_off   ,color: Colors.blue,size: 20,),
+                                                              onPressed: () {
+                                                              setState( () {
+                                                                 passwordVisible = !passwordVisible;
+                                                                    },
+                                                                   );
+                                                                   },
+                                                                  ),        
+                                                                border: InputBorder.none,
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                                                hintText: "Password",
+                                                                hintStyle: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ))
+                                ],
+                              ),
+                            ),
+                            if (Responsive.isMobile(context))
+                              SizedBox(height: defaultPadding),
+                            if (Responsive.isMobile(context))
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                   Container(
+                                      child: Text("Status",
+                                          style: themeTextStyle(
+                                              color: Colors.black,
+                                              size: 15,
+                                              fw: FontWeight.bold))),
+                                 Container(
                                                       height: 40,
                                                       margin: EdgeInsets.only(
                                                           top: 10,
@@ -1476,8 +1686,87 @@ Widget Update_Category(BuildContext context,id,sub_text) {
                                                       child: DropdownButton(
                                                         dropdownColor:
                                                             Colors.white,
-                                                        hint: _StatusValue ==
-                                                                null
+                                                        hint: _StatusValue == null
+                                                            ? Text('$_Status',style: TextStyle(color:Colors.black),)
+                                                            : Text(
+                                                                _StatusValue!,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                        isExpanded: true,
+                                                        underline: Container(),
+                                                        icon: Icon(
+                                                          Icons.arrow_drop_down,
+                                                          color: Colors.black,
+                                                        ),
+                                                        iconSize: 35,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    0,
+                                                                    0,
+                                                                    0)),
+                                                        items: ['Select','Inactive','Active'].map(
+                                                          (val) {
+                                                            return DropdownMenuItem<
+                                                                String>(
+                                                              value: val,
+                                                              child: Text(val),
+                                                            );
+                                                          },
+                                                        ).toList(),
+                                                        onChanged: (val) {
+                                                          setState(
+                                                            () {
+                                                              _StatusValue =
+                                                                  val!;
+                                                            },
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                  ],
+                                ),
+                              )
+                          ],
+                        ),
+                      ),
+                      if (!Responsive.isMobile(context))
+                        SizedBox(width: defaultPadding),
+                      // On Mobile means if the screen is less than 850 we dont want to show it
+                      if (!Responsive.isMobile(context))
+                        Expanded(
+                            flex: 2,
+                            child: Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      child: Text("Status",
+                                          style: themeTextStyle(
+                                              color: Colors.black,
+                                              size: 15,
+                                              fw: FontWeight.bold))),
+                                              Container(
+                                                      height: 40,
+                                                      margin: EdgeInsets.only(
+                                                          top: 10,
+                                                          bottom: 10,
+                                                          right: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      padding: EdgeInsets.only(
+                                                          left: 10, right: 10),
+                                                      child: DropdownButton(
+                                                        dropdownColor:
+                                                            Colors.white,
+                                                        hint: _StatusValue == null
                                                             ? Text('$_Status',style: TextStyle(color:Colors.black),)
                                                             : Text(
                                                                 _StatusValue!,
@@ -1515,369 +1804,43 @@ Widget Update_Category(BuildContext context,id,sub_text) {
                                                         onChanged: (val) {
                                                           setState(
                                                             () {
-                                                              _StatusValue =
-                                                                  val!;
+                                                              _StatusValue = val!;
                                                             },
                                                           );
                                                         },
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
-                                              ),
-
-                                              // Text_field(context,"category_name","Category Name","Enter Category Name"),
-                                              SizedBox(height: defaultPadding),
-                                              if (Responsive.isMobile(context))
-                                                SizedBox(width: defaultPadding),
-                                              if (Responsive.isMobile(context))
-
-                                                //   Text_field(context,"slug_url","Slug Url","Enter Slug Url"),
-
-                                                Container(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Container(
-                                                          child: Text(
-                                                              "Parent Category",
-                                                              style: themeTextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  size: 15,
-                                                                  fw: FontWeight
-                                                                      .bold))),
-                                                      Container(
-                                                        height: 40,
-                                                        margin: EdgeInsets.only(
-                                                            top: 10,
-                                                            bottom: 10,
-                                                            right: 10),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color:
-                                                              Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                        ),
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 10,
-                                                                right: 10),
-                                                        child: DropdownButton(
-                                                          dropdownColor:
-                                                              Colors.white,
-                                                          hint: _dropDownValue ==
-                                                                  null
-                                                              ? Text('$Perent_cat',style: TextStyle(color:Colors.black),)
-                                                              : Text(
-                                                                  _dropDownValue!,
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .black),
-                                                                ),
-                                                          underline:
-                                                              Container(),
-                                                          isExpanded: true,
-                                                          icon: Icon(
-                                                            Icons
-                                                                .arrow_drop_down,
-                                                            color: Colors.black,
-                                                          ),
-                                                          iconSize: 35,
-                                                          style: TextStyle(
-                                                              color: Color
-                                                                  .fromARGB(255,
-                                                                      1, 1, 2)),
-                                                          items: [
-                                                            'Select',
-                                                            'One',
-                                                            'Two',
-                                                            'Three'
-                                                          ].map(
-                                                            (val) {
-                                                              return DropdownMenuItem<
-                                                                  String>(
-                                                                value: val,
-                                                                child:
-                                                                    Text(val),
-                                                              );
-                                                            },
-                                                          ).toList(),
-                                                          onChanged: (val) {
-                                                            setState(
-                                                              () {
-                                                                _dropDownValue =
-                                                                    val!;
-                                                              },
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                            ],
-                                          ),
-                                        ),
-                                        if (!Responsive.isMobile(context))
-                                          SizedBox(width: defaultPadding),
-                                        // On Mobile means if the screen is less than 850 we dont want to show it
-                                        if (!Responsive.isMobile(context))
-                                          Expanded(
-                                              flex: 2,
-                                              child: Container(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                        child: Text(
-                                                            "Parent Category",
-                                                            style: themeTextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                size: 15,
-                                                                fw: FontWeight
-                                                                    .bold))),
-                                                    Container(
-                                                      height: 40,
-                                                      margin: EdgeInsets.only(
-                                                          top: 10,
-                                                          bottom: 10,
-                                                          right: 10),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                      ),
-                                                      padding: EdgeInsets.only(
-                                                          left: 10, right: 10),
-                                                      child: DropdownButton(
-                                                        dropdownColor:
-                                                            Colors.white,
-                                                        hint: _dropDownValue ==
-                                                                null
-                                                            ?Text('$Perent_cat',style: TextStyle(color:Colors.black),)
-                                                            : Text(
-                                                                _dropDownValue!,
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                        isExpanded: true,
-                                                        underline: Container(),
-                                                        icon: Icon(
-                                                          Icons.arrow_drop_down,
-                                                          color: Colors.black,
-                                                        ),
-                                                        iconSize: 35,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    8,
-                                                                    14,
-                                                                    18)),
-                                                        items: [
-                                                          'Select',
-                                                          'One',
-                                                          'Two',
-                                                          'Three'
-                                                        ].map(
-                                                          (val) {
-                                                            return DropdownMenuItem<
-                                                                String>(
-                                                              value: val,
-                                                              child: Text(val),
-                                                            );
-                                                          },
-                                                        ).toList(),
-                                                        onChanged: (val) {
-                                                          setState(
-                                                            () {
-                                                              _dropDownValue =
-                                                                  val!;
-                                                            },
-                                                          );
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )),
-                                      ],
-                                    ),
-                                     (
-                                    url_img == null && image == "null")
-                                     ?
-                                      SizedBox()
-                                      :
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              margin: EdgeInsets.symmetric(horizontal:10),
-                                              width: 100,
-                                             
-                                              child: 
-                                              Column(children: [
-                                                (url_img == null || url_img.isEmpty)
-                                                ?
-                                                Image.network("$image", height: 100,fit: BoxFit.contain,)
-                                                :
-                                                Image.network(url_img, height: 100,fit: BoxFit.contain,),
-
-                                                GestureDetector(
-                                                  onTap:(){
-                                                   // return  "Image Removed Successfully";
-                                                    print("Image Removed Successfully");
-                                                  },
-                                                  child: Container(
-                                                    alignment: Alignment.center,
-                                                    width: double.infinity,
-                                                    decoration: BoxDecoration(border:Border.all(color: Colors.black),color: Colors.red),
-                                                    child: Text("Remove Image",style: TextStyle(color: Colors.white,fontSize:11),)),
-                                                )
-                                            ],)),
-
-                                          ],
-                                        ), 
-
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text("Upload Image Here",
-                                                  style: themeTextStyle(
-                                                      size: 15,
-                                                      fw: FontWeight.bold)),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                height: 40,
-                                                margin: EdgeInsets.only(
-                                                    top: 10,
-                                                    bottom: 10,
-                                                    right: 10),
-                                                padding: EdgeInsets.only(
-                                                    left: 10, right: 10),
-                                                child: Row(
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _ImageSelect_Alert(context);
-                                                      },
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                            border: Border.all(
-                                                                color: Colors.white),
-                                                            color:
-                                                                Colors.grey),
-                                                        child: Text(
-                                                          "Choose File",
-                                                          style:TextStyle(fontWeight: FontWeight.bold,color: Colors.black),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                 (url_img == null ||
-                                                  url_img.isEmpty)
-                                                            ?
-                                                             Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 10,
-                                                                  ),
-                                                                  Text(
-                                                                      "No file choosen",
-                                                                      style: themeTextStyle(
-                                                                          size: 15,
-                                                                          color: Colors
-                                                                              .black38)),
-                                                                ],
-                                                              )
-                                                            : Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 10,
-                                                                  ),
-                                                                  Text(
-                                                                    "file selected",
-                                                                    style: themeTextStyle(
-                                                                        size: 12,
-                                                                        fw: FontWeight
-                                                                            .w400,
-                                                                        color:
-                                                                            themeBG4),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                  ],
-                                                ),
-                                              ),
-                                              ////
-                                              SizedBox(height: defaultPadding),
-                                            ],
-                                          ),
-                                        ),
-
-                                        if (!Responsive.isMobile(context))
-                                          SizedBox(width: defaultPadding),
-                                        // On Mobile means if the screen is less than 850 we dont want to show it
-                                        if (!Responsive.isMobile(context))
-                                          Expanded(
-                                            flex: 2,
-                                            child:
-                                                SizedBox(width: defaultPadding),
-                                          ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          themeButton3(context, () {
-                                       
-                                              setState(() {
-                                                  updatelist(id, Catename,slugUrl,_StatusValue,_dropDownValue,
-                                                 (url_img == null || url_img.isEmpty)
-                                                 ?
-                                                 image
-                                                 :
-                                                 url_img
-                                                 );
-                                               
-                                               clearText();
-                                              });
-                                        
-                                          },
-                                              buttonColor: Colors.blue,
-                                              label: "Update"),
-                                          SizedBox(height: 20.0),
-                                        ])
-                                  ],
-                                )                    
+                                ],
                               ),
-                ]
+                            )),
+                    ],
+                  ),
+                 
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    themeButton3(context, () {
+                     setState(() {
+                      updatelist(id, firstName,lastName,_email,_mobile,_passwd,(_StatusValue != null)?_StatusValue : _Status);
+                      clearText();
+                      });
+                    }, buttonColor: Colors.green, label: "Update"),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    themeButton3(context, () {
+                      setState(() {
+                        clearText();
+                      });
+                    }, label: "Reset", buttonColor: Colors.black),
+                    SizedBox(width: 20.0),
+                  ])
+                ],
+              )
+              )
+              )
+                  ]
                 )
                 );
                 
@@ -1885,222 +1848,107 @@ Widget Update_Category(BuildContext context,id,sub_text) {
 ///////////////////////////
 
 
-
-
-
-
-//////////////////   popup Box for Image selection ++++++++++++++++++++++++++++++++++++++ 
-
-  void _ImageSelect_Alert(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(builder: (context, StateSetter setStatee) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(
-                    20.0,
-                  ),
-                ),
-              ),
-              // contentPadding: EdgeInsets.only(
-              //   top: 10.0,
-              // ),
-              title: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Media",
-                        style: TextStyle(fontSize: 20.0, color: Colors.black),
+//1234
+bool view_SubAdmin_info = false;
+/////////////  Update widget for product Update+++++++++++++++++++++++++
+Widget View_SubAdmin_Data(BuildContext context,sub_text) {
+ 
+  return 
+           Container(
+                      height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
                       ),
-                      IconButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          icon: Icon(
-                            Icons.cancel,
-                            color: Colors.black38,
-                          ))
-                    ],
-                  ),
-                  Divider(
-                    thickness: 1,
-                    color: Colors.black12,
-                  )
+                  child:   ListView(children: [
+
+              Container(
+              height: 100,
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal:10 ),
+              child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  view_SubAdmin_info = false;
+                });
+
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                Icon(Icons.arrow_back,color: Colors.blue,size:25),
+                SizedBox(width: 10,),
+              Text(
+                       'Sub Admin',
+                       style: themeTextStyle(
+                  size: 18.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.bold,
+                  color: Colors.blue),
+                   ),
+                      SizedBox(width: 5,),
+              Text(
+                       '$sub_text',
+               style: themeTextStyle(
+                  size: 12.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.normal,
+                  color: Colors.black45),
+                   ),
                 ],
               ),
-              content: Container(
-                height: 400,
-                width: MediaQuery.of(context).size.width - 400,
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.all(10),
-                            child: Text(
-                              "All Media ",
-                              style: TextStyle(
-                                  fontSize: 15.0, color: Colors.black),
-                            ),
-                          ),
-                          themeButton3(context, () {
-                            setState(() {
-                              pickFile();
-                              Navigator.of(context).pop();
-                            });
-                          }, label: "Add New", buttonColor: Colors.blue),
-                        ],
-                      ),
-                      Divider(
-                        thickness: 1.5,
-                        color: Colors.black,
-                      ),
-                      if (!Responsive.isMobile(context))
-                      All_media(context, setStatee),
-                      if (Responsive.isMobile(context)) 
-                      All_media_mobile(context, setStatee)
-                    ],
-                  ),
-                ),
-              ),
-            );
-          });
-        });
-  }
-
-//////////////////////////////////////////==========
-
-
-////////  Data bases Image call  +++++++++++++++++++++++++++++++
- List<String> _selectedOptions = [];
-  Widget All_media(BuildContext context, setStatee) {
-    return 
-    Container(
-          height: 500,
-        child:
-         GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount:    4,
-          ),
-          itemCount: myList.length,
-          itemBuilder: (_, index) => 
-         Container(
-                  margin: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          '${myList[index]}'),
-                      fit: BoxFit.contain,
+            ), 
+                      ],
                     ),
-                  ),
-                  alignment: Alignment.topLeft,
-                  child:
-                   CheckboxListTile(
-                    checkColor: Colors.white,
-                    activeColor: Colors.green,
-                    side:
-                     BorderSide(width: 2, color: Colors.red),
-                  value: _selectedOptions.contains(myList[index]),
-                    onChanged: ( value) {
-                  setState(() {
-                   if (value != null && _selectedOptions.isEmpty) {
-                    setState(() {
-                       _selectedOptions.add(myList[index]);
-                        url_img = _selectedOptions[0];
-                       Navigator.pop(context);
-                    });
-              } 
-              else if(_selectedOptions != null && _selectedOptions.isNotEmpty){
-                 setState(() {
-                   _selectedOptions[0] = "${myList[index]}";
-                    url_img = _selectedOptions[0];
-                   Navigator.pop(context);
-                 });
-              }  
-              else {
-                _selectedOptions.remove(myList[index]);
-              }
-            });
-          },
-        )            
-      ),
-    ),
-  );
+            ) ,   
+            Container(
+                padding: EdgeInsets.symmetric(horizontal:10 ),
+              child: Divider(thickness: 2,color: Colors.black,)) ,
+                   Container(
+                      padding: EdgeInsets.all(defaultPadding),
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.black12,
+                        // borderRadius:
+                        //     const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: 
+                      (data == null)
+                      ?
+                      Center(
+                             child: CircularProgressIndicator())
+                      :
+                       Column(
+                                  children: [
+
+                                     themeListRow(context, "First Name", "$firstName",descColor:Colors.black,headColor : Colors.black),
+                                     SizedBox(height: defaultPadding),
+                                      themeListRow(context, "Last Name", "$lastName",descColor:Colors.black,headColor : Colors.black),
+                                      SizedBox(height: defaultPadding),
+                                      themeListRow(context, "Email Id", "$_email",descColor:Colors.black,headColor : Colors.black),
+                                      SizedBox(height: defaultPadding),
+                                       themeListRow(context, "Mobile No.", "$_mobile",descColor:Colors.black,headColor : Colors.black),
+                                       SizedBox(height: defaultPadding),
+                                       themeListRow(context,  "Status", "$_Status",descColor:Colors.black,headColor : Colors.black),
+                                       SizedBox(height: defaultPadding),
+                                       themeListRow(context, "Date At", "$_date",descColor:Colors.black,headColor : Colors.black),
+
+                                  ])
+                   )
+
+                  ]
+                )
+                );
+                
 }
-//////////
 
 
 
-////////  Data bases Image call   MOBILE +++++++++++++++++++++++++++++++
-
-Widget All_media_mobile(BuildContext context, setStatee) 
-     {
-    return 
-    Container(
-          height: 500,
-        child:
-         GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount:    2,
-          ),
-          itemCount: myList.length, // <-- required
-          itemBuilder: (_, index) => 
-         Container(
-                  margin: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                     border: Border.all(color: Colors.grey),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          '${myList[index]}'),
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  child:
-                    CheckboxListTile(
-                    checkColor: Colors.white,
-                    activeColor: Colors.green,
-                    side:
-                     BorderSide(width: 2, color: Colors.red),
-                  value: _selectedOptions.contains(myList[index]),
-                    onChanged: ( value) {
-                  setState(() {
-                   if (value != null && _selectedOptions.isEmpty) {
-                    setState(() {
-                       _selectedOptions.add(myList[index]);
-                        url_img = _selectedOptions[0];
-                       Navigator.pop(context);
-                    });
-              } 
-              else if(_selectedOptions != null && _selectedOptions.isNotEmpty){
-                 setState(() {
-                   _selectedOptions[0] = "${myList[index]}";
-                    url_img = _selectedOptions[0];
-                   Navigator.pop(context);
-                 });
-              }  
-              else {
-                _selectedOptions.remove(myList[index]);
-              }
-            });
-          },
-        )
-                ),
-        ),
-    );
-  }
-//////////
+///////////////////////////
 
 
 
@@ -2115,15 +1963,12 @@ Widget All_media_mobile(BuildContext context, setStatee)
           borderRadius: BorderRadius.circular(10),
         ),
         child: TextFormField(
-          controller: ctr_name,
-                  onChanged: 
-           (ctr_name == CategoryController)
-           ?
-           (value){
-            Slug_gen("$value");
-           }
-           :
-           (value){}, 
+        onChanged: (val) {
+                                setState(() {
+                                  ctr_name = val;
+                                });
+                              },
+
           validator: (value) {
             if (value == null || value.isEmpty) {
                return 'Please Enter value';
@@ -2167,7 +2012,7 @@ Widget All_media_mobile(BuildContext context, setStatee)
                 ],
               ),
               content: Text(
-                'Are you sure to delete this Categorys ?',
+                'Are you sure to delete this sub admin ?',
                 style: themeTextStyle(
                     size: 16.0,
                     ftFamily: 'ms',
@@ -2209,7 +2054,6 @@ Widget All_media_mobile(BuildContext context, setStatee)
                   onPressed: () {
                    setState(() {
                      deleteUser(iid_delete);
-                     
                       Navigator.of(context).pop(false);
                    });
                   } ,
