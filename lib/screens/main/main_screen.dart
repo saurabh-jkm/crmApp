@@ -89,6 +89,11 @@ class _MainScreenState extends State<MainScreen> {
                 flex: 5, 
                 child: LoginPage()      ///SignupScreen()
                 )
+            else if (sidemenu == 10)
+              Expanded(
+                flex: 5, 
+                child: LoginPage()      ///SignupScreen()
+                )
           ],
         ),
       ),
@@ -292,6 +297,25 @@ class _MainScreenState extends State<MainScreen> {
             leading: Icon(Icons.description_sharp,color: Colors.white), 
             title: Text(
               "About Us",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+
+            ListTile(
+             tileColor:(sidemenu == 10)? const Color.fromARGB(127, 33, 149, 243)  : const Color.fromARGB(0, 255, 255, 255),
+            onTap: () {
+              setState(() {
+                sidemenu = 10;
+                 if (Responsive.isMobile(context))
+                     {
+                      Navigator.of(context).pop();
+                     }
+              });
+            },
+            horizontalTitleGap: 0.0,
+            leading: Icon(Icons.admin_panel_settings_outlined,color: Colors.white), 
+            title: Text(
+              "Sub Admin",
               style: TextStyle(color: Colors.white),
             ),
           ),

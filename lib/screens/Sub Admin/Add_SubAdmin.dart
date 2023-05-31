@@ -16,13 +16,13 @@ import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-class CategoryAdd extends StatefulWidget {
-  const CategoryAdd({super.key});
+class SubAdmin extends StatefulWidget {
+  const SubAdmin({super.key});
   @override
-  State<CategoryAdd> createState() => _CategoryAddState();
+  State<SubAdmin> createState() => _SubAdminState();
 }
 
-class _CategoryAddState extends State<CategoryAdd> {
+class _SubAdminState extends State<SubAdmin> {
   final _formKey = GlobalKey<FormState>();
 
   var cate_name = "";
@@ -83,9 +83,6 @@ class _CategoryAddState extends State<CategoryAdd> {
             setState(() async{
               downloadURL = await FirebaseStorage.instance.ref().child('media/$fileName').getDownloadURL();
               url_img = downloadURL.toString();
-                setState(() {
-                 url_img = downloadURL.toString(); 
-              });
             });
 
         }
@@ -107,11 +104,8 @@ class _CategoryAddState extends State<CategoryAdd> {
              uploadTask.whenComplete(() => print("selected image"));
               setState(() async{
               downloadURL = await FirebaseStorage.instance.ref().child('media/$fileName').getDownloadURL();
-              setState(() {
-                 url_img = downloadURL.toString(); 
-              });
-             
-          //   print("$url_img  +++++++88888888+++++++++");
+              url_img = downloadURL.toString(); 
+              // print("$url_img  +++++++88888888+++++++++");
             });
           }
           else{
@@ -402,8 +396,7 @@ return downloadURL.toString();
 
                   Form(
                     key: _formKey,
-                    child:
-                     Row(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
@@ -755,17 +748,14 @@ return downloadURL.toString();
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                         (url_img != null && url_img.isNotEmpty)
-                            ?
-                             Image.network(
+                         url_img == null
+                            ? Icon(Icons.photo, size: 12)
+                            : Image.network(
                                 url_img,
                                 height: 100,
                                 width: 100,
                                 fit: BoxFit.contain,
-                              )
-                            :
-                                Icon(Icons.photo, size: 12)
-                            
+                              ),
                     ],
                   ),
                   SizedBox(
