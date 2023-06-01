@@ -163,7 +163,7 @@ class _InventryListState extends State<InventryList> {
                               Text("entries",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
                             ],)
                             ],),
-                           Container(
+                           SizedBox(
                             height: 40,
                             width: 300,
                             child: SearchField())  

@@ -36,7 +36,7 @@ dbUpdate(db, where) {
   var id = (where['id']);
   where.remove('id');
 
-  print("--->____${where}");
+  // print("--->____${where}");
   // return false;
 
   db.collection(table).doc(id).update(where).then((value) {

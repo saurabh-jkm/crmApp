@@ -1,6 +1,6 @@
 // import 'package:chatapp_firebase/helper/helper_function.dart';
 // import 'package:chatapp_firebase/service/database_service.dart';
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, non_constant_identifier_names, no_leading_underscores_for_local_identifiers
 
 import 'package:firebase_auth/firebase_auth.dart';
 

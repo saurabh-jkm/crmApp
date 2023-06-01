@@ -1,16 +1,12 @@
 
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, prefer_final_fields, non_constant_identifier_names, prefer_const_constructors
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
-import '../../controllers/MenuAppController.dart';
-import '../../helper/helper_function.dart';
 import '../../themes/auth_service.dart';
 import '../../themes/theme_widgets.dart';
-import '../main/main_screen.dart';
 import 'Login_user.dart';
 
 class RegisterPage extends StatefulWidget {
