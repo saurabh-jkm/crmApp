@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals, file_names
 
 import 'dart:convert';
 import 'dart:io';
@@ -10,8 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../themes/function.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/firebase_Storage.dart';
@@ -216,7 +214,6 @@ class _ProductAddState extends State<ProductAdd> {
 ////////////////////  add list   ++++++++++++++++++++++++++++++++++++++++++++++
 
   addList() async {
-    var arrData = new Map();
     var alert = '';
 
     Map<dynamic, dynamic> itemField = {};
@@ -229,9 +226,7 @@ class _ProductAddState extends State<ProductAdd> {
       var field = temp[1];
       var tempData = (itemField[key] == null) ? {} : itemField[key];
 
-      totalItem = (field == 'no_item' &&
-              tempVar != '' &&
-              Submit_subProductBox.contains(key))
+      totalItem = (field == 'no_item' && tempVar != '')
           ? totalItem + int.parse(tempVar.toString())
           : totalItem;
 
@@ -251,12 +246,7 @@ class _ProductAddState extends State<ProductAdd> {
       }
 
       tempData[field] = tempVar;
-      // tempData.forEach((k,v) {
-
-      // });
-      if (Submit_subProductBox.contains(key)) {
-        itemField[key] = tempData;
-      }
+      itemField[key] = tempData;
     });
 
     if (alert != '') {
@@ -271,34 +261,9 @@ class _ProductAddState extends State<ProductAdd> {
       itemField.remove('basic');
     }
 
-    Map<String, dynamic> w = {};
-    w = {
-      'table': "product",
-      'name': "${NameController.text}",
-      'slug_url': "${SlugUrlController.text}",
-      'product_type': (basic_Product == true) ? "basic" : "featured",
-      "price_details": itemField,
-      "no_item": totalItem,
-      "img": featureImg,
-      'category': "$_PerentCate",
-      'status': "$_StatusValue",
-      "date_at": "$Date_at",
-      'attribute': selectedCheck,
-      'attributeInner': Submit_subProductBox,
-    };
-    if (edit) {
-      w['id'] = update_id;
-      await dbUpdate(db, w);
-      themeAlert(context, "Successfully Updated");
-    } else {
-      await dbSave(db, w);
-      themeAlert(context, "Successfully Uploaded");
-    }
-
+    themeAlert(context, "Successfully Uploaded");
     clearText();
     setState(() {
-      edit = false;
-      update_id = '';
       Add_product = false;
       Pro_Data();
     });
@@ -350,9 +315,7 @@ class _ProductAddState extends State<ProductAdd> {
   _fnChangeCheckVal(key, Value, checkType) {
     if (this.mounted)
       setState(() {
-        if (!edit) {
-          _controllers = new Map();
-        }
+        _controllers = new Map();
         itemNo_i = 0;
         subProductBox = [];
         Submit_subProductBox = [];
@@ -377,7 +340,7 @@ class _ProductAddState extends State<ProductAdd> {
           }
           subProduDetailList[checkType] = temp;
         }
-
+        // print(subProduDetailList.length);
         if (subProduDetailList.length == 1) {
           subProduDetailList.forEach((key, value) {
             value.forEach((k, v) {
@@ -430,10 +393,8 @@ class _ProductAddState extends State<ProductAdd> {
   var stock;
   var ship;
   var pro_img;
-
-  // Edit  ================================================================
-  // Edit  ================================================================
-  // Edit  ================================================================
+  //
+//////
   Map<String, dynamic>? update_data;
   Future Update_initial(id) async {
     Map<dynamic, dynamic> w = {'table': "product", 'id': id};
@@ -441,7 +402,6 @@ class _ProductAddState extends State<ProductAdd> {
 
     if (dbData != null) {
       setState(() {
-        edit = true;
         NameController.text = (dbData['name'] == null) ? '' : dbData['name'];
         SlugUrlController.text = (dbData['name'] == null) ? '' : dbData['name'];
 
@@ -451,67 +411,42 @@ class _ProductAddState extends State<ProductAdd> {
         product_type = dbData!['product_type'];
         _Status = dbData!['status'];
         _PerentC = dbData!['parent_cate'];
-        _PerentCate = dbData!['category'];
         SlugUrlController.text = slugUrl;
         _controllers = new Map();
-
-        if (dbData['price_details'] != null) {
-          dbData['price_details'].forEach((k, v) {
-            v.forEach((ke, vl) {
-              var key = "${k}___$ke";
-
-              if (ke == 'img') {
-                var tt = (_itemCtr[k] != null) ? _itemCtr[k] : {};
-                var ttt = (tt['img'] != null) ? tt['img'] : {};
-                vl.forEach((img) {
-                  ttt[img] = true;
-                });
-
-                tt['img'] = ttt;
-                _itemCtr[k] = tt;
-              } else {
-                _controllers[key] = TextEditingController();
-                _controllers[key]?.text = vl;
-              }
-            });
+        dbData['price_details'].forEach((k, v) {
+          v.forEach((ke, vl) {
+            var key = "${k}___$ke";
+            if (ke == 'img') {
+              _itemCtr[key] = vl;
+            } else {
+              _controllers[key] = TextEditingController();
+              _controllers[key]?.text = vl;
+            }
           });
-        }
+        });
 
+        print(dbData['attribute']);
+        selectedCheck = dbData['attribute'];
         // Submit_subProductBox = ['attributeInner'];
 
         Add_product = true;
         basic_Product = (product_type == 'basic') ? true : false;
         editAction = true;
-        selectedCheck = {};
-        if (basic_Product) {
-          // this is basic product
-          Map<String, dynamic> myMap = jsonDecode(price_data);
-          mrp = myMap["basic_product"]["mrp_price"];
-          sell = myMap["basic_product"]["selling_price"];
-          disc = myMap["basic_product"]["discount"];
-          stock = myMap["basic_product"]["stock"];
-          ship = myMap["basic_product"]["shiping_price"];
-          pro_img = myMap["basic_product"]["product_images"];
-          basic_Product = true;
-          url_img = pro_img;
-        } else {
-          // featured
-          var attr = dbData['attribute'];
 
-          Attri_data.forEach((vl) {
-            if (vl['value'] != null) {
-              vl['value'].forEach((k, val) {
-                if (attr[k.toLowerCase()] != null &&
-                    attr[k.toLowerCase()] == true) {
-                  selectedCheck[vl['attribute_name'].toLowerCase()] = true;
-                  selectedCheck[k.toLowerCase()] = true;
-                  _fnChangeCheckVal(
-                      k.toLowerCase(), true, capitalize(vl['attribute_name']));
-                }
-              });
-            }
-          });
-        }
+        // if (product_type == "Basic Product") {
+        //   Map<String, dynamic> myMap = jsonDecode(price_data);
+        //   mrp = myMap["basic_product"]["mrp_price"];
+        //   sell = myMap["basic_product"]["selling_price"];
+        //   disc = myMap["basic_product"]["discount"];
+        //   stock = myMap["basic_product"]["stock"];
+        //   ship = myMap["basic_product"]["shiping_price"];
+        //   pro_img = myMap["basic_product"]["product_images"];
+        //   basic_Product = true;
+        //   url_img = pro_img;
+        // }
+        // if (product_type == "Featured Product") {
+        //   basic_Product = false;
+        // }
       });
     }
   }
@@ -563,7 +498,6 @@ class _ProductAddState extends State<ProductAdd> {
 
   ///////   LOcal widget change variable
   bool updateWidget = false;
-  bool edit = false;
   var update_id;
   var basic_Product = true;
   /////
@@ -1000,7 +934,7 @@ class _ProductAddState extends State<ProductAdd> {
                           //// sub product list =======================================================
                           for (var title in subProductBox)
                             wd_sub_product_details(context, title)
-
+                          /////==========
                           // sub attribute ---------------------------------
                         ]),
 
@@ -1015,19 +949,15 @@ class _ProductAddState extends State<ProductAdd> {
                           addList();
                         });
                       }
-                    },
-                        buttonColor: Colors.green,
-                        label: (edit) ? "Update" : "Submit"),
+                    }, buttonColor: Colors.green, label: "Submit"),
                     SizedBox(
                       width: 10,
                     ),
-                    (edit)
-                        ? SizedBox()
-                        : themeButton3(context, () {
-                            setState(() {
-                              clearText();
-                            });
-                          }, label: "Reset", buttonColor: Colors.black),
+                    themeButton3(context, () {
+                      setState(() {
+                        clearText();
+                      });
+                    }, label: "Reset", buttonColor: Colors.black),
                     SizedBox(width: 20.0),
                   ])
                 ],

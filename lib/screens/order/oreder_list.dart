@@ -1,10 +1,14 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, prefer_collection_literals, unused_field, non_constant_identifier_names, prefer_typing_uninitialized_variables, avoid_print, deprecated_member_use, unnecessary_null_comparison, unnecessary_new, sort_child_properties_last
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, prefer_collection_literals, unused_field, non_constant_identifier_names, prefer_typing_uninitialized_variables, avoid_print, deprecated_member_use, unnecessary_null_comparison, unnecessary_new, sort_child_properties_last, use_build_context_synchronously, no_leading_underscores_for_local_identifiers
 
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crm_demo/screens/order/product.dart';
+import 'package:crm_demo/screens/order/syncPdf.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../constants.dart';
 import '../../responsive.dart';
@@ -15,6 +19,8 @@ import '../dashboard/components/my_fields.dart';
 import '../dashboard/components/recent_files.dart';
 import '../dashboard/components/storage_details.dart';
 import 'package:file_picker/file_picker.dart';
+
+import 'invoice_service.dart';
 class OrderList extends StatefulWidget {
   const OrderList({super.key});
   @override
@@ -22,57 +28,40 @@ class OrderList extends StatefulWidget {
 }
 
 class _OrderListState extends State<OrderList> {
-  Map<String, TextEditingController> _controllers = Map();
-   String _dropDownValue = "Select";
    String _StatusValue = "Select";
-  
- // File Picker ==========================================================
-         // Codec<String, String> stringToBase64 = utf8.fuse(base64);
-  var uploadedDoc;
-// result;
-  String? fileName;
-  PlatformFile? pickedfile;
-  bool isLoading = false;
-  File? fileToDisplay;
+ 
 
-  void clear_upload() {
-    fileName = null;
-  }
-
-  pickFile() async {
-    //print("yes");
-    try {
-      setState(() {
-        isLoading = true;
-      });
-
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['png', 'jpeg', 'jpg', 'pdf'],
-        allowMultiple: false,
-      );
-
-      if (result != null) {
-        fileName = result.files.first.name;
-        pickedfile = result.files.first;
-        fileToDisplay = File(pickedfile!.path.toString());
-        setState(() {
-          List<int> imageBytes = fileToDisplay!.readAsBytesSync();
-          uploadedDoc = base64Encode(imageBytes);
-          _controllers['doc'] = uploadedDoc;
-        });
-      print('File name $uploadedDoc');
-      }
-      setState(() {
-        isLoading = false;
-        
-      });
-    } catch (e) {
-      print(e);
+ ///////////////////////////////////////////////////////////////////////////  
+  final PdfInvoiceService service = PdfInvoiceService();
+  Future<void> savePdfFile(String fileName, Uint8List byteList) async {
+  if (kIsWeb) {
+     Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PDFview_Web_mobile(BytesCode: byteList),
+                        ),
+                      );              
     }
+  else{
+      final output = await getTemporaryDirectory();
+       // print("$output   ++++++++");
+         var filePath = "${output.path}/$fileName.pdf";
+         final file = File(filePath);
+        await   file.writeAsBytes(byteList);
+      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PDFview_Web_mobile(BytesCode: byteList),
+                        ),
+                      );                 
+  }      
   }
+/// ===============================================================
 
-/// 
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +74,7 @@ class _OrderListState extends State<OrderList> {
                           ?
                           listList(context)
                           :
-                         Details_view(context)
+                           Details_view(context)
                         ],
                       )
 
@@ -174,7 +163,7 @@ class _OrderListState extends State<OrderList> {
                               Text("entries",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
                             ],)
                             ],),
-                           Container(
+                           SizedBox(
                             height: 40,
                             width: 300,
                             child: SearchField())  
@@ -339,7 +328,7 @@ class _OrderListState extends State<OrderList> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Text("$index",style: TextStyle(fontWeight: FontWeight.normal)),
+          child: Text(index,style: TextStyle(fontWeight: FontWeight.normal)),
         ),
         
       ),
@@ -428,17 +417,26 @@ class _OrderListState extends State<OrderList> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child:Text("$pay_date")
       ),
+
+      
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: 
+
         RowFor_Mobile_web( 
         context,
-        "invoice$index",
+               () {
+                setState(() async{
+                final data = await service.createInvoice();
+                savePdfFile("invoice", data);
+                });
+              },
         (){
           setState(() {
             _Details_wd = true;
           });
-        }),
+        }
+        ),
       ),
      
     ]);
@@ -465,7 +463,7 @@ class _OrderListState extends State<OrderList> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // S.No.	OrderId	User	Product	Price	Payment Status	Delivery Status	Payment Date	Actions
-                              themeListRow(context, "OrderId", "$odID"),
+                              themeListRow(context, "OrderId", odID),
                               themeListRow(context, "User Name","$user"),
                               themeListRow(context, "Product Name","$_product"),
                               themeListRow(context, "Price","$_price"),
@@ -495,13 +493,19 @@ class _OrderListState extends State<OrderList> {
                                 fw: FontWeight.normal),
                           ),
                           RowFor_Mobile_web( 
-                               context,
-                              "invoice",
-                                  (){
-                                  setState(() {
-                                   _Details_wd = true;
-                                           });
-                                        }),
+        context,
+                () {
+                setState(() async{
+                final data = await service.createInvoice();
+                savePdfFile("invoice", data);
+                });
+              },
+        (){
+          setState(() async{
+            _Details_wd = true;
+          });
+        }
+        ),
                                 ],
                               ),
                             Divider(thickness:2 ,)
@@ -514,9 +518,15 @@ class _OrderListState extends State<OrderList> {
           ),
       ]);
   
-  }/////////
+  }
+  /////////================================================================
 
 
+
+
+
+/////////////////////////////////////  Row GOt Action Button  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+///
 
 Widget RowFor_Mobile_web(BuildContext context,_invoice,_details_view){
   return
@@ -533,11 +543,11 @@ Widget RowFor_Mobile_web(BuildContext context,_invoice,_details_view){
                   color: Colors.green.withOpacity(0.1),
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
-                child: IconButton(onPressed: (){
-                  print("$_invoice ++++++++++++");
-                }, icon:Icon(Icons.download,color: Colors.green,) ) 
+                child: IconButton(onPressed: _invoice, icon:Icon(Icons.download,color: Colors.green,) ) 
               ),
-                  SizedBox(width: 10),
+
+              SizedBox(width: 10),
+         
             Container(
                 height: 40,
                 width: 40,
@@ -558,6 +568,13 @@ Widget RowFor_Mobile_web(BuildContext context,_invoice,_details_view){
 }
 
 /////////////////////////////////////////////=====================================================
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 //////////////////   Detaials View ++++++++++++++++++++++++++++++++++++++++++++
 
@@ -786,7 +803,5 @@ Widget RowFor_Mobile_web(BuildContext context,_invoice,_details_view){
       ),      
    );
 }
-  
-/////////////////////////////////////==========================================
 
 }/// Class CLose
