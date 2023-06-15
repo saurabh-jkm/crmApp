@@ -6,9 +6,6 @@ import '../constants.dart';
 import '../responsive.dart';
 import 'style.dart';
 
-
-
-
 // Button
 Widget themeButton3(BuildContext context, fn,
     {label: 'Submit',
@@ -59,7 +56,9 @@ Widget themeBtnSm(BuildContext context,
     buttonColor: '',
     fn: '',
     buttonWidth: '',
-    icon: false}) {
+    icon: '',
+    borderRadius: '',
+    btnSize: ''}) {
   return Container(
     width: (buttonWidth == '') ? null : buttonWidth,
     child: Center(
@@ -70,9 +69,10 @@ Widget themeBtnSm(BuildContext context,
           backgroundColor: (buttonColor == '') ? themeBG2 : buttonColor,
           shadowColor: Color.fromARGB(255, 165, 165, 165),
           elevation: 3,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
-          minimumSize: Size(80, 30), //////// HERE
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                  (borderRadius == '') ? 32.0 : borderRadius)),
+          minimumSize: (btnSize != '') ? btnSize : Size(80, 30), //////// HERE
         ),
         onPressed: () {
           if (fn != '' && arg == null) {
@@ -92,12 +92,12 @@ Widget themeBtnSm(BuildContext context,
               style: themeTextStyle(
                   color: Colors.white, size: 14.0, ftFamily: 'ms'),
             ),
-            (!icon)
+            (icon == '')
                 ? SizedBox()
                 : Padding(
                     padding: EdgeInsets.only(top: 2.0, left: 5.0),
                     child: Icon(
-                      Icons.arrow_forward_ios_outlined,
+                      icon,
                       size: 10.0,
                     ),
                   )
@@ -114,7 +114,7 @@ Widget themeListRow(BuildContext context, label, desc,
     double labelWidth: 100.0,
     double decWidth: 0.0,
     decFontWait: FontWeight.normal,
-    headColor : Colors.white,
+    headColor: Colors.white,
     descColor: Colors.white}) {
   return Padding(
     padding: EdgeInsets.only(bottom: bottomSpace),
@@ -451,70 +451,65 @@ pleaseWait(BuildContext context, {containerHeight: 300.0}) {
   );
 }
 
-
-HeadLine(BuildContext context,icon_def, head_text,Sub_text, fn,{arg: 0, buttonColor: '' ,Buttonlabel: "Update",iconColor: ""}){
-  return
-  Container(
-              height: 100,
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal:10 ),
-              child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-
-              Icon(icon_def,color: iconColor,size:30),
-              SizedBox(width: 10,),
+HeadLine(BuildContext context, icon_def, head_text, Sub_text, fn,
+    {arg: 0, buttonColor: '', Buttonlabel: "Update", iconColor: ""}) {
+  return Container(
+    height: 100,
+    width: double.infinity,
+    padding: EdgeInsets.symmetric(horizontal: 10),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Icon(icon_def, color: iconColor, size: 30),
+            SizedBox(
+              width: 10,
+            ),
             Text(
-           '$head_text',
-           style: themeTextStyle(
-                size: 18.0,
-                ftFamily: 'ms',
-                fw: FontWeight.bold,
-                color: Colors.black),
-                 ),
-          SizedBox(width: 5,),
+              '$head_text',
+              style: themeTextStyle(
+                  size: 18.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.bold,
+                  color: Colors.black),
+            ),
+            SizedBox(
+              width: 5,
+            ),
             Text(
-           '$Sub_text',
-             style: themeTextStyle(
-                size: 12.0,
-                ftFamily: 'ms',
-                fw: FontWeight.normal,
-                color: Colors.black45),
-
-                 ),
-
-              ],
-            ), 
-
-              ElevatedButton.icon(
-                style: TextButton.styleFrom(
-                  backgroundColor: buttonColor,
-                  padding:
-                   EdgeInsets.symmetric(
-                    horizontal: defaultPadding * 1.5,
-                    vertical:
-                        defaultPadding / (Responsive.isMobile(context) ? 2 : 1),
-                  ),
-                ),
-                onPressed: () {
-          if (arg == 0) {
-            fn();
-          } else {
-            fn(arg);
-          }
-        },
-                icon: Icon(Icons.add),
-                label: Text("Add New"),
-              ),
-                      ],
-                    ),
-            );
+              '$Sub_text',
+              style: themeTextStyle(
+                  size: 12.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.normal,
+                  color: Colors.black45),
+            ),
+          ],
+        ),
+        ElevatedButton.icon(
+          style: TextButton.styleFrom(
+            backgroundColor: buttonColor,
+            padding: EdgeInsets.symmetric(
+              horizontal: defaultPadding * 1.5,
+              vertical: defaultPadding / (Responsive.isMobile(context) ? 2 : 1),
+            ),
+          ),
+          onPressed: () {
+            if (arg == 0) {
+              fn();
+            } else {
+              fn(arg);
+            }
+          },
+          icon: Icon(Icons.add),
+          label: Text("Add New"),
+        ),
+      ],
+    ),
+  );
 }
-
-
 
 const textInputDecoration = InputDecoration(
   labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.w300),
