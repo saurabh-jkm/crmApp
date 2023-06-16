@@ -58,7 +58,7 @@ class _OrderListState extends State<OrderList> {
   }
 
   // new order =====================================================
-  _newOrder() {
+  _newOrder() { 
     Navigator.push(
       context,
       MaterialPageRoute(
