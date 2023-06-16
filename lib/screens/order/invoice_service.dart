@@ -20,7 +20,7 @@ import 'package:pdf/widgets.dart';
     final image = (await rootBundle.load("assets/images/flutter_explained_logo.jpg")).buffer.asUint8List();
     pdf.addPage(
       pw.Page(
-        pageFormat: PdfPageFormat.a3,
+        pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
           return pw.Column(
             children: [

@@ -107,6 +107,12 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+  <!-- Pdf View in Flutter Web -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js"></script>
+<script type="text/javascript">
+   pdfjsLib.GlobalWorkerOptions.workerSrc = "//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js";
+</script>
+<!-- ========================= -->
 </head>
 <body>
   <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
@@ -176,6 +182,7 @@
   <script src="main.dart.js" type="application/javascript"></script>
   <!-- Removes the loading indicator after 10 seconds -->
   <script>
+    
     window.onload = function () {
       setTimeout(function () {
         var loadingIndicator = document.getElementById("loading_container");

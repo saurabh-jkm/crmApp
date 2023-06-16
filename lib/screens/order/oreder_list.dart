@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, prefer_collection_literals, unused_field, non_constant_identifier_names, prefer_typing_uninitialized_variables, avoid_print, deprecated_member_use, unnecessary_null_comparison, unnecessary_new, sort_child_properties_last, use_build_context_synchronously, no_leading_underscores_for_local_identifiers
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, prefer_collection_literals, unused_field, non_constant_identifier_names, prefer_typing_uninitialized_variables, avoid_print, deprecated_member_use, unnecessary_null_comparison, unnecessary_new, sort_child_properties_last, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, unnecessary_string_interpolations
 
 import 'dart:convert';
 import 'dart:io';
@@ -35,12 +35,17 @@ class _OrderListState extends State<OrderList> {
   final PdfInvoiceService service = PdfInvoiceService();
   Future<void> savePdfFile(String fileName, Uint8List byteList) async {
   if (kIsWeb) {
-     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PDFview_Web_mobile(BytesCode: byteList),
-                        ),
-                      );              
+    var base64 = base64Encode(byteList);
+    print("$base64");
+    print("   ++++++++++++++++++++++++++++++++++=");
+
+
+    //  Navigator.push(
+    //                     context,
+    //                     MaterialPageRoute(
+    //                       builder: (context) => PDFview_Web_mobile(BytesCode: byteList),
+    //                     ),
+    //                   );              
     }
   else{
       final output = await getTemporaryDirectory();
@@ -58,10 +63,6 @@ class _OrderListState extends State<OrderList> {
   }
 /// ===============================================================
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,6 +71,7 @@ class _OrderListState extends State<OrderList> {
                         children: [
                           Header(title: "Order",),
                           SizedBox(height: defaultPadding),
+
                           (_Details_wd == false)
                           ?
                           listList(context)
@@ -80,7 +82,6 @@ class _OrderListState extends State<OrderList> {
 
     );
   }
-
 
 ////////   List       ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     var _number_select = 10;
@@ -165,7 +166,7 @@ class _OrderListState extends State<OrderList> {
                             ],),
                            SizedBox(
                             height: 40,
-                            width: 300,
+                            width: 200,
                             child: SearchField())  
                             ],
                           )), 
