@@ -57,6 +57,18 @@ class _OrderListState extends State<OrderList> {
     }
   }
 
+  // new order =====================================================
+  _newOrder() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => orderNewSreen(),
+      ),
+    );
+  }
+
+  /// ===============================================================
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
