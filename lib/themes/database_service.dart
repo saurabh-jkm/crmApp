@@ -8,14 +8,13 @@ class DatabaseService {
 
 /////// reference for our collections  ++++++++++++++++++++++++++++++++++++
 
-
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection("users");
 
-
 /////// saving the userdata   +++++++++++++++++++++++++++++++++++++++++++++
 
-  Future savingUserData(String fName,String lName, String email, String Mobile,String pass,String status, String date) async {
+  Future savingUserData(String fName, String lName, String email, String Mobile,
+      String pass, String status, String date) async {
     return await userCollection.doc(uid).set({
       "first_name": fName,
       "last_name": lName,
@@ -28,8 +27,7 @@ class DatabaseService {
     });
   }
 
- /////// getting user data
-
+  /////// getting user data
 
   Future gettingUserData(String email) async {
     QuerySnapshot snapshot =
@@ -42,5 +40,4 @@ class DatabaseService {
   getUserGroups() async {
     return userCollection.doc(uid).snapshots();
   }
-
 }

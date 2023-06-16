@@ -1,4 +1,3 @@
-
 // ignore_for_file: unused_local_variable, dead_code, prefer_collection_literals, unnecessary_new, prefer_typing_uninitialized_variables, avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,7 +35,6 @@ dbUpdate(db, where) {
   var id = (where['id']);
   where.remove('id');
 
-  // print("--->____${where}");
   // return false;
 
   db.collection(table).doc(id).update(where).then((value) {

@@ -1,4 +1,3 @@
-
 // ignore_for_file: prefer_const_constructors, deprecated_member_use, prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
@@ -10,7 +9,7 @@ import '../../../controllers/MenuAppController.dart';
 import '../../../responsive.dart';
 
 class Header extends StatefulWidget {
-  const Header( {super.key, @required this.title});
+  const Header({super.key, @required this.title});
   final title;
 
   @override
@@ -30,8 +29,13 @@ class _HeaderState extends State<Header> {
         if (!Responsive.isMobile(context))
           Row(
             children: [
-              Icon(Icons.dashboard_outlined,color: Colors.blue,),
-              SizedBox(width: 10,),
+              Icon(
+                Icons.dashboard_outlined,
+                color: Colors.blue,
+              ),
+              SizedBox(
+                width: 10,
+              ),
               Text(
                 "${widget.title}",
                 style: Theme.of(context).textTheme.headline6,
@@ -40,7 +44,6 @@ class _HeaderState extends State<Header> {
           ),
         if (!Responsive.isMobile(context))
           Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
-        
         ProfileCard()
       ],
     );
@@ -91,6 +94,7 @@ class SearchField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      style: TextStyle(color: Color.fromARGB(255, 27, 27, 27)),
       decoration: InputDecoration(
         hintText: "Search",
         hintStyle: TextStyle(color: Colors.black),
@@ -101,8 +105,7 @@ class SearchField extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(10)),
         ),
         suffixIcon: InkWell(
-          onTap: () {
-          },
+          onTap: () {},
           child: Container(
             padding: EdgeInsets.all(defaultPadding * 0.75),
             margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
