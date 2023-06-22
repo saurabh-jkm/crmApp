@@ -57,8 +57,9 @@ dependencies:
   pdf: ^3.8.2
   path_provider: ^2.0.5
   syncfusion_flutter_pdfviewer: ^21.2.8
-
-
+  dropdown_search: ^5.0.6
+  dio: ^5.2.1+1
+  # dropdown_button2: ^2.2.4
 
 
 dev_dependencies:

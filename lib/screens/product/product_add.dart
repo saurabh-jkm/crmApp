@@ -43,11 +43,11 @@ class _ProductAddState extends State<ProductAdd> {
   Map<String, TextEditingController> _controllers = new Map();
   Map<String, TextEditingController> _controllers2 = new Map();
 
-  Map<String, TextEditingController> ctr_mrp = new Map();
-  Map<String, TextEditingController> ctr_sell_p = new Map();
-  Map<String, TextEditingController> ctr_dicount = new Map();
-  Map<String, TextEditingController> ctr_shipping = new Map();
-  Map<String, TextEditingController> ctr_notem = new Map();
+  // Map<String, TextEditingController> ctr_mrp = new Map();
+  // Map<String, TextEditingController> ctr_sell_p = new Map();
+  // Map<String, TextEditingController> ctr_dicount = new Map();
+  // Map<String, TextEditingController> ctr_shipping = new Map();
+  // Map<String, TextEditingController> ctr_notem = new Map();
 
   /// imple text controller
   final SlugUrlController = TextEditingController();
@@ -144,6 +144,7 @@ class _ProductAddState extends State<ProductAdd> {
   List productList = [];
   List Featured_list = [];
   Pro_Data() async {
+    var temp2 = [];
     productList = [];
     Map<dynamic, dynamic> w = {
       'table': "product",
@@ -154,6 +155,10 @@ class _ProductAddState extends State<ProductAdd> {
       temp.forEach((k, v) {
         productList.add(v);
       });
+      for (var i = 0; i < productList.length; i++) {
+        temp2.add(productList[i]["name"]);
+      }
+      print("${temp2}  ++++++++++++++");
     });
 
     Image_data();
@@ -1531,337 +1536,337 @@ class _ProductAddState extends State<ProductAdd> {
     ]);
   }
 
-/////////////  Update widget for product Update+++++++++++++++++++++++++
-  Widget Update_product(BuildContext context, id, sub_text) {
-    return Container(
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          // borderRadius:
-          //     const BorderRadius.all(Radius.circular(10)),
-        ),
-        child: ListView(children: [
-          Container(
-            height: 100,
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      updateWidget = false;
-                      update_data = {};
-                      Pro_Data();
-                    });
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Icon(Icons.arrow_back, color: Colors.blue, size: 25),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Product',
-                        style: themeTextStyle(
-                            size: 18.0,
-                            ftFamily: 'ms',
-                            fw: FontWeight.bold,
-                            color: Colors.blue),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        '$sub_text',
-                        style: themeTextStyle(
-                            size: 12.0,
-                            ftFamily: 'ms',
-                            fw: FontWeight.normal,
-                            color: Colors.black45),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-              margin: EdgeInsets.symmetric(horizontal: 10.0),
-              padding: EdgeInsets.all(defaultPadding),
-              decoration: BoxDecoration(
-                color: Colors.black12,
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-              ),
-              child: (update_data == null)
-                  ? Center(child: CircularProgressIndicator())
-                  : Column(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Column(
-                                children: [
-                                  Container(
-                                      child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Name*",
-                                          style: themeTextStyle(
-                                              color: Colors.black,
-                                              size: 15,
-                                              fw: FontWeight.bold)),
-                                      Container(
-                                          height: 40,
-                                          margin: EdgeInsets.only(
-                                            top: 10,
-                                            bottom: 10,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: TextFormField(
-                                            initialValue: Name,
-                                            autofocus: false,
-                                            onChanged: (value) {
-                                              Name = value;
-                                              Slug_gen("$value");
-                                              print(
-                                                  "${SlugUrlController.text} +++====");
-                                            },
-                                            //  onChanged: (value) => Name = value,
-                                            // controller: ctr_name,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please Enter Name';
-                                              }
-                                              return null;
-                                            },
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 15),
-                                              hintText: 'Enter Name',
-                                              hintStyle: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ))
-                                    ],
-                                  )),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        ///////////////// Category for Mobile ++++++++++++++++++++++++++++++++++++
+// /////////////  Update widget for product Update+++++++++++++++++++++++++
+//   Widget Update_product(BuildContext context, id, sub_text) {
+//     return Container(
+//         height: MediaQuery.of(context).size.height,
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           // borderRadius:
+//           //     const BorderRadius.all(Radius.circular(10)),
+//         ),
+//         child: ListView(children: [
+//           Container(
+//             height: 100,
+//             width: double.infinity,
+//             padding: EdgeInsets.symmetric(horizontal: 10),
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 GestureDetector(
+//                   onTap: () {
+//                     setState(() {
+//                       updateWidget = false;
+//                       update_data = {};
+//                       Pro_Data();
+//                     });
+//                   },
+//                   child: Row(
+//                     crossAxisAlignment: CrossAxisAlignment.end,
+//                     children: [
+//                       Icon(Icons.arrow_back, color: Colors.blue, size: 25),
+//                       SizedBox(
+//                         width: 10,
+//                       ),
+//                       Text(
+//                         'Product',
+//                         style: themeTextStyle(
+//                             size: 18.0,
+//                             ftFamily: 'ms',
+//                             fw: FontWeight.bold,
+//                             color: Colors.blue),
+//                       ),
+//                       SizedBox(
+//                         width: 5,
+//                       ),
+//                       Text(
+//                         '$sub_text',
+//                         style: themeTextStyle(
+//                             size: 12.0,
+//                             ftFamily: 'ms',
+//                             fw: FontWeight.normal,
+//                             color: Colors.black45),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//           Container(
+//               margin: EdgeInsets.symmetric(horizontal: 10.0),
+//               padding: EdgeInsets.all(defaultPadding),
+//               decoration: BoxDecoration(
+//                 color: Colors.black12,
+//                 borderRadius: const BorderRadius.all(Radius.circular(10)),
+//               ),
+//               child: (update_data == null)
+//                   ? Center(child: CircularProgressIndicator())
+//                   : Column(
+//                       children: [
+//                         Row(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             Expanded(
+//                               flex: 2,
+//                               child: Column(
+//                                 children: [
+//                                   Container(
+//                                       child: Column(
+//                                     crossAxisAlignment:
+//                                         CrossAxisAlignment.start,
+//                                     children: [
+//                                       Text("Name*",
+//                                           style: themeTextStyle(
+//                                               color: Colors.black,
+//                                               size: 15,
+//                                               fw: FontWeight.bold)),
+//                                       Container(
+//                                           height: 40,
+//                                           margin: EdgeInsets.only(
+//                                             top: 10,
+//                                             bottom: 10,
+//                                           ),
+//                                           decoration: BoxDecoration(
+//                                             color: Colors.white,
+//                                             borderRadius:
+//                                                 BorderRadius.circular(10),
+//                                           ),
+//                                           child: TextFormField(
+//                                             initialValue: Name,
+//                                             autofocus: false,
+//                                             onChanged: (value) {
+//                                               Name = value;
+//                                               Slug_gen("$value");
+//                                               print(
+//                                                   "${SlugUrlController.text} +++====");
+//                                             },
+//                                             //  onChanged: (value) => Name = value,
+//                                             // controller: ctr_name,
+//                                             validator: (value) {
+//                                               if (value == null ||
+//                                                   value.isEmpty) {
+//                                                 return 'Please Enter Name';
+//                                               }
+//                                               return null;
+//                                             },
+//                                             style:
+//                                                 TextStyle(color: Colors.black),
+//                                             decoration: InputDecoration(
+//                                               border: InputBorder.none,
+//                                               contentPadding:
+//                                                   EdgeInsets.symmetric(
+//                                                       horizontal: 20,
+//                                                       vertical: 15),
+//                                               hintText: 'Enter Name',
+//                                               hintStyle: TextStyle(
+//                                                 color: Colors.grey,
+//                                                 fontSize: 16,
+//                                               ),
+//                                             ),
+//                                           ))
+//                                     ],
+//                                   )),
+//                                 ],
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                         ///////////////// Category for Mobile ++++++++++++++++++++++++++++++++++++
 
-                        SizedBox(height: defaultPadding),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (!Responsive.isMobile(context))
-                              SizedBox(width: defaultPadding),
-                            if (!Responsive.isMobile(context))
-                              Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                      child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Slug Url",
-                                          style: themeTextStyle(
-                                              color: Colors.black,
-                                              size: 15,
-                                              fw: FontWeight.bold)),
-                                      Container(
-                                          height: 40,
-                                          margin: EdgeInsets.only(
-                                            top: 10,
-                                            bottom: 10,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: TextFormField(
-                                            //initialValue: SlugUrlController.text,
-                                            autofocus: false,
-                                            //  onChanged: (value) => Name = value,
-                                            onChanged: (value) =>
-                                                SlugUrlController.text =
-                                                    value.toString(),
-                                            controller: SlugUrlController,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please Enter Slug Url';
-                                              }
-                                              return null;
-                                            },
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 15),
-                                              hintText: 'Enter Slug Url',
-                                              hintStyle: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ))
-                                    ],
-                                  ))),
-                          ],
-                        ),
+//                         SizedBox(height: defaultPadding),
+//                         Row(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             if (!Responsive.isMobile(context))
+//                               SizedBox(width: defaultPadding),
+//                             if (!Responsive.isMobile(context))
+//                               Expanded(
+//                                   flex: 2,
+//                                   child: Container(
+//                                       child: Column(
+//                                     crossAxisAlignment:
+//                                         CrossAxisAlignment.start,
+//                                     children: [
+//                                       Text("Slug Url",
+//                                           style: themeTextStyle(
+//                                               color: Colors.black,
+//                                               size: 15,
+//                                               fw: FontWeight.bold)),
+//                                       Container(
+//                                           height: 40,
+//                                           margin: EdgeInsets.only(
+//                                             top: 10,
+//                                             bottom: 10,
+//                                           ),
+//                                           decoration: BoxDecoration(
+//                                             color: Colors.white,
+//                                             borderRadius:
+//                                                 BorderRadius.circular(10),
+//                                           ),
+//                                           child: TextFormField(
+//                                             //initialValue: SlugUrlController.text,
+//                                             autofocus: false,
+//                                             //  onChanged: (value) => Name = value,
+//                                             onChanged: (value) =>
+//                                                 SlugUrlController.text =
+//                                                     value.toString(),
+//                                             controller: SlugUrlController,
+//                                             validator: (value) {
+//                                               if (value == null ||
+//                                                   value.isEmpty) {
+//                                                 return 'Please Enter Slug Url';
+//                                               }
+//                                               return null;
+//                                             },
+//                                             style:
+//                                                 TextStyle(color: Colors.black),
+//                                             decoration: InputDecoration(
+//                                               border: InputBorder.none,
+//                                               contentPadding:
+//                                                   EdgeInsets.symmetric(
+//                                                       horizontal: 20,
+//                                                       vertical: 15),
+//                                               hintText: 'Enter Slug Url',
+//                                               hintStyle: TextStyle(
+//                                                 color: Colors.grey,
+//                                                 fontSize: 16,
+//                                               ),
+//                                             ),
+//                                           ))
+//                                     ],
+//                                   ))),
+//                           ],
+//                         ),
 
-                        ///
+//                         ///
 
-                        ////////  Slug +++++++++++++++ web & Mobile +++++++++++++++++++++++++++++++++++++++
+//                         ////////  Slug +++++++++++++++ web & Mobile +++++++++++++++++++++++++++++++++++++++
 
-                        if (Responsive.isMobile(context))
-                          SizedBox(height: defaultPadding),
-                        if (Responsive.isMobile(context))
-                          Container(
-                              child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Slug Url",
-                                  style: themeTextStyle(
-                                      color: Colors.black,
-                                      size: 15,
-                                      fw: FontWeight.bold)),
-                              Container(
-                                  height: 40,
-                                  margin: EdgeInsets.only(
-                                    top: 10,
-                                    bottom: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: TextFormField(
-                                    // initialValue: SlugUrlController.text,
-                                    autofocus: false,
-                                    onChanged: (value) =>
-                                        SlugUrlController.text = value,
-                                    controller: SlugUrlController,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please Enter Slug Url';
-                                      }
-                                      return null;
-                                    },
-                                    style: TextStyle(color: Colors.black),
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 15),
-                                      hintText: 'Enter Slug Url',
-                                      hintStyle: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ))
-                            ],
-                          )),
+//                         if (Responsive.isMobile(context))
+//                           SizedBox(height: defaultPadding),
+//                         if (Responsive.isMobile(context))
+//                           Container(
+//                               child: Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               Text("Slug Url",
+//                                   style: themeTextStyle(
+//                                       color: Colors.black,
+//                                       size: 15,
+//                                       fw: FontWeight.bold)),
+//                               Container(
+//                                   height: 40,
+//                                   margin: EdgeInsets.only(
+//                                     top: 10,
+//                                     bottom: 10,
+//                                   ),
+//                                   decoration: BoxDecoration(
+//                                     color: Colors.white,
+//                                     borderRadius: BorderRadius.circular(10),
+//                                   ),
+//                                   child: TextFormField(
+//                                     // initialValue: SlugUrlController.text,
+//                                     autofocus: false,
+//                                     onChanged: (value) =>
+//                                         SlugUrlController.text = value,
+//                                     controller: SlugUrlController,
+//                                     validator: (value) {
+//                                       if (value == null || value.isEmpty) {
+//                                         return 'Please Enter Slug Url';
+//                                       }
+//                                       return null;
+//                                     },
+//                                     style: TextStyle(color: Colors.black),
+//                                     decoration: InputDecoration(
+//                                       border: InputBorder.none,
+//                                       contentPadding: EdgeInsets.symmetric(
+//                                           horizontal: 20, vertical: 15),
+//                                       hintText: 'Enter Slug Url',
+//                                       hintStyle: TextStyle(
+//                                         color: Colors.grey,
+//                                         fontSize: 16,
+//                                       ),
+//                                     ),
+//                                   ))
+//                             ],
+//                           )),
 
-                        //////////  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                         //////////  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-                        Row(children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                basic_Product = true;
-                              });
-                            },
-                            child: Container(
-                                alignment: Alignment.center,
-                                padding: EdgeInsets.symmetric(horizontal: 5),
-                                margin: EdgeInsets.symmetric(
-                                    horizontal: 5, vertical: 20),
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    color: (basic_Product == true)
-                                        ? Colors.green
-                                        : Colors.grey,
-                                    border: Border.all(color: Colors.black38),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Text("Basic Product")),
-                          ),
-                          GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  basic_Product = false;
-                                });
-                              },
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.symmetric(horizontal: 5),
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 5, vertical: 20),
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                      color: (basic_Product == false)
-                                          ? Colors.green
-                                          : Colors.grey,
-                                      border: Border.all(color: Colors.black38),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Text("Fetured Product")))
-                        ]),
+//                         Row(children: [
+//                           GestureDetector(
+//                             onTap: () {
+//                               setState(() {
+//                                 basic_Product = true;
+//                               });
+//                             },
+//                             child: Container(
+//                                 alignment: Alignment.center,
+//                                 padding: EdgeInsets.symmetric(horizontal: 5),
+//                                 margin: EdgeInsets.symmetric(
+//                                     horizontal: 5, vertical: 20),
+//                                 height: 40,
+//                                 decoration: BoxDecoration(
+//                                     color: (basic_Product == true)
+//                                         ? Colors.green
+//                                         : Colors.grey,
+//                                     border: Border.all(color: Colors.black38),
+//                                     borderRadius: BorderRadius.circular(10)),
+//                                 child: Text("Basic Product")),
+//                           ),
+//                           GestureDetector(
+//                               onTap: () {
+//                                 setState(() {
+//                                   basic_Product = false;
+//                                 });
+//                               },
+//                               child: Container(
+//                                   alignment: Alignment.center,
+//                                   padding: EdgeInsets.symmetric(horizontal: 5),
+//                                   margin: EdgeInsets.symmetric(
+//                                       horizontal: 5, vertical: 20),
+//                                   height: 40,
+//                                   decoration: BoxDecoration(
+//                                       color: (basic_Product == false)
+//                                           ? Colors.green
+//                                           : Colors.grey,
+//                                       border: Border.all(color: Colors.black38),
+//                                       borderRadius: BorderRadius.circular(10)),
+//                                   child: Text("Fetured Product")))
+//                         ]),
 
-                        /////////  Basic Product Rate Deatils +++++++++++++++++++++++
+//                         /////////  Basic Product Rate Deatils +++++++++++++++++++++++
 
-                        SizedBox(
-                          height: 10,
-                        ),
+//                         SizedBox(
+//                           height: 10,
+//                         ),
 
-                        SizedBox(
-                          height: 20,
-                        ),
+//                         SizedBox(
+//                           height: 20,
+//                         ),
 
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              themeButton3(context, () {
-                                updatelist(
-                                    id, Name, slugUrl, _StatusValue, _PerentC
-                                    // (url_img == null || url_img.isEmpty)
-                                    //     ? image
-                                    //     : url_img
-                                    );
-                              },
-                                  buttonColor: Colors.blueAccent,
-                                  label: "Update"),
-                              SizedBox(
-                                width: 10,
-                              ),
-                            ])
-                      ],
-                    )),
-        ]));
-  }
+//                         Row(
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               themeButton3(context, () {
+//                                 updatelist(
+//                                     id, Name, slugUrl, _StatusValue, _PerentC
+//                                     // (url_img == null || url_img.isEmpty)
+//                                     //     ? image
+//                                     //     : url_img
+//                                     );
+//                               },
+//                                   buttonColor: Colors.blueAccent,
+//                                   label: "Update"),
+//                               SizedBox(
+//                                 width: 10,
+//                               ),
+//                             ])
+//                       ],
+//                     )),
+//         ]));
+//   }
 
 ///////////////////////////
 

@@ -1,8 +1,6 @@
-// ignore_for_file: non_constant_identifier_names, prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, deprecated_colon_for_default_value, avoid_unnecessary_containers, non_constant_identifier_names, camel_case_types, duplicate_ignore
 
 import 'package:flutter/material.dart';
-import '../../responsive.dart';
-import '../dashboard/components/header.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 
@@ -128,6 +126,7 @@ class _orderNewSreenState extends State<orderNewSreen> {
 
 //PRODUCT ROW ======================================================
 //PRODUCT ROW ======================================================
+  // ignore: non_constant_identifier_names
   Widget wd_rows(BuildContext context, td1, td2, td3, td4, td5, td6,
       {bg: false}) {
     return Container(

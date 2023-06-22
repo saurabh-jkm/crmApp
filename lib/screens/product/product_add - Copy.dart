@@ -152,6 +152,8 @@ class _ProductAddState extends State<ProductAdd> {
       temp.forEach((k, v) {
         productList.add(v);
       });
+
+      print("$productList  ++++++++++++++");
     });
 
     Image_data();
@@ -260,7 +262,6 @@ class _ProductAddState extends State<ProductAdd> {
     } else {
       itemField.remove('basic');
     }
-
 
     themeAlert(context, "Successfully Uploaded");
     clearText();
