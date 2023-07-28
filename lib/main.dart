@@ -33,7 +33,7 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {    
+class MyApp extends StatelessWidget {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   // This widget is the root of your application.
   @override
@@ -55,14 +55,16 @@ class MyApp extends StatelessWidget {
                         .apply(bodyColor: Colors.white),
                 canvasColor: secondaryColor,
               ),
-              home:  MultiProvider(
-                providers: [
-                  ChangeNotifierProvider(
-                    create: (context) => MenuAppController(),
+              home: MultiProvider(
+                  providers: [
+                    ChangeNotifierProvider(
+                      create: (context) => MenuAppController(),
+                    ),
+                  ],
+                  child: MainScreen(
+                      pageNo:
+                          1) //LoginPage() //MainScreen(pageNo: 1) // MainScreen(),
                   ),
-                ],
-                child:   MainScreen() // MainScreen(),          
-              ),
             );
           }
           return CircularProgressIndicator();

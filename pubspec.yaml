@@ -42,7 +42,7 @@ dependencies:
   qr_flutter: ^4.0.0
   slug_it: ^0.0.1
   flutter_colorpicker: ^1.0.3
-  intl: ^0.18.1
+  # intl: ^0.18.0
 # Firebase setup +++++
   firebase_auth: ^4.2.0
   firebase_core: ^2.9.0
@@ -56,11 +56,15 @@ dependencies:
 # Invoice pdf generator ==========================
   pdf: ^3.8.2
   path_provider: ^2.0.5
-  syncfusion_flutter_pdfviewer: ^21.2.8
+  # syncfusion_flutter_pdfviewer: ^21.2.8
+  # syncfusion_flutter_pdfviewer: ^20.3.47
+  syncfusion_flutter_pdfviewer: ^21.2.3
+
   dropdown_search: ^5.0.6
   dio: ^5.2.1+1
   # dropdown_button2: ^2.2.4
-
+  html: ^0.15.4
+  charts_flutter: ^0.12.0
 
 dev_dependencies:
   flutter_test:

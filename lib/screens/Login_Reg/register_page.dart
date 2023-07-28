@@ -1,4 +1,3 @@
-
 // ignore_for_file: use_build_context_synchronously, prefer_final_fields, non_constant_identifier_names, prefer_const_constructors
 
 import 'package:flutter/gestures.dart';
@@ -17,14 +16,14 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-/////////////////////////////////////////////////////  
+/////////////////////////////////////////////////////
   bool _isLoading = false;
   final formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
   String fullName = "";
   String status = "Active";
-    String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
   AuthService authService = AuthService();
 ////////////////////////////////////////////////////
 
@@ -41,14 +40,14 @@ class _RegisterPageState extends State<RegisterPage> {
 //           await HelperFunctions.saveUserLoggedInStatus(true);
 //           await HelperFunctions.saveUserEmailSF(email);
 //           await HelperFunctions.saveUserNameSF(fullName);
-//           nextScreenReplace(context,  
+//           nextScreenReplace(context,
 //           MultiProvider(
 //                 providers: [
 //                   ChangeNotifierProvider(
 //                     create: (context) => MenuAppController(),
 //                   ),
 //                 ],
-//                 child:   MainScreen() // MainScreen(),          
+//                 child:   MainScreen() // MainScreen(),
 //               ),
 //               );
 //         } else {
@@ -61,24 +60,19 @@ class _RegisterPageState extends State<RegisterPage> {
 //     }
 //   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    return 
-    Scaffold(
+    return Scaffold(
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
                   color: Theme.of(context).primaryColor))
-          : 
-          SingleChildScrollView(
+          : SingleChildScrollView(
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.white,
                 ),
-                
                 margin: EdgeInsets.all(20),
                 child: Padding(
                   padding:
@@ -100,21 +94,23 @@ class _RegisterPageState extends State<RegisterPage> {
                           //     style: TextStyle(
                           //         fontSize: 15, fontWeight: FontWeight.w400)),
                           //          Image.network("https://images-platform.99static.com//yT4-uU8ZTohW9Mjum5r1GLTEO0k=/169x2087:1712x3630/fit-in/590x590/99designs-contests-attachments/103/103937/attachment_103937755",height: 300,),
-                           const SizedBox(height: 20,),
-              
-              
-               /////// Full Name   TextFormField++++++++++++++++
-                         
+                          const SizedBox(
+                            height: 20,
+                          ),
+
+                          /////// Full Name   TextFormField++++++++++++++++
+
                           SizedBox(
                             height: 45,
                             child: TextFormField(
                               style: TextStyle(color: Colors.black),
-                              decoration: 
-                                textInputDecoration.copyWith(
+                              decoration: textInputDecoration.copyWith(
                                   labelText: "Full Name",
-                                  prefixIcon: Icon(Icons.person,color: Theme.of(context).primaryColor,)
-                                  ),
-                                 onChanged: (val) {
+                                  prefixIcon: Icon(
+                                    Icons.person,
+                                    color: Theme.of(context).primaryColor,
+                                  )),
+                              onChanged: (val) {
                                 setState(() {
                                   fullName = val;
                                 });
@@ -122,112 +118,111 @@ class _RegisterPageState extends State<RegisterPage> {
                               validator: (val) {
                                 if (val!.isNotEmpty) {
                                   return null;
-                                } 
-                                else {
+                                } else {
                                   return "Name cannot be empty";
                                 }
                               },
                             ),
                           ),
-              
-                    ////////
-              
+
+                          ////////
+
                           const SizedBox(
                             height: 15,
                           ),
-              
-              /////////   Email     TextFormField+++++++++++++++
-                  
+
+                          /////////   Email     TextFormField+++++++++++++++
+
                           SizedBox(
                             height: 45,
                             child: TextFormField(
-                                style: TextStyle(color: Colors.black),
+                              style: TextStyle(color: Colors.black),
                               decoration: textInputDecoration.copyWith(
                                   labelText: "Email",
                                   prefixIcon: Icon(
                                     Icons.email,
                                     color: Theme.of(context).primaryColor,
-                                  )
-                                  ),
+                                  )),
                               onChanged: (val) {
                                 setState(() {
                                   email = val;
                                 });
                               },
-                                        
+
                               // check tha validation
                               validator: (val) {
-                                return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                return RegExp(
+                                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                         .hasMatch(val!)
                                     ? null
                                     : "Please enter a valid email";
                               },
                             ),
                           ),
-                      /////
-                     
+                          /////
+
                           const SizedBox(height: 20),
-              
-              //// Passwd TextFormField ++++++++++++++++++++++++                
+
+                          //// Passwd TextFormField ++++++++++++++++++++++++
                           SizedBox(
                             height: 45,
                             child: TextFormField(
-                                style: TextStyle(color: Colors.black),
-                                  obscureText: true,
-                                  decoration: 
-                                    textInputDecoration.copyWith(
-                                    labelText: "Password",
-                                    prefixIcon: Icon(Icons.lock,color: Theme.of(context).primaryColor,)
-                                    ),
-                                        
-                                  validator: (val) {
-                                   if (val!.length < 6) {
-                                   return "Password must be at least 6 characters";
-                                    } 
-                                    else {
-                                    return null;
-                                    }
-                                  },
-                                 onChanged: (val) {
-                                  setState(() {
+                              style: TextStyle(color: Colors.black),
+                              obscureText: true,
+                              decoration: textInputDecoration.copyWith(
+                                  labelText: "Password",
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                    color: Theme.of(context).primaryColor,
+                                  )),
+                              validator: (val) {
+                                if (val!.length < 6) {
+                                  return "Password must be at least 6 characters";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              onChanged: (val) {
+                                setState(() {
                                   password = val;
-                                  });
+                                });
                               },
                             ),
                           ),
-                        ////
-              
+                          ////
+
                           const SizedBox(
                             height: 20,
                           ),
-              
-              //////////  Registration buttton++++++++++++++                     
-              
+
+                          //////////  Registration buttton++++++++++++++
+
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Theme.of(context).primaryColor,
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30))),
                               child: const Text(
                                 "Register",
-                                style:
-                                    TextStyle(color: Colors.white, fontSize: 16),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16),
                               ),
                               onPressed: () {
-                               // register();
+                                // register();
                               },
-                            ),                         
+                            ),
                           ),
-              
-                     /////     
+
+                          /////
                           const SizedBox(
                             height: 10,
                           ),
-              
-              /////   Send to Login page
+
+                          /////   Send to Login page
 
                           Text.rich(TextSpan(
                             text: "Already have an account? ",
@@ -245,9 +240,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     }),
                             ],
                           )),
-                        ////
-              
-              
+                          ////
                         ],
                       )),
                 ),
@@ -255,6 +248,4 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
     );
   }
-
- 
 }

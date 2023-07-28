@@ -158,7 +158,7 @@ class _ProductAddState extends State<ProductAdd> {
       for (var i = 0; i < productList.length; i++) {
         temp2.add(productList[i]["name"]);
       }
-      print("${temp2}  ++++++++++++++");
+      // print("${temp2}  ++++++++++++++");
     });
 
     Image_data();
@@ -1312,15 +1312,27 @@ class _ProductAddState extends State<ProductAdd> {
                           for (var index = 0;
                               index < productList.length;
                               index++)
-                            tableRowWidget(
-                                index + 1,
-                                productList[index]['img'],
-                                productList[index]['name'],
-                                productList[index]['category'],
-                                productList[index]['no_item'],
-                                productList[index]['status'],
-                                productList[index]['date_at'],
-                                productList[index]['id'])
+                            (Responsive.isMobile(context))
+                                ? tableRowWidget_mobile(
+                                    productList[index]['img'],
+                                    productList[index]['name'],
+                                    productList[index]['category'],
+                                    productList[index]['status'],
+                                    productList[index]['date_at'],
+                                    productList[index]['id'])
+                                : tableRowWidget(
+                                    index + 1,
+                                    productList[index]['img'],
+                                    productList[index]['name'],
+                                    productList[index]['category'],
+                                    productList[index]['no_item'],
+                                    (productList[index]['status'] == "1")
+                                        ? "Active"
+                                        : (productList[index]['status'] == "2")
+                                            ? "Inactive"
+                                            : "",
+                                    productList[index]['date_at'],
+                                    productList[index]['id'])
                         ],
                       ),
                     ],
@@ -1337,7 +1349,9 @@ class _ProductAddState extends State<ProductAdd> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text("$sno", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text("$sno",
+              style: GoogleFonts.alike(
+                  fontWeight: FontWeight.normal, fontSize: 11)),
         ),
       ),
       TableCell(
@@ -1364,32 +1378,48 @@ class _ProductAddState extends State<ProductAdd> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text("$name", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text("$name",
+              style: GoogleFonts.alike(
+                  fontWeight: FontWeight.normal, fontSize: 11)),
         ),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$pName", style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text("$pName",
+            style:
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$items", style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text("$status",
+            style: GoogleFonts.alike(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                color: (status == "Active")
+                    ? Colors.green
+                    : (status == "Inactive")
+                        ? Colors.red
+                        : Colors.white)),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$status", style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text("$items",
+            style:
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$date", style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text("$date",
+            style:
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
       TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
           child: Row(
             children: [
               Container(
-                  height: 40,
-                  width: 40,
+                  height: 30,
+                  width: 30,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Colors.blue.withOpacity(0.1),
@@ -1404,13 +1434,14 @@ class _ProductAddState extends State<ProductAdd> {
                       },
                       icon: Icon(
                         Icons.edit,
+                        size: 15,
                         color: Colors.blue,
                       )) ////
                   ),
               SizedBox(width: 10),
               Container(
-                  height: 40,
-                  width: 40,
+                  height: 30,
+                  width: 30,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Colors.red.withOpacity(0.1),
@@ -1422,6 +1453,7 @@ class _ProductAddState extends State<ProductAdd> {
                       },
                       icon: Icon(
                         Icons.delete_outline_outlined,
+                        size: 15,
                         color: Colors.red,
                       ))),
             ],
@@ -1457,10 +1489,11 @@ class _ProductAddState extends State<ProductAdd> {
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  themeListRow(context, "Product Name", "$name"),
-                  themeListRow(context, "Category Name", "$pName"),
-                  themeListRow(context, "Satus", "$status"),
-                  themeListRow(context, "Date", "$date"),
+                  themeListRow(context, "Product Name", "$name", fontsize: 11),
+                  themeListRow(context, "Category Name", "$pName",
+                      fontsize: 11),
+                  themeListRow(context, "Satus", "$status", fontsize: 11),
+                  themeListRow(context, "Date", "$date", fontsize: 11),
                   SizedBox(
                     height: 10,
                   ),
@@ -1487,8 +1520,8 @@ class _ProductAddState extends State<ProductAdd> {
                             fw: FontWeight.normal),
                       ),
                       Container(
-                          height: 40,
-                          width: 40,
+                          height: 30,
+                          width: 30,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.blue.withOpacity(0.1),
@@ -1504,13 +1537,14 @@ class _ProductAddState extends State<ProductAdd> {
                               },
                               icon: Icon(
                                 Icons.edit,
+                                size: 15,
                                 color: Colors.blue,
                               )) ////
                           ),
                       SizedBox(width: 10),
                       Container(
-                          height: 40,
-                          width: 40,
+                          height: 30,
+                          width: 30,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.red.withOpacity(0.1),
@@ -1522,6 +1556,7 @@ class _ProductAddState extends State<ProductAdd> {
                                 showExitPopup(iid);
                               },
                               icon: Icon(
+                                size: 15,
                                 Icons.delete_outline_outlined,
                                 color: Colors.red,
                               ))),

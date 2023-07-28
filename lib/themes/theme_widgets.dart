@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_equal_for_default_values, avoid_unnecessary_containers, deprecated_member_use, no_leading_underscores_for_local_identifiers, prefer_const_literals_to_create_immutables, unnecessary_brace_in_string_interps, sort_child_properties_last, sized_box_for_whitespace, non_constant_identifier_names, deprecated_colon_for_default_value
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../constants.dart';
 import '../responsive.dart';
@@ -149,13 +150,13 @@ Widget themeListRow(BuildContext context, label, desc,
               )
             : SizedBox(
                 width: decWidth,
-                child: Text(
-                  ": $desc",
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: themeTextStyle(
-                      size: fontsize, color: descColor, ftFamily: 'ms'),
-                ),
+                child: Text(": $desc",
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: GoogleFonts.alike(
+                      fontSize: fontsize,
+                      color: descColor,
+                    )),
               )
       ],
     ),

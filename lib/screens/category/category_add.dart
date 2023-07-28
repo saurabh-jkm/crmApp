@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:slug_it/slug_it.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
@@ -74,7 +75,7 @@ class _CategoryAddState extends State<CategoryAdd> {
         final path = results.files.single.path;
         final fileName = results.files.single.name;
         UploadFile(path!, fileName).then((value) {
-          print("image selected");
+          // print("image selected");
         });
         setState(() async {
           downloadURL = await FirebaseStorage.instance
@@ -163,7 +164,7 @@ class _CategoryAddState extends State<CategoryAdd> {
     }
     setState(() {
       listExample();
-      print("$StoreDocs ++++++++");
+      //print("$StoreDocs ++++++++");
     });
   }
 
@@ -1018,7 +1019,9 @@ class _CategoryAddState extends State<CategoryAdd> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text("$sno", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text("$sno",
+              style: GoogleFonts.alike(
+                  fontWeight: FontWeight.normal, fontSize: 11)),
         ),
       ),
       TableCell(
@@ -1045,28 +1048,36 @@ class _CategoryAddState extends State<CategoryAdd> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text("$name", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text("$name",
+              style: GoogleFonts.alike(
+                  fontWeight: FontWeight.normal, fontSize: 11)),
         ),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$pName", style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text("$pName",
+            style:
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$status", style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text("$status",
+            style:
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$date", style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text("$date",
+            style:
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
       TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
           child: Row(
             children: [
               Container(
-                  height: 40,
-                  width: 40,
+                  height: 30,
+                  width: 30,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Colors.blue.withOpacity(0.1),
@@ -1082,13 +1093,14 @@ class _CategoryAddState extends State<CategoryAdd> {
                       },
                       icon: Icon(
                         Icons.edit,
+                        size: 15,
                         color: Colors.blue,
                       )) ////
                   ),
               SizedBox(width: 10),
               Container(
-                  height: 40,
-                  width: 40,
+                  height: 30,
+                  width: 30,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Colors.red.withOpacity(0.1),
@@ -1100,6 +1112,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                       },
                       icon: Icon(
                         Icons.delete_outline_outlined,
+                        size: 15,
                         color: Colors.red,
                       ))),
             ],
@@ -1135,10 +1148,11 @@ class _CategoryAddState extends State<CategoryAdd> {
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  themeListRow(context, "Product Name", "$name"),
-                  themeListRow(context, "Category Name", "$pName"),
-                  themeListRow(context, "Satus", "$status"),
-                  themeListRow(context, "Date", "$date"),
+                  themeListRow(context, "Product Name", "$name", fontsize: 11),
+                  themeListRow(context, "Category Name", "$pName",
+                      fontsize: 11),
+                  themeListRow(context, "Satus", "$status", fontsize: 11),
+                  themeListRow(context, "Date", "$date", fontsize: 11),
                   SizedBox(
                     height: 10,
                   ),
@@ -1165,8 +1179,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                             fw: FontWeight.normal),
                       ),
                       Container(
-                          height: 40,
-                          width: 40,
+                          height: 30,
+                          width: 30,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.blue.withOpacity(0.1),
@@ -1183,13 +1197,14 @@ class _CategoryAddState extends State<CategoryAdd> {
                               },
                               icon: Icon(
                                 Icons.edit,
+                                size: 15,
                                 color: Colors.blue,
                               )) ////
                           ),
                       SizedBox(width: 10),
                       Container(
-                          height: 40,
-                          width: 40,
+                          height: 30,
+                          width: 30,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.red.withOpacity(0.1),
@@ -1202,6 +1217,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                               },
                               icon: Icon(
                                 Icons.delete_outline_outlined,
+                                size: 15,
                                 color: Colors.red,
                               ))),
                     ],

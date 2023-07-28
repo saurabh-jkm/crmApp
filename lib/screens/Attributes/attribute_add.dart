@@ -13,6 +13,7 @@ import '../dashboard/components/header.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+
 class AttributeAdd extends StatefulWidget {
   const AttributeAdd({super.key});
   @override
@@ -20,7 +21,7 @@ class AttributeAdd extends StatefulWidget {
 }
 
 class _AttributeAddState extends State<AttributeAdd> {
-   var db = FirebaseFirestore.instance;
+  var db = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
 //////
   final AttributeController = TextEditingController();
@@ -54,10 +55,11 @@ class _AttributeAddState extends State<AttributeAdd> {
       //listExample();
     });
   }
+
 /////////////
   Color mycolor = Colors.grey;
-  var Head_Name ;
-  var hexString ;
+  var Head_Name;
+  var hexString;
   var _Status;
   var Attribute_name;
   Map value_color = {};
@@ -88,7 +90,7 @@ class _AttributeAddState extends State<AttributeAdd> {
     return _attribute
         .add({
           'attribute_name': "${AttributeController.text}",
-          "value":"$Date_at",
+          "value": "$Date_at",
           'status': "$_StatusValue",
           "date_at": "$Date_at"
         })
@@ -153,25 +155,19 @@ class _AttributeAddState extends State<AttributeAdd> {
           ////////
           return Scaffold(
               body: Container(
-            child:
-             ListView(
+            child: ListView(
               children: [
                 Header(
                   title: "Attribute",
                 ),
-                             (Add_Attribute != true )
-                              ?
-                               (updateWidget != true )
-                                  ?
-                                   (update_subAttribute == true && updateWidget == false)
-                                    ? 
-                                     Update_Sub_Attribute(context, update_id,"View/Add")
-                                    : 
-                                    listList(context,"Add / Edit")
-                                  :
-                                 Update_Attribute(context, update_id,"Edit")
-                               :
-                               listCon(context,"Add New Attribute")
+                (Add_Attribute != true)
+                    ? (updateWidget != true)
+                        ? (update_subAttribute == true && updateWidget == false)
+                            ? Update_Sub_Attribute(
+                                context, update_id, "View/Add")
+                            : listList(context, "Add / Edit")
+                        : Update_Attribute(context, update_id, "Edit")
+                    : listCon(context, "Add New Attribute")
               ],
             ),
           ));
@@ -181,66 +177,66 @@ class _AttributeAddState extends State<AttributeAdd> {
 //// Widget for Start_up
   Widget listCon(BuildContext context, sub_text) {
     return Container(
-                      height: MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        // borderRadius:
-                        //     const BorderRadius.all(Radius.circular(10)),
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          // borderRadius:
+          //     const BorderRadius.all(Radius.circular(10)),
+        ),
+        child: ListView(children: [
+          Container(
+            height: 100,
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      Add_Attribute = false;
+                    });
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Icon(Icons.arrow_back, color: Colors.blue, size: 25),
+                      SizedBox(
+                        width: 10,
                       ),
-                      child:  ListView(children: [
-            Container(
-              height: 100,
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal:10 ),
-              child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-            GestureDetector(
-              onTap: (){
-                setState(() {
-                   Add_Attribute = false;
-                });
-
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-               Icon(Icons.arrow_back,color: Colors.blue,size:25),
-                SizedBox(width: 10,),
-              Text(
-                       'Attribute',
-                       style: themeTextStyle(
-                  size: 18.0,
-                  ftFamily: 'ms',
-                  fw: FontWeight.bold,
-                  color: Colors.blue),
-                   ),
-                      SizedBox(width: 5,),
-              Text(
-                       '$sub_text',
-               style: themeTextStyle(
-                  size: 12.0,
-                  ftFamily: 'ms',
-                  fw: FontWeight.normal,
-                  color: Colors.black45),
-                   ),
-                ],
-              ),
-            ), 
-
-       
-                      ],
-                    ),
-            )   
-            ,          
-           Container(
+                      Text(
+                        'Attribute',
+                        style: themeTextStyle(
+                            size: 18.0,
+                            ftFamily: 'ms',
+                            fw: FontWeight.bold,
+                            color: Colors.blue),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        '$sub_text',
+                        style: themeTextStyle(
+                            size: 12.0,
+                            ftFamily: 'ms',
+                            fw: FontWeight.normal,
+                            color: Colors.black45),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
               padding: EdgeInsets.all(defaultPadding),
               margin: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
               ),
-              child:  Column(
+              child: Column(
                 children: [
                   Form(
                       key: _formKey,
@@ -322,7 +318,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                   ),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     themeButton3(context, () {
-                        addList();
+                      addList();
                       clearText();
                       _AttributeData();
                     }, buttonColor: Colors.green, label: "Submit"),
@@ -346,99 +342,108 @@ class _AttributeAddState extends State<AttributeAdd> {
 
 ////////////////////////////// List ++++++++++++++++++++++++++++++++++++++++++++
   bool Add_Attribute = false;
-   var _number_select = 10;
+  var _number_select = 10;
   Widget listList(BuildContext context, sub_text) {
     return Container(
-                      height: MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        // borderRadius:
-                        //     const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: 
-       ListView(
+      height: MediaQuery.of(context).size.height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        // borderRadius:
+        //     const BorderRadius.all(Radius.circular(10)),
+      ),
+      child: ListView(
         children: [
-          HeadLine(context,
-             Icons.line_style_sharp,
-             "Attribute",
-              "$sub_text",
-             () {
-              setState(() {
-               Add_Attribute = true;
-              });
-             },
-               buttonColor: Colors.blue,
-              iconColor: Colors.black
-              ),
-               Container(
+          HeadLine(context, Icons.line_style_sharp, "Attribute", "$sub_text",
+              () {
+            setState(() {
+              Add_Attribute = true;
+            });
+          }, buttonColor: Colors.blue, iconColor: Colors.black),
+          Container(
             margin: EdgeInsets.all(10),
-             decoration: BoxDecoration(
-            color: secondaryColor,
+            decoration: BoxDecoration(
+              color: secondaryColor,
             ),
-            child:
-            
-            
-            
-             Column(
-               children: [
-                  Container(
-                          padding: EdgeInsets.all(10),
-                          color:Theme.of(context).secondaryHeaderColor,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                            Column(
-                            crossAxisAlignment: CrossAxisAlignment.start, 
-                        
+            child: Column(
+              children: [
+                Container(
+                    padding: EdgeInsets.all(10),
+                    color: Theme.of(context).secondaryHeaderColor,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Attribute List",
+                              style: themeTextStyle(
+                                  fw: FontWeight.bold,
+                                  color: Colors.white,
+                                  size: 15),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Row(
                               children: [
-
-                            Text("Attribute List",style: themeTextStyle(fw: FontWeight.bold,color: Colors.white,size: 15),),
-                            SizedBox(height: 20,),
-                            Row(children: [
-                              Text("Show",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
-
-                              
-                                  Container(
-                                    margin: EdgeInsets.symmetric(horizontal: 5),
-                                    padding: EdgeInsets.all(2) ,
-                                    height: 20,
-                                    color: Colors.white,
-                                    child: DropdownButton<int>(
-                                       dropdownColor:Colors.white,
-                                       iconEnabledColor: Colors.black,
-                                       hint: Text("$_number_select",style: TextStyle(color:Colors.black,fontSize: 12),),
+                                Text(
+                                  "Show",
+                                  style: themeTextStyle(
+                                      fw: FontWeight.normal,
+                                      color: Colors.white,
+                                      size: 15),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 5),
+                                  padding: EdgeInsets.all(2),
+                                  height: 20,
+                                  color: Colors.white,
+                                  child: DropdownButton<int>(
+                                      dropdownColor: Colors.white,
+                                      iconEnabledColor: Colors.black,
+                                      hint: Text(
+                                        "$_number_select",
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 12),
+                                      ),
                                       value: _number_select,
-                                      items: <int>[10,25, 50, 100].map((int value) {
-                                      return new DropdownMenuItem<int>(
-                                      value: value,
-                                      child: new Text(value.toString(),style: TextStyle(color:Colors.black,fontSize: 12),),
+                                      items: <int>[10, 25, 50, 100]
+                                          .map((int value) {
+                                        return new DropdownMenuItem<int>(
+                                          value: value,
+                                          child: new Text(
+                                            value.toString(),
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12),
+                                          ),
                                         );
                                       }).toList(),
                                       onChanged: (newVal) {
-                                       setState(() {
-                                      _number_select = newVal!;
-                                         });
-                                       }),
-                                  ),
-                            
-
-                              Text("entries",style: themeTextStyle(fw: FontWeight.normal,color: Colors.white,size: 15),),
-                            ],)
-                            ],),
-                            
-
-                           Container(
-                            height: 40,
-                            width: 300,
-                            child: SearchField())  
-                            ],
-                          )), 
-                          
-                          SizedBox(height: 5,),
-
-
-
-                 Table(
+                                        setState(() {
+                                          _number_select = newVal!;
+                                        });
+                                      }),
+                                ),
+                                Text(
+                                  "entries",
+                                  style: themeTextStyle(
+                                      fw: FontWeight.normal,
+                                      color: Colors.white,
+                                      size: 15),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                        Container(height: 40, width: 300, child: SearchField())
+                      ],
+                    )),
+                SizedBox(
+                  height: 5,
+                ),
+                Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   border: TableBorder(
                     horizontalInside: BorderSide(width: .5, color: Colors.grey),
@@ -459,8 +464,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                                               fontWeight: FontWeight.bold))),
                                 ),
                               ])
-                        :
-                         TableRow(
+                        : TableRow(
                             decoration: BoxDecoration(
                                 color: Theme.of(context).secondaryHeaderColor),
                             children: [
@@ -470,8 +474,8 @@ class _AttributeAddState extends State<AttributeAdd> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text('S.No.',
-                                        style:
-                                            TextStyle(fontWeight: FontWeight.bold)),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
                                   ),
                                 ),
                                 TableCell(
@@ -480,30 +484,30 @@ class _AttributeAddState extends State<AttributeAdd> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text("Name",
-                                        style:
-                                            TextStyle(fontWeight: FontWeight.bold)),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
                                   ),
                                 ),
                                 TableCell(
                                   verticalAlignment:
                                       TableCellVerticalAlignment.middle,
                                   child: Text("Status",
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold)),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
                                 ),
                                 TableCell(
                                   verticalAlignment:
                                       TableCellVerticalAlignment.middle,
                                   child: Text("Date",
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold)),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
                                 ),
                                 TableCell(
                                   verticalAlignment:
                                       TableCellVerticalAlignment.middle,
                                   child: Text("Actions",
-                                      style:
-                                          TextStyle(fontWeight: FontWeight.bold)),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
                                 ),
                               ]),
                     for (var index = 0; index < StoreDocs.length; index++)
@@ -520,9 +524,9 @@ class _AttributeAddState extends State<AttributeAdd> {
                               "${StoreDocs[index]["date_at"]}",
                               "${StoreDocs[index]["id"]}"),
                   ],
+                ),
+              ],
             ),
-               ],
-             ),
           ),
         ],
       ),
@@ -535,31 +539,46 @@ class _AttributeAddState extends State<AttributeAdd> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Text("$sno", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text("$sno",
+              style: GoogleFonts.alike(
+                  fontWeight: FontWeight.normal, fontSize: 11)),
         ),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Text("$name", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text("$name",
+              style: GoogleFonts.alike(
+                  fontWeight: FontWeight.normal, fontSize: 11)),
         ),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$status", style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text(
+            (status == "1")
+                ? "Active"
+                : (status == "2")
+                    ? "Inactive"
+                    : "",
+            style: GoogleFonts.alike(
+              fontWeight: FontWeight.normal,
+              fontSize: 11,
+            )),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$date", style: TextStyle(fontWeight: FontWeight.bold)),
+        child: Text("$date",
+            style:
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
       TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
           child: Row(
             children: [
               Container(
-                  height: 40,
-                  width: 40,
+                  height: 30,
+                  width: 30,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Colors.blue.withOpacity(0.1),
@@ -575,13 +594,14 @@ class _AttributeAddState extends State<AttributeAdd> {
                       },
                       icon: Icon(
                         Icons.edit,
+                        size: 15,
                         color: Colors.blue,
                       )) ////
                   ),
               SizedBox(width: 10),
               Container(
-                  height: 40,
-                  width: 40,
+                  height: 30,
+                  width: 30,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Colors.green.withOpacity(0.1),
@@ -598,6 +618,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                       },
                       icon: Icon(
                         Icons.more_horiz_outlined,
+                        size: 15,
                         color: Colors.green,
                       )) ////
                   ),
@@ -618,9 +639,9 @@ class _AttributeAddState extends State<AttributeAdd> {
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  themeListRow(context, "Name", "$name"),
-                  themeListRow(context, "Satus", "$status"),
-                  themeListRow(context, "Date", "$date"),
+                  themeListRow(context, "Name", "$name", fontsize: 11),
+                  themeListRow(context, "Satus", "$status", fontsize: 11),
+                  themeListRow(context, "Date", "$date", fontsize: 11),
                   SizedBox(
                     height: 10,
                   ),
@@ -647,8 +668,8 @@ class _AttributeAddState extends State<AttributeAdd> {
                             fw: FontWeight.normal),
                       ),
                       Container(
-                          height: 40,
-                          width: 40,
+                          height: 30,
+                          width: 30,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.blue.withOpacity(0.1),
@@ -665,13 +686,14 @@ class _AttributeAddState extends State<AttributeAdd> {
                               },
                               icon: Icon(
                                 Icons.edit,
+                                size: 15,
                                 color: Colors.blue,
                               )) ////
                           ),
                       SizedBox(width: 10),
                       Container(
-                          height: 40,
-                          width: 40,
+                          height: 30,
+                          width: 30,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.green.withOpacity(0.1),
@@ -688,6 +710,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                               },
                               icon: Icon(
                                 Icons.more_horiz_outlined,
+                                size: 15,
                                 color: Colors.green,
                               )) ////
                           ),
@@ -705,65 +728,64 @@ class _AttributeAddState extends State<AttributeAdd> {
 /////////
 
 /////////////  Update widget for product Update+++++++++++++++++++++++++
-  Widget Update_Attribute(BuildContext context, id,sub_text) {
-    return
-
-             Container(
-                      height: MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        // borderRadius:
-                        //     const BorderRadius.all(Radius.circular(10)),
+  Widget Update_Attribute(BuildContext context, id, sub_text) {
+    return Container(
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          // borderRadius:
+          //     const BorderRadius.all(Radius.circular(10)),
+        ),
+        child: ListView(children: [
+          Container(
+            height: 100,
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      updateWidget = false;
+                      Head_Name = null;
+                    });
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Icon(Icons.arrow_back, color: Colors.blue, size: 25),
+                      SizedBox(
+                        width: 10,
                       ),
-                  child:   ListView(children: [
-
-                   Container(
-              height: 100,
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal:10 ),
-              child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-            GestureDetector(
-              onTap: (){
-                setState(() {
-                updateWidget = false;
-                 Head_Name = null;
-                });
-
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-               Icon(Icons.arrow_back,color: Colors.blue,size:25),
-                SizedBox(width: 10,),
-              Text(
-                  'Attribute',
-                       style: themeTextStyle(
-                  size: 18.0,
-                  ftFamily: 'ms',
-                  fw: FontWeight.bold,
-                  color: Colors.blue),
-                   ),
-                      SizedBox(width: 5,),
-              Text(
-                       '$sub_text',
-               style: themeTextStyle(
-                  size: 12.0,
-                  ftFamily: 'ms',
-                  fw: FontWeight.normal,
-                  color: Colors.black45),
-                   ),
-                ],
-              ),
-            ), 
-                      ],
-                    ),
-            ) ,
-
+                      Text(
+                        'Attribute',
+                        style: themeTextStyle(
+                            size: 18.0,
+                            ftFamily: 'ms',
+                            fw: FontWeight.bold,
+                            color: Colors.blue),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        '$sub_text',
+                        style: themeTextStyle(
+                            size: 12.0,
+                            ftFamily: 'ms',
+                            fw: FontWeight.normal,
+                            color: Colors.black45),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
           Container(
               padding: EdgeInsets.all(defaultPadding),
-               margin: EdgeInsets.symmetric(horizontal: 10),
+              margin: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -889,67 +911,69 @@ class _AttributeAddState extends State<AttributeAdd> {
                   ])
                 ],
               )),
-          SizedBox( height: 100, )
+          SizedBox(
+            height: 100,
+          )
         ]));
   }
 ///////////////////////////
 
 /////////////  Update widget for product Update++++++++++++++++++++++
-  Widget Update_Sub_Attribute(BuildContext context, id,sub_text) {
+  Widget Update_Sub_Attribute(BuildContext context, id, sub_text) {
     return Container(
-                      height: MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        // borderRadius:
-                        //     const BorderRadius.all(Radius.circular(10)),
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          // borderRadius:
+          //     const BorderRadius.all(Radius.circular(10)),
+        ),
+        child: ListView(children: [
+          Container(
+            height: 100,
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      update_subAttribute = false;
+                    });
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Icon(Icons.arrow_back, color: Colors.blue, size: 25),
+                      SizedBox(
+                        width: 10,
                       ),
-                      child:  ListView(children: [
-            Container(
-              height: 100,
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal:10 ),
-              child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-            GestureDetector(
-              onTap: (){
-                setState(() {
-                   update_subAttribute = false;
-                });
-
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-               Icon(Icons.arrow_back,color: Colors.blue,size:25),
-                SizedBox(width: 10,),
-              Text(
-                       '$Head_Name Attribute',
-                       style: themeTextStyle(
-                  size: 18.0,
-                  ftFamily: 'ms',
-                  fw: FontWeight.bold,
-                  color: Colors.blue),
-                   ),
-                      SizedBox(width: 5,),
-              Text(
-                       '$sub_text',
-               style: themeTextStyle(
-                  size: 12.0,
-                  ftFamily: 'ms',
-                  fw: FontWeight.normal,
-                  color: Colors.black45),
-                   ),
-                ],
-              ),
-            ), 
-
-       
-                      ],
-                    ),
-            )   
-            ,          
-           Container(
+                      Text(
+                        '$Head_Name Attribute',
+                        style: themeTextStyle(
+                            size: 18.0,
+                            ftFamily: 'ms',
+                            fw: FontWeight.bold,
+                            color: Colors.blue),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        '$sub_text',
+                        style: themeTextStyle(
+                            size: 12.0,
+                            ftFamily: 'ms',
+                            fw: FontWeight.normal,
+                            color: Colors.black45),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
               padding: EdgeInsets.all(defaultPadding),
               margin: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
@@ -1052,107 +1076,125 @@ class _AttributeAddState extends State<AttributeAdd> {
                                                 .toUpperCase(),
                                             style: themeTextStyle(
                                                 color: Colors.black,
-                                                size: 15,                                                     // Sizes   
-                                            fw: FontWeight.normal)),
+                                                size: 15, // Sizes
+                                                fw: FontWeight.normal)),
                                       ),
-                                          (Head_Name != "Sizes")
-                                               ?
-                                      Padding(
-                                          padding: const EdgeInsets.all(5.0),
-                                          child: GestureDetector(
-                                         
-                                            onTap: () {
-                                          
-                                              showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title:
-                                                          Text('Pick a color!'),
-                                                      content:
-                                                          SingleChildScrollView(
-                                                        child: ColorPicker(
-                                                          pickerColor:
-                                                              mycolor, //default color
-                                                          onColorChanged:
-                                                              (Color color) {
-                                                            //on color picked
-                                                            setState(() {
-                                                              mycolor = color;
-                                                              hexString = color.value.toRadixString(16).padLeft(9, '0x');
-                                                            });
-                                                          },
-                                                        ),
-                                                      ),
-                                                      actions: <Widget>[
-                                                        ElevatedButton(
-                                                          child: const Text('DONE'),
-                                                          onPressed: () {
+                                      (Head_Name != "Sizes")
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return AlertDialog(
+                                                          title: Text(
+                                                              'Pick a color!'),
+                                                          content:
+                                                              SingleChildScrollView(
+                                                            child: ColorPicker(
+                                                              pickerColor:
+                                                                  mycolor, //default color
+                                                              onColorChanged:
+                                                                  (Color
+                                                                      color) {
+                                                                //on color picked
+                                                                setState(() {
+                                                                  mycolor =
+                                                                      color;
+                                                                  hexString = color
+                                                                      .value
+                                                                      .toRadixString(
+                                                                          16)
+                                                                      .padLeft(
+                                                                          9,
+                                                                          '0x');
+                                                                });
+                                                              },
+                                                            ),
+                                                          ),
+                                                          actions: <Widget>[
+                                                            ElevatedButton(
+                                                              child: const Text(
+                                                                  'DONE'),
+                                                              onPressed: () {
+                                                                setState(() {
+                                                                  var tempColor =
+                                                                      dbData![
+                                                                          'value'];
+                                                                  tempColor[
+                                                                      "${Color_list[i]["name"]}"] = {
+                                                                    "name":
+                                                                        "${Color_list[i]["name"]}",
+                                                                    "color":
+                                                                        "$hexString",
+                                                                    "status":
+                                                                        "${Color_list[i]["status"]}",
+                                                                    "date_at":
+                                                                        "$Date_at",
+                                                                  };
+                                                                  dbData!['value'] =
+                                                                      tempColor;
+                                                                  Map<String,
+                                                                          dynamic>
+                                                                      where = {
+                                                                    'table':
+                                                                        "attribute",
+                                                                    'id': id,
+                                                                    'value':
+                                                                        tempColor
+                                                                  };
+                                                                  dbUpdate(db,
+                                                                      where);
+                                                                  Update_initial(
+                                                                      id);
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                });
 
-                                                                 setState(() {
-
-                                var tempColor = dbData!['value'];                      
-                                 tempColor["${Color_list[i]["name"]}"] =  {
-                                   "name" : "${Color_list[i]["name"]}",
-                                   "color" : "$hexString",
-                                   "status" : "${Color_list[i]["status"]}",
-                                   "date_at": "$Date_at",
-                                    };
-                                 dbData!['value'] = tempColor;
-                                 Map<String, dynamic> where = {
-                                'table': "attribute",
-                               'id': id,
-                               'value': tempColor
-                            };
-                            dbUpdate(db, where) ;
-                              Update_initial(id);
-                                  Navigator.of(context).pop();
-
+                                                                //dismiss the color picker
+                                                              },
+                                                            ),
+                                                          ],
+                                                        );
                                                       });
-                                                 
-                                                          //dismiss the color picker
-                                                          },
-                                                        ),
-                                                      ],
-                                                    );
-                                                  });
-
-                                            },
-                                            child: Container(
-                                              width: 10.0,
-                                              child: Container(
-                                                margin: EdgeInsets.symmetric(
-                                                    horizontal: 15),
-                                                height: 30,
-                                                width: 10,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    border: Border.all(
-                                                        color: Colors.white,
-                                                        width: 5.0),
-                                                    color: (Color_list[i]
-                                                                ['color'] ==
-                                                            null)
-                                                        ? Color.fromARGB(0, 0, 0, 0)
-                                                        : Color(int.parse(
-                                                            Color_list[i]
-                                                                    ['color']
-                                                                .toString())) 
-                                                    ),
-                                              ),
-                                            ),
-                                          ))
-                                          :
-                                        SizedBox(),
+                                                },
+                                                child: Container(
+                                                  width: 10.0,
+                                                  child: Container(
+                                                    margin:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 15),
+                                                    height: 30,
+                                                    width: 10,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        border: Border.all(
+                                                            color: Colors.white,
+                                                            width: 5.0),
+                                                        color: (Color_list[i]
+                                                                    ['color'] ==
+                                                                null)
+                                                            ? Color.fromARGB(
+                                                                0, 0, 0, 0)
+                                                            : Color(int.parse(
+                                                                Color_list[i][
+                                                                        'color']
+                                                                    .toString()))),
+                                                  ),
+                                                ),
+                                              ))
+                                          : SizedBox(),
                                       Padding(
                                         padding: const EdgeInsets.all(10.0),
-                                        child: 
-                                        Text(
+                                        child: Text(
                                             "${Color_list[i]["status"]}",
-                                                style: themeTextStyle(
+                                            style: themeTextStyle(
                                                 color: Colors.black,
                                                 size: 15,
                                                 fw: FontWeight.normal)),
@@ -1176,28 +1218,28 @@ class _AttributeAddState extends State<AttributeAdd> {
                     themeButton3(context, () {
                       if (Sub_AttributeController.text.isNotEmpty) {
                         setState(() {
-                          var tempColor = dbData!['value'];                      
-                              tempColor[Sub_AttributeController.text] =  {
-                                "name" : "${Sub_AttributeController.text}",
-                                "color" : hexString,
-                                "status" : "$_Status",
-                                "date_at": "$Date_at" ,
-                                    };
-                               dbData!['value'] = tempColor;
-                            Map<String, dynamic> where = {
+                          var tempColor = dbData!['value'];
+                          tempColor[Sub_AttributeController.text] = {
+                            "name": "${Sub_AttributeController.text}",
+                            "color": hexString,
+                            "status": "$_Status",
+                            "date_at": "$Date_at",
+                          };
+                          dbData!['value'] = tempColor;
+                          Map<String, dynamic> where = {
                             'table': "attribute",
                             'id': id,
                             'value': tempColor
-                            };
-                            dbUpdate(db, where);
-                            Update_initial(id);
+                          };
+                          dbUpdate(db, where);
+                          Update_initial(id);
                           _Status = null;
                           Sub_AttributeController.text = "";
                         });
                       } else {
                         themeAlert(context, 'Please Enter Required value!',
                             type: "error");
-                        }
+                      }
                     }, buttonColor: Colors.green, label: "Add New"),
                     SizedBox(
                       width: 10,

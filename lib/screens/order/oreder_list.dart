@@ -4,8 +4,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/screens/order/order_new.dart';
-import 'package:crm_demo/screens/order/product.dart';
 import 'package:crm_demo/screens/order/syncPdf.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/foundation.dart';
@@ -16,7 +14,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/firebase_functions.dart';
@@ -28,7 +25,9 @@ import '../dashboard/components/recent_files.dart';
 import '../dashboard/components/storage_details.dart';
 import 'package:file_picker/file_picker.dart';
 
+import '../inventry/qr_code.dart';
 import 'invoice_service.dart';
+import 'dart:ui' as ui;
 
 class OrderList extends StatefulWidget {
   const OrderList({super.key});
@@ -37,6 +36,7 @@ class OrderList extends StatefulWidget {
 }
 
 class _OrderListState extends State<OrderList> {
+  GlobalKey globalKey = GlobalKey();
   final _formKey = GlobalKey<FormState>();
   final Buyer_name_Controller = TextEditingController();
   final Buyer_Mobile_Controller = TextEditingController();
@@ -46,7 +46,7 @@ class _OrderListState extends State<OrderList> {
   String _PerentCate = '';
   String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
   ///////////////////////////////////////////////////////////////////////////
-  final PdfInvoiceService service = PdfInvoiceService();
+  // final PdfInvoiceService service = PdfInvoiceService(title: "Saurabh Yadav");
   Future<void> savePdfFile(String fileName, Uint8List byteList) async {
     if (kIsWeb) {
       Navigator.push(
@@ -57,7 +57,6 @@ class _OrderListState extends State<OrderList> {
       );
     } else {
       final output = await getTemporaryDirectory();
-      // print("$output   ++++++++");
       var filePath = "${output.path}/$fileName.pdf";
       final file = File(filePath);
       await file.writeAsBytes(byteList);
@@ -182,21 +181,21 @@ class _OrderListState extends State<OrderList> {
 
 ///////     Update data collection ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  var Buy_Name;
-  var category;
-  // var _Status;
-  var _PerentC;
-  var product_type;
-  // var price_data;
+  // var Buy_Name;
+  // var category;
+  // // var _Status;
+  // var _PerentC;
+  // var product_type;
+  // // var price_data;
 
-  ///
-  var mrp;
-  var sell;
-  var disc;
-  var stock;
-  var ship;
-  var pro_img;
-  //
+  // ///
+  // var mrp;
+  // var sell;
+  // var disc;
+  // var stock;
+  // var ship;
+  // var pro_img;
+  // //
 ////////////////////////  Data Get for Update++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   Map<String, dynamic>? update_order_data;
   Future Update_initial(id) async {
@@ -208,7 +207,11 @@ class _OrderListState extends State<OrderList> {
         // SlugUrlController.text = (dbData['name'] == null) ? '' : dbData['name'];
 
         _PerentCate = dbData!['category'];
-        _StatusValue = dbData!['status'];
+        _StatusValue = (dbData!['status'] == "1")
+            ? "Active"
+            : (dbData!['status'] == "2")
+                ? "Inactive"
+                : "";
         Buyer_name_Controller.text = dbData!['buyer_name'];
         Buyer_Mobile_Controller.text = dbData!['buyer_mobile'];
         Buyer_Email_Controller.text = dbData!['buyer_email'];
@@ -321,7 +324,7 @@ class _OrderListState extends State<OrderList> {
     });
   }
 
-/////////////======== ========= ========== ======================================
+/////////////======== ========= ========== ============
 
 ///////////++++++++++++++++++++++++++++++++++++++++++
   clearText() {
@@ -389,7 +392,7 @@ class _OrderListState extends State<OrderList> {
             });
           }, buttonColor: Colors.blue, iconColor: Colors.black),
           Container(
-            margin: EdgeInsets.all(10),
+            margin: EdgeInsets.symmetric(horizontal: 5.0),
             decoration: BoxDecoration(
               color: secondaryColor,
             ),
@@ -426,7 +429,6 @@ class _OrderListState extends State<OrderList> {
                                 Container(
                                   margin: EdgeInsets.symmetric(horizontal: 5),
                                   padding: EdgeInsets.all(2),
-                                  height: 20,
                                   color: Colors.white,
                                   child: DropdownButton<int>(
                                     dropdownColor: Colors.white,
@@ -468,7 +470,11 @@ class _OrderListState extends State<OrderList> {
                             )
                           ],
                         ),
-                        SizedBox(height: 40, width: 300, child: SearchField())
+                        Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            child: SearchField())
                       ],
                     )),
                 SizedBox(
@@ -601,11 +607,15 @@ class _OrderListState extends State<OrderList> {
                               OrderList[index]['buyer_name'],
                               OrderList[index]['category'],
                               (OrderList[index]['status'] == "1")
-                                  ? "Success"
+                                  ? "Active"
                                   : (OrderList[index]['status'] == "2")
                                       ? "Inactive"
                                       : "",
                               OrderList[index]['date_at'],
+                              OrderList[index]['buyer_mobile'],
+                              OrderList[index]['buyer_email'],
+                              OrderList[index]['buyer_address'],
+                              OrderList[index]['price_details'],
                             )
                           : tableRowWidget(
                               "${index + 1}",
@@ -619,7 +629,10 @@ class _OrderListState extends State<OrderList> {
                                       ? "Inactive"
                                       : "",
                               OrderList[index]['date_at'],
-                              //OrderList[index]['date_at']
+                              OrderList[index]['buyer_mobile'],
+                              OrderList[index]['buyer_email'],
+                              OrderList[index]['buyer_address'],
+                              OrderList[index]['price_details'],
                             )
                   ],
                 ),
@@ -638,7 +651,11 @@ class _OrderListState extends State<OrderList> {
       _product,
       _price,
       pro_status, //del_status,
-      pay_date) {
+      pay_date,
+      buyer_mobile,
+      buyer_email,
+      buyer_address,
+      price_details) {
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -752,11 +769,20 @@ class _OrderListState extends State<OrderList> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: RowFor_Mobile_web(
           context,
-          () {
-            setState(() async {
-              final data = await service.createInvoice();
-              savePdfFile("invoice", data);
-            });
+          () async {
+            print("Tedj    +++++++888++++");
+            final data = await PdfInvoiceService(
+              orderID: "$odID",
+              category: "$_product",
+              oderDate: "$pay_date",
+              buyername: "$user",
+              BuyerMobile: "$buyer_mobile",
+              BuyerEmail: "$buyer_email",
+              BuyerAddress: "$buyer_address",
+              PriceDetail: price_details,
+            ).createInvoice();
+            // final data = await service.createInvoice();
+            savePdfFile("invoice", data);
           },
           () {
             setState(() {
@@ -777,8 +803,8 @@ class _OrderListState extends State<OrderList> {
 
 /////////////   ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  TableRow tableRowWidget_mobile(
-      String odID, user, _product, pro_status, pay_date) {
+  TableRow tableRowWidget_mobile(String odID, user, _product, pro_status,
+      pay_date, buyer_mobile, buyer_email, buyer_address, price_details) {
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -820,8 +846,19 @@ class _OrderListState extends State<OrderList> {
                       ),
                       RowFor_Mobile_web(context, () {
                         setState(() async {
-                          final data = await service.createInvoice();
+                          final data = await PdfInvoiceService(
+                            orderID: "$odID",
+                            category: "$_product",
+                            oderDate: "$pay_date",
+                            buyername: "$user",
+                            BuyerMobile: "$buyer_mobile",
+                            BuyerEmail: "$buyer_email",
+                            BuyerAddress: "$buyer_address",
+                            PriceDetail: price_details,
+                          ).createInvoice();
                           savePdfFile("invoice", data);
+                          // // final data = await service.createInvoice();
+                          // savePdfFile("invoice", data);
                         });
                       }, () {
                         setState(() async {
@@ -830,6 +867,8 @@ class _OrderListState extends State<OrderList> {
                       }, () {
                         setState(() async {
                           _Update_wd = true;
+                          _Order_ID = odID;
+                          Update_initial(odID);
                         });
                       })
                     ],
@@ -1192,7 +1231,7 @@ class _OrderListState extends State<OrderList> {
             ),
           ),
           Container(
-              padding: EdgeInsets.all(defaultPadding),
+              padding: EdgeInsets.all(10),
               margin: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.black12,
@@ -1217,6 +1256,14 @@ class _OrderListState extends State<OrderList> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       themeButton3(context, () {
+                        setState(() {
+                          clearText();
+                        });
+                      }, label: "Reset", buttonColor: Colors.black),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      themeButton3(context, () {
                         if (_formKey.currentState!.validate()) {
                           setState(() {
                             addList();
@@ -1226,14 +1273,6 @@ class _OrderListState extends State<OrderList> {
                               type: "error");
                         }
                       }, buttonColor: Colors.green, label: "Submit"),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      themeButton3(context, () {
-                        setState(() {
-                          clearText();
-                        });
-                      }, label: "Reset", buttonColor: Colors.black),
                     ],
                   ),
                   SizedBox(height: 20.0),
@@ -1665,7 +1704,6 @@ class _OrderListState extends State<OrderList> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  width: 100,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           primary: Colors.amber // Background color
@@ -1676,8 +1714,8 @@ class _OrderListState extends State<OrderList> {
                         });
                       },
                       child: Text(
-                        "+ Add",
-                        style: GoogleFonts.alike(fontSize: 12),
+                        "+",
+                        style: GoogleFonts.alike(fontSize: 30),
                       )),
                 ),
                 SizedBox(
@@ -1685,7 +1723,6 @@ class _OrderListState extends State<OrderList> {
                 ),
                 (Order_details != 1)
                     ? Container(
-                        width: 100,
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               primary: Colors.red, // Background color
@@ -1695,8 +1732,8 @@ class _OrderListState extends State<OrderList> {
                                 Order_details--;
                               });
                             },
-                            child: Text("- Remove",
-                                style: GoogleFonts.alike(fontSize: 12))),
+                            child: Text("-",
+                                style: GoogleFonts.alike(fontSize: 30))),
                       )
                     : SizedBox()
               ],
@@ -1804,7 +1841,7 @@ class _OrderListState extends State<OrderList> {
     var tempData = (_itemCtr[tempType] != null) ? _itemCtr[tempType] : {};
     return Container(
         margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
-        padding: EdgeInsets.all(8.0),
+        padding: EdgeInsets.symmetric(horizontal: 3.0),
         decoration: BoxDecoration(
           color: Color.fromARGB(228, 182, 222, 248),
           border:
@@ -1812,7 +1849,8 @@ class _OrderListState extends State<OrderList> {
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Container(
-            padding: EdgeInsets.symmetric(vertical: 3.0, horizontal: 5.0),
+            padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 5.0),
+            margin: EdgeInsets.symmetric(horizontal: 3, vertical: 3),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10), color: themeBG2),
             child: Text(
@@ -2055,7 +2093,7 @@ class _OrderListState extends State<OrderList> {
                     .toList();
                 if (_controllers[key]!.text.isNotEmpty &&
                     foodListSearch!.length == 0) {
-                  print('foodListSearch length ${foodListSearch!.length}');
+                  // print('foodListSearch length ${foodListSearch!.length}');
                 }
               });
 
@@ -2070,7 +2108,7 @@ class _OrderListState extends State<OrderList> {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10)),
-                width: MediaQuery.of(context).size.width * 0.2,
+                width: MediaQuery.of(context).size.width,
                 child: Column(children: [
                   (_controllers[key]!.text.isNotEmpty &&
                           foodListSearch!.length == 0)
@@ -2185,6 +2223,7 @@ class _OrderListState extends State<OrderList> {
 ///////////////////////////////// @4 Upadate Order  ++++++++++++++++++++++++++++++++++++++++++++++++++++
   var _Update_wd = false;
   var _Order_ID;
+
   Widget Update_Order(BuildContext context, sub_text, O_ID) {
     return Container(
       height: MediaQuery.of(context).size.height,
@@ -2241,7 +2280,7 @@ class _OrderListState extends State<OrderList> {
             ),
           ),
           Container(
-              padding: EdgeInsets.all(defaultPadding),
+              // padding: EdgeInsets.all(10),
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               decoration: BoxDecoration(
                 color: Colors.black12,
@@ -2266,6 +2305,14 @@ class _OrderListState extends State<OrderList> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       themeButton3(context, () {
+                        setState(() {
+                          clearText();
+                        });
+                      }, label: "Reset", buttonColor: Colors.black),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      themeButton3(context, () {
                         if (_formKey.currentState!.validate()) {
                           setState(() {
                             updatelist(O_ID);
@@ -2275,14 +2322,6 @@ class _OrderListState extends State<OrderList> {
                               type: "error");
                         }
                       }, buttonColor: Colors.green, label: "Submit"),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      themeButton3(context, () {
-                        setState(() {
-                          clearText();
-                        });
-                      }, label: "Reset", buttonColor: Colors.black),
                     ],
                   ),
                   SizedBox(height: 20.0),
@@ -2295,8 +2334,6 @@ class _OrderListState extends State<OrderList> {
 ///////////////////===============================================================
 
   ///
-  // wd_input_field(
-  //     context, 'Enter Product Name', 'product_name', itemNo),
   Map<String, TextEditingController> _controllers = new Map();
   // input fields
   Widget wd_input_field(BuildContext context, label, ctrName, conName) {
