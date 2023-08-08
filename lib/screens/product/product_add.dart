@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals, unused_local_variable, deprecated_member_use
 
 import 'dart:convert';
 import 'dart:io';
@@ -41,7 +41,8 @@ class _ProductAddState extends State<ProductAdd> {
   int _StatusValue = 1;
 ////////  Map advance product Controller++++++++++++++++
   Map<String, TextEditingController> _controllers = new Map();
-  Map<String, TextEditingController> _controllers2 = new Map();
+  // Map<String, TextEditingController> _controllers2 = new Map();
+  Map<String, TextEditingController> _controllers_Address = new Map();
 
   // Map<String, TextEditingController> ctr_mrp = new Map();
   // Map<String, TextEditingController> ctr_sell_p = new Map();
@@ -62,14 +63,16 @@ class _ProductAddState extends State<ProductAdd> {
 /////================================================
   @override
   clearText() {
-    NameController.clear();
-    SlugUrlController.clear();
-    DiscountController.clear();
-    _PerentCate;
-    _StatusValue;
-    clear_imageData();
-    _controllers = new Map();
-    _itemCtr = {};
+    setState(() {
+      NameController.clear();
+      SlugUrlController.clear();
+      DiscountController.clear();
+      _PerentCate;
+      _StatusValue;
+      clear_imageData();
+      _controllers = new Map();
+      _itemCtr = {};
+    });
   }
 
   ///// File Picker +++++++++++++++++++++++++++++++++++++++++
@@ -225,14 +228,37 @@ class _ProductAddState extends State<ProductAdd> {
     var alert = '';
 
     Map<dynamic, dynamic> itemField = {};
+    Map<dynamic, dynamic> location_pro = {};
     int totalItem = 0;
     var featureImg = '';
+
+/////  Loop For Address Store ++++++++++++++++++++++++++++
+    _controllers_Address.forEach((k, val) {
+      var tempVar = _controllers_Address['$k']?.text;
+      var temp = k.split("___");
+      var key = temp[0];
+      var field = temp[1];
+      var tempData = (location_pro[key] == null) ? {} : location_pro[key];
+
+      alert = (tempVar == null)
+          ? 'Please Enter valid ${field.toUpperCase()}'
+          : alert;
+      tempData[field] = tempVar;
+
+      if (tempVar != '') {
+        location_pro[key] = tempData;
+      }
+    });
+
+////////  Loop For Product Detais Hold
+    print("$_controllers  +++gggg1++");
     _controllers.forEach((k, val) {
       var tempVar = _controllers['$k']?.text;
       var temp = k.split("___");
       var key = temp[0];
       var field = temp[1];
       var tempData = (itemField[key] == null) ? {} : itemField[key];
+      print("$tempData  +++gggg3++");
 
       totalItem = (field == 'no_item' &&
               tempVar != '' &&
@@ -256,9 +282,7 @@ class _ProductAddState extends State<ProductAdd> {
       }
 
       tempData[field] = tempVar;
-      // tempData.forEach((k,v) {
 
-      // });
       if (Submit_subProductBox.contains(key)) {
         itemField[key] = tempData;
       }
@@ -268,34 +292,54 @@ class _ProductAddState extends State<ProductAdd> {
       themeAlert(context, alert, type: 'error');
       return false;
     }
+
     if (basic_Product == true) {
-      var temp = itemField['basic'];
-      itemField = {};
-      itemField['basic'] = temp;
+      // var temp = itemField['basic'];
+      // itemField = {};
+      // itemField['basic'] = temp;
+      _controllers.forEach((key, value) {
+        print("'$key : $value'  +++gggg++");
+      });
     } else {
       itemField.remove('basic');
     }
 
     Map<String, dynamic> w = {};
-    w = {
-      'table': "product",
-      'name': "${NameController.text}",
-      'slug_url': "${SlugUrlController.text}",
-      'product_type': (basic_Product == true) ? "basic" : "featured",
-      "price_details": itemField,
-      "no_item": totalItem,
-      "img": featureImg,
-      'category': "$_PerentCate",
-      'status': "$_StatusValue",
-      "date_at": "$Date_at",
-      'attribute': selectedCheck,
-      'attributeInner': Submit_subProductBox,
-    };
+    w = (basic_Product == true)
+        ? {
+            'table': "product",
+            'name': "${NameController.text}",
+            'slug_url': "${SlugUrlController.text}",
+            "location_of_product": location_pro,
+            'product_type': "basic",
+            "price_details": itemField,
+            // "no_item": totalItem,
+            "img": featureImg,
+            'category': "$_PerentCate",
+            'status': "$_StatusValue",
+            "date_at": "$Date_at",
+          }
+        : {
+            'table': "product",
+            'name': "${NameController.text}",
+            'slug_url': "${SlugUrlController.text}",
+            "location_of_product": location_pro,
+            'product_type': "featured",
+            "price_details": itemField,
+            "no_item": totalItem,
+            "img": featureImg,
+            'category': "$_PerentCate",
+            'status': "$_StatusValue",
+            "date_at": "$Date_at",
+            'attribute': selectedCheck,
+            'attributeInner': Submit_subProductBox,
+          };
     if (edit) {
       w['id'] = update_id;
       await dbUpdate(db, w);
       themeAlert(context, "Successfully Updated");
     } else {
+      // print("$location_pro  +++++++++++++++");
       await dbSave(db, w);
       themeAlert(context, "Successfully Uploaded");
     }
@@ -478,6 +522,17 @@ class _ProductAddState extends State<ProductAdd> {
                 _controllers[key] = TextEditingController();
                 _controllers[key]?.text = vl;
               }
+            });
+          });
+        }
+
+        if (dbData['location_of_product'] != null) {
+          dbData['location_of_product'].forEach((k, v) {
+            v.forEach((ke, vl) {
+              var key = "${k}___$ke";
+
+              _controllers_Address[key] = TextEditingController();
+              _controllers_Address[key]?.text = vl;
             });
           });
         }
@@ -854,52 +909,114 @@ class _ProductAddState extends State<ProductAdd> {
                             "Enter Slug Url")
                       ],
                     )),
+                  ////////
+                  Divider(
+                    thickness: 1.5,
+                    color: Colors.black12,
+                  ),
 
+                  ///  Address Details Of Prod
+                  Column(
+                    children: [
+                      SizedBox(height: 20.0),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.edit_location_alt,
+                            size: 30,
+                            color: Colors.blue,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Address Of Product",
+                              style: GoogleFonts.alike(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18)),
+                        ],
+                      ),
+                      // dropdown
+                      SizedBox(height: 10.0),
+                      wd_add_product(
+                        context,
+                      ),
+                      SizedBox(height: 10.0),
+                    ],
+                  ),
+
+                  ///
+                  Divider(
+                    thickness: 1.5,
+                    color: Colors.black12,
+                  ),
                   //////////  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-                  Row(children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          basic_Product = true;
-                          _controllers = new Map();
-                        });
-                      },
-                      child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          margin:
-                              EdgeInsets.symmetric(horizontal: 5, vertical: 20),
-                          height: 40,
-                          decoration: BoxDecoration(
-                              color: (basic_Product == true)
-                                  ? Colors.green
-                                  : Colors.grey,
-                              border: Border.all(color: Colors.black38),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Text("Basic Product")),
-                    ),
-                    GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            basic_Product = false;
-                            _controllers = new Map();
-                          });
-                        },
-                        child: Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.symmetric(horizontal: 5),
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 20),
-                            height: 40,
-                            decoration: BoxDecoration(
-                                color: (basic_Product == false)
-                                    ? Colors.green
-                                    : Colors.grey,
-                                border: Border.all(color: Colors.black38),
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Text("Fetured Product"))),
-                  ]),
+                  Column(
+                    children: [
+                      SizedBox(height: 30),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.production_quantity_limits_sharp,
+                            size: 30,
+                            color: Colors.blue,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Type Of Product",
+                              style: GoogleFonts.alike(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18)),
+                        ],
+                      ),
+                      Row(children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              basic_Product = true;
+                              _controllers = new Map();
+                            });
+                          },
+                          child: Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 5, vertical: 20),
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: (basic_Product == true)
+                                      ? Colors.green
+                                      : Colors.grey,
+                                  border: Border.all(color: Colors.black38),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Text("Basic Product")),
+                        ),
+                        GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                basic_Product = false;
+                                _controllers = new Map();
+                              });
+                            },
+                            child: Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 5, vertical: 20),
+                                height: 40,
+                                decoration: BoxDecoration(
+                                    color: (basic_Product == false)
+                                        ? Colors.green
+                                        : Colors.grey,
+                                    border: Border.all(color: Colors.black38),
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Text("Fetured Product"))),
+                      ]),
+                    ],
+                  ),
 
                   /////////  Basic Product Rate Deatils +++++++++++++++++++++++
 
@@ -1162,32 +1279,34 @@ class _ProductAddState extends State<ProductAdd> {
                                         height: 20,
                                         color: Colors.white,
                                         child: DropdownButton<int>(
-                                            dropdownColor: Colors.white,
-                                            iconEnabledColor: Colors.black,
-                                            hint: Text(
-                                              "$_number_select",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12),
-                                            ),
-                                            value: _number_select,
-                                            items: <int>[10, 25, 50, 100]
-                                                .map((int value) {
-                                              return new DropdownMenuItem<int>(
-                                                value: value,
-                                                child: new Text(
-                                                  value.toString(),
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 12),
-                                                ),
-                                              );
-                                            }).toList(),
-                                            onChanged: (newVal) {
-                                              setState(() {
-                                                _number_select = newVal!;
-                                              });
-                                            }),
+                                          dropdownColor: Colors.white,
+                                          iconEnabledColor: Colors.black,
+                                          hint: Text(
+                                            "$_number_select",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12),
+                                          ),
+                                          value: _number_select,
+                                          items: <int>[10, 25, 50, 100]
+                                              .map((int value) {
+                                            return new DropdownMenuItem<int>(
+                                              value: value,
+                                              child: new Text(
+                                                value.toString(),
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12),
+                                              ),
+                                            );
+                                          }).toList(),
+                                          onChanged: (newVal) {
+                                            setState(() {
+                                              _number_select = newVal!;
+                                            });
+                                          },
+                                          underline: SizedBox(),
+                                        ),
                                       ),
                                       Text(
                                         "entries",
@@ -1905,18 +2024,18 @@ class _ProductAddState extends State<ProductAdd> {
 
 ///////////////////////////
 
-/////////// Discount  ++++++++
-  Mp_Discount_cal(mrp, sell) {
-    var mrpp = int.parse(mrp);
-    var sellpp = int.parse(sell);
-    setState(() {
-      var DiscountPP = (((mrpp - sellpp) / mrpp * 100));
-      DiscountController.text = DiscountPP.toStringAsFixed(2);
-      (basic_Product == true)
-          ? _controllers2["discount"] = DiscountController
-          : _controllers["discount"] = DiscountController;
-    });
-  }
+// /////////// Discount  ++++++++
+//   Mp_Discount_cal(mrp, sell) {
+//     var mrpp = int.parse(mrp);
+//     var sellpp = int.parse(sell);
+//     setState(() {
+//       var DiscountPP = (((mrpp - sellpp) / mrpp * 100));
+//       DiscountController.text = DiscountPP.toStringAsFixed(2);
+//       (basic_Product == true)
+//           ? _controllers2["discount"] = DiscountController
+//           : _controllers["discount"] = DiscountController;
+//     });
+//   }
 
 ///////////// this is for  Featured Product   +++++++++++++++++++++++++++++++++++++++
 ///////////// this is for  Featured Product   +++++++++++++++++++++++++++++++++++++++
@@ -1936,10 +2055,9 @@ class _ProductAddState extends State<ProductAdd> {
       margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
       padding: EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 219, 219, 219),
-        border:
-            Border.all(width: 1.0, color: Color.fromARGB(255, 187, 187, 187)),
-      ),
+          color: const Color.fromARGB(255, 219, 219, 219),
+          border: Border.all(width: 1.0, color: Colors.blue),
+          borderRadius: BorderRadius.circular(10)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2084,8 +2202,10 @@ class _ProductAddState extends State<ProductAdd> {
                               color: Colors.black,
                               size: 15,
                               fw: FontWeight.bold)),
-                      Text_field_rate(
-                          context, "1", "shiping_price", "Shiping Price"),
+                      // Text_field_rate(
+                      //     context, "1", "shiping_price", "Shiping Price"),
+                      wd_input_field(
+                          context, 'Shiping Price', 'shiping_price', itemNo),
                     ],
                   )),
                 ),
@@ -2102,8 +2222,10 @@ class _ProductAddState extends State<ProductAdd> {
                               size: 15,
                               fw: FontWeight.bold)),
                       // Text_rate(context, NoitemController, "Selling Price")
-                      Text_field_rate(
-                          context, "1", "stock_item", "Stock (No. item)"),
+                      // Text_field_rate(
+                      //     context, "1", "stock_item", "Stock (No. item)"),
+                      wd_input_field(
+                          context, 'Stock (No. item)', 'no_item', itemNo),
                     ],
                   )),
                 ),
@@ -2303,204 +2425,204 @@ class _ProductAddState extends State<ProductAdd> {
             child: Icon(Icons.cancel_outlined, color: Colors.red, size: 15)));
   }
 
-///////////  Map text field   ++++++++++++++++++++++++++++
-  Widget Text_field_rate(
-      BuildContext context, ctr_type, controller_name, hint) {
-    if (ctr_type == '1') {
-      var tempStr = (_controllers["$controller_name"]?.text == null)
-          ? ''
-          : _controllers["$controller_name"]?.text;
-      _controllers["$controller_name"] = TextEditingController();
-      _controllers["$controller_name"]?.text = tempStr.toString();
-    } else {
-      var tempStr = (_controllers2["$controller_name"]?.text == null)
-          ? ''
-          : _controllers2["$controller_name"]?.text;
-      _controllers2["$controller_name"] = TextEditingController();
-      _controllers2["$controller_name"]?.text = tempStr.toString();
-    }
-    return Container(
-      height: 40,
-      margin: EdgeInsets.only(
-        top: 10,
-        bottom: 10,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: TextFormField(
-        obscureText: false,
-        controller: (ctr_type == '1')
-            ? _controllers["$controller_name"]
-            : _controllers2["$controller_name"],
-        onChanged: (value) async {
-          if (ctr_type == '1') {
-            if (_controllers["mrp_price"]!.text.isNotEmpty &&
-                _controllers["$controller_name"]!.text ==
-                    _controllers["selling_price"]!.text) {
-              Mp_Discount_cal(_controllers["mrp_price"]!.text,
-                  _controllers["selling_price"]!.text);
-            }
-          }
-          if (ctr_type == '2') {
-            if (_controllers2["mrp_price"]!.text.isNotEmpty &&
-                _controllers2["$controller_name"]!.text ==
-                    _controllers2["selling_price"]!.text) {
-              Mp_Discount_cal(_controllers2["mrp_price"]!.text,
-                  _controllers2["selling_price"]!.text);
-            }
-          }
-        },
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please Enter value';
-          }
-        },
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          hintText: '$hint',
-          hintStyle: TextStyle(
-            color: Colors.grey,
-            fontSize: 16,
-          ),
-          suffixIcon: Container(
-            height: 10,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    if (ctr_type == '1') {
-                      var mrpIncre =
-                          int.parse(_controllers["$controller_name"]!.text);
-                      setState(() {
-                        mrpIncre++;
-                        _controllers["$controller_name"]!.text =
-                            mrpIncre.toString();
-                      });
-                    }
-                    if (ctr_type == '2') {
-                      var mrpIncre =
-                          int.parse(_controllers2["$controller_name"]!.text);
-                      setState(() {
-                        mrpIncre++;
-                        _controllers2["$controller_name"]!.text =
-                            mrpIncre.toString();
-                      });
-                    }
-                  },
-                  child: Icon(Icons.expand_less_rounded,
-                      size: 20, color: Colors.black),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    if (ctr_type == '1') {
-                      var mrpIncre =
-                          int.parse(_controllers["$controller_name"]!.text);
-                      setState(() {
-                        mrpIncre--;
-                        _controllers["$controller_name"]!.text =
-                            mrpIncre.toString();
-                      });
-                    }
-                    if (ctr_type == '2') {
-                      var mrpIncre =
-                          int.parse(_controllers2["$controller_name"]!.text);
-                      setState(() {
-                        mrpIncre--;
-                        _controllers2["$controller_name"]!.text =
-                            mrpIncre.toString();
-                      });
-                    }
-                  },
-                  child: Icon(Icons.expand_more_outlined,
-                      size: 20, color: Colors.black),
-                )
-              ],
-            ),
-          ),
-        ),
-        style: TextStyle(color: Colors.black),
-        keyboardType: TextInputType.number,
-        inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.digitsOnly
-        ], // Onl
-      ),
-    );
-  }
-////////////==============================================
+// ///////////  Map text field   ++++++++++++++++++++++++++++
+//   Widget Text_field_rate(
+//       BuildContext context, ctr_type, controller_name, hint) {
+//     if (ctr_type == '1') {
+//       var tempStr = (_controllers["$controller_name"]?.text == null)
+//           ? ''
+//           : _controllers["$controller_name"]?.text;
+//       _controllers["$controller_name"] = TextEditingController();
+//       _controllers["$controller_name"]?.text = tempStr.toString();
+//     } else {
+//       var tempStr = (_controllers2["$controller_name"]?.text == null)
+//           ? ''
+//           : _controllers2["$controller_name"]?.text;
+//       _controllers2["$controller_name"] = TextEditingController();
+//       _controllers2["$controller_name"]?.text = tempStr.toString();
+//     }
+//     return Container(
+//       height: 40,
+//       margin: EdgeInsets.only(
+//         top: 10,
+//         bottom: 10,
+//       ),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(10),
+//       ),
+//       child: TextFormField(
+//         obscureText: false,
+//         controller: (ctr_type == '1')
+//             ? _controllers["$controller_name"]
+//             : _controllers2["$controller_name"],
+//         onChanged: (value) async {
+//           if (ctr_type == '1') {
+//             if (_controllers["mrp_price"]!.text.isNotEmpty &&
+//                 _controllers["$controller_name"]!.text ==
+//                     _controllers["selling_price"]!.text) {
+//               Mp_Discount_cal(_controllers["mrp_price"]!.text,
+//                   _controllers["selling_price"]!.text);
+//             }
+//           }
+//           if (ctr_type == '2') {
+//             if (_controllers2["mrp_price"]!.text.isNotEmpty &&
+//                 _controllers2["$controller_name"]!.text ==
+//                     _controllers2["selling_price"]!.text) {
+//               Mp_Discount_cal(_controllers2["mrp_price"]!.text,
+//                   _controllers2["selling_price"]!.text);
+//             }
+//           }
+//         },
+//         validator: (value) {
+//           if (value == null || value.isEmpty) {
+//             return 'Please Enter value';
+//           }
+//         },
+//         decoration: InputDecoration(
+//           border: InputBorder.none,
+//           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+//           hintText: '$hint',
+//           hintStyle: TextStyle(
+//             color: Colors.grey,
+//             fontSize: 16,
+//           ),
+//           suffixIcon: Container(
+//             height: 10,
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.spaceAround,
+//               children: [
+//                 GestureDetector(
+//                   onTap: () {
+//                     if (ctr_type == '1') {
+//                       var mrpIncre =
+//                           int.parse(_controllers["$controller_name"]!.text);
+//                       setState(() {
+//                         mrpIncre++;
+//                         _controllers["$controller_name"]!.text =
+//                             mrpIncre.toString();
+//                       });
+//                     }
+//                     if (ctr_type == '2') {
+//                       var mrpIncre =
+//                           int.parse(_controllers2["$controller_name"]!.text);
+//                       setState(() {
+//                         mrpIncre++;
+//                         _controllers2["$controller_name"]!.text =
+//                             mrpIncre.toString();
+//                       });
+//                     }
+//                   },
+//                   child: Icon(Icons.expand_less_rounded,
+//                       size: 20, color: Colors.black),
+//                 ),
+//                 GestureDetector(
+//                   onTap: () {
+//                     if (ctr_type == '1') {
+//                       var mrpIncre =
+//                           int.parse(_controllers["$controller_name"]!.text);
+//                       setState(() {
+//                         mrpIncre--;
+//                         _controllers["$controller_name"]!.text =
+//                             mrpIncre.toString();
+//                       });
+//                     }
+//                     if (ctr_type == '2') {
+//                       var mrpIncre =
+//                           int.parse(_controllers2["$controller_name"]!.text);
+//                       setState(() {
+//                         mrpIncre--;
+//                         _controllers2["$controller_name"]!.text =
+//                             mrpIncre.toString();
+//                       });
+//                     }
+//                   },
+//                   child: Icon(Icons.expand_more_outlined,
+//                       size: 20, color: Colors.black),
+//                 )
+//               ],
+//             ),
+//           ),
+//         ),
+//         style: TextStyle(color: Colors.black),
+//         keyboardType: TextInputType.number,
+//         inputFormatters: <TextInputFormatter>[
+//           FilteringTextInputFormatter.digitsOnly
+//         ], // Onl
+//       ),
+//     );
+//   }
+// ////////////==============================================
 
-//////////// update text widget ++++++++++++++++
-  Widget Text_field_up(BuildContext context, ini_value, lebel, hint) {
-    return Container(
-        height: 40,
-        margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: TextFormField(
-          obscureText: false,
-          controller: ini_value,
-          onChanged: (value) async {
-            if (mrp.isNotEmpty && ini_value == sell) {
-              Mp_Discount_cal(mrp, sell);
-            }
-          },
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please Enter value';
-            }
-          },
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            hintText: '$hint',
-            hintStyle: TextStyle(
-              color: Colors.grey,
-              fontSize: 16,
-            ),
-            suffixIcon: Container(
-              height: 10,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      var mrpIncre = int.parse(ini_value!.text);
-                      setState(() {
-                        mrpIncre++;
-                        ini_value = mrpIncre.toString();
-                      });
-                    },
-                    child: Icon(Icons.expand_less_rounded,
-                        size: 20, color: Colors.black),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      var mrpIncre = int.parse(ini_value!.text);
-                      setState(() {
-                        mrpIncre--;
-                        ini_value = mrpIncre.toString();
-                      });
-                    },
-                    child: Icon(Icons.expand_more_outlined,
-                        size: 20, color: Colors.black),
-                  )
-                ],
-              ),
-            ),
-          ),
-          style: TextStyle(color: Colors.black),
-          keyboardType: TextInputType.number,
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly
-          ], // Onl
-        ));
-  }
-//////
+// //////////// update text widget ++++++++++++++++
+//   Widget Text_field_up(BuildContext context, ini_value, lebel, hint) {
+//     return Container(
+//         height: 40,
+//         margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(10),
+//         ),
+//         child: TextFormField(
+//           obscureText: false,
+//           controller: ini_value,
+//           onChanged: (value) async {
+//             if (mrp.isNotEmpty && ini_value == sell) {
+//               Mp_Discount_cal(mrp, sell);
+//             }
+//           },
+//           validator: (value) {
+//             if (value == null || value.isEmpty) {
+//               return 'Please Enter value';
+//             }
+//           },
+//           decoration: InputDecoration(
+//             border: InputBorder.none,
+//             contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+//             hintText: '$hint',
+//             hintStyle: TextStyle(
+//               color: Colors.grey,
+//               fontSize: 16,
+//             ),
+//             suffixIcon: Container(
+//               height: 10,
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+//                 children: [
+//                   GestureDetector(
+//                     onTap: () {
+//                       var mrpIncre = int.parse(ini_value!.text);
+//                       setState(() {
+//                         mrpIncre++;
+//                         ini_value = mrpIncre.toString();
+//                       });
+//                     },
+//                     child: Icon(Icons.expand_less_rounded,
+//                         size: 20, color: Colors.black),
+//                   ),
+//                   GestureDetector(
+//                     onTap: () {
+//                       var mrpIncre = int.parse(ini_value!.text);
+//                       setState(() {
+//                         mrpIncre--;
+//                         ini_value = mrpIncre.toString();
+//                       });
+//                     },
+//                     child: Icon(Icons.expand_more_outlined,
+//                         size: 20, color: Colors.black),
+//                   )
+//                 ],
+//               ),
+//             ),
+//           ),
+//           style: TextStyle(color: Colors.black),
+//           keyboardType: TextInputType.number,
+//           inputFormatters: <TextInputFormatter>[
+//             FilteringTextInputFormatter.digitsOnly
+//           ], // Onl
+//         ));
+//   }
+// //////
 
 ////////  Data bases Image call  +++++++++++++++++++++++++++++++
   List<String> _selectedOptions = [];
@@ -2696,32 +2818,32 @@ class _ProductAddState extends State<ProductAdd> {
       child: TextFormField(
         obscureText: false,
         controller: _controllers[key],
-        readOnly: (ctrName == 'discount') ? true : false,
-        onChanged: (value) async {
-          if (ctrName == 'sell_price' || ctrName == 'mrp') {
-            var tempMrp = _controllers['${conName}___mrp']?.text;
-            var tempSellPrice = _controllers['${conName}___sell_price']?.text;
+        // readOnly: (ctrName == 'discount') ? true : false,
+        // onChanged: (value) async {
+        //   if (ctrName == 'sell_price' || ctrName == 'mrp') {
+        //     var tempMrp = _controllers['${conName}___mrp']?.text;
+        //     var tempSellPrice = _controllers['${conName}___sell_price']?.text;
 
-            if (tempSellPrice != '' && tempMrp != '') {
-              var discount = (((int.parse(tempMrp.toString()) -
-                              int.parse(tempSellPrice.toString())) *
-                          100) /
-                      int.parse(tempMrp.toString()))
-                  .round();
+        //     if (tempSellPrice != '' && tempMrp != '') {
+        //       var discount = (((int.parse(tempMrp.toString()) -
+        //                       int.parse(tempSellPrice.toString())) *
+        //                   100) /
+        //               int.parse(tempMrp.toString()))
+        //           .round();
 
-              setState(() {
-                _controllers['${conName}___discount'] = TextEditingController();
-                _controllers['${conName}___discount']?.text =
-                    (discount == null) ? '' : discount.toString();
-              });
-            } else {
-              setState(() {
-                _controllers['${conName}___discount'] = TextEditingController();
-                _controllers['${conName}___discount']?.text = '';
-              });
-            }
-          }
-        },
+        //       setState(() {
+        //         _controllers['${conName}___discount'] = TextEditingController();
+        //         _controllers['${conName}___discount']?.text =
+        //             (discount == null) ? '' : discount.toString();
+        //       });
+        //     } else {
+        //       setState(() {
+        //         _controllers['${conName}___discount'] = TextEditingController();
+        //         _controllers['${conName}___discount']?.text = '';
+        //       });
+        //     }
+        //   }
+        // },
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please Enter value';
@@ -2735,24 +2857,24 @@ class _ProductAddState extends State<ProductAdd> {
             color: Colors.grey,
             fontSize: 16,
           ),
-          suffixIcon: Container(
-            height: 10,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: Icon(Icons.expand_less_rounded,
-                      size: 20, color: Colors.black),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Icon(Icons.expand_more_outlined,
-                      size: 20, color: Colors.black),
-                )
-              ],
-            ),
-          ),
+          // suffixIcon: Container(
+          //   height: 10,
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //     children: [
+          //       GestureDetector(
+          //         onTap: () {},
+          //         child: Icon(Icons.expand_less_rounded,
+          //             size: 20, color: Colors.black),
+          //       ),
+          //       GestureDetector(
+          //         onTap: () {},
+          //         child: Icon(Icons.expand_more_outlined,
+          //             size: 20, color: Colors.black),
+          //       )
+          //     ],
+          //   ),
+          // ),
         ),
         style: TextStyle(color: Colors.black),
         keyboardType: TextInputType.number,
@@ -2762,6 +2884,228 @@ class _ProductAddState extends State<ProductAdd> {
       ),
     );
   }
+
+//  @3b Add   Address Of Product Cib ======================================================
+  int Order_details = 1;
+  Widget wd_add_product(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.black45)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // wd_added_product_list(context),
+          // SizedBox(height: 10.0),
+          for (var i = 0; i < Order_details; i++)
+            wd_Address_details(context, "Address No._${i + 1}"),
+          SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.amber // Background color
+                          ),
+                      onPressed: () {
+                        setState(() {
+                          Order_details++;
+                        });
+                      },
+                      child: Text(
+                        "+",
+                        style: GoogleFonts.alike(fontSize: 30),
+                      )),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                (Order_details != 1)
+                    ? Container(
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.red, // Background color
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                Order_details--;
+                              });
+                            },
+                            child: Text("-",
+                                style: GoogleFonts.alike(fontSize: 30))),
+                      )
+                    : SizedBox()
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+///////////// this is for  Featured Product   +++++++++++++++++++++++++++++++++++++++
+  bool show_drop_list = false;
+  Map<dynamic, dynamic> _itemdCtr = {};
+  Widget wd_Address_details(BuildContext context, title) {
+    var itemNo = title;
+    // print("$itemNo   +++++++++++++++++++++++++++");
+    var tempType = itemNo;
+    var tempData = (_itemdCtr[tempType] != null) ? _itemdCtr[tempType] : {};
+    print("$tempData   +++++++++++++++++++++++++++");
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 3.0),
+        decoration: BoxDecoration(),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+            padding: EdgeInsets.all(2),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10), color: themeBG2),
+            child: Text(
+              "$title",
+              style: GoogleFonts.alike(
+                  fontWeight: FontWeight.normal, fontSize: 11),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(10),
+            color: Color.fromARGB(228, 182, 222, 248),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Number Of Item",
+                              style: GoogleFonts.alike(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold)),
+                          wd_Address_field(context, 'Enter Number Of Item',
+                              'number_of_item', itemNo),
+                        ],
+                      )),
+                    ),
+                    SizedBox(width: defaultPadding),
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Name Of Storage",
+                              style: GoogleFonts.alike(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold)),
+                          wd_Address_field(context, 'Enter Name Of Storage',
+                              'name_of_storage', itemNo),
+                        ],
+                      )),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )
+        ]));
+  }
+
+// input fields
+  Widget wd_Address_field(BuildContext context, label, ctrName, conName) {
+    // conName = conName;
+    var key = "${conName}___${ctrName}";
+
+    var tempStr = (_controllers_Address[key]?.text != null)
+        ? _controllers_Address[key]?.text
+        : '';
+
+    _controllers_Address[key] = TextEditingController();
+    _controllers_Address[key]?.text = tempStr.toString();
+
+    // for cursor show in input field at last
+    int stringLength = (tempStr == null) ? 0 : tempStr.length;
+    _controllers_Address[key]?.selection =
+        TextSelection.collapsed(offset: stringLength);
+
+    return Container(
+      height: 40,
+      margin: EdgeInsets.only(
+        top: 10,
+        bottom: 10,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: TextFormField(
+          obscureText: false,
+          controller: _controllers_Address[key],
+          // onChanged: (value) async {
+          //   // print("${_controllers_Address}   ++++++++++++++++++");
+          // },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please Enter value';
+            }
+          },
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            hintText: '$label',
+            hintStyle: TextStyle(
+              color: Colors.grey,
+              fontSize: 16,
+            ),
+            // suffixIcon: (ctrName == "number_of_item")
+            //     ? Container(
+            //         height: 10,
+            //         child: Column(
+            //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //           children: [
+            //             GestureDetector(
+            //               onTap: () {
+            //                 setState(() {});
+            //               },
+            //               child: Icon(Icons.expand_less_rounded,
+            //                   size: 20, color: Colors.black),
+            //             ),
+            //             GestureDetector(
+            //               onTap: () {},
+            //               child: Icon(Icons.expand_more_outlined,
+            //                   size: 20, color: Colors.black),
+            //             )
+            //           ],
+            //         ),
+            //       )
+            //     : SizedBox()
+          ),
+          style: TextStyle(color: Colors.black),
+          keyboardType: (ctrName == "number_of_item")
+              ? TextInputType.number
+              : TextInputType.name,
+          inputFormatters: (ctrName == "number_of_item")
+              ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
+              : <TextInputFormatter>[
+                  FilteringTextInputFormatter.singleLineFormatter
+                ]
+          // Onl
+          ),
+    );
+  }
+
+  ////////////// Search drop down
 }
 
 /// Class CLose

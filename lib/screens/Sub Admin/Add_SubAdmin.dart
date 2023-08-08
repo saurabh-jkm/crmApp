@@ -22,7 +22,7 @@ class SubAdmin extends StatefulWidget {
 }
 
 class _SubAdminState extends State<SubAdmin> {
-////////// variable of Sub Admin +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+////////// variable of Sub Admin ++++++++++++++++++++++++++++++++++++++++++++++++++
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
   String email = "";
@@ -70,9 +70,9 @@ class _SubAdminState extends State<SubAdmin> {
       StoreDocs.add(data);
       // data["id"] = queryDocumentSnapshot.id;
     }
-    setState(() {
-      print("$StoreDocs ++++++++");
-    });
+    // setState(() {
+    //   print("$StoreDocs ++++++++");
+    // });
   }
 
 /////////////

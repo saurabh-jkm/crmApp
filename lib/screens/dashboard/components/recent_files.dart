@@ -1,10 +1,8 @@
 // ignore_for_file: prefer_const_constructors, deprecated_member_use, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import '../../../constants.dart';
-import '../../../models/RecentFile.dart';
 import '../../../models/bar_charts.dart';
 
 class RecentFiles extends StatelessWidget {

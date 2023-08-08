@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, prefer_collection_literals, unused_field, non_constant_identifier_names, prefer_typing_uninitialized_variables, avoid_print, deprecated_member_use, unnecessary_null_comparison, unnecessary_new, sort_child_properties_last, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, unnecessary_string_interpolations, unused_local_variable, prefer_is_empty, body_might_complete_normally_nullable, sized_box_for_whitespace, sized_box_for_whitespace, sized_box_for_whitespace, unnecessary_brace_in_string_interps, deprecated_colon_for_default_value, duplicate_ignore
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, prefer_collection_literals, unused_field, non_constant_identifier_names, prefer_typing_uninitialized_variables, avoid_print, deprecated_member_use, unnecessary_null_comparison, unnecessary_new, sort_child_properties_last, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, unnecessary_string_interpolations, unused_local_variable, prefer_is_empty, body_might_complete_normally_nullable, sized_box_for_whitespace, sized_box_for_whitespace, sized_box_for_whitespace, unnecessary_brace_in_string_interps, deprecated_colon_for_default_value, duplicate_ignore, depend_on_referenced_packages
 
 import 'dart:convert';
 import 'dart:io';
@@ -429,6 +429,7 @@ class _OrderListState extends State<OrderList> {
                                 Container(
                                   margin: EdgeInsets.symmetric(horizontal: 5),
                                   padding: EdgeInsets.all(2),
+                                  height: 20,
                                   color: Colors.white,
                                   child: DropdownButton<int>(
                                     dropdownColor: Colors.white,
@@ -2337,7 +2338,7 @@ class _OrderListState extends State<OrderList> {
   Map<String, TextEditingController> _controllers = new Map();
   // input fields
   Widget wd_input_field(BuildContext context, label, ctrName, conName) {
-    conName = conName;
+    // conName = conName;
     var key = "${conName}___${ctrName}";
 
     var tempStr =

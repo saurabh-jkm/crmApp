@@ -153,31 +153,33 @@ class _InventryListState extends State<InventryList> {
                                   height: 20,
                                   color: Colors.white,
                                   child: DropdownButton<int>(
-                                      dropdownColor: Colors.white,
-                                      iconEnabledColor: Colors.black,
-                                      hint: Text(
-                                        "$_number_select",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 12),
-                                      ),
-                                      value: _number_select,
-                                      items: <int>[10, 25, 50, 100]
-                                          .map((int value) {
-                                        return new DropdownMenuItem<int>(
-                                          value: value,
-                                          child: new Text(
-                                            value.toString(),
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      onChanged: (newVal) {
-                                        setState(() {
-                                          _number_select = newVal!;
-                                        });
-                                      }),
+                                    dropdownColor: Colors.white,
+                                    iconEnabledColor: Colors.black,
+                                    hint: Text(
+                                      "$_number_select",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 12),
+                                    ),
+                                    value: _number_select,
+                                    items:
+                                        <int>[10, 25, 50, 100].map((int value) {
+                                      return new DropdownMenuItem<int>(
+                                        value: value,
+                                        child: new Text(
+                                          value.toString(),
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 12),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (newVal) {
+                                      setState(() {
+                                        _number_select = newVal!;
+                                      });
+                                    },
+                                    underline: SizedBox(),
+                                  ),
                                 ),
                                 Text(
                                   "entries",
