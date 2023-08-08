@@ -260,15 +260,24 @@ class _CategoryAddState extends State<CategoryAdd> {
   ///
 
 ///////////    Creating SLug Url Function +++++++++++++++++++++++++++++++++++++++
+
   Slug_gen(String text) {
+    var listtt = [];
     var slus_string;
     String slug = SlugIT().makeSlug(text);
     setState(() {
+      for (var index = 0; index < StoreDocs.length; index++) {
+        listtt.add("${StoreDocs[index]['slug_url']}");
+      }
       slus_string = slug;
-      SlugUrlController.text = slus_string;
+      if (listtt.contains("$slus_string")) {
+        SlugUrlController.text = "$slus_string${listtt.length}";
+      } else {
+        SlugUrlController.text = slus_string;
+      }
     });
   }
-///// ++++++++++++++++++++++++++++++++++++++
+/////
 
   bool Add_Category = false;
 

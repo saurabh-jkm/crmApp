@@ -93,7 +93,7 @@ class _OrderListState extends State<OrderList> {
     };
     var dbData = await dbFindDynamic(db, w);
     dbData.forEach((k, v) {
-      Cate_Name_list[v['category_name']] = v['id'];
+      Cate_Name_list[v['category_name']] = v['category_name'];
     });
     // print("$Cate_Name_list  +++++++++++++++++++++");
   }
@@ -363,7 +363,7 @@ class _OrderListState extends State<OrderList> {
                       ? listList(context)
                       : Update_Order(context, "Edit", _Order_ID)
                   : Add_newOredr(context, "Add")
-              : Details_view(context)
+              : Details_view(context, priceData)
         ],
       ),
     ));
@@ -545,7 +545,7 @@ class _OrderListState extends State<OrderList> {
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
                                     padding: const EdgeInsets.all(5.0),
-                                    child: Text('Product Category',
+                                    child: Text('Category',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
                                   ),
@@ -555,6 +555,26 @@ class _OrderListState extends State<OrderList> {
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
                                     padding: const EdgeInsets.all(5.0),
+                                    child: Text("Product Name",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text("Quantity",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
                                     child: Text("Price",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
@@ -645,6 +665,32 @@ class _OrderListState extends State<OrderList> {
     );
   }
 
+  price_de(price_details) {
+    var prrr = {};
+    var ffff = price_details as Map;
+    var ff = new Map();
+    if (ffff.isNotEmpty) {
+      if (ffff.isNotEmpty) {
+        ffff.forEach((k, v) {
+          v.forEach((ke, vl) {
+            var key = "${k}___$ke";
+            ff[key];
+            ff[key] = vl;
+          });
+        });
+      }
+    }
+    setState(() {
+      prrr["price"] = "${ff["Product No. 1___price"]}.00 rs";
+      prrr["quantity"] = "${ffff.length}";
+      prrr["Pro_name"] = "${ff["Product No. 1___product_name"]}";
+      prrr["Pro_gst"] = "${ff["Product No. 1___gst"]}";
+      prrr["Pro_total_price"] = "${ff["Product No. 1___total_price"]}.00 rs";
+    });
+    // int i = index as int;
+    return prrr;
+  }
+
   TableRow tableRowWidget(
       String index,
       odID,
@@ -657,6 +703,9 @@ class _OrderListState extends State<OrderList> {
       buyer_email,
       buyer_address,
       price_details) {
+//////// Product Detailll ++++++++++++++++++++++
+    var pricett = price_de(price_details);
+//////////////////// ++++++++++++++++++++++++++++++++++++++++++++++
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -690,9 +739,21 @@ class _OrderListState extends State<OrderList> {
           child: Text("$_product",
               style: GoogleFonts.alike(
                   fontWeight: FontWeight.normal, fontSize: 11))),
+
       TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
-          child: Text("$_price",
+          child: Text("${pricett["Pro_name"]}",
+              style: GoogleFonts.alike(
+                  fontWeight: FontWeight.normal, fontSize: 11))),
+      TableCell(
+          verticalAlignment: TableCellVerticalAlignment.middle,
+          child: Text("${pricett["quantity"]}",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.alike(
+                  fontWeight: FontWeight.normal, fontSize: 11))),
+      TableCell(
+          verticalAlignment: TableCellVerticalAlignment.middle,
+          child: Text("${pricett["price"]}",
               style: GoogleFonts.alike(
                   fontWeight: FontWeight.normal, fontSize: 11))),
       TableCell(
@@ -771,7 +832,7 @@ class _OrderListState extends State<OrderList> {
         child: RowFor_Mobile_web(
           context,
           () async {
-            print("Tedj    +++++++888++++");
+            // print("Tedj    +++++++888++++");
             final data = await PdfInvoiceService(
               orderID: "$odID",
               category: "$_product",
@@ -788,6 +849,19 @@ class _OrderListState extends State<OrderList> {
           () {
             setState(() {
               _Details_wd = true;
+              priceData["order_id"] = "$odID";
+              priceData["oder_Date"] = "$pay_date";
+              priceData["buyer_name"] = "$user";
+              priceData["buyer_mobile"] = "$buyer_mobile";
+              priceData["buyer_address"] = "$buyer_address";
+              priceData["buyer_email"] = "$buyer_email";
+              priceData["Pro_name"] = "${pricett["Pro_name"]}";
+              priceData["Pro_quantity"] = "${pricett["quantity"]}";
+              priceData["Pro_price"] = "${pricett["price"]}";
+              priceData["Pro_gst"] = "${pricett["Pro_gst"]}";
+              priceData["total_price"] = "${pricett["Pro_total_price"]}";
+
+              priceData["product_details"] = price_details;
             });
           },
           () {
@@ -954,8 +1028,26 @@ class _OrderListState extends State<OrderList> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////// @2 Detaials View ++++++++++++++++++++++++++++++++++++++++++++
+  var priceData = {};
+  Widget Details_view(BuildContext context, priceData) {
+    var ffff = priceData["product_details"] as Map;
+    var ff = new Map();
+    if (ffff.isNotEmpty) {
+      if (ffff.isNotEmpty) {
+        ffff.forEach((k, v) {
+          v.forEach((ke, vl) {
+            var key = "${k}___$ke";
+            ff[key];
+            ff[key] = vl;
+          });
+        });
+      }
+    }
 
-  Widget Details_view(BuildContext context) {
+    for (var i = 1; i <= ffff.length; i++) {
+      print("${i} ${ff["Product No. ${i}___product_name"]}  ++++hhhhh++++");
+    }
+
     return Container(
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
@@ -981,7 +1073,7 @@ class _OrderListState extends State<OrderList> {
                       width: 10,
                     ),
                     Text(
-                      'Details',
+                      'Order Details',
                       style: themeTextStyle(
                           size: 18.0,
                           ftFamily: 'ms',
@@ -995,180 +1087,119 @@ class _OrderListState extends State<OrderList> {
               margin: EdgeInsets.symmetric(horizontal: 10),
               child: Divider(thickness: 4, color: Colors.blue)),
           Container(
-            padding: EdgeInsets.all(defaultPadding),
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: Colors.black12,
-              // borderRadius: const BorderRadius.all(Radius.circular(10)),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      "View Product",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    Divider(thickness: 2, color: Colors.black38)
-                  ],
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: Table(
-                    border: TableBorder.all(color: Colors.black26, width: 1.5),
-                    children: [
-                      TableRow(children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Sr.",
-
-                              ///	Product	Order Id	Item	Price	Shipping
-                              style: themeTextStyle(
-                                  color: Colors.black,
-                                  size: 15,
-                                  fw: FontWeight.bold)),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Product",
-                              style: themeTextStyle(
-                                  color: Colors.black,
-                                  size: 15,
-                                  fw: FontWeight.bold)),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Order Id",
-                              style: themeTextStyle(
-                                  color: Colors.black,
-                                  size: 15,
-                                  fw: FontWeight.bold)),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Item",
-                              style: themeTextStyle(
-                                  color: Colors.black,
-                                  size: 15,
-                                  fw: FontWeight.bold)),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Price",
-                              style: themeTextStyle(
-                                  color: Colors.black,
-                                  size: 15,
-                                  fw: FontWeight.bold)),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Shipping",
-                              style: themeTextStyle(
-                                  color: Colors.black,
-                                  size: 15,
-                                  fw: FontWeight.bold)),
-                        ),
-                      ]),
-                      for (var i = 0; i < 1; i++)
-                        TableRow(children: [
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Text("${i + 1}",
-                                style: themeTextStyle(
-                                    color: Colors.black,
-                                    size: 15,
-                                    fw: FontWeight.normal)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Text("Nike Shoes".toUpperCase(),
-                                style: themeTextStyle(
-                                    color: Colors.black,
-                                    size: 15, // Sizes
-                                    fw: FontWeight.normal)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Text("123",
-                                style: themeTextStyle(
-                                    color: Colors.black,
-                                    size: 15,
-                                    fw: FontWeight.normal)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Text("Red,Small",
-                                style: themeTextStyle(
-                                    color: Colors.black,
-                                    size: 15,
-                                    fw: FontWeight.normal)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Text("100",
-                                style: themeTextStyle(
-                                    color: Colors.black,
-                                    size: 15,
-                                    fw: FontWeight.normal)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Text("20",
-                                style: themeTextStyle(
-                                    color: Colors.black,
-                                    size: 15,
-                                    fw: FontWeight.normal)),
-                          ),
-                        ]),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 50),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 100),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black)),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Order Details",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black))
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: Colors.black12,
+                // borderRadius:
+                //     const BorderRadius.all(Radius.circular(10)),
+              ),
+              child: (priceData == null)
+                  ? Center(child: CircularProgressIndicator())
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Shipping Details",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black))
-                            ],
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.shopping_bag_rounded,
+                                    size: 30,
+                                    color: Colors.blue,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Order Details",
+                                    style: GoogleFonts.alike(
+                                        fontSize: 20,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              themeListRow(context, "Product Name",
+                                  "${priceData["Pro_name"]}",
+                                  descColor: Colors.black,
+                                  headColor: Colors.black),
+                              SizedBox(height: defaultPadding),
+                              themeListRow(context, "Order ID",
+                                  "${priceData["order_id"]}",
+                                  descColor: Colors.black,
+                                  headColor: Colors.black),
+                              SizedBox(height: defaultPadding),
+                              themeListRow(
+                                  context, "Price", "${priceData["Pro_price"]}",
+                                  descColor: Colors.black,
+                                  headColor: Colors.black),
+                              SizedBox(height: defaultPadding),
+                              themeListRow(context, "Quantity",
+                                  "${priceData["Pro_quantity"]}",
+                                  descColor: Colors.black,
+                                  headColor: Colors.black),
+                              SizedBox(height: defaultPadding),
+                              themeListRow(
+                                  context, "GST", "${priceData["Pro_gst"]} %",
+                                  descColor: Colors.black,
+                                  headColor: Colors.black),
+                              SizedBox(height: defaultPadding),
+                              themeListRow(context, "Total",
+                                  "${priceData["total_price"]}",
+                                  descColor: Colors.black,
+                                  headColor: Colors.black),
+                              SizedBox(height: defaultPadding),
+                            ]),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_history,
+                                    size: 30,
+                                    color: Colors.blue,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Shipping Details",
+                                    style: GoogleFonts.alike(
+                                        fontSize: 20,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              themeListRow(context, "Customer",
+                                  "${priceData["buyer_name"]}",
+                                  descColor: Colors.black,
+                                  headColor: Colors.black),
+                              SizedBox(height: defaultPadding),
+                              themeListRow(context, "Mobile No.",
+                                  "${priceData["buyer_mobile"]}",
+                                  descColor: Colors.black,
+                                  headColor: Colors.black),
+                              SizedBox(height: defaultPadding),
+                              themeListRow(context, "Email Id",
+                                  "${priceData["buyer_email"]}",
+                                  descColor: Colors.black,
+                                  headColor: Colors.black),
+                              SizedBox(height: defaultPadding),
+                              themeListRow(context, "Address",
+                                  "${priceData["buyer_address"]}",
+                                  descColor: Colors.black,
+                                  headColor: Colors.black),
+                              SizedBox(height: defaultPadding),
+                            ]),
+                      ],
+                    ))
         ],
       ),
     );
@@ -1937,7 +1968,7 @@ class _OrderListState extends State<OrderList> {
                             child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Discount",
+                            Text("Discount (%)",
                                 style: GoogleFonts.alike(
                                   fontSize: 15,
                                   color: Colors.black,
@@ -2407,30 +2438,30 @@ class _OrderListState extends State<OrderList> {
             color: Colors.grey,
             fontSize: 16,
           ),
-          suffixIcon: Container(
-            height: 8.0,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    // var mrpIncre = int.parse(conName!.text);
-                    // setState(() {
-                    //   mrpIncre++;
-                    //   conName = mrpIncre.toString();
-                    // });
-                  },
-                  child: Icon(Icons.expand_less_rounded,
-                      size: 15, color: Colors.black),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Icon(Icons.expand_more_outlined,
-                      size: 15, color: Colors.black),
-                )
-              ],
-            ),
-          ),
+          // suffixIcon: Container(
+          //   height: 8.0,
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //     children: [
+          //       GestureDetector(
+          //         onTap: () {
+          //           // var mrpIncre = int.parse(conName!.text);
+          //           // setState(() {
+          //           //   mrpIncre++;
+          //           //   conName = mrpIncre.toString();
+          //           // });
+          //         },
+          //         child: Icon(Icons.expand_less_rounded,
+          //             size: 15, color: Colors.black),
+          //       ),
+          //       GestureDetector(
+          //         onTap: () {},
+          //         child: Icon(Icons.expand_more_outlined,
+          //             size: 15, color: Colors.black),
+          //       )
+          //     ],
+          //   ),
+          // ),
         ),
         style: TextStyle(color: Colors.black),
         keyboardType: TextInputType.number,

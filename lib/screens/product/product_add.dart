@@ -287,7 +287,7 @@ class _ProductAddState extends State<ProductAdd> {
         itemField[key] = tempData;
       }
 
-      print("&&&&& ${tempData}");
+      // print("&&&&& ${tempData}");
     });
 
     if (alert != '') {
@@ -295,20 +295,20 @@ class _ProductAddState extends State<ProductAdd> {
       return false;
     }
 
-    print("---->${itemField}");
+    // print("---->${itemField}");
 
-    if (basic_Product == true) {
-      var temp = itemField['basic'];
-      itemField = {};
-      itemField['basic'] = temp;
-      // _controllers.forEach((key, value) {
-      //   print("'$key : $value'  +++gggg++");
-      // });
-    } else {
-      itemField.remove('basic');
-    }
+    // if (basic_Product == true) {
+    //   var temp = itemField['basic'];
+    //   itemField = {};
+    //   itemField['basic'] = temp;
+    //   // _controllers.forEach((key, value) {
+    //   //   print("'$key : $value'  +++gggg++");
+    //   // });
+    // } else {
+    //   itemField.remove('basic');
+    // }
 
-    print("---->>><${itemField}");
+    // print("---->>><${itemField}");
 
     Map<String, dynamic> w = {};
     w = (basic_Product == true)
@@ -319,7 +319,7 @@ class _ProductAddState extends State<ProductAdd> {
             "location_of_product": location_pro,
             'product_type': "basic",
             "price_details": itemField,
-            // "no_item": totalItem,
+            "no_item": "${itemField["basic"]["no_item"]}",
             "img": featureImg,
             'category': "$_PerentCate",
             'status': "$_StatusValue",
@@ -608,11 +608,19 @@ class _ProductAddState extends State<ProductAdd> {
 
 ///////////    Creating SLug Url Function +++++++++++++++++++++++++++++++++++++++
   Slug_gen(String text) {
+    var listtt = [];
     var slus_string;
     String slug = SlugIT().makeSlug(text);
     setState(() {
+      for (var index = 0; index < productList.length; index++) {
+        listtt.add("${productList[index]['slug_url']}");
+      }
       slus_string = slug;
-      SlugUrlController.text = slus_string;
+      if (listtt.contains("$slus_string")) {
+        SlugUrlController.text = "$slus_string${listtt.length}";
+      } else {
+        SlugUrlController.text = slus_string;
+      }
     });
   }
 /////
@@ -2824,32 +2832,32 @@ class _ProductAddState extends State<ProductAdd> {
       child: TextFormField(
         obscureText: false,
         controller: _controllers[key],
-        // readOnly: (ctrName == 'discount') ? true : false,
-        // onChanged: (value) async {
-        //   if (ctrName == 'sell_price' || ctrName == 'mrp') {
-        //     var tempMrp = _controllers['${conName}___mrp']?.text;
-        //     var tempSellPrice = _controllers['${conName}___sell_price']?.text;
+        readOnly: (ctrName == 'discount') ? true : false,
+        onChanged: (value) async {
+          if (ctrName == 'sell_price' || ctrName == 'mrp') {
+            var tempMrp = _controllers['${conName}___mrp']?.text;
+            var tempSellPrice = _controllers['${conName}___sell_price']?.text;
 
-        //     if (tempSellPrice != '' && tempMrp != '') {
-        //       var discount = (((int.parse(tempMrp.toString()) -
-        //                       int.parse(tempSellPrice.toString())) *
-        //                   100) /
-        //               int.parse(tempMrp.toString()))
-        //           .round();
+            if (tempSellPrice != '' && tempMrp != '') {
+              var discount = (((int.parse(tempMrp.toString()) -
+                              int.parse(tempSellPrice.toString())) *
+                          100) /
+                      int.parse(tempMrp.toString()))
+                  .round();
 
-        //       setState(() {
-        //         _controllers['${conName}___discount'] = TextEditingController();
-        //         _controllers['${conName}___discount']?.text =
-        //             (discount == null) ? '' : discount.toString();
-        //       });
-        //     } else {
-        //       setState(() {
-        //         _controllers['${conName}___discount'] = TextEditingController();
-        //         _controllers['${conName}___discount']?.text = '';
-        //       });
-        //     }
-        //   }
-        // },
+              setState(() {
+                _controllers['${conName}___discount'] = TextEditingController();
+                _controllers['${conName}___discount']?.text =
+                    (discount == null) ? '' : discount.toString();
+              });
+            } else {
+              setState(() {
+                _controllers['${conName}___discount'] = TextEditingController();
+                _controllers['${conName}___discount']?.text = '';
+              });
+            }
+          }
+        },
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please Enter value';
