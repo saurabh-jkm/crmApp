@@ -251,14 +251,13 @@ class _ProductAddState extends State<ProductAdd> {
     });
 
 ////////  Loop For Product Detais Hold
-    print("$_controllers  +++gggg1++");
+
     _controllers.forEach((k, val) {
       var tempVar = _controllers['$k']?.text;
       var temp = k.split("___");
       var key = temp[0];
       var field = temp[1];
       var tempData = (itemField[key] == null) ? {} : itemField[key];
-      print("$tempData  +++gggg3++");
 
       totalItem = (field == 'no_item' &&
               tempVar != '' &&
@@ -282,10 +281,13 @@ class _ProductAddState extends State<ProductAdd> {
       }
 
       tempData[field] = tempVar;
-
-      if (Submit_subProductBox.contains(key)) {
+      if (basic_Product == false && Submit_subProductBox.contains(key)) {
+        itemField[key] = tempData;
+      } else {
         itemField[key] = tempData;
       }
+
+      print("&&&&& ${tempData}");
     });
 
     if (alert != '') {
@@ -293,16 +295,20 @@ class _ProductAddState extends State<ProductAdd> {
       return false;
     }
 
+    print("---->${itemField}");
+
     if (basic_Product == true) {
-      // var temp = itemField['basic'];
-      // itemField = {};
-      // itemField['basic'] = temp;
-      _controllers.forEach((key, value) {
-        print("'$key : $value'  +++gggg++");
-      });
+      var temp = itemField['basic'];
+      itemField = {};
+      itemField['basic'] = temp;
+      // _controllers.forEach((key, value) {
+      //   print("'$key : $value'  +++gggg++");
+      // });
     } else {
       itemField.remove('basic');
     }
+
+    print("---->>><${itemField}");
 
     Map<String, dynamic> w = {};
     w = (basic_Product == true)
