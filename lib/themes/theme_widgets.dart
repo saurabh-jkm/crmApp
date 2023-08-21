@@ -9,14 +9,14 @@ import 'style.dart';
 
 // Button
 Widget themeButton3(BuildContext context, fn,
-    {label: 'Submit',
-    fontSize: 16.0,
-    arg: 0,
-    buttonColor: '',
-    radius: 32.0,
-    borderColor: '',
-    btnWidthSize: 100.0,
-    btnHeightSize: 40.0}) {
+    {label = 'Submit',
+    fontSize = 16.0,
+    arg = 0,
+    buttonColor = '',
+    radius = 32.0,
+    borderColor = '',
+    btnWidthSize = 100.0,
+    btnHeightSize = 40.0}) {
   buttonColor = (buttonColor == '') ? themeBG : buttonColor;
   return Container(
     child: Center(
@@ -50,16 +50,16 @@ Widget themeButton3(BuildContext context, fn,
 }
 
 Widget themeBtnSm(BuildContext context,
-    {label: 'Submit',
+    {label = 'Submit',
     dynamic arg,
     dynamic arg2,
     dynamic arg3,
-    buttonColor: '',
-    fn: '',
-    buttonWidth: '',
-    icon: '',
-    borderRadius: '',
-    btnSize: ''}) {
+    buttonColor = '',
+    fn = '',
+    buttonWidth = '',
+    icon = '',
+    borderRadius = '',
+    btnSize = ''}) {
   return Container(
     width: (buttonWidth == '') ? null : buttonWidth,
     child: Center(
@@ -110,13 +110,13 @@ Widget themeBtnSm(BuildContext context,
 }
 
 Widget themeListRow(BuildContext context, label, desc,
-    {fontsize: 14,
-    bottomSpace: 4.0,
-    double labelWidth: 100.0,
-    double decWidth: 0.0,
-    decFontWait: FontWeight.normal,
-    headColor: Colors.white,
-    descColor: Colors.white}) {
+    {fontsize = 14,
+    bottomSpace = 4.0,
+    double labelWidth = 100.0,
+    double decWidth = 0.0,
+    decFontWait = FontWeight.normal,
+    headColor = Colors.white,
+    descColor = Colors.white}) {
   return Padding(
     padding: EdgeInsets.only(bottom: bottomSpace),
     child: Row(
@@ -165,12 +165,12 @@ Widget themeListRow(BuildContext context, label, desc,
 ///////  My Payment Row
 
 Widget themePayListRow(BuildContext context, label, desc,
-    {fontsize: 13,
-    bottomSpace: 4.0,
-    double labelWidth: 100.0,
-    double decWidth: 0.0,
-    decFontWait: FontWeight.normal,
-    descColor: Colors.black}) {
+    {fontsize = 13,
+    bottomSpace = 4.0,
+    double labelWidth = 100.0,
+    double decWidth = 0.0,
+    decFontWait = FontWeight.normal,
+    descColor = Colors.black}) {
   return Padding(
     padding: EdgeInsets.only(bottom: bottomSpace),
     child: Row(
@@ -221,15 +221,15 @@ Widget themePayListRow(BuildContext context, label, desc,
 // theme navigation tab
 
 Widget themeNavigationTab(BuildContext context, _tabController,
-    {allList: false,
-    pendingList: false,
-    allListWidget: '',
-    pendingListWidget: '',
-    screenHeight: '',
-    label: 'data',
-    tab1: "All",
-    tab2: "Pending",
-    no_have_message: ''}) {
+    {allList = false,
+    pendingList = false,
+    allListWidget = '',
+    pendingListWidget = '',
+    screenHeight = '',
+    label = 'data',
+    tab1 = "All",
+    tab2 = "Pending",
+    no_have_message = ''}) {
   return Container(
     child: Column(
       children: [
@@ -365,7 +365,7 @@ Widget themeNavigationTab(BuildContext context, _tabController,
 
 // flot button
 Widget themeFloatButton(BuildContext context, label,
-    {fn: '', myIcon: '', myColor: '', fontsize: ''}) {
+    {fn = '', myIcon = '', myColor = '', fontsize = ''}) {
   return FloatingActionButton.extended(
     icon: Icon((myIcon == '') ? Icons.add_circle_outline_outlined : myIcon),
     label: Text(
@@ -443,7 +443,7 @@ themeHeading(BuildContext context, text) {
 
 // Pleas wait progress
 
-pleaseWait(BuildContext context, {containerHeight: 300.0}) {
+pleaseWait(BuildContext context, {containerHeight = 300.0}) {
   return Container(
     height: containerHeight,
     child: Column(
@@ -453,7 +453,7 @@ pleaseWait(BuildContext context, {containerHeight: 300.0}) {
 }
 
 HeadLine(BuildContext context, icon_def, head_text, Sub_text, fn,
-    {arg: 0, buttonColor: '', Buttonlabel: "Update", iconColor: ""}) {
+    {arg = 0, buttonColor = '', Buttonlabel = "Update", iconColor = ""}) {
   return Container(
     height: 100,
     width: double.infinity,

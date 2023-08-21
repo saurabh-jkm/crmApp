@@ -247,7 +247,7 @@ String time_in_php(time) {
 }
 
 // PHP dateTIme to min only
-date_diff_min(dateIs, {isHours: false}) {
+date_diff_min(dateIs, {isHours = false}) {
   var temp = dateIs.split(" ");
   var tempDate = temp[0].split("-");
   var tempTime = temp[1].split(":");

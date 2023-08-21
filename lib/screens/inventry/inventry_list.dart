@@ -5,6 +5,8 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/inventry/qr_code.dart';
+import 'package:firedart/firestore/firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,12 +28,7 @@ class InventryList extends StatefulWidget {
 }
 
 class _InventryListState extends State<InventryList> {
-////// Firebase fn   +++
-  var db = FirebaseFirestore.instance;
-  final Stream<QuerySnapshot> _crmStream =
-      FirebaseFirestore.instance.collection('product').snapshots();
-  CollectionReference _product =
-      FirebaseFirestore.instance.collection('product');
+  bool progressWidget = true;
   ////////////+++++++++++++++++++++++++++++++++++++++++++++++++
   List StoreDocs = [];
   Inventory_list() async {
@@ -43,29 +40,42 @@ class _InventryListState extends State<InventryList> {
       StoreDocs.add(data);
       data["id"] = queryDocumentSnapshot.id;
     }
+    setState(() {
+      progressWidget = false;
+    });
+  }
+
+  Win_Inventory_list() async {
+    StoreDocs = [];
+    var collection = Firestore.instance.collection('product');
+    var querySnapshot = await collection.get();
+    for (var queryDocumentSnapshot in querySnapshot) {
+      Map data = queryDocumentSnapshot.map as Map<String, dynamic>;
+      StoreDocs.add(data);
+      data["id"] = queryDocumentSnapshot.id;
+    }
+    setState(() {
+      progressWidget = false;
+    });
   }
 
   ///
   @override
   void initState() {
-    Inventory_list();
+    if (!kIsWeb && Platform.isWindows) {
+      Win_Inventory_list();
+    } else {
+      Inventory_list();
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: _crmStream,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          //////
-          if (snapshot.hasError) {
-            themeAlert(context, "Something went wrong");
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          return Scaffold(
-              body: Container(
+    return (progressWidget == true)
+        ? Center(child: pleaseWait(context))
+        : Scaffold(
+            body: Container(
             child: ListView(
               children: [
                 Header(
@@ -76,7 +86,6 @@ class _InventryListState extends State<InventryList> {
               ],
             ),
           ));
-        });
   }
 
 ////////   List       ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -426,13 +435,13 @@ class _InventryListState extends State<InventryList> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Row(
           children: [
-            Container(
-              color: Colors.black,
-              margin: EdgeInsets.all(5),
-              height: 100,
-              width: 100,
-              child: QRCode(qrSize: 80, qrData: '$name'),
-            ),
+            // Container(
+            //   color: Colors.black,
+            //   margin: EdgeInsets.all(5),
+            //   height: 100,
+            //   width: 100,
+            //   child: QRCode(qrSize: 80, qrData: '$name'),
+            // ),
             Container(
               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               child: Column(
@@ -442,6 +451,7 @@ class _InventryListState extends State<InventryList> {
                   themeListRow(context, "Name", "$name"),
                   themeListRow(context, "Category Name", "$category"),
                   themeListRow(context, "Quantity Left", "$_Item"),
+                  themeListRow(context, "Status", "$_Status"),
                   Row(
                     children: [
                       SizedBox(
@@ -468,7 +478,6 @@ class _InventryListState extends State<InventryList> {
                           context, "", "Sell", Colors.green, "Buy", Colors.red),
                     ],
                   ),
-                  themeListRow(context, "Status", "$_Status"),
 
                   ///  themeListRow(context, "Product QR","Product QR"),
                   Divider(

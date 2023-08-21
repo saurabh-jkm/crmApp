@@ -27,13 +27,14 @@ class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
-  AuthService authService = AuthService();
+
   // ignore: unused_field
   bool _isLoading = false;
 
 ///////// Login  Fuction +++++++++++++++++++++++
 
   login() async {
+    AuthService authService = AuthService();
     if (formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -45,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
           QuerySnapshot snapshot =
               await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
                   .gettingUserData(email);
-          print(" ${snapshot.docs} Kkjhfjkhhnfj");
+          // print(" ${snapshot.docs} Kkjhfjkhhnfj");
           // saving the values to our shared preferences
           await HelperFunctions.saveUserLoggedInStatus(true);
 

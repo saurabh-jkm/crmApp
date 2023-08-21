@@ -1,7 +1,10 @@
-// ignore_for_file: use_key_in_widget_constructors, avoid_print, prefer_const_constructors, await_only_futures, unused_import
+// ignore_for_file: use_key_in_widget_constructors, avoid_print, prefer_const_constructors, await_only_futures, unused_import, unused_local_variable
+
+import 'dart:io';
 
 import 'package:crm_demo/shared/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firedart/firedart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,12 +25,15 @@ void main() async {
       projectId: Constants.projectId,
       storageBucket: Constants.storageBucket,
     ));
-  }
-  // else if (!kIsWeb) {
-  // var projectId = Constants.projectId;
-  // await Firestore.initialize(projectId);
-  // }
-  else {
+  } else if (Platform.isWindows) {
+    var projectId = "crmapp-aed0e";
+    var apiKey = "AIzaSyCbtC7CC-VQPanXbmdFp_HJg5VYB10AXHQ";
+
+    await Firestore.initialize(
+      projectId,
+    );
+    FirebaseAuth.initialize(apiKey, VolatileStore());
+  } else {
     await Firebase.initializeApp();
   }
   runApp(MyApp());
@@ -55,15 +61,14 @@ class MyApp extends StatelessWidget {
                         .apply(bodyColor: Colors.white),
                 canvasColor: secondaryColor,
               ),
-              home: MultiProvider(
-                  providers: [
-                    ChangeNotifierProvider(
-                      create: (context) => MenuAppController(),
-                    ),
-                  ],
-                  child: MainScreen(
-                      pageNo:
-                          1) //LoginPage() //MainScreen(pageNo: 1) // MainScreen(),
+              home: MultiProvider(providers: [
+                ChangeNotifierProvider(
+                  create: (context) => MenuAppController(),
+                ),
+              ], child: MainScreen(pageNo: 1)
+                  // child: LoginPage()
+
+                  ////MainScreen(pageNo: 1) // MainScreen(),
                   ),
             );
           }

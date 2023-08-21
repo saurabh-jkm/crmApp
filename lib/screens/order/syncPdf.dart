@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'dart:html' as html;
+// import 'dart:html' as html;
 
 /// Represents Homepage for Navigation
 class PDFview_Web_mobile extends StatefulWidget {
@@ -23,14 +23,14 @@ class _PDFview_Web_mobile extends State<PDFview_Web_mobile> {
     super.initState();
   }
 
-  void downloadDocument() {
-    final blob = html.Blob([widget.BytesCode]);
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url);
-    anchor.target = '_blank'; // Open in a new tab/window
-    anchor.download = 'sample_document.pdf'; // Set the desired file name
-    anchor.click(); // Trigger the download
-  }
+  // void downloadDocument() {
+  //   final blob = html.Blob([widget.BytesCode]);
+  //   final url = html.Url.createObjectUrlFromBlob(blob);
+  //   final anchor = html.AnchorElement(href: url);
+  //   anchor.target = '_blank'; // Open in a new tab/window
+  //   anchor.download = 'sample_document.pdf'; // Set the desired file name
+  //   anchor.click(); // Trigger the download
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +55,7 @@ class _PDFview_Web_mobile extends State<PDFview_Web_mobile> {
         backgroundColor: Colors.green,
         onPressed: () {
           setState(() {
-            //   i++;
-            downloadDocument();
+            // downloadDocument();
           });
         },
       ),

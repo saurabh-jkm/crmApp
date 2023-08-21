@@ -1,7 +1,10 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, unused_import, body_might_complete_normally_nullable, no_leading_underscores_for_local_identifiers, unused_field, depend_on_referenced_packages, avoid_print, sized_box_for_whitespace, unnecessary_new
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, unused_import, body_might_complete_normally_nullable, no_leading_underscores_for_local_identifiers, unused_field, depend_on_referenced_packages, avoid_print, sized_box_for_whitespace, unnecessary_new, unused_shown_name, unnecessary_cast, duplicate_ignore
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants.dart';
@@ -21,13 +24,18 @@ class AttributeAdd extends StatefulWidget {
 }
 
 class _AttributeAddState extends State<AttributeAdd> {
-  var db = FirebaseFirestore.instance;
+  var db = (kIsWeb)
+      ? FirebaseFirestore.instance
+      : (!kIsWeb)
+          ? Firestore.instance
+          : FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
 //////
   final AttributeController = TextEditingController();
   final Sub_AttributeController = TextEditingController();
   String? _StatusValue;
   String Date_at = DateFormat('dd-MM-yyyy' "  hh:mm").format(DateTime.now());
+  bool progressWidget = true;
 /////
   clearText() {
     AttributeController.clear();
@@ -35,15 +43,13 @@ class _AttributeAddState extends State<AttributeAdd> {
   }
 
 ///////////  firebase property Database access  +++++++++++++++++++++++++++
-  final Stream<QuerySnapshot> _crmStream =
-      FirebaseFirestore.instance.collection('attribute').snapshots();
-  CollectionReference _attribute =
-      FirebaseFirestore.instance.collection('attribute');
 
   List StoreDocs = [];
+
   _AttributeData() async {
     StoreDocs = [];
-    // var collection = FirebaseFirestore.instance.collection('category');
+    CollectionReference _attribute =
+        FirebaseFirestore.instance.collection('attribute');
     var querySnapshot = await _attribute.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
       // ignore: unnecessary_cast
@@ -52,7 +58,7 @@ class _AttributeAddState extends State<AttributeAdd> {
       data["id"] = queryDocumentSnapshot.id;
     }
     setState(() {
-      //listExample();
+      progressWidget = false;
     });
   }
 
@@ -61,7 +67,6 @@ class _AttributeAddState extends State<AttributeAdd> {
   var Head_Name;
   var hexString;
   var _Status;
-  var Attribute_name;
   Map value_color = {};
   List Color_list = [];
 //////
@@ -74,7 +79,8 @@ class _AttributeAddState extends State<AttributeAdd> {
       dbData = pathData.data() as Map<String, dynamic>?;
       setState(() {
         _Status = dbData!['status'];
-        Attribute_name = dbData!['attribute_name'];
+        AttributeController.text = dbData!['attribute_name'];
+        Sub_AttributeController.text = dbData!["attribute_name"];
         value_color = dbData!["value"];
         value_color.forEach((k, v) => Color_list.add(v));
         // print("$Color_list  ++++++");
@@ -87,6 +93,8 @@ class _AttributeAddState extends State<AttributeAdd> {
 /////// add Category Data  =+++++++++++++++++++
 
   Future<void> addList() {
+    CollectionReference _attribute =
+        FirebaseFirestore.instance.collection('attribute');
     return _attribute
         .add({
           'attribute_name': "${AttributeController.text}",
@@ -103,6 +111,8 @@ class _AttributeAddState extends State<AttributeAdd> {
 ////////// delete Category Data ++++++++++++++++
 
   Future<void> deleteUser(id) {
+    CollectionReference _attribute =
+        FirebaseFirestore.instance.collection('attribute');
     return _attribute.doc(id).delete().then((value) {
       setState(() {
         themeAlert(context, "Deleted Successfully ");
@@ -116,13 +126,23 @@ class _AttributeAddState extends State<AttributeAdd> {
 /////// Update
 
   Future<void> updatelist(id, Catename, _Status) {
+    CollectionReference _attribute =
+        FirebaseFirestore.instance.collection('attribute');
     return _attribute.doc(id).update({
       'attribute_name': "$Catename",
-      'status': "$_Status",
+      'status': (_Status == "Active")
+          ? "1"
+          : (_Status == "Inactive")
+              ? "2"
+              : "",
       "date_at": "$Date_at"
     }).then((value) {
       themeAlert(context, "Successfully Update");
       setState(() {
+        _Status = null;
+        _StatusValue = null;
+        AttributeController.clear();
+        _AttributeData();
         updateWidget = false;
       });
     }).catchError(
@@ -133,28 +153,93 @@ class _AttributeAddState extends State<AttributeAdd> {
 
   @override
   void initState() {
-    _AttributeData();
+    if (kIsWeb) {
+      _AttributeData();
+    } else if (!kIsWeb) {
+      All_AttributeData();
+    }
+
     super.initState();
   }
+
+//////////// hhh
+
+  All_AttributeData() async {
+    // print("object   +++++++++++++++++++++");
+    StoreDocs = [];
+    final _attribute = Firestore.instance.collection('attribute');
+    final documents = await _attribute.get();
+    for (var document in documents) {
+      Map data = document.map as Map<String, dynamic>;
+      StoreDocs.add(data);
+      data["id"] = document.id;
+    }
+    setState(() {
+      progressWidget = false;
+    });
+  }
+
+  Future All_Update_initial(id) async {
+    Color_list = [];
+    final _attribute = Firestore.instance.collection('attribute');
+    final pathData = await _attribute.document(id).get();
+    // DocumentSnapshot pathData =
+    //     await FirebaseFirestore.instance.collection('attribute').doc(id).get();
+    if (pathData != null) {
+      dbData = pathData.map as Map<String, dynamic>?;
+      setState(() {
+        _Status = (dbData!['status'] == "1")
+            ? "Active"
+            : (dbData!['status'] == "2")
+                ? "Inactive"
+                : "";
+        AttributeController.text = dbData!['attribute_name'];
+        Sub_AttributeController.text = dbData!["attribute_name"];
+        value_color = dbData!["value"];
+        value_color.forEach((k, v) => Color_list.add(v));
+        // print("$Color_list  ++++++");
+      });
+    }
+  }
+
+  /////// Update
+
+  Future<void> All_updatelist(id, Catename, _Status) {
+    final _attribute = Firestore.instance.collection('attribute');
+    return _attribute.document(id).update({
+      'attribute_name': "$Catename",
+      'status': (_Status == "Active")
+          ? "1"
+          : (_Status == "Inactive")
+              ? "2"
+              : "",
+      "date_at": "$Date_at"
+    }).then((value) {
+      themeAlert(context, "Successfully Update");
+      setState(() {
+        _Status = null;
+        _StatusValue = null;
+        AttributeController.clear();
+        All_AttributeData();
+        updateWidget = false;
+      });
+    }).catchError(
+        (error) => themeAlert(context, 'Failed to update', type: "error"));
+  }
+
+/////////
+
+  ///
 
   bool updateWidget = false;
   bool update_subAttribute = false;
   var update_id;
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: _crmStream,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          //////
-          if (snapshot.hasError) {
-            themeAlert(context, '"Something went wrong"', type: "error");
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          ////////
-          return Scaffold(
-              body: Container(
+    return (progressWidget == true)
+        ? Center(child: pleaseWait(context))
+        : Scaffold(
+            body: Container(
             child: ListView(
               children: [
                 Header(
@@ -171,7 +256,6 @@ class _AttributeAddState extends State<AttributeAdd> {
               ],
             ),
           ));
-        });
   }
 
 //// Widget for Start_up
@@ -439,7 +523,11 @@ class _AttributeAddState extends State<AttributeAdd> {
                             )
                           ],
                         ),
-                        Container(height: 40, width: 300, child: SearchField())
+                        //     Container(
+                        //         margin: EdgeInsets.symmetric(horizontal: 10),
+                        //         height: MediaQuery.of(context).size.height * 0.05,
+                        //         width: MediaQuery.of(context).size.width * 0.4,
+                        //         child: SearchField())
                       ],
                     )),
                 SizedBox(
@@ -565,6 +653,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                     : "",
             style: GoogleFonts.alike(
               fontWeight: FontWeight.normal,
+              color: (status == "1") ? Colors.green : Colors.red,
               fontSize: 11,
             )),
       ),
@@ -591,7 +680,11 @@ class _AttributeAddState extends State<AttributeAdd> {
                         setState(() {
                           updateWidget = true;
                           update_id = iid;
-                          Update_initial(iid);
+                          if (kIsWeb) {
+                            Update_initial(iid);
+                          } else if (!kIsWeb) {
+                            All_Update_initial(iid);
+                          }
                         });
                       },
                       icon: Icon(
@@ -615,7 +708,11 @@ class _AttributeAddState extends State<AttributeAdd> {
                           update_subAttribute = true;
                           update_id = iid;
                           Head_Name = name;
-                          Update_initial(iid);
+                          if (kIsWeb) {
+                            Update_initial(iid);
+                          } else if (!kIsWeb) {
+                            All_Update_initial(iid);
+                          }
                         });
                       },
                       icon: Icon(
@@ -812,10 +909,8 @@ class _AttributeAddState extends State<AttributeAdd> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: TextFormField(
-                            initialValue: Attribute_name,
                             autofocus: false,
-                            onChanged: (value) => Attribute_name = value,
-                            // controller: ctr_name,
+                            controller: AttributeController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Enter Attribute Name";
@@ -836,6 +931,16 @@ class _AttributeAddState extends State<AttributeAdd> {
                           )),
                     ],
                   )),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text("Status",
+                          style: themeTextStyle(
+                              color: Colors.black,
+                              size: 15,
+                              fw: FontWeight.bold)),
+                    ],
+                  ),
                   Container(
                     height: 40,
                     margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
@@ -863,7 +968,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                       ),
                       iconSize: 35,
                       style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                      items: ['Select', 'Inactive', 'Active'].map(
+                      items: ['Select', 'Active', 'Inactive'].map(
                         (val) {
                           return DropdownMenuItem<String>(
                             value: val,
@@ -885,13 +990,15 @@ class _AttributeAddState extends State<AttributeAdd> {
                   ),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     themeButton3(context, () {
-                      if (Attribute_name.isNotEmpty &&
-                          (Attribute_name != null && _StatusValue != null)) {
+                      if (AttributeController != null && _StatusValue != null) {
                         setState(() {
-                          updatelist(id, Attribute_name, _StatusValue);
-                          _Status = null;
-                          _StatusValue = null;
-                          Attribute_name = null;
+                          if (kIsWeb) {
+                            updatelist(
+                                id, AttributeController.text, _StatusValue);
+                          } else if (!kIsWeb) {
+                            All_updatelist(
+                                id, AttributeController.text, _StatusValue);
+                          }
                         });
                       } else {
                         themeAlert(context, 'Please Enter Required value!',
@@ -905,8 +1012,8 @@ class _AttributeAddState extends State<AttributeAdd> {
                       setState(() {
                         clearText();
                         _Status = null;
-                        _StatusValue = null;
-                        Attribute_name = null;
+                        _StatusValue = "";
+                        AttributeController.clear();
                       });
                     }, label: "Reset", buttonColor: Colors.black),
                     SizedBox(width: 20.0),
@@ -1119,8 +1226,8 @@ class _AttributeAddState extends State<AttributeAdd> {
                                                           ),
                                                           actions: <Widget>[
                                                             ElevatedButton(
-                                                              child: const Text(
-                                                                  'DONE'),
+                                                              child:
+                                                                  Text('DONE'),
                                                               onPressed: () {
                                                                 setState(() {
                                                                   var tempColor =
@@ -1233,10 +1340,15 @@ class _AttributeAddState extends State<AttributeAdd> {
                             'id': id,
                             'value': tempColor
                           };
-                          dbUpdate(db, where);
-                          Update_initial(id);
+                          if (!kIsWeb && Platform.isWindows) {
+                            All_dbUpdate(db, where);
+                            All_Update_initial(id);
+                          } else {
+                            dbUpdate(db, where);
+                            Update_initial(id);
+                          }
                           _Status = null;
-                          Sub_AttributeController.text = "";
+                          Sub_AttributeController.clear();
                         });
                       } else {
                         themeAlert(context, 'Please Enter Required value!',

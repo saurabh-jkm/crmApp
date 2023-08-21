@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, prefer_collection_literals, unused_field, non_constant_identifier_names, prefer_typing_uninitialized_variables, avoid_print, deprecated_member_use, unnecessary_null_comparison, unnecessary_new, sort_child_properties_last, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, unnecessary_string_interpolations, unused_local_variable, prefer_is_empty, body_might_complete_normally_nullable, sized_box_for_whitespace, sized_box_for_whitespace, sized_box_for_whitespace, unnecessary_brace_in_string_interps, deprecated_colon_for_default_value, duplicate_ignore, depend_on_referenced_packages
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, prefer_final_fields, prefer_collection_literals, unused_field, non_constant_identifier_names, prefer_typing_uninitialized_variables, avoid_print, deprecated_member_use, unnecessary_null_comparison, unnecessary_new, sort_child_properties_last, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, unnecessary_string_interpolations, unused_local_variable, prefer_is_empty, body_might_complete_normally_nullable, sized_box_for_whitespace, sized_box_for_whitespace, sized_box_for_whitespace, unnecessary_brace_in_string_interps, deprecated_colon_for_default_value, duplicate_ignore, depend_on_referenced_packages, unused_element
 
 import 'dart:convert';
 import 'dart:io';
@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/order/syncPdf.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,10 +57,10 @@ class _OrderListState extends State<OrderList> {
         ),
       );
     } else {
-      final output = await getTemporaryDirectory();
-      var filePath = "${output.path}/$fileName.pdf";
-      final file = File(filePath);
-      await file.writeAsBytes(byteList);
+      // final output = await getTemporaryDirectory();
+      // var filePath = "${output.path}/$fileName.pdf";
+      // final file = File(filePath);
+      // await file.writeAsBytes(byteList);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -83,7 +84,9 @@ class _OrderListState extends State<OrderList> {
   // get user data
 ///////////  Calling Category data +++++++++++++++++++++++++++
   ///
-  var db = FirebaseFirestore.instance;
+  var db = (!kIsWeb && Platform.isWindows)
+      ? Firestore.instance
+      : FirebaseFirestore.instance;
   Map<int, String> v_status = {1: 'Active', 2: 'Inactive'};
   Map<String, String> Cate_Name_list = {'Select': ''};
   _CateData() async {
@@ -91,7 +94,11 @@ class _OrderListState extends State<OrderList> {
       'table': 'category',
       //'status':'1',
     };
-    var dbData = await dbFindDynamic(db, w);
+
+    // var dbData = await dbFindDynamic(db, w);
+    var dbData = (!kIsWeb && Platform.isWindows)
+        ? await All_dbFindDynamic(db, w)
+        : await dbFindDynamic(db, w);
     dbData.forEach((k, v) {
       Cate_Name_list[v['category_name']] = v['category_name'];
     });
@@ -153,14 +160,17 @@ class _OrderListState extends State<OrderList> {
       'category': "$_PerentCate",
       "date_at": "$Date_at",
     };
-
-    await dbSave(db, w);
+    (!kIsWeb && Platform.isWindows)
+        ? await win_dbSave(db, w)
+        : await dbSave(db, w);
     themeAlert(context, "Successfully Uploaded");
-
     setState(() {
       clearText();
+      Add_New_Order = false;
     });
   }
+
+///////////////////////// Order List Data fetch fn ++++++++++++++++++++++++++++
 
   List OrderList = [];
   OrderList_data() async {
@@ -168,34 +178,20 @@ class _OrderListState extends State<OrderList> {
     Map<dynamic, dynamic> w = {
       'table': "order",
     };
-    var temp = await dbFindDynamic(db, w);
+    var temp = (!kIsWeb && Platform.isWindows)
+        ? await All_dbFindDynamic(db, w)
+        : await dbFindDynamic(db, w);
     setState(() {
       temp.forEach((k, v) {
         OrderList.add(v);
       });
+      _CateData();
+      Pro_Data_Drop();
+      progressWidget = false;
     });
   }
+////////////////////////////////////////========================================
 
-///////////===================================================================
-  ///
-
-///////     Update data collection ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-  // var Buy_Name;
-  // var category;
-  // // var _Status;
-  // var _PerentC;
-  // var product_type;
-  // // var price_data;
-
-  // ///
-  // var mrp;
-  // var sell;
-  // var disc;
-  // var stock;
-  // var ship;
-  // var pro_img;
-  // //
 ////////////////////////  Data Get for Update++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   Map<String, dynamic>? update_order_data;
   Future Update_initial(id) async {
@@ -203,9 +199,6 @@ class _OrderListState extends State<OrderList> {
     var dbData = await dbFind(w);
     if (dbData != null) {
       setState(() {
-        // NameController.text = (dbData['name'] == null) ? '' : dbData['name'];
-        // SlugUrlController.text = (dbData['name'] == null) ? '' : dbData['name'];
-
         _PerentCate = dbData!['category'];
         _StatusValue = (dbData!['status'] == "1")
             ? "Active"
@@ -237,8 +230,9 @@ class _OrderListState extends State<OrderList> {
   }
 
   ///////  Update Order Submit  ++++++++++++++++++++++
-  CollectionReference _order = FirebaseFirestore.instance.collection('order');
+
   Object updatelist(id) {
+    CollectionReference _order = FirebaseFirestore.instance.collection('order');
     var alert = '';
     Map<dynamic, dynamic> itemField = {};
     //  int totalItem = 0;
@@ -297,6 +291,65 @@ class _OrderListState extends State<OrderList> {
         (error) => themeAlert(context, 'Failed to update', type: "error"));
   }
 
+  Object Win_updatelist(id) {
+    var _order = Firestore.instance.collection('order');
+    var alert = '';
+    Map<dynamic, dynamic> itemField = {};
+    //  int totalItem = 0;
+    var featureImg = '';
+    _controllers.forEach((k, val) {
+      var tempVar = _controllers['$k']?.text;
+      var temp = k.split("___");
+      var key = temp[0];
+      var field = temp[1];
+      var tempData = (itemField[key] == null) ? {} : itemField[key];
+
+      // totalItem = (tempVar != ''  //&& Submit_subProductBox.contains(key)
+      //     )
+      //     ? totalItem + int.parse(tempVar.toString())
+      //     : totalItem;
+
+      alert = (tempVar == null)
+          ? 'Please Enter valid ${field.toUpperCase()}'
+          : alert;
+
+      tempData[field] = tempVar;
+
+      if (tempVar != ''
+          //Submit_subProductBox.contains(key)
+          ) {
+        itemField[key] = tempData;
+      }
+    });
+
+    if (alert != '') {
+      themeAlert(context, alert, type: 'error');
+      return false;
+    }
+
+    return _order.document(id).update({
+      'buyer_name': Buyer_name_Controller.text,
+      'category': _PerentCate,
+      'buyer_mobile': Buyer_Mobile_Controller.text,
+      'buyer_email': Buyer_Email_Controller.text,
+      'buyer_address': Buyer_Address_Controller.text,
+      "price_details": itemField,
+      'status': (_StatusValue == "Active")
+          ? "1"
+          : (_StatusValue == "Inactive")
+              ? "2"
+              : "0",
+      "date_at": "$Date_at"
+    }).then((value) {
+      themeAlert(context, "Successfully Update");
+      setState(() {
+        _Update_wd = false;
+        Order_details = 1;
+        OrderList_data();
+      });
+    }).catchError(
+        (error) => themeAlert(context, 'Failed to update', type: "error"));
+  }
 /////////////////////////////////////////===========================================\\
 /////////  Product List data For Dropdown Value     ++++++++++
 
@@ -310,9 +363,10 @@ class _OrderListState extends State<OrderList> {
     productList = [];
     Map<dynamic, dynamic> w = {
       'table': "product",
-      //'status': "$_StatusValue",
     };
-    var temp = await dbFindDynamic(db, w);
+    var temp = (!kIsWeb && Platform.isWindows)
+        ? await All_dbFindDynamic(db, w)
+        : await dbFindDynamic(db, w);
     setState(() {
       temp.forEach((k, v) {
         productList.add(v);
@@ -341,32 +395,34 @@ class _OrderListState extends State<OrderList> {
   @override
   void initState() {
     super.initState();
-    _CateData();
-    Pro_Data_Drop();
     OrderList_data();
   }
 
+  bool progressWidget = true;
 //// end user fun
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Container(
-      child: ListView(
-        children: [
-          Header(
-            title: "Order",
-          ),
-          SizedBox(height: defaultPadding),
-          (_Details_wd == false)
-              ? (Add_New_Order != true)
-                  ? (_Update_wd != true)
-                      ? listList(context)
-                      : Update_Order(context, "Edit", _Order_ID)
-                  : Add_newOredr(context, "Add")
-              : Details_view(context, priceData)
-        ],
-      ),
-    ));
+    return (progressWidget == true)
+        ? Center(child: pleaseWait(context))
+        : Scaffold(
+            body: Container(
+            child: ListView(
+              children: [
+                Header(
+                  title: "Order",
+                ),
+                SizedBox(height: defaultPadding),
+                (_Details_wd == false)
+                    ? (Add_New_Order != true)
+                        ? (_Update_wd != true)
+                            ? listList(context)
+                            : Update_Order(context, "Edit", _Order_ID)
+                        : Add_newOredr(context, "Add")
+                    : Details_view(context, priceData)
+              ],
+            ),
+          ));
+    // });
   }
 
 //////// ///////////////////////////////// @1  List  of Order       ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2312,7 +2368,7 @@ class _OrderListState extends State<OrderList> {
             ),
           ),
           Container(
-              // padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(10),
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               decoration: BoxDecoration(
                 color: Colors.black12,
@@ -2347,13 +2403,17 @@ class _OrderListState extends State<OrderList> {
                       themeButton3(context, () {
                         if (_formKey.currentState!.validate()) {
                           setState(() {
-                            updatelist(O_ID);
+                            if (!kIsWeb && Platform.isWindows) {
+                              Win_updatelist(O_ID);
+                            } else {
+                              updatelist(O_ID);
+                            }
                           });
                         } else {
                           themeAlert(context, 'Image value required!',
                               type: "error");
                         }
-                      }, buttonColor: Colors.green, label: "Submit"),
+                      }, buttonColor: Colors.green, label: "Update"),
                     ],
                   ),
                   SizedBox(height: 20.0),

@@ -1,13 +1,17 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new, unnecessary_cast, override_on_non_overriding_member
+
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:slug_it/slug_it.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/firebase_Storage.dart';
+import '../../themes/firebase_functions.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
@@ -39,13 +43,17 @@ class _CategoryAddState extends State<CategoryAdd> {
   final SlugUrlController = TextEditingController();
   bool Tranding = false;
 
+  bool progressWidget = true;
+  var db = (!kIsWeb && Platform.isWindows)
+      ? Firestore.instance
+      : FirebaseFirestore.instance;
   @override
-  void dispose() {
-    // Clean up the controller when the widget is disposed.
-    CategoryController.dispose();
-    SlugUrlController.dispose();
-    super.dispose();
-  }
+  // void dispose() {
+  //   // Clean up the controller when the widget is disposed.
+  //   CategoryController.dispose();
+  //   SlugUrlController.dispose();
+  //   super.dispose();
+  // }
 
   clearText() {
     SlugUrlController.clear();
@@ -71,18 +79,20 @@ class _CategoryAddState extends State<CategoryAdd> {
         allowedExtensions: ['png', 'jpg'],
         allowMultiple: false,
       );
+
       if (results != null) {
         final path = results.files.single.path;
         final fileName = results.files.single.name;
-        UploadFile(path!, fileName).then((value) {
-          // print("image selected");
-        });
+
+        UploadFile(path!, fileName).then((value) {});
+        // print("$url_img  ++++++++vvvvv+++++++++");
         setState(() async {
           downloadURL = await FirebaseStorage.instance
               .ref()
               .child('media/$fileName')
               .getDownloadURL();
           url_img = downloadURL.toString();
+
           setState(() {
             url_img = downloadURL.toString();
           });
@@ -109,6 +119,7 @@ class _CategoryAddState extends State<CategoryAdd> {
               .getDownloadURL();
           setState(() {
             url_img = downloadURL.toString();
+            image_addList(url_img);
           });
 
           //   print("$url_img  +++++++88888888+++++++++");
@@ -123,15 +134,16 @@ class _CategoryAddState extends State<CategoryAdd> {
 /////////// firebase Storage +++++++++++++++++++
   ///
   String? downloadURL;
-  List<String> myList = [];
+  List<String> _Storage_image_List = [];
   Future listExample() async {
     firebase_storage.ListResult result =
         await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
     result.items.forEach((firebase_storage.Reference ref) async {
       var uri = await downloadURLExample("${ref.fullPath}");
-      myList.add(uri);
+      _Storage_image_List.add(uri);
+      // image_addList(uri);
     });
-    return myList;
+    return _Storage_image_List;
   }
 
   Future downloadURLExample(image_path) async {
@@ -140,13 +152,25 @@ class _CategoryAddState extends State<CategoryAdd> {
     return downloadURL.toString();
   }
 
-////
+//////
+/////// add Category Data  =+++++++++++++++++++
 
+  Future<void> image_addList(image_url) {
+    CollectionReference _category =
+        FirebaseFirestore.instance.collection('window_image');
+    return _category
+        .add({'image_url': "$image_url", "date_at": "$Date_at"}).then((value) {
+      setState(() {
+        themeAlert(context, "Image upload successfully");
+        // _CateData();
+      });
+    }).catchError(
+            (error) => themeAlert(context, 'Failed to Submit', type: "error"));
+  }
+
+//////////
 ///////////  firebase property Database access  +++++++++++++++++++++++++++
-  final Stream<QuerySnapshot> _crmStream =
-      FirebaseFirestore.instance.collection('category').snapshots();
-  CollectionReference _category =
-      FirebaseFirestore.instance.collection('category');
+
 ////////
 
 /////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
@@ -157,12 +181,13 @@ class _CategoryAddState extends State<CategoryAdd> {
     var collection = FirebaseFirestore.instance.collection('category');
     var querySnapshot = await collection.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
-      // ignore: unnecessary_cast
+      // ignore:
       Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
       StoreDocs.add(data);
       data["id"] = queryDocumentSnapshot.id;
     }
     setState(() {
+      progressWidget = false;
       listExample();
       //print("$StoreDocs ++++++++");
     });
@@ -197,6 +222,8 @@ class _CategoryAddState extends State<CategoryAdd> {
 /////// add Category Data  =+++++++++++++++++++
 
   Future<void> addList() {
+    CollectionReference _category =
+        FirebaseFirestore.instance.collection('category');
     return _category.add({
       'category_name': "$cate_name",
       'slug_url': "$slug__url",
@@ -222,6 +249,8 @@ class _CategoryAddState extends State<CategoryAdd> {
 ////////// delete Category Data ++++++++++++++++++
 
   Future<void> deleteUser(id) {
+    CollectionReference _category =
+        FirebaseFirestore.instance.collection('category');
     return _category.doc(id).delete().then((value) {
       setState(() {
         themeAlert(context, "Deleted Successfully ");
@@ -236,6 +265,9 @@ class _CategoryAddState extends State<CategoryAdd> {
 /////// Update
 
   Future<void> updatelist(id, Catename, slugUrl, _Status, _perentCate, image) {
+    CollectionReference _category =
+        FirebaseFirestore.instance.collection('category');
+
     return _category.doc(id).update({
       'category_name': "$Catename",
       "parent_cate": "$_perentCate",
@@ -283,27 +315,158 @@ class _CategoryAddState extends State<CategoryAdd> {
 
   @override
   void initState() {
-    _CateData();
+    if (!kIsWeb && Platform.isWindows) {
+      _All_Platform_CateData();
+    } else {
+      _CateData();
+    }
+
     super.initState();
   }
+
+/////////////  For Cross PLatform Fuction   +++++++++++++++++++++++++++++++++++++++++++++
+
+  ///  Get Category data
+  _All_Platform_CateData() async {
+    StoreDocs = [];
+    final ref = Firestore.instance.collection('category');
+    final documents = await ref.get();
+    for (var document in documents) {
+      Map data = document.map as Map<String, dynamic>;
+      StoreDocs.add(data);
+      data["id"] = document.id;
+    }
+
+    setState(() {
+      progressWidget = false;
+      Windows_Image_data();
+    });
+  }
+
+  Future Windows_Image_data() async {
+    var temp2 = [];
+    _Storage_image_List = [];
+    Map<dynamic, dynamic> w = {
+      'table': "window_image",
+      //'status': "$_StatusValue",
+    };
+    var temp = (!kIsWeb && Platform.isWindows)
+        ? await All_dbFindDynamic(db, w)
+        : await dbFindDynamic(db, w);
+
+    setState(() {
+      temp.forEach((k, v) {
+        _Storage_image_List.add(v["image_url"]);
+      });
+      progressWidget = false;
+    });
+  }
+/////  Update Catego
+
+//////
+
+  Future All_Update_initial(id) async {
+    var pathData =
+        await Firestore.instance.collection('category').document(id).get();
+    // await FirebaseFirestore.instance.collection('category').doc(id).get();
+    if (pathData != null) {
+      data = pathData.map as Map<String, dynamic>?;
+      setState(() {
+        Perent_cat = data!['parent_cate'];
+        slugUrl = data!['slug_url'];
+        image = data!["image"];
+        _Status = (data!['status'] == "1")
+            ? "Active"
+            : (data!['status'] == "2")
+                ? "Inactive"
+                : "Select";
+        Catename = data!['category_name'];
+      });
+    }
+  }
+
+  ///
+
+/////// Update
+
+  Future<void> All_updatelist(
+      id, Catename, slugUrl, _Status, _perentCate, image) async {
+    var _category = await Firestore.instance.collection('category');
+    return _category.document(id).update({
+      'category_name': "$Catename",
+      "parent_cate": "$_perentCate",
+      'slug_url': "$slugUrl",
+      'status': (_Status == "Active")
+          ? "1"
+          : (_Status == "Inactive")
+              ? "2"
+              : "0",
+      "image": "$image",
+      "date_at": "$Date_at"
+    }).then((value) {
+      themeAlert(context, "Successfully Update");
+      setState(() {
+        updateWidget = false;
+        _All_Platform_CateData();
+      });
+    }).catchError(
+        (error) => themeAlert(context, 'Failed to update', type: "error"));
+  }
+
+  ///
+
+////////// delete Category Data ++++++++++++++++++
+
+  Future<void> All_deleteUser(id) async {
+    var _category = await Firestore.instance.collection('category');
+    return _category.document(id).delete().then((value) {
+      setState(() {
+        themeAlert(context, "Deleted Successfully ");
+        _All_Platform_CateData();
+      });
+    }).catchError(
+        (error) => themeAlert(context, 'Not find Data', type: "error"));
+  }
+
+  ////////////
+
+/////// add Category Data  =+++++++++++++++++++
+
+  Future<void> All_addList() async {
+    var _category = await Firestore.instance.collection('category');
+    return _category.add({
+      'category_name': "$cate_name",
+      'slug_url': "$slug__url",
+      'parent_cate': "$_dropDownValue",
+      'status': (_StatusValue == "Active")
+          ? "1"
+          : (_StatusValue == "Inactive")
+              ? "2"
+              : "0",
+      'image': "$url_img",
+      "date_at": "$Date_at"
+    }).then((value) {
+      setState(() {
+        themeAlert(context, "Submitted Successfully ");
+        _All_Platform_CateData();
+        Add_Category = false;
+      });
+    }).catchError(
+        (error) => themeAlert(context, 'Failed to Submit', type: "error"));
+  }
+
+//////////
+
+/////////////  ==============================================
 
   bool updateWidget = false;
   var update_id;
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: _crmStream,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          //////
-          if (snapshot.hasError) {
-            themeAlert(context, '"Something went wrong"', type: "error");
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          ////////
-          return Scaffold(
-              body: Container(
+    return (progressWidget == true)
+        ? Center(child: pleaseWait(context))
+        : Scaffold(
+            body: Container(
             child: ListView(
               children: [
                 Header(
@@ -317,7 +480,7 @@ class _CategoryAddState extends State<CategoryAdd> {
               ],
             ),
           ));
-        });
+    // });
   }
 
 //// Widget for Start_up
@@ -771,7 +934,11 @@ class _CategoryAddState extends State<CategoryAdd> {
                         setState(() {
                           cate_name = CategoryController.text;
                           slug__url = SlugUrlController.text;
-                          addList();
+                          if (kIsWeb) {
+                            addList();
+                          } else if (!kIsWeb) {
+                            All_addList();
+                          }
                           clearText();
                           clear_imageData();
                         });
@@ -896,7 +1063,11 @@ class _CategoryAddState extends State<CategoryAdd> {
                             )
                           ],
                         ),
-                        Container(height: 40, width: 300, child: SearchField())
+                        Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            child: SearchField())
                       ],
                     )),
                 SizedBox(
@@ -1099,7 +1270,11 @@ class _CategoryAddState extends State<CategoryAdd> {
                         setState(() {
                           updateWidget = true;
                           update_id = iid;
-                          Update_initial(iid);
+                          if (kIsWeb) {
+                            Update_initial(iid);
+                          } else if (!kIsWeb) {
+                            All_Update_initial(iid);
+                          }
                         });
                       },
                       icon: Icon(
@@ -1833,16 +2008,27 @@ class _CategoryAddState extends State<CategoryAdd> {
                             children: [
                               themeButton3(context, () {
                                 setState(() {
-                                  updatelist(
-                                      id,
-                                      Catename,
-                                      slugUrl,
-                                      _StatusValue,
-                                      _dropDownValue,
-                                      (url_img == null || url_img.isEmpty)
-                                          ? image
-                                          : url_img);
-
+                                  if (kIsWeb) {
+                                    updatelist(
+                                        id,
+                                        Catename,
+                                        slugUrl,
+                                        _StatusValue,
+                                        _dropDownValue,
+                                        (url_img == null || url_img.isEmpty)
+                                            ? image
+                                            : url_img);
+                                  } else if (!kIsWeb) {
+                                    All_updatelist(
+                                        id,
+                                        Catename,
+                                        slugUrl,
+                                        _StatusValue,
+                                        _dropDownValue,
+                                        (url_img == null || url_img.isEmpty)
+                                            ? image
+                                            : url_img);
+                                  }
                                   clearText();
                                 });
                               }, buttonColor: Colors.blue, label: "Update"),
@@ -1955,13 +2141,13 @@ class _CategoryAddState extends State<CategoryAdd> {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
         ),
-        itemCount: myList.length,
+        itemCount: _Storage_image_List.length,
         itemBuilder: (_, index) => Container(
             margin: EdgeInsets.all(10),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               image: DecorationImage(
-                image: NetworkImage('${myList[index]}'),
+                image: NetworkImage('${_Storage_image_List[index]}'),
                 fit: BoxFit.contain,
               ),
             ),
@@ -1970,24 +2156,24 @@ class _CategoryAddState extends State<CategoryAdd> {
               checkColor: Colors.white,
               activeColor: Colors.green,
               side: BorderSide(width: 2, color: Colors.red),
-              value: _selectedOptions.contains(myList[index]),
+              value: _selectedOptions.contains(_Storage_image_List[index]),
               onChanged: (value) {
                 setState(() {
                   if (value != null && _selectedOptions.isEmpty) {
                     setState(() {
-                      _selectedOptions.add(myList[index]);
+                      _selectedOptions.add(_Storage_image_List[index]);
                       url_img = _selectedOptions[0];
                       Navigator.pop(context);
                     });
                   } else if (_selectedOptions != null &&
                       _selectedOptions.isNotEmpty) {
                     setState(() {
-                      _selectedOptions[0] = "${myList[index]}";
+                      _selectedOptions[0] = "${_Storage_image_List[index]}";
                       url_img = _selectedOptions[0];
                       Navigator.pop(context);
                     });
                   } else {
-                    _selectedOptions.remove(myList[index]);
+                    _selectedOptions.remove(_Storage_image_List[index]);
                   }
                 });
               },
@@ -2006,13 +2192,13 @@ class _CategoryAddState extends State<CategoryAdd> {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
         ),
-        itemCount: myList.length, // <-- required
+        itemCount: _Storage_image_List.length, // <-- required
         itemBuilder: (_, index) => Container(
             margin: EdgeInsets.all(10),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               image: DecorationImage(
-                image: NetworkImage('${myList[index]}'),
+                image: NetworkImage('${_Storage_image_List[index]}'),
                 fit: BoxFit.contain,
               ),
             ),
@@ -2020,24 +2206,24 @@ class _CategoryAddState extends State<CategoryAdd> {
               checkColor: Colors.white,
               activeColor: Colors.green,
               side: BorderSide(width: 2, color: Colors.red),
-              value: _selectedOptions.contains(myList[index]),
+              value: _selectedOptions.contains(_Storage_image_List[index]),
               onChanged: (value) {
                 setState(() {
                   if (value != null && _selectedOptions.isEmpty) {
                     setState(() {
-                      _selectedOptions.add(myList[index]);
+                      _selectedOptions.add(_Storage_image_List[index]);
                       url_img = _selectedOptions[0];
                       Navigator.pop(context);
                     });
                   } else if (_selectedOptions != null &&
                       _selectedOptions.isNotEmpty) {
                     setState(() {
-                      _selectedOptions[0] = "${myList[index]}";
+                      _selectedOptions[0] = "${_Storage_image_List[index]}";
                       url_img = _selectedOptions[0];
                       Navigator.pop(context);
                     });
                   } else {
-                    _selectedOptions.remove(myList[index]);
+                    _selectedOptions.remove(_Storage_image_List[index]);
                   }
                 });
               },
@@ -2149,8 +2335,11 @@ class _CategoryAddState extends State<CategoryAdd> {
                 child: TextButton(
                   onPressed: () {
                     setState(() {
-                      deleteUser(iid_delete);
-
+                      if (kIsWeb) {
+                        deleteUser(iid_delete);
+                      } else if (!kIsWeb) {
+                        All_deleteUser(iid_delete);
+                      }
                       Navigator.of(context).pop(false);
                     });
                   },

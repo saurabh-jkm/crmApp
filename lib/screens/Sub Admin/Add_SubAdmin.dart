@@ -1,19 +1,23 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new, unused_field, unused_label, unrelated_type_equality_checks, file_names
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new, unused_field, unused_label, unrelated_type_equality_checks, file_names, unnecessary_cast
+
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:firedart/firestore/firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
+
 import '../../constants.dart';
-import '../../controllers/MenuAppController.dart';
-import '../../helper/helper_function.dart';
 import '../../responsive.dart';
+
+import '../../themes/firebase_functions.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
 import 'package:intl/intl.dart';
-import '../../themes/auth_service.dart';
-import '../main/main_screen.dart';
 
 class SubAdmin extends StatefulWidget {
   const SubAdmin({super.key});
@@ -31,12 +35,15 @@ class _SubAdminState extends State<SubAdmin> {
   String lname = "";
   String fullName = "";
   String Mobile = "";
-  String? _StatusValue;
+  String? _StatusValue = "";
   String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
-  AuthService authService = AuthService();
+  var db = (!kIsWeb && Platform.isWindows)
+      ? Firestore.instance
+      : FirebaseFirestore.instance;
+  bool progressWidget = true;
   ///////////======================================================================
   String? _dropDownValue;
-
+  String _User_Cate = '';
   clearText() {
     setState(() {
       fname = "";
@@ -44,6 +51,7 @@ class _SubAdminState extends State<SubAdmin> {
       email = "";
       fullName = "";
       password = "";
+      _User_Cate = '';
       Mobile = "";
       _StatusValue = "";
     });
@@ -51,38 +59,81 @@ class _SubAdminState extends State<SubAdmin> {
 //////
 
 ///////////  firebase property Database access  +++++++++++++++++++++++++++
-  final Stream<QuerySnapshot> _crmStream =
-      FirebaseFirestore.instance.collection('users').snapshots();
-  CollectionReference _UsersSubAdmin =
-      FirebaseFirestore.instance.collection('users');
+
 ////////
 
 /////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
 
   List StoreDocs = [];
+  List UserIDcheck = [];
   _SubAdmin_ListData() async {
     StoreDocs = [];
     var collection = FirebaseFirestore.instance.collection('users');
     var querySnapshot = await collection.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
-      // ignore: unnecessary_cast
       Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
       StoreDocs.add(data);
-      // data["id"] = queryDocumentSnapshot.id;
+      data["id"] = queryDocumentSnapshot.id;
     }
-    // setState(() {
-    //   print("$StoreDocs ++++++++");
-    // });
+    setState(() {
+      progressWidget = false;
+      _CateData();
+    });
+  }
+
+  Win_SubAdmin_ListData() async {
+    StoreDocs = [];
+    final collection = Firestore.instance.collection('users');
+    final querySnapshot = await collection.get();
+    for (var queryDocumentSnapshot in querySnapshot) {
+      Map data = queryDocumentSnapshot.map as Map<String, dynamic>;
+      setState(() {
+        StoreDocs.add(data);
+        data["id"] = queryDocumentSnapshot.id;
+      });
+    }
+
+    setState(() {
+      String base64String;
+      String decodedString;
+      for (var i = 0; i < StoreDocs.length; i++) {
+        base64String = '${StoreDocs[i]["uid"]}';
+        decodedString = utf8.decode(base64.decode(base64String));
+        UserIDcheck.add(decodedString);
+      }
+      progressWidget = false;
+      _CateData();
+    });
   }
 
 /////////////
+////////////  User Category  data +++++++++++++++++++++++++++++++++++++++++++++++++
+  Map<int, String> v_status = {0: "Select", 1: 'Active', 2: 'Inactive'};
+  Map<String, String> Cate_Name_list = {'Select': ''};
+  _CateData() async {
+    Map<dynamic, dynamic> w = {
+      'table': 'user_category',
+      //'status':'1',
+    };
+
+    // var dbData = await dbFindDynamic(db, w);
+    var dbData = (!kIsWeb && Platform.isWindows)
+        ? await All_dbFindDynamic(db, w)
+        : await dbFindDynamic(db, w);
+    dbData.forEach((k, v) {
+      Cate_Name_list[v['category_name']] = v['category_name'];
+    });
+    // print("$Cate_Name_list  +++++++++++++++++++++");
+  }
+
+///////// ====================================================================
+  ///
 
   var firstName;
   var lastName;
   var _email;
   var _passwd;
   var _mobile;
-  var _Status;
   var _date;
 
 //////
@@ -99,7 +150,32 @@ class _SubAdminState extends State<SubAdmin> {
         _mobile = data!['mobile_no'];
         _passwd = data!['password'];
         _date = data!['date_at'];
-        _Status = (data!['status'] == "1")
+        _User_Cate = data!['user_category'];
+        _StatusValue = (data!['status'] == "1")
+            ? "Active"
+            : (data!['status'] == "2")
+                ? "Inactive"
+                : "Select";
+
+        print("$_User_Cate bjjj====");
+      });
+    }
+  }
+
+  Future All_Update_initial(id) async {
+    var pathData =
+        await Firestore.instance.collection('users').document(id).get();
+    if (pathData != null) {
+      data = pathData.map as Map<String, dynamic>?;
+      setState(() {
+        firstName = data!['first_name'];
+        lastName = data!['last_name'];
+        _email = data!["email"];
+        _mobile = data!['mobile_no'];
+        _passwd = data!['password'];
+        _date = data!['date_at'];
+        _User_Cate = data!['user_category'];
+        _StatusValue = (data!['status'] == "1")
             ? "Active"
             : (data!['status'] == "2")
                 ? "Inactive"
@@ -110,47 +186,66 @@ class _SubAdminState extends State<SubAdmin> {
 
   ///
 
-// /////// add Sub_Admin User Data  =+++++++++++++++++++
-////////////////////////////////////////////////////
+  ////////// register
+  //fname,lname, email, Mobile, password,_StatusValue,Date_at
+  Add_Sub_user(String fname, String lname, String email, String mobile,
+      String password, String user_Cate, String _Status, String date_at) async {
+    final bytes = utf8.encode(email);
+    final base64Str = base64.encode(bytes);
 
-  Add_SubAdmin() async {
+    Map<String, dynamic> w = {};
+
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
-      await authService
-          .registerUserWithEmailandPassword(
-              fname, lname, email, Mobile, password, _StatusValue!, Date_at)
-          .then((value) async {
-        if (value == true) {
-          // saving the shared preference state
-          await HelperFunctions.saveUserLoggedInStatus(true);
-          await HelperFunctions.saveUserEmailSF(email);
-          await HelperFunctions.saveUserNameSF(fname);
-          nextScreenReplace(
-            context,
-            MultiProvider(providers: [
-              ChangeNotifierProvider(
-                create: (context) => MenuAppController(),
-              ),
-            ], child: MainScreen(pageNo: 1) // MainScreen() // MainScreen(),
-                ),
-          );
+      w = {
+        'table': "users",
+        "first_name": fname,
+        "last_name": lname,
+        "email": email,
+        "mobile_no": Mobile,
+        "password": password,
+        "user_category": user_Cate,
+        "status": _Status,
+        "date_at": date_at,
+        "uid": "$base64Str",
+      };
+      if (UserIDcheck.contains(email) != true) {
+        if (!kIsWeb && Platform.isWindows) {
+          await win_dbSave(db, w);
         } else {
-          showSnackbar(context, Colors.red, value);
-          setState(() {
-            _isLoading = false;
-          });
+          dbSave(db, w);
         }
+
+        themeAlert(context, "Successfully Submitted");
+        setState(() {
+          clearText();
+          if (!kIsWeb && Platform.isWindows) {
+            Win_SubAdmin_ListData();
+          } else {
+            _SubAdmin_ListData();
+          }
+          Add_Category = false;
+        });
+      } else {
+        showSnackbar(context, Colors.red, "User Already Exists !!");
+      }
+    } else {
+      showSnackbar(context, Colors.red, "Invalid Value!!");
+      setState(() {
+        _isLoading = false;
       });
     }
   }
 
-// //////////
+// //////////===================================================================
 
 ////////// delete Category Data ++++++++++++++++++
 
   Future<void> deleteUser(id) {
+    CollectionReference _UsersSubAdmin =
+        FirebaseFirestore.instance.collection('users');
     return _UsersSubAdmin.doc(id).delete().then((value) {
       setState(() {
         themeAlert(context, "Deleted Successfully ");
@@ -160,14 +255,24 @@ class _SubAdminState extends State<SubAdmin> {
         (error) => themeAlert(context, 'Not find Data', type: "error"));
   }
 
+  Future<void> win_deleteUser(id) {
+    var _UsersSubAdmin = Firestore.instance.collection('users');
+    return _UsersSubAdmin.document(id).delete().then((value) {
+      setState(() {
+        themeAlert(context, "Deleted Successfully ");
+        Win_SubAdmin_ListData();
+      });
+    }).catchError(
+        (error) => themeAlert(context, 'Not find Data', type: "error"));
+  }
   ////////////
-  ///
-  ///
-  ///
+
 /////// Update
 
   Future<void> updatelist(
-      id, f_name, l_name, _email, _mobile, _passwd, _Status) async {
+      id, f_name, l_name, _email, _mobile, _passwd, user_cat, _Status) async {
+    CollectionReference _UsersSubAdmin =
+        FirebaseFirestore.instance.collection('users');
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -178,6 +283,7 @@ class _SubAdminState extends State<SubAdmin> {
         'email': _email,
         'mobile_no': "$_mobile",
         "password": _passwd,
+        "user_category": user_cat,
         "status": (_Status == "Active")
             ? "1"
             : (_Status == "Inactive")
@@ -200,13 +306,53 @@ class _SubAdminState extends State<SubAdmin> {
     }
   }
 
+  Future<void> win_updatelist(
+      id, f_name, l_name, _email, _mobile, _passwd, user_cat, _Status) async {
+    var _UsersSubAdmin = Firestore.instance.collection('users');
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      await _UsersSubAdmin.document(id).update({
+        'first_name': f_name,
+        "last_name": l_name,
+        'email': _email,
+        'mobile_no': "$_mobile",
+        "password": _passwd,
+        "user_category": user_cat,
+        "status": (_Status == "Active")
+            ? "1"
+            : (_Status == "Inactive")
+                ? "2"
+                : "0",
+        "date_at": Date_at,
+      }).then((value) {
+        themeAlert(context, "Successfully Update");
+        setState(() {
+          updateWidget = false;
+          Win_SubAdmin_ListData();
+        });
+      }).catchError(
+          (error) => themeAlert(context, 'Failed to update', type: "error"));
+    } else {
+      themeAlert(context, 'Fill the Required value!', type: "error");
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   ///
 
   bool Add_Category = false;
 
   @override
   void initState() {
-    _SubAdmin_ListData();
+    if (!kIsWeb && Platform.isWindows) {
+      Win_SubAdmin_ListData();
+    } else {
+      _SubAdmin_ListData();
+    }
     super.initState();
   }
 
@@ -214,19 +360,10 @@ class _SubAdminState extends State<SubAdmin> {
   var update_id;
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: _crmStream,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          //////
-          if (snapshot.hasError) {
-            themeAlert(context, '"Something went wrong"', type: "error");
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          ////////
-          return Scaffold(
-              body: Container(
+    return (progressWidget == true)
+        ? Center(child: pleaseWait(context))
+        : Scaffold(
+            body: Container(
             child: ListView(
               children: [
                 Header(
@@ -242,7 +379,6 @@ class _SubAdminState extends State<SubAdmin> {
               ],
             ),
           ));
-        });
   }
 
 //// Widget for Start_up
@@ -312,6 +448,61 @@ class _SubAdminState extends State<SubAdmin> {
                   child: Column(
                     children: [
                       Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                  child: Text("User Category*",
+                                      style: themeTextStyle(
+                                          color: Colors.black,
+                                          size: 15,
+                                          fw: FontWeight.bold))),
+                              Container(
+                                height: 40,
+                                width:
+                                    MediaQuery.of(context).size.width * 0.785,
+                                margin: EdgeInsets.only(top: 10, bottom: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                padding: EdgeInsets.only(left: 10, right: 10),
+                                child: DropdownButton(
+                                  dropdownColor: Colors.white,
+                                  value: _User_Cate,
+                                  underline: Container(),
+                                  isExpanded: true,
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black,
+                                  ),
+                                  iconSize: 35,
+                                  style: TextStyle(
+                                      color: Color.fromARGB(255, 5, 8, 10)),
+                                  items: [
+                                    for (MapEntry<String, String> e
+                                        in Cate_Name_list.entries)
+                                      DropdownMenuItem(
+                                        value: e.value,
+                                        child: Text(e.key),
+                                      ),
+                                  ],
+                                  onChanged: (val) {
+                                    setState(
+                                      () {
+                                        _User_Cate = val!;
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      SizedBox(height: defaultPadding),
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
@@ -327,13 +518,14 @@ class _SubAdminState extends State<SubAdmin> {
                                             color: Colors.black,
                                             size: 15,
                                             fw: FontWeight.bold)),
+                                    SizedBox(height: 10),
                                     SizedBox(
                                       height: 45,
                                       child: TextFormField(
                                         style: TextStyle(color: Colors.black),
                                         decoration:
                                             textInputDecoration.copyWith(
-                                                labelText: "Full Name",
+                                                labelText: "First Name",
                                                 prefixIcon: Icon(
                                                   Icons.person,
                                                   color: Theme.of(context)
@@ -369,6 +561,7 @@ class _SubAdminState extends State<SubAdmin> {
                                               color: Colors.black,
                                               size: 15,
                                               fw: FontWeight.bold)),
+                                      SizedBox(height: 10),
                                       SizedBox(
                                         height: 45,
                                         child: TextFormField(
@@ -414,6 +607,7 @@ class _SubAdminState extends State<SubAdmin> {
                                           color: Colors.black,
                                           size: 15,
                                           fw: FontWeight.bold)),
+                                  SizedBox(height: 10),
                                   SizedBox(
                                     height: 45,
                                     child: TextFormField(
@@ -452,11 +646,12 @@ class _SubAdminState extends State<SubAdmin> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Container(
-                                          child: Text("Email*",
+                                          child: Text("Email Id*",
                                               style: themeTextStyle(
                                                   color: Colors.black,
                                                   size: 15,
                                                   fw: FontWeight.bold))),
+                                      SizedBox(height: 10),
                                       /////////   Email     TextFormField+++++++++++++++
 
                                       SizedBox(
@@ -505,6 +700,7 @@ class _SubAdminState extends State<SubAdmin> {
                                                     color: Colors.black,
                                                     size: 15,
                                                     fw: FontWeight.bold))),
+                                        SizedBox(height: 10),
                                         SizedBox(
                                           height: 45,
                                           child: TextFormField(
@@ -555,6 +751,7 @@ class _SubAdminState extends State<SubAdmin> {
                                                   color: Colors.black,
                                                   size: 15,
                                                   fw: FontWeight.bold))),
+                                      SizedBox(height: 10),
                                       SizedBox(
                                         height: 45,
                                         child: TextFormField(
@@ -606,6 +803,7 @@ class _SubAdminState extends State<SubAdmin> {
                                                   color: Colors.black,
                                                   size: 15,
                                                   fw: FontWeight.bold))),
+                                      SizedBox(height: 10),
                                       //// Passwd TextFormField ++++++++++++++++++++++++
                                       SizedBox(
                                         height: 45,
@@ -640,77 +838,7 @@ class _SubAdminState extends State<SubAdmin> {
                                 ),
                                 if (Responsive.isMobile(context))
                                   SizedBox(height: defaultPadding),
-                                if (Responsive.isMobile(context))
-                                  Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            child: Text("Status",
-                                                style: themeTextStyle(
-                                                    color: Colors.black,
-                                                    size: 15,
-                                                    fw: FontWeight.bold))),
-                                        Container(
-                                          height: 40,
-                                          margin: EdgeInsets.only(
-                                              top: 10, bottom: 10, right: 10),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          padding: EdgeInsets.only(
-                                              left: 10, right: 10),
-                                          child: DropdownButton(
-                                            dropdownColor: Colors.white,
-                                            hint: _StatusValue == null
-                                                ? Text(
-                                                    'Select',
-                                                    style: TextStyle(
-                                                        color: Colors.black),
-                                                  )
-                                                : Text(
-                                                    _StatusValue!,
-                                                    style: TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 1, 0, 0)),
-                                                  ),
-                                            isExpanded: true,
-                                            underline: Container(),
-                                            icon: Icon(
-                                              Icons.arrow_drop_down,
-                                              color: Colors.black,
-                                            ),
-                                            iconSize: 35,
-                                            style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 1, 7, 7)),
-                                            items: [
-                                              'Select',
-                                              'Inactive',
-                                              'Active'
-                                            ].map(
-                                              (val) {
-                                                return DropdownMenuItem<String>(
-                                                  value: val,
-                                                  child: Text(val),
-                                                );
-                                              },
-                                            ).toList(),
-                                            onChanged: (val) {
-                                              setState(
-                                                () {
-                                                  _StatusValue = val!;
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
+                                if (Responsive.isMobile(context)) Status_Drowp()
                               ],
                             ),
                           ),
@@ -718,78 +846,7 @@ class _SubAdminState extends State<SubAdmin> {
                             SizedBox(width: defaultPadding),
                           // On Mobile means if the screen is less than 850 we dont want to show it
                           if (!Responsive.isMobile(context))
-                            Expanded(
-                                flex: 2,
-                                child: Container(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                          child: Text("Status",
-                                              style: themeTextStyle(
-                                                  color: Colors.black,
-                                                  size: 15,
-                                                  fw: FontWeight.bold))),
-                                      Container(
-                                        height: 40,
-                                        margin: EdgeInsets.only(
-                                            top: 10, bottom: 10, right: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        padding: EdgeInsets.only(
-                                            left: 10, right: 10),
-                                        child: DropdownButton(
-                                          dropdownColor: Colors.white,
-                                          hint: _StatusValue == null
-                                              ? Text(
-                                                  'Select',
-                                                  style: TextStyle(
-                                                      color: Colors.black),
-                                                )
-                                              : Text(
-                                                  _StatusValue!,
-                                                  style: TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 1, 0, 0)),
-                                                ),
-                                          isExpanded: true,
-                                          underline: Container(),
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: Colors.black,
-                                          ),
-                                          iconSize: 35,
-                                          style: TextStyle(
-                                              color:
-                                                  Color.fromARGB(255, 1, 7, 7)),
-                                          items: [
-                                            'Select',
-                                            'Inactive',
-                                            'Active'
-                                          ].map(
-                                            (val) {
-                                              return DropdownMenuItem<String>(
-                                                value: val,
-                                                child: Text(val),
-                                              );
-                                            },
-                                          ).toList(),
-                                          onChanged: (val) {
-                                            setState(
-                                              () {
-                                                _StatusValue = val!;
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )),
+                            Expanded(flex: 2, child: Status_Drowp()),
                         ],
                       ),
                       SizedBox(
@@ -799,9 +856,22 @@ class _SubAdminState extends State<SubAdmin> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             themeButton3(context, () {
-                              setState(() {
-                                Add_SubAdmin();
-                                clearText();
+                              setState(() async {
+                                await Add_Sub_user(
+                                    fname,
+                                    lname,
+                                    email,
+                                    Mobile,
+                                    password,
+                                    _User_Cate,
+                                    (_StatusValue == "Active")
+                                        ? "1"
+                                        : (_StatusValue == "Inactive")
+                                            ? "2"
+                                            : "",
+                                    Date_at);
+
+                                // clearText();
                               });
                             }, buttonColor: Colors.green, label: "Submit"),
                             SizedBox(
@@ -917,7 +987,11 @@ class _SubAdminState extends State<SubAdmin> {
                             )
                           ],
                         ),
-                        Container(height: 40, width: 300, child: SearchField())
+                        Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            child: SearchField())
                       ],
                     )),
                 SizedBox(
@@ -971,6 +1045,13 @@ class _SubAdminState extends State<SubAdmin> {
                                 TableCell(
                                   verticalAlignment:
                                       TableCellVerticalAlignment.middle,
+                                  child: Text("User Type",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                TableCell(
+                                  verticalAlignment:
+                                      TableCellVerticalAlignment.middle,
                                   child: Text("Email",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)),
@@ -1001,6 +1082,7 @@ class _SubAdminState extends State<SubAdmin> {
                       (Responsive.isMobile(context))
                           ? tableRowWidget_mobile(
                               "${StoreDocs[index]["first_name"]} ${StoreDocs[index]["last_name"]}",
+                              "${StoreDocs[index]["user_category"]}",
                               "${StoreDocs[index]["email"]}",
                               (StoreDocs[index]["status"] == "1")
                                   ? "Active"
@@ -1012,6 +1094,7 @@ class _SubAdminState extends State<SubAdmin> {
                           : tableRowWidget(
                               "${index + 1}",
                               "${StoreDocs[index]["first_name"]} ${StoreDocs[index]["last_name"]}",
+                              "${StoreDocs[index]["user_category"]}",
                               "${StoreDocs[index]["email"]}",
                               (StoreDocs[index]["status"] == "1")
                                   ? "Active"
@@ -1019,7 +1102,9 @@ class _SubAdminState extends State<SubAdmin> {
                                       ? "Inactive"
                                       : "",
                               "${StoreDocs[index]["date_at"]}",
-                              "${StoreDocs[index]["uid"]}"),
+                              (!kIsWeb && Platform.isWindows)
+                                  ? "${StoreDocs[index]["id"]}"
+                                  : "${StoreDocs[index]["uid"]}"),
                   ],
                 ),
               ],
@@ -1030,7 +1115,7 @@ class _SubAdminState extends State<SubAdmin> {
     );
   }
 
-  TableRow tableRowWidget(sno, name, email, status, date, iid) {
+  TableRow tableRowWidget(sno, name, U_type, email, status, date, iid) {
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -1045,6 +1130,13 @@ class _SubAdminState extends State<SubAdmin> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         // horizentalAlignment: TableCellVerticalAlignment.middle,
         child: Text("$name",
+            style:
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
+      ),
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        // horizentalAlignment: TableCellVerticalAlignment.middle,
+        child: Text("$U_type",
             style:
                 GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
@@ -1075,7 +1167,7 @@ class _SubAdminState extends State<SubAdmin> {
     ]);
   }
 
-  TableRow tableRowWidget_mobile(name, email, status, date, iid) {
+  TableRow tableRowWidget_mobile(name, U_type, email, status, date, iid) {
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -1088,6 +1180,7 @@ class _SubAdminState extends State<SubAdmin> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   themeListRow(context, "Name", "$name"),
+                  themeListRow(context, "User Type", "$U_type"),
                   themeListRow(context, "Email", "$email"),
                   themeListRow(context, "Status", "$status"),
                   themeListRow(context, "Date", "$date"),
@@ -1150,7 +1243,11 @@ class _SubAdminState extends State<SubAdmin> {
                     setState(() {
                       updateWidget = true;
                       update_id = iid;
-                      Update_initial(iid);
+                      if (!kIsWeb && Platform.isWindows) {
+                        All_Update_initial(iid);
+                      } else {
+                        Update_initial(iid);
+                      }
                     });
                   },
                   icon: Icon(
@@ -1192,7 +1289,12 @@ class _SubAdminState extends State<SubAdmin> {
                   onPressed: () {
                     setState(() {
                       view_SubAdmin_info = true;
-                      Update_initial(iid);
+                      if (!kIsWeb && Platform.isWindows) {
+                        All_Update_initial(iid);
+                      }
+                      {
+                        Update_initial(iid);
+                      }
                     });
                   },
                   icon: Icon(
@@ -1228,7 +1330,8 @@ class _SubAdminState extends State<SubAdmin> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    setState(() {
+                    setState(() async {
+                      await clearText();
                       updateWidget = false;
                     });
                   },
@@ -1277,6 +1380,63 @@ class _SubAdminState extends State<SubAdmin> {
                       key: _formKey,
                       child: Column(
                         children: [
+                          Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      child: Text("User Category*",
+                                          style: themeTextStyle(
+                                              color: Colors.black,
+                                              size: 15,
+                                              fw: FontWeight.bold))),
+                                  Container(
+                                    height: 40,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.785,
+                                    margin:
+                                        EdgeInsets.only(top: 10, bottom: 10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding:
+                                        EdgeInsets.only(left: 10, right: 10),
+                                    child: DropdownButton(
+                                      dropdownColor: Colors.white,
+                                      value: _User_Cate,
+                                      underline: Container(),
+                                      isExpanded: true,
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black,
+                                      ),
+                                      iconSize: 35,
+                                      style: TextStyle(
+                                          color: Color.fromARGB(255, 5, 8, 10)),
+                                      items: [
+                                        for (MapEntry<String, String> e
+                                            in Cate_Name_list.entries)
+                                          DropdownMenuItem(
+                                            value: e.value,
+                                            child: Text(e.key),
+                                          ),
+                                      ],
+                                      onChanged: (val) {
+                                        setState(
+                                          () {
+                                            _User_Cate = val!;
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                          SizedBox(height: defaultPadding),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -1754,80 +1914,7 @@ class _SubAdminState extends State<SubAdmin> {
                                     if (Responsive.isMobile(context))
                                       SizedBox(height: defaultPadding),
                                     if (Responsive.isMobile(context))
-                                      Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                                child: Text("Status",
-                                                    style: themeTextStyle(
-                                                        color: Colors.black,
-                                                        size: 15,
-                                                        fw: FontWeight.bold))),
-                                            Container(
-                                              height: 40,
-                                              margin: EdgeInsets.only(
-                                                  top: 10,
-                                                  bottom: 10,
-                                                  right: 10),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              padding: EdgeInsets.only(
-                                                  left: 10, right: 10),
-                                              child: DropdownButton(
-                                                dropdownColor: Colors.white,
-                                                hint: _StatusValue == null
-                                                    ? Text(
-                                                        '$_Status',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black),
-                                                      )
-                                                    : Text(
-                                                        _StatusValue!,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black),
-                                                      ),
-                                                isExpanded: true,
-                                                underline: Container(),
-                                                icon: Icon(
-                                                  Icons.arrow_drop_down,
-                                                  color: Colors.black,
-                                                ),
-                                                iconSize: 35,
-                                                style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 0, 0, 0)),
-                                                items: [
-                                                  'Select',
-                                                  'Inactive',
-                                                  'Active'
-                                                ].map(
-                                                  (val) {
-                                                    return DropdownMenuItem<
-                                                        String>(
-                                                      value: val,
-                                                      child: Text(val),
-                                                    );
-                                                  },
-                                                ).toList(),
-                                                onChanged: (val) {
-                                                  setState(
-                                                    () {
-                                                      _StatusValue = val!;
-                                                    },
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
+                                      Status_Drowp()
                                   ],
                                 ),
                               ),
@@ -1835,78 +1922,7 @@ class _SubAdminState extends State<SubAdmin> {
                                 SizedBox(width: defaultPadding),
                               // On Mobile means if the screen is less than 850 we dont want to show it
                               if (!Responsive.isMobile(context))
-                                Expanded(
-                                    flex: 2,
-                                    child: Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                              child: Text("Status",
-                                                  style: themeTextStyle(
-                                                      color: Colors.black,
-                                                      size: 15,
-                                                      fw: FontWeight.bold))),
-                                          Container(
-                                            height: 40,
-                                            margin: EdgeInsets.only(
-                                                top: 10, bottom: 10, right: 10),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            padding: EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            child: DropdownButton(
-                                              dropdownColor: Colors.white,
-                                              hint: _StatusValue == null
-                                                  ? Text(
-                                                      '$_Status',
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    )
-                                                  : Text(
-                                                      _StatusValue!,
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    ),
-                                              isExpanded: true,
-                                              underline: Container(),
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                                color: Colors.black,
-                                              ),
-                                              iconSize: 35,
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0)),
-                                              items: [
-                                                'Select',
-                                                'Inactive',
-                                                'Active'
-                                              ].map(
-                                                (val) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: val,
-                                                    child: Text(val),
-                                                  );
-                                                },
-                                              ).toList(),
-                                              onChanged: (val) {
-                                                setState(
-                                                  () {
-                                                    _StatusValue = val!;
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )),
+                                Expanded(flex: 2, child: Status_Drowp()),
                             ],
                           ),
                           SizedBox(
@@ -1916,17 +1932,33 @@ class _SubAdminState extends State<SubAdmin> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 themeButton3(context, () {
-                                  setState(() {
-                                    updatelist(
-                                        id,
-                                        firstName,
-                                        lastName,
-                                        _email,
-                                        _mobile,
-                                        _passwd,
-                                        (_StatusValue != null)
-                                            ? _StatusValue
-                                            : _Status);
+                                  setState(() async {
+                                    if (!kIsWeb && Platform.isWindows) {
+                                      await win_updatelist(
+                                          id,
+                                          firstName,
+                                          lastName,
+                                          _email,
+                                          _mobile,
+                                          _passwd,
+                                          _User_Cate,
+                                          (_StatusValue != null)
+                                              ? _StatusValue
+                                              : _StatusValue);
+                                    } else {
+                                      await updatelist(
+                                          id,
+                                          firstName,
+                                          lastName,
+                                          _email,
+                                          _mobile,
+                                          _passwd,
+                                          _User_Cate,
+                                          (_StatusValue != null)
+                                              ? _StatusValue
+                                              : _StatusValue);
+                                    }
+
                                     clearText();
                                   });
                                 }, buttonColor: Colors.green, label: "Update"),
@@ -2023,6 +2055,9 @@ class _SubAdminState extends State<SubAdmin> {
                       themeListRow(context, "First Name", "$firstName",
                           descColor: Colors.black, headColor: Colors.black),
                       SizedBox(height: defaultPadding),
+                      themeListRow(context, "User Category", "$_User_Cate",
+                          descColor: Colors.black, headColor: Colors.black),
+                      SizedBox(height: defaultPadding),
                       themeListRow(context, "Last Name", "$lastName",
                           descColor: Colors.black, headColor: Colors.black),
                       SizedBox(height: defaultPadding),
@@ -2032,7 +2067,7 @@ class _SubAdminState extends State<SubAdmin> {
                       themeListRow(context, "Mobile No.", "$_mobile",
                           descColor: Colors.black, headColor: Colors.black),
                       SizedBox(height: defaultPadding),
-                      themeListRow(context, "Status", "$_Status",
+                      themeListRow(context, "Status", "$_StatusValue",
                           descColor: Colors.black, headColor: Colors.black),
                       SizedBox(height: defaultPadding),
                       themeListRow(context, "Date At", "$_date",
@@ -2144,7 +2179,12 @@ class _SubAdminState extends State<SubAdmin> {
                 child: TextButton(
                   onPressed: () {
                     setState(() {
-                      deleteUser(iid_delete);
+                      if (!kIsWeb) {
+                        win_deleteUser(iid_delete);
+                      } else {
+                        deleteUser(iid_delete);
+                      }
+
                       Navigator.of(context).pop(false);
                     });
                   },
@@ -2162,6 +2202,64 @@ class _SubAdminState extends State<SubAdmin> {
           ),
         ) ??
         false; //if showDialouge had returned null, then return false
+  }
+
+  Widget Status_Drowp() {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+              child: Text("Status",
+                  style: themeTextStyle(
+                      color: Colors.black, size: 15, fw: FontWeight.bold))),
+          Container(
+            height: 40,
+            margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: EdgeInsets.only(left: 10, right: 10),
+            child: DropdownButton(
+              dropdownColor: Colors.white,
+              hint: _StatusValue == ""
+                  ? Text(
+                      "Select",
+                      style: TextStyle(color: Colors.black),
+                    )
+                  : Text(
+                      _StatusValue!,
+                      style: TextStyle(color: Colors.black),
+                    ),
+              isExpanded: true,
+              underline: Container(),
+              icon: Icon(
+                Icons.arrow_drop_down,
+                color: Colors.black,
+              ),
+              iconSize: 35,
+              style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+              items: ['Select', 'Inactive', 'Active'].map(
+                (val) {
+                  return DropdownMenuItem<String>(
+                    value: val,
+                    child: Text(val),
+                  );
+                },
+              ).toList(),
+              onChanged: (val) {
+                setState(
+                  () {
+                    _StatusValue = val!;
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
