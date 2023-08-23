@@ -181,10 +181,15 @@ class _OrderListState extends State<OrderList> {
     var temp = (!kIsWeb && Platform.isWindows)
         ? await All_dbFindDynamic(db, w)
         : await dbFindDynamic(db, w);
-    setState(() {
+    setState(() async {
       temp.forEach((k, v) {
         OrderList.add(v);
       });
+      var userData = {
+        'order_data': OrderList,
+      };
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user', jsonEncode(userData));
       _CateData();
       Pro_Data_Drop();
       progressWidget = false;

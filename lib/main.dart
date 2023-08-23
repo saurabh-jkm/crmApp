@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'constants.dart';
 import 'controllers/MenuAppController.dart';
 import 'screens/Login_Reg/Login_user.dart';
+import 'screens/Login_Reg/login_copy.dart';
 import 'screens/main/main_screen.dart';
 
 void main() async {
@@ -39,7 +40,6 @@ void main() async {
   runApp(MyApp());
 }
 
-
 class MyApp extends StatelessWidget {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   // This widget is the root of your application.
@@ -66,7 +66,8 @@ class MyApp extends StatelessWidget {
                 ChangeNotifierProvider(
                   create: (context) => MenuAppController(),
                 ),
-              ], child: MainScreen(pageNo: 1)
+              ], child: Login_Copy()
+                  //MainScreen(pageNo: 1)
                   // child: LoginPage()
 
                   ////MainScreen(pageNo: 1) // MainScreen(),

@@ -46,10 +46,14 @@ dbUpdate(db, where) {
   }).catchError((error) {
     returnData = "Updattion Failed: $error";
   });
+  return returnData;
 }
 
 //////////// All dbUpdate
-All_dbUpdate(db, where) {
+All_dbUpdate(
+  db,
+  where,
+) {
   var returnData = '';
   if (where == null || where == '') {
     return "Map data is empty";
@@ -76,6 +80,7 @@ All_dbUpdate(db, where) {
   }).catchError((error) {
     returnData = "Updattion Failed: $error";
   });
+  return returnData;
 }
 //////
 
