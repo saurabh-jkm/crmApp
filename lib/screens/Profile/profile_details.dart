@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/style.dart';
@@ -21,6 +22,25 @@ class ProfileDetails extends StatefulWidget {
 }
 
 class _ProfileDetailsState extends State<ProfileDetails> {
+  /////// get user data  +++++++++++++++++++++++++++++++++++++++++++++++++++
+  Map<dynamic, dynamic> user = new Map();
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic userData = (prefs.getString('user'));
+    if (userData != null) {
+      setState(() {
+        user = jsonDecode(userData) as Map<dynamic, dynamic>;
+      });
+    }
+  }
+
+///////=======================================================================
+  @override
+  void initState() {
+    _getUser();
+    super.initState();
+  }
+
   ///
   @override
   Widget build(BuildContext context) {
@@ -314,8 +334,10 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                  image: NetworkImage(
-                      "https://mir-s3-cdn-cf.behance.net/project_modules/fs/bd59d257035687.59c5f04c1361c.png"),
+                  image: (user.isNotEmpty && user != "")
+                      ? NetworkImage("${user["avatar"]}")
+                      : NetworkImage(
+                          "https://img.freepik.com/premium-vector/account-icon-user-icon-vector-graphics_292645-552.jpg?w=2000"),
                   // AssetImage("assets/images/sl1.jpg"),
                   fit: BoxFit.fill)),
         ),

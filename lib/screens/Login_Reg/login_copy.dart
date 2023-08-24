@@ -1,16 +1,19 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, use_build_context_synchronously, file_names, avoid_print
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, use_build_context_synchronously, file_names, avoid_print, unnecessary_brace_in_string_interps, dead_code
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Login_Reg/register_page.dart';
 import 'package:crm_demo/themes/firebase_functions.dart';
+import 'package:crm_demo/themes/style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firedart/firedart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants.dart';
 import '../../controllers/MenuAppController.dart';
@@ -38,25 +41,83 @@ class _Login_CopyState extends State<Login_Copy> {
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
       : FirebaseFirestore.instance;
+
+/////////  internet checker
+  var ActiveConnection;
+  String T = "";
+  Future CheckUserConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        setState(() {
+          ActiveConnection = true;
+          //     T = "successfull";
+        });
+      }
+    } on SocketException catch (_) {
+      setState(() {
+        ActiveConnection = false;
+        //  T = "No Internet Connection";
+        //return "No Internet Connection";
+        //  themeAlert(context, "$T",
+        //     type: "error");
+      });
+    }
+  }
+/////////
+
 ///////// Login  Fuction +++++++++++++++++++++++
 
   Future<void> login() async {
+    // CheckUserConnection();
+    // (user_data.isEmpty)
+    //               ? themeButton3(context, _fnCheckPhoneNumber, label: "Submit")
+    //               : themeButton3(context, _fnLoginNow, label: "Login Now")
     // AuthService authService = AuthService();
-    if (formKey.currentState!.validate()) {
+    if (formKey.currentState!.validate() && user_data.isNotEmpty) {
       setState(() {
         _isLoading = true;
       });
-      Future.delayed(const Duration(seconds: 4), () {
-        nextScreenReplace(
-          context,
-          MultiProvider(providers: [
-            ChangeNotifierProvider(
-              create: (context) => MenuAppController(),
-            ),
-          ], child: MainScreen(pageNo: 1) // MainScreen(),
-              ),
-        );
-      });
+      for (var i = 0; i <= user_data.length; i++) {
+        if (email == "${user_data[i]["email"]}") {
+          // break;
+          if (password == "${user_data[i]["password"]}") {
+            var userData = {
+              'type': user_data[i]["user_category"],
+              'id': user_data[i]["user_category"],
+              'name':
+                  "${user_data[i]["first_name"]} ${user_data[i]["last_name"]}",
+              'fname': user_data[i]["first_name"],
+              'lname': user_data[i]["last_name"],
+              'phone': user_data[i]["mobile_no"],
+              'email': user_data[i]["email"],
+              'user_type': user_data[i]["user_type"],
+              'profile_complete': user_data[i]["user_category"],
+              'avatar': user_data[i]["avatar"],
+            };
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            await prefs.setString('user', jsonEncode(userData));
+            print("${userData}  ++++++tt+++++");
+            themeAlert(context, "Successfully Sign In !!");
+            await Future.delayed(const Duration(seconds: 3), () {
+              nextScreenReplace(
+                context,
+                MultiProvider(providers: [
+                  ChangeNotifierProvider(
+                    create: (context) => MenuAppController(),
+                  ),
+                ], child: MainScreen(pageNo: 1) // MainScreen(),
+                    ),
+              );
+            });
+          } else {
+            themeAlert(context, "Your password incorrect  !!", type: "error");
+          }
+          break;
+        } else {
+          themeAlert(context, "Account dosen't exist !!", type: "error");
+        }
+      }
     } else {
       showSnackbar(context, Colors.red, "Error");
       setState(() {
@@ -67,12 +128,11 @@ class _Login_CopyState extends State<Login_Copy> {
 
   ///
 
-  List StoreDocs = [];
+  List user_data = [];
 
   ///
   User_Data() async {
-    var temp2 = [];
-    StoreDocs = [];
+    user_data = [];
     Map<dynamic, dynamic> w = {
       'table': "users",
       //'status': "$_StatusValue",
@@ -83,10 +143,10 @@ class _Login_CopyState extends State<Login_Copy> {
 
     setState(() {
       temp.forEach((k, v) {
-        StoreDocs.add(v);
+        user_data.add(v);
       });
 
-      print("${StoreDocs}  ++++++++++++++");
+      print("${user_data}  ++++++++++++++");
     });
   }
 

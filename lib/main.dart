@@ -1,5 +1,6 @@
 // ignore_for_file: use_key_in_widget_constructors, avoid_print, prefer_const_constructors, await_only_futures, unused_import, unused_local_variable
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:crm_demo/shared/constants.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
 import 'controllers/MenuAppController.dart';
 import 'screens/Login_Reg/Login_user.dart';
@@ -40,8 +42,33 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  bool loginIs = false;
+  Map<dynamic, dynamic> user = new Map();
+
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic userData = (prefs.getString('user'));
+    if (userData != null) {
+      setState(() {
+        user = jsonDecode(userData) as Map<dynamic, dynamic>;
+        loginIs = true;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    _getUser();
+    super.initState();
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -66,7 +93,7 @@ class MyApp extends StatelessWidget {
                 ChangeNotifierProvider(
                   create: (context) => MenuAppController(),
                 ),
-              ], child: Login_Copy()
+              ], child: (loginIs == true) ? MainScreen(pageNo: 1) : Login_Copy()
                   //MainScreen(pageNo: 1)
                   // child: LoginPage()
 

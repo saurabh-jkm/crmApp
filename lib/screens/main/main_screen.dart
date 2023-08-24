@@ -1,7 +1,10 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, use_key_in_widget_constructors, annotate_overrides, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, use_key_in_widget_constructors, annotate_overrides, prefer_typing_uninitialized_variables, unused_element
+
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../controllers/MenuAppController.dart';
 import '../../responsive.dart';
 import '../About/about_us.dart';
@@ -23,10 +26,24 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   var sidemenu;
+
+  Map<dynamic, dynamic> user = new Map();
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic userData = (prefs.getString('user'));
+    if (userData != null) {
+      setState(() {
+        user = jsonDecode(userData) as Map<dynamic, dynamic>;
+        // print("$user  ++++tttt+++");
+      });
+    }
+  }
+
   @override
   void initState() {
     setState(() {
       sidemenu = widget.pageNo;
+      _getUser();
     });
     super.initState();
   }
@@ -308,26 +325,28 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
 
-          ListTile(
-            tileColor: (sidemenu == 10)
-                ? const Color.fromARGB(127, 33, 149, 243)
-                : const Color.fromARGB(0, 255, 255, 255),
-            onTap: () {
-              setState(() {
-                sidemenu = 10;
-                if (Responsive.isMobile(context)) {
-                  Navigator.of(context).pop();
-                }
-              });
-            },
-            horizontalTitleGap: 0.0,
-            leading:
-                Icon(Icons.admin_panel_settings_outlined, color: Colors.white),
-            title: Text(
-              "Sub Admin",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
+          (user["user_type"] == "admin")
+              ? ListTile(
+                  tileColor: (sidemenu == 10)
+                      ? const Color.fromARGB(127, 33, 149, 243)
+                      : const Color.fromARGB(0, 255, 255, 255),
+                  onTap: () {
+                    setState(() {
+                      sidemenu = 10;
+                      if (Responsive.isMobile(context)) {
+                        Navigator.of(context).pop();
+                      }
+                    });
+                  },
+                  horizontalTitleGap: 0.0,
+                  leading: Icon(Icons.admin_panel_settings_outlined,
+                      color: Colors.white),
+                  title: Text(
+                    "Sub Admin",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              : SizedBox()
         ],
       ),
     );

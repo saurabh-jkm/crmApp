@@ -72,8 +72,12 @@ class _SubAdminState extends State<SubAdmin> {
     var querySnapshot = await collection.get();
     for (var queryDocumentSnapshot in querySnapshot.docs) {
       Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
-      StoreDocs.add(data);
-      data["id"] = queryDocumentSnapshot.id;
+      // print("${data["user_type"]} ++++tttt+++");
+      if (data["user_type"] != "admin") {
+        StoreDocs.add(data);
+        // print("$StoreDocs    ++++tttt+++");
+        data["id"] = queryDocumentSnapshot.id;
+      }
     }
     setState(() {
       progressWidget = false;
@@ -88,8 +92,11 @@ class _SubAdminState extends State<SubAdmin> {
     for (var queryDocumentSnapshot in querySnapshot) {
       Map data = queryDocumentSnapshot.map as Map<String, dynamic>;
       setState(() {
-        StoreDocs.add(data);
-        data["id"] = queryDocumentSnapshot.id;
+        if (data["user_type"] != "admin") {
+          StoreDocs.add(data);
+          // print("$StoreDocs    ++++tttt+++");
+          data["id"] = queryDocumentSnapshot.id;
+        }
       });
     }
 
@@ -157,7 +164,7 @@ class _SubAdminState extends State<SubAdmin> {
                 ? "Inactive"
                 : "Select";
 
-        print("$_User_Cate bjjj====");
+        // print("$_User_Cate bjjj====");
       });
     }
   }
@@ -207,7 +214,9 @@ class _SubAdminState extends State<SubAdmin> {
         "mobile_no": Mobile,
         "password": password,
         "user_category": user_Cate,
+        "user_type": "sub",
         "status": _Status,
+        "avatar": "",
         "date_at": date_at,
         "uid": "$base64Str",
       };
