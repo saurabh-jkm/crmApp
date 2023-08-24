@@ -115,17 +115,19 @@ class _AboutUsState extends State<AboutUs> {
   var update_id;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Container(
-      child: ListView(
-        children: [
-          Header(
-            title: "About Us",
-          ),
-          listCon(context, "Edit About Us")
-        ],
-      ),
-    ));
+    return (progressWidget == true)
+        ? Center(child: pleaseWait(context))
+        : Scaffold(
+            body: Container(
+            child: ListView(
+              children: [
+                Header(
+                  title: "About Us",
+                ),
+                listCon(context, "Edit About Us")
+              ],
+            ),
+          ));
   }
 
 //// Widget for Start_up

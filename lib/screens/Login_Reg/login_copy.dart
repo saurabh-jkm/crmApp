@@ -97,7 +97,7 @@ class _Login_CopyState extends State<Login_Copy> {
             };
             SharedPreferences prefs = await SharedPreferences.getInstance();
             await prefs.setString('user', jsonEncode(userData));
-            print("${userData}  ++++++tt+++++");
+            // print("${userData}  ++++++tt+++++");
             themeAlert(context, "Successfully Sign In !!");
             await Future.delayed(const Duration(seconds: 3), () {
               nextScreenReplace(
@@ -119,7 +119,7 @@ class _Login_CopyState extends State<Login_Copy> {
         }
       }
     } else {
-      showSnackbar(context, Colors.red, "Error");
+      showSnackbar(context, Colors.red, "Invalid value !!");
       setState(() {
         _isLoading = false;
       });
@@ -146,7 +146,7 @@ class _Login_CopyState extends State<Login_Copy> {
         user_data.add(v);
       });
 
-      print("${user_data}  ++++++++++++++");
+      // print("${user_data}  ++++++++++++++");
     });
   }
 

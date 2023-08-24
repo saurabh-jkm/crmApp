@@ -14,7 +14,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/firebase_functions.dart';
@@ -185,11 +185,7 @@ class _OrderListState extends State<OrderList> {
       temp.forEach((k, v) {
         OrderList.add(v);
       });
-      var userData = {
-        'order_data': OrderList,
-      };
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user', jsonEncode(userData));
+
       _CateData();
       Pro_Data_Drop();
       progressWidget = false;
