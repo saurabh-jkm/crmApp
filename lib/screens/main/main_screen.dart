@@ -317,6 +317,8 @@ class _MainScreenState extends State<MainScreen> {
                 }
               });
             },
+
+            ///
             horizontalTitleGap: 0.0,
             leading: Icon(Icons.description_sharp, color: Colors.white),
             title: Text(
