@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io' show Platform;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
@@ -319,7 +320,7 @@ class _ProductAddState extends State<ProductAdd> {
           : alert;
       // check image
       if (_itemCtr[key] == null) {
-        alert = "${key.toUpperCase()} Product Image Required";
+        //alert = "${key.toUpperCase()} Product Image Required";
       } else {
         List<dynamic> tempImgs = [];
         _itemCtr[key]['img'].forEach((k, v) {
@@ -335,6 +336,8 @@ class _ProductAddState extends State<ProductAdd> {
       } else {
         itemField[key] = tempData;
       }
+
+      tempData['img'] = (tempData['img'] == null) ? {} : tempData['img'];
 
       // print("&&&&& ${tempData}");
     });
@@ -2233,7 +2236,7 @@ class _ProductAddState extends State<ProductAdd> {
                       // Text_field_rate(
                       //     context, "1", "shiping_price", "Shiping Price"),
                       wd_input_field(
-                          context, 'Sell Price', 'shipping_price', itemNo),
+                          context, 'Shipping Price', 'shipping_price', itemNo),
                     ],
                   )),
                 ),
@@ -2499,11 +2502,12 @@ class _ProductAddState extends State<ProductAdd> {
         child: GestureDetector(
             onTap: () {
               setState(() {
+                // New_img_List_gallery = [];
                 var tempData =
                     (_itemCtr[itemNo] != null) ? _itemCtr[itemNo] : {};
 
                 List selectedImgs = (['img'] != null) ? tempData['img'] : {};
-                print("$selectedImgs  ==gg==");
+                // print("$selectedImgs  ==gg==");
                 selectedImgs.remove(imgUrl);
 
                 tempData['img'] = selectedImgs;

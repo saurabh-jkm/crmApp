@@ -205,7 +205,7 @@ class _CategoryAddState extends State<CategoryAdd> {
     return _category.add({
       'category_name': "$cate_name",
       'slug_url': "$slug__url",
-      'parent_cate': "$_dropDownValue",
+      'parent_cate': "$_PerentCate",
       'status': (_StatusValue == "Active")
           ? "1"
           : (_StatusValue == "Inactive")
@@ -251,7 +251,7 @@ class _CategoryAddState extends State<CategoryAdd> {
     data = await dbFind(w);
     if (data != null) {
       setState(() {
-        _dropDownValue = data!['parent_cate'];
+        _PerentCate = data!['parent_cate'];
         slugUrl = data!['slug_url'];
         image = data!["image"];
         _StatusValue = (data!['status'] == "1")
@@ -271,7 +271,7 @@ class _CategoryAddState extends State<CategoryAdd> {
     w = {
       'table': "category",
       'category_name': "$Catename",
-      "parent_cate": "$_perentCate",
+      "parent_cate": "${(_perentCate == null) ? '' : _perentCate}",
       'slug_url': "$slugUrl",
       'status': (_Status == "Active")
           ? "1"
@@ -371,7 +371,7 @@ class _CategoryAddState extends State<CategoryAdd> {
     return _category.add({
       'category_name': "$cate_name",
       'slug_url': "$slug__url",
-      'parent_cate': "$_dropDownValue",
+      'parent_cate': "$_PerentCate",
       'status': (_StatusValue == "Active")
           ? "1"
           : (_StatusValue == "Inactive")
@@ -689,7 +689,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                      child: Text("Parent Category",
+                                      child: Text("-Parent Category",
                                           style: themeTextStyle(
                                               color: Colors.black,
                                               size: 15,
@@ -1330,6 +1330,10 @@ class _CategoryAddState extends State<CategoryAdd> {
 /////////
 
 /////////////  Update widget for product Update+++++++++++++++++++++++++
+  ///========================================================================
+  ///========================================================================
+  ///========================================================================
+  ///========================================================================
   Widget Update_Category(BuildContext context, id, sub_text) {
     return Container(
         height: MediaQuery.of(context).size.height,
@@ -1717,7 +1721,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                         Container(
                                           height: 40,
                                           margin: EdgeInsets.only(
-                                              top: 10, bottom: 10, right: 10),
+                                              top: 10, bottom: 10),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
@@ -1727,19 +1731,9 @@ class _CategoryAddState extends State<CategoryAdd> {
                                               left: 10, right: 10),
                                           child: DropdownButton(
                                             dropdownColor: Colors.white,
-                                            hint: _dropDownValue == null
-                                                ? Text(
-                                                    'Select',
-                                                    style: TextStyle(
-                                                        color: Colors.black),
-                                                  )
-                                                : Text(
-                                                    _dropDownValue!,
-                                                    style: TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-                                            isExpanded: true,
+                                            value: _PerentCate,
                                             underline: Container(),
+                                            isExpanded: true,
                                             icon: Icon(
                                               Icons.arrow_drop_down,
                                               color: Colors.black,
@@ -1747,24 +1741,19 @@ class _CategoryAddState extends State<CategoryAdd> {
                                             iconSize: 35,
                                             style: TextStyle(
                                                 color: Color.fromARGB(
-                                                    255, 8, 14, 18)),
+                                                    255, 5, 8, 10)),
                                             items: [
-                                              'Select',
-                                              'One',
-                                              'Two',
-                                              'Three'
-                                            ].map(
-                                              (val) {
-                                                return DropdownMenuItem<String>(
-                                                  value: val,
-                                                  child: Text(val),
-                                                );
-                                              },
-                                            ).toList(),
+                                              for (MapEntry<String, String> e
+                                                  in Cate_Name_list.entries)
+                                                DropdownMenuItem(
+                                                  value: e.value,
+                                                  child: Text(e.key),
+                                                ),
+                                            ],
                                             onChanged: (val) {
                                               setState(
                                                 () {
-                                                  _dropDownValue = val!;
+                                                  _PerentCate = val!;
                                                 },
                                               );
                                             },

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, unused_import, body_might_complete_normally_nullable, no_leading_underscores_for_local_identifiers, unused_field, depend_on_referenced_packages, avoid_print, sized_box_for_whitespace, unnecessary_new, unused_shown_name, unnecessary_cast, duplicate_ignore
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, unused_import, body_might_complete_normally_nullable, no_leading_underscores_for_local_identifiers, unused_field, depend_on_referenced_packages, avoid_print, sized_box_for_whitespace, unnecessary_new, unused_shown_name, unnecessary_cast, duplicate_ignore, await_only_futures
 import 'dart:convert';
 import 'dart:io';
 
@@ -26,20 +26,21 @@ class AttributeAdd extends StatefulWidget {
 class _AttributeAddState extends State<AttributeAdd> {
   var db = (kIsWeb)
       ? FirebaseFirestore.instance
-      : (!kIsWeb)
+      : (!kIsWeb && Platform.isWindows)
           ? Firestore.instance
           : FirebaseFirestore.instance;
+
   final _formKey = GlobalKey<FormState>();
 //////
   final AttributeController = TextEditingController();
   final Sub_AttributeController = TextEditingController();
-  String? _StatusValue;
+  String? _StatusValue = "Active";
   String Date_at = DateFormat('dd-MM-yyyy' "  hh:mm").format(DateTime.now());
   bool progressWidget = true;
 /////
   clearText() {
     AttributeController.clear();
-    _StatusValue = null;
+    _StatusValue = "Active";
   }
 
 ///////////  firebase property Database access  +++++++++++++++++++++++++++
@@ -73,8 +74,20 @@ class _AttributeAddState extends State<AttributeAdd> {
   Map<String, dynamic>? dbData;
   Future Update_initial(id) async {
     Color_list = [];
-    DocumentSnapshot pathData =
-        await FirebaseFirestore.instance.collection('attribute').doc(id).get();
+    if (!kIsWeb && Platform.isWindows) {
+      final _attribute = Firestore.instance.collection('attribute');
+      final pathData = await _attribute.document(id).get();
+      await refresh_sub_attribute(pathData);
+    } else {
+      DocumentSnapshot pathData = await FirebaseFirestore.instance
+          .collection('attribute')
+          .doc(id)
+          .get();
+      await refresh_sub_attribute(pathData);
+    }
+  }
+
+  refresh_sub_attribute(pathData) {
     if (pathData.exists) {
       dbData = pathData.data() as Map<String, dynamic>?;
       setState(() {
@@ -92,20 +105,39 @@ class _AttributeAddState extends State<AttributeAdd> {
 
 /////// add Category Data  =+++++++++++++++++++
 
-  Future<void> addList() {
-    CollectionReference _attribute =
-        FirebaseFirestore.instance.collection('attribute');
-    return _attribute
-        .add({
-          'attribute_name': "${AttributeController.text}",
-          "value": "$Date_at",
-          'status': "$_StatusValue",
-          "date_at": "$Date_at"
-        })
-        .then((value) => themeAlert(context, "Successfully Submit"))
-        .catchError(
-            (error) => themeAlert(context, 'Failed to Submit', type: "error"));
+  Future<void> addList() async {
+    if (!kIsWeb && Platform.isWindows) {
+      var attribute = await Firestore.instance.collection('attribute');
+      await _saveAttr(attribute);
+    } else {
+      CollectionReference attribute =
+          FirebaseFirestore.instance.collection('attribute');
+      await _saveAttr(attribute);
+    }
+
+    if (Platform.isWindows) {
+      All_AttributeData();
+    } else {
+      _AttributeData();
+    }
+    clearText();
   }
+
+  // save attribute
+  _saveAttr(attribute) {
+    return attribute.add({
+      'attribute_name': "${AttributeController.text}",
+      "value": {},
+      'status': "${(_StatusValue == 'Active') ? '1' : "2"}",
+      "date_at": "$Date_at"
+    }).then((value) {
+      setState(() {
+        themeAlert(context, "Added Successfully");
+      });
+    }).catchError(
+        (error) => themeAlert(context, 'Failed to Submit', type: "error"));
+  }
+
 //////////
 
 ////////// delete Category Data ++++++++++++++++
@@ -153,10 +185,10 @@ class _AttributeAddState extends State<AttributeAdd> {
 
   @override
   void initState() {
-    if (kIsWeb) {
-      _AttributeData();
-    } else if (!kIsWeb) {
+    if (!kIsWeb && Platform.isWindows) {
       All_AttributeData();
+    } else {
+      _AttributeData();
     }
 
     super.initState();
@@ -187,18 +219,25 @@ class _AttributeAddState extends State<AttributeAdd> {
     //     await FirebaseFirestore.instance.collection('attribute').doc(id).get();
     if (pathData != null) {
       dbData = pathData.map as Map<String, dynamic>?;
-      setState(() {
-        _Status = (dbData!['status'] == "1")
-            ? "Active"
-            : (dbData!['status'] == "2")
-                ? "Inactive"
-                : "";
-        AttributeController.text = dbData!['attribute_name'];
-        Sub_AttributeController.text = dbData!["attribute_name"];
-        value_color = dbData!["value"];
-        value_color.forEach((k, v) => Color_list.add(v));
-        // print("$Color_list  ++++++");
+
+      _StatusValue = (dbData!['status'] == "1")
+          ? "Active"
+          : (dbData!['status'] == "2")
+              ? "Inactive"
+              : "";
+      AttributeController.text = dbData!['attribute_name'];
+      Sub_AttributeController.text = '';
+      value_color = dbData!["value"];
+      value_color.forEach((k, v) {
+        Color_list.add(v);
       });
+      // print("$Color_list  ++++++");
+
+      if (this.mounted) {
+        setState(() {
+          Color_list = Color_list;
+        });
+      }
     }
   }
 
@@ -227,7 +266,47 @@ class _AttributeAddState extends State<AttributeAdd> {
         (error) => themeAlert(context, 'Failed to update', type: "error"));
   }
 
-/////////
+///////// =============================================
+  _fnAddSubAttribute(id) async {
+    if (Sub_AttributeController.text.length < 1) {
+      themeAlert(context, "Please Enter valid Sub Attribute Name",
+          type: 'error');
+      return false;
+    }
+
+    var tempColor = dbData!['value'];
+    if (dbData!['attribute_name'] == 'Colors') {
+      tempColor[Sub_AttributeController.text.trim()] = {
+        "name": "${Sub_AttributeController.text.trim()}",
+        "color": hexString,
+        "status": 1,
+        "date_at": "$Date_at",
+      };
+    } else {
+      tempColor[Sub_AttributeController.text.trim()] = {
+        "name": "${Sub_AttributeController.text.trim()}",
+        "status": 1,
+        "date_at": "$Date_at",
+      };
+    }
+
+    dbData!['value'] = tempColor;
+    Map<String, dynamic> where = {
+      'table': "attribute",
+      'id': id,
+      'value': tempColor
+    };
+    if (!kIsWeb && Platform.isWindows) {
+      await All_dbUpdate(db, where);
+      await All_Update_initial(id);
+    } else {
+      await dbUpdate(db, where);
+      await Update_initial(id);
+    }
+
+    _Status = null;
+    Sub_AttributeController.clear();
+  }
 
   ///
 
@@ -377,7 +456,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                             iconSize: 35,
                             style:
                                 TextStyle(color: Color.fromARGB(255, 1, 7, 7)),
-                            items: ['Select', 'Inactive', 'Active'].map(
+                            items: ['Active', 'Inactive'].map(
                               (val) {
                                 return DropdownMenuItem<String>(
                                   value: val,
@@ -403,8 +482,10 @@ class _AttributeAddState extends State<AttributeAdd> {
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     themeButton3(context, () {
                       addList();
-                      clearText();
-                      _AttributeData();
+
+                      setState(() {
+                        Add_Attribute = false;
+                      });
                     }, buttonColor: Colors.green, label: "Submit"),
                     SizedBox(
                       width: 10,
@@ -680,10 +761,10 @@ class _AttributeAddState extends State<AttributeAdd> {
                         setState(() {
                           updateWidget = true;
                           update_id = iid;
-                          if (kIsWeb) {
-                            Update_initial(iid);
-                          } else if (!kIsWeb) {
+                          if (Platform.isWindows) {
                             All_Update_initial(iid);
+                          } else {
+                            Update_initial(iid);
                           }
                         });
                       },
@@ -716,9 +797,9 @@ class _AttributeAddState extends State<AttributeAdd> {
                         });
                       },
                       icon: Icon(
-                        Icons.more_horiz_outlined,
+                        Icons.list,
                         size: 15,
-                        color: Colors.green,
+                        color: const Color.fromARGB(255, 255, 255, 255),
                       )) ////
                   ),
             ],
@@ -1101,6 +1182,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                             margin: EdgeInsets.symmetric(horizontal: 20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text("Add New",
                                     style: themeTextStyle(
@@ -1111,7 +1193,18 @@ class _AttributeAddState extends State<AttributeAdd> {
                                     context,
                                     Sub_AttributeController,
                                     "Enter Sub Attribute Name",
-                                    "Sub Attribute Name ")
+                                    "Sub Attribute Name "),
+
+                                // add button =========================
+                                themeButton3(context, () {
+                                  if (Sub_AttributeController.text.isNotEmpty) {
+                                    _fnAddSubAttribute(id);
+                                  } else {
+                                    themeAlert(
+                                        context, 'Please Enter Required value!',
+                                        type: "error");
+                                  }
+                                }, buttonColor: Colors.green, label: "Add New"),
                               ],
                             )),
                       ),
@@ -1210,7 +1303,8 @@ class _AttributeAddState extends State<AttributeAdd> {
                                                                   (Color
                                                                       color) {
                                                                 //on color picked
-                                                                setState(() {
+                                                                setState(
+                                                                    () async {
                                                                   mycolor =
                                                                       color;
                                                                   hexString = color
@@ -1255,8 +1349,18 @@ class _AttributeAddState extends State<AttributeAdd> {
                                                                     'value':
                                                                         tempColor
                                                                   };
-                                                                  dbUpdate(db,
-                                                                      where);
+
+                                                                  if (!kIsWeb &&
+                                                                      Platform
+                                                                          .isWindows) {
+                                                                    All_dbUpdate(
+                                                                      db,
+                                                                      where,
+                                                                    );
+                                                                  } else {
+                                                                    dbUpdate(db,
+                                                                        where);
+                                                                  }
                                                                   Update_initial(
                                                                       id);
                                                                   Navigator.of(
@@ -1324,37 +1428,6 @@ class _AttributeAddState extends State<AttributeAdd> {
                     SizedBox(
                       width: 20,
                     ),
-                    themeButton3(context, () {
-                      if (Sub_AttributeController.text.isNotEmpty) {
-                        setState(() {
-                          var tempColor = dbData!['value'];
-                          tempColor[Sub_AttributeController.text] = {
-                            "name": "${Sub_AttributeController.text}",
-                            "color": hexString,
-                            "status": "$_Status",
-                            "date_at": "$Date_at",
-                          };
-                          dbData!['value'] = tempColor;
-                          Map<String, dynamic> where = {
-                            'table': "attribute",
-                            'id': id,
-                            'value': tempColor
-                          };
-                          if (!kIsWeb && Platform.isWindows) {
-                            All_dbUpdate(db, where);
-                            All_Update_initial(id);
-                          } else {
-                            dbUpdate(db, where);
-                            Update_initial(id);
-                          }
-                          _Status = null;
-                          Sub_AttributeController.clear();
-                        });
-                      } else {
-                        themeAlert(context, 'Please Enter Required value!',
-                            type: "error");
-                      }
-                    }, buttonColor: Colors.green, label: "Add New"),
                     SizedBox(
                       width: 10,
                     ),
