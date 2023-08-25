@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:crm_demo/screens/Login_Reg/login_copy.dart';
+import 'package:crm_demo/screens/Login_Reg/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';

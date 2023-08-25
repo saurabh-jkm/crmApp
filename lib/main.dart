@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
 import 'controllers/MenuAppController.dart';
 import 'screens/Login_Reg/Login_user.dart';
-import 'screens/Login_Reg/login_copy.dart';
+import 'screens/Login_Reg/login_screen.dart';
 import 'screens/main/main_screen.dart';
 
 void main() async {
