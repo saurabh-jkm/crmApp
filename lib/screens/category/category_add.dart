@@ -54,8 +54,9 @@ class _CategoryAddState extends State<CategoryAdd> {
     _StatusValue = null;
     clear_imageData();
   }
-//////
 
+//////
+  String _PerentCate = '';
   ///// File Picker ==========================================================
   var url_img;
   String? fileName;
@@ -324,9 +325,29 @@ class _CategoryAddState extends State<CategoryAdd> {
   @override
   void initState() {
     Comman_Cate_Data();
+    _CateData();
     super.initState();
   }
 
+///////////  Calling Category data +++++++++++++++++++++++++++
+  Map<int, String> v_status = {0: "Select", 1: 'Active', 2: 'Inactive'};
+  Map<String, String> Cate_Name_list = {'Select': ''};
+  _CateData() async {
+    Map<dynamic, dynamic> w = {
+      'table': 'category',
+      //'status':'1',
+    };
+
+    // var dbData = await dbFindDynamic(db, w);
+    var dbData = (!kIsWeb && Platform.isWindows)
+        ? await All_dbFindDynamic(db, w)
+        : await dbFindDynamic(db, w);
+    dbData.forEach((k, v) {
+      Cate_Name_list[v['category_name']] = v['category_name'];
+    });
+    // print("$Cate_Name_list  +++++++++++++++++++++");
+  }
+  ///////============================================================
 ////////// delete Category Data ++++++++++++++++++
 
   Future<void> All_deleteUser(id) async {
@@ -613,8 +634,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                                                 fw: FontWeight.bold))),
                                     Container(
                                       height: 40,
-                                      margin: EdgeInsets.only(
-                                          top: 10, bottom: 10, right: 10),
+                                      margin:
+                                          EdgeInsets.only(top: 10, bottom: 10),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(10),
@@ -623,19 +644,9 @@ class _CategoryAddState extends State<CategoryAdd> {
                                           EdgeInsets.only(left: 10, right: 10),
                                       child: DropdownButton(
                                         dropdownColor: Colors.white,
-                                        hint: _dropDownValue == null
-                                            ? Text(
-                                                'Select',
-                                                style: TextStyle(
-                                                    color: Colors.black),
-                                              )
-                                            : Text(
-                                                _dropDownValue!,
-                                                style: TextStyle(
-                                                    color: Colors.black),
-                                              ),
-                                        isExpanded: true,
+                                        value: _PerentCate,
                                         underline: Container(),
+                                        isExpanded: true,
                                         icon: Icon(
                                           Icons.arrow_drop_down,
                                           color: Colors.black,
@@ -643,20 +654,19 @@ class _CategoryAddState extends State<CategoryAdd> {
                                         iconSize: 35,
                                         style: TextStyle(
                                             color:
-                                                Color.fromARGB(255, 4, 6, 7)),
-                                        items: ['Select', 'One', 'Two', 'Three']
-                                            .map(
-                                          (val) {
-                                            return DropdownMenuItem<String>(
-                                              value: val,
-                                              child: Text(val),
-                                            );
-                                          },
-                                        ).toList(),
+                                                Color.fromARGB(255, 5, 8, 10)),
+                                        items: [
+                                          for (MapEntry<String, String> e
+                                              in Cate_Name_list.entries)
+                                            DropdownMenuItem(
+                                              value: e.value,
+                                              child: Text(e.key),
+                                            ),
+                                        ],
                                         onChanged: (val) {
                                           setState(
                                             () {
-                                              _dropDownValue = val!;
+                                              _PerentCate = val!;
                                             },
                                           );
                                         },
@@ -686,8 +696,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                                               fw: FontWeight.bold))),
                                   Container(
                                     height: 40,
-                                    margin: EdgeInsets.only(
-                                        top: 10, bottom: 10, right: 10),
+                                    margin:
+                                        EdgeInsets.only(top: 10, bottom: 10),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(10),
@@ -696,39 +706,28 @@ class _CategoryAddState extends State<CategoryAdd> {
                                         EdgeInsets.only(left: 10, right: 10),
                                     child: DropdownButton(
                                       dropdownColor: Colors.white,
-                                      hint: _dropDownValue == null
-                                          ? Text(
-                                              'Select',
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            )
-                                          : Text(
-                                              _dropDownValue!,
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            ),
-                                      isExpanded: true,
+                                      value: _PerentCate,
                                       underline: Container(),
+                                      isExpanded: true,
                                       icon: Icon(
                                         Icons.arrow_drop_down,
                                         color: Colors.black,
                                       ),
                                       iconSize: 35,
                                       style: TextStyle(
-                                          color: Color.fromARGB(255, 4, 6, 7)),
-                                      items:
-                                          ['Select', 'One', 'Two', 'Three'].map(
-                                        (val) {
-                                          return DropdownMenuItem<String>(
-                                            value: val,
-                                            child: Text(val),
-                                          );
-                                        },
-                                      ).toList(),
+                                          color: Color.fromARGB(255, 5, 8, 10)),
+                                      items: [
+                                        for (MapEntry<String, String> e
+                                            in Cate_Name_list.entries)
+                                          DropdownMenuItem(
+                                            value: e.value,
+                                            child: Text(e.key),
+                                          ),
+                                      ],
                                       onChanged: (val) {
                                         setState(
                                           () {
-                                            _dropDownValue = val!;
+                                            _PerentCate = val!;
                                           },
                                         );
                                       },

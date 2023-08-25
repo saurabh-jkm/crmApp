@@ -115,7 +115,17 @@ class _Login_CopyState extends State<Login_Copy> {
           }
           break;
         } else {
-          themeAlert(context, "Account dosen't exist !!", type: "error");
+          if (i < user_data.length && email != "${user_data[i]["email"]}") {
+            print("$i +++++tt");
+          } else if (i <= user_data.length &&
+              email != "${user_data[i]["email"]}") {
+            themeAlert(context, "Account dosen't exist !!", type: "error");
+            break;
+          } else {
+            print("$i +++++tt");
+            themeAlert(context, "Account dosen't exist !!", type: "error");
+            break;
+          }
         }
       }
     } else {
@@ -140,7 +150,6 @@ class _Login_CopyState extends State<Login_Copy> {
     var temp = (!kIsWeb && Platform.isWindows)
         ? await All_dbFindDynamic(db, w)
         : await dbFindDynamic(db, w);
-
     setState(() {
       temp.forEach((k, v) {
         user_data.add(v);
@@ -299,15 +308,6 @@ class _Login_CopyState extends State<Login_Copy> {
                                       children: [
                                         themeButton3(context, () {
                                           login();
-                                          //                 nextScreenReplace(context,
-                                          //         MultiProvider(
-                                          //        providers: [
-                                          //        ChangeNotifierProvider(
-                                          //       create: (context) => MenuAppController(),
-                                          //     ),
-                                          //   ],
-                                          //   child: MainScreen() // MainScreen(),
-                                          // ),);
                                         },
                                             buttonColor: Colors.green,
                                             label: "Log In"),
@@ -322,19 +322,19 @@ class _Login_CopyState extends State<Login_Copy> {
                                       children: [
                                         TextButton(
                                           onPressed: () {
-                                            nextScreenReplace(
-                                              context,
-                                              MultiProvider(
-                                                  providers: [
-                                                    ChangeNotifierProvider(
-                                                      create: (context) =>
-                                                          MenuAppController(),
-                                                    ),
-                                                  ],
-                                                  child:
-                                                      RegisterPage() // MainScreen(),
-                                                  ),
-                                            );
+                                            // nextScreenReplace(
+                                            //   context,
+                                            //   MultiProvider(
+                                            //       providers: [
+                                            //         ChangeNotifierProvider(
+                                            //           create: (context) =>
+                                            //               MenuAppController(),
+                                            //         ),
+                                            //       ],
+                                            //       child:
+                                            //           RegisterPage() // MainScreen(),
+                                            //       ),
+                                            // );
                                           },
                                           child: Text(
                                             'Create an account',
@@ -464,19 +464,6 @@ class _Login_CopyState extends State<Login_Copy> {
                                 children: [
                                   themeButton3(context, () {
                                     login();
-                                    // nextScreenReplace(
-                                    //   context,
-                                    //   MultiProvider(
-                                    //       providers: [
-                                    //         ChangeNotifierProvider(
-                                    //           create: (context) =>
-                                    //               MenuAppController(),
-                                    //         ),
-                                    //       ],
-                                    //       child: MainScreen(
-                                    //           pageNo: 1) // MainScreen(),
-                                    //       ),
-                                    // );
                                   },
                                       buttonColor: Colors.green,
                                       label: "Log In"),
