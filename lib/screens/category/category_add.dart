@@ -205,7 +205,7 @@ class _CategoryAddState extends State<CategoryAdd> {
     return _category.add({
       'category_name': "$cate_name",
       'slug_url': "$slug__url",
-      'parent_cate': "$_dropDownValue",
+      'parent_cate': "$_PerentCate",
       'status': (_StatusValue == "Active")
           ? "1"
           : (_StatusValue == "Inactive")
