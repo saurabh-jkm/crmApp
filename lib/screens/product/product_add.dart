@@ -83,6 +83,7 @@ class _ProductAddState extends State<ProductAdd> {
 
   var url_img;
   String? fileName;
+  var New_img_List_gallery = [];
   pickFile() async {
     if (!kIsWeb) {
       final results = await FilePicker.platform.pickFiles(
@@ -93,16 +94,24 @@ class _ProductAddState extends State<ProductAdd> {
       if (results != null) {
         final path = results.files.single.path;
         final fileName = results.files.single.name;
-        UploadFile(path!, fileName).then((value) {
-          print("image selected");
-        });
+
         setState(() async {
-          downloadURL = await FirebaseStorage.instance
-              .ref()
-              .child('media/$fileName')
-              .getDownloadURL();
-          url_img = downloadURL.toString();
+          url_img = await uploadFile(path!, fileName, db);
+          New_img_List_gallery.add(url_img);
+          Pro_Data();
+          print("$url_img  ==gg=");
         });
+
+        // UploadFile(path!, fileName).then((value) {
+        //   print("image selected");
+        // });
+        // setState(() async {
+        //   downloadURL = await FirebaseStorage.instance
+        //       .ref()
+        //       .child('media/$fileName')
+        //       .getDownloadURL();
+        //   url_img = downloadURL.toString();
+        // });
       } else {
         themeAlert(context, 'Not find selected', type: "error");
       }
@@ -124,6 +133,8 @@ class _ProductAddState extends State<ProductAdd> {
               .child('media/$fileName')
               .getDownloadURL();
           url_img = downloadURL.toString();
+          New_img_List_gallery.add(url_img);
+          Pro_Data();
         });
       } else {
         themeAlert(context, 'Not find selected', type: "error");
@@ -158,11 +169,7 @@ class _ProductAddState extends State<ProductAdd> {
       progressWidget = false;
     });
 
-    if (!kIsWeb && Platform.isWindows) {
-      Windows_Image_data();
-    } else {
-      Image_data();
-    }
+    Windows_Image_data();
 
     _CateData();
     if (!kIsWeb && Platform.isWindows) {
@@ -225,21 +232,21 @@ class _ProductAddState extends State<ProductAdd> {
 /////////// firebase Storage Image data calll   +++++++++++++++++++
   String? downloadURL;
   var _Storage_image_List = [];
-  Future Image_data() async {
-    firebase_storage.ListResult result =
-        await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
-    result.items.forEach((firebase_storage.Reference ref) async {
-      var uri = await downloadURLExample("${ref.fullPath}");
-      _Storage_image_List.add(uri);
-    });
-    return _Storage_image_List;
-  }
+  // Future Image_data() async {
+  //   firebase_storage.ListResult result =
+  //       await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
+  //   result.items.forEach((firebase_storage.Reference ref) async {
+  //     var uri = await downloadURLExample("${ref.fullPath}");
+  //     _Storage_image_List.add(uri);
+  //   });
+  //   return _Storage_image_List;
+  // }
 
-  Future downloadURLExample(image_path) async {
-    downloadURL =
-        await FirebaseStorage.instance.ref().child(image_path).getDownloadURL();
-    return downloadURL.toString();
-  }
+  // Future downloadURLExample(image_path) async {
+  //   downloadURL =
+  //       await FirebaseStorage.instance.ref().child(image_path).getDownloadURL();
+  //   return downloadURL.toString();
+  // }
 
   Future Windows_Image_data() async {
     var temp2 = [];
@@ -259,6 +266,7 @@ class _ProductAddState extends State<ProductAdd> {
       progressWidget = false;
     });
   }
+
 ////  +===============================================================================
 
 ////////////////////  add list   ++++++++++++++++++++++++++++++++++++++++++++++
@@ -2113,6 +2121,7 @@ class _ProductAddState extends State<ProductAdd> {
     var selectedImgs = (tempData['img'] != null) ? tempData['img'] : {};
 
     var imgList = [];
+
     selectedImgs.forEach((k, v) {
       imgList.add(k);
     });
@@ -2417,7 +2426,9 @@ class _ProductAddState extends State<ProductAdd> {
                                                   }
                                                   tempData['img'] =
                                                       selectedImgs;
+
                                                   _itemCtr[itemNo] = tempData;
+                                                  Pro_Data();
                                                 });
                                               },
                                             )),
@@ -2451,10 +2462,17 @@ class _ProductAddState extends State<ProductAdd> {
               SizedBox(
                 width: 20,
               ),
-              (selectedImgs.isEmpty)
-                  ? SizedBox()
+              (selectedImgs.isEmpty && Add_product == true)
+                  ? Row(
+                      children: [
+                        // Image.network("$url_img")
+                        for (var imgUrl in New_img_List_gallery)
+                          wd_selectedImgCon(context, imgUrl, itemNo)
+                      ],
+                    )
                   : Row(
                       children: [
+                        // Image.network("$url_img")
                         for (var imgUrl in imgList)
                           wd_selectedImgCon(context, imgUrl, itemNo)
                       ],
@@ -2483,9 +2501,11 @@ class _ProductAddState extends State<ProductAdd> {
               setState(() {
                 var tempData =
                     (_itemCtr[itemNo] != null) ? _itemCtr[itemNo] : {};
-                var selectedImgs =
-                    (tempData['img'] != null) ? tempData['img'] : {};
+
+                List selectedImgs = (['img'] != null) ? tempData['img'] : {};
+                print("$selectedImgs  ==gg==");
                 selectedImgs.remove(imgUrl);
+
                 tempData['img'] = selectedImgs;
                 _itemCtr[itemNo] = tempData;
 

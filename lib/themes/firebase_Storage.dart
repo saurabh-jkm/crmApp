@@ -1,14 +1,25 @@
-// ignore_for_file: non_constant_identifier_names, avoid_function_literals_in_foreach_calls, avoid_print, unnecessary_string_interpolations, unused_import, unnecessary_null_comparison, file_names
+// ignore_for_file: non_constant_identifier_names, avoid_function_literals_in_foreach_calls, avoid_print, unnecessary_string_interpolations, unused_import, unnecessary_null_comparison, file_names, prefer_const_declarations, unused_local_variable
 
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firedart/firestore/firestore.dart';
+import 'package:http/http.dart' as http;
+import 'package:crm_demo/themes/style.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show Uint8List, debugPrint, kIsWeb;
+import 'dart:convert';
+
+import '../screens/order/invoice_service.dart';
+import '../shared/constants.dart';
+import 'firebase_functions.dart';
 
 final firebase_storage.FirebaseStorage storage =
     firebase_storage.FirebaseStorage.instance;
-
+var db = (!kIsWeb && Platform.isWindows)
+    ? Firestore.instance
+    : FirebaseFirestore.instance;
 Future<void> UploadFile(
   String filepath,
   String fileName,
@@ -53,3 +64,63 @@ class FireStoreDatabase {
     return downloadURL.toString();
   }
 }
+
+////////////////////////////  Rest Api  ????????????????
+//Future<void>
+uploadFile(String filepath, String fileName, var db) async {
+  var ulr;
+  final storageBucket = Constants.storageBucket;
+  final apiKey = Constants.apiKey;
+  // final File file = await File(filepath);
+
+  final fileBytes = await File(filepath).readAsBytes();
+  // final fileBase64 = base64Encode(fileBytes);
+
+  var url = Uri.parse(
+      "https://firebasestorage.googleapis.com/v0/b/$storageBucket/o?uploadType=media&name=media/$fileName");
+  final response = await http.post(
+    url,
+    headers: {
+      'Authorization': 'Bearer $apiKey',
+
+      'Content-Type':
+          'application/octet-stream', // Replace with your file's content type
+    },
+    body: fileBytes,
+  );
+
+  if (response.statusCode == 200) {
+    var tempRetrunData = jsonDecode(response.body) as Map<dynamic, dynamic>;
+    ulr =
+        "https://firebasestorage.googleapis.com/v0/b/crmapp-aed0e.appspot.com/o/media%2F$fileName?alt=media&token=${tempRetrunData["downloadTokens"]}";
+    image_addList(ulr);
+    return ulr;
+  } else {
+    print("Error uploading file: ${response.statusCode}");
+  }
+}
+
+//////
+/////// add Category Data  =+++++++++++++++++++
+
+Future<void> image_addList(image_url) async {
+  Map<String, dynamic> w = {
+    'table': "window_image",
+    'image_url': "$image_url",
+    "date_at": "$Date_at"
+  };
+
+  if (!kIsWeb && Platform.isWindows) {
+    await win_dbSave(db, w);
+  } else {
+    await dbSave(db, w);
+  }
+}
+
+//////////
+
+
+
+
+
+

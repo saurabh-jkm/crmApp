@@ -1,8 +1,14 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, avoid_returning_null_for_void, no_leading_underscores_for_local_identifiers, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, sized_box_for_whitespace, unused_import
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, avoid_returning_null_for_void, no_leading_underscores_for_local_identifiers, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, sized_box_for_whitespace, unused_import, unnecessary_new, unnecessary_brace_in_string_interps, prefer_collection_literals
 
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants.dart';
+import '../../models/MyFiles.dart';
 import '../../responsive.dart';
 import 'components/header.dart';
 import 'components/my_fields.dart';
@@ -25,6 +31,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   void initState() {
+    _getUser();
     super.initState();
   }
 
@@ -67,6 +74,73 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ),
   ];
   /////
+  /////// get user data  +++++++++++++++++++++++++++++++++++++++++++++++++++
+  Map<dynamic, dynamic> Order_data = new Map();
+  var List_order = [];
+
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic userData = (prefs.getString('user'));
+
+    if (userData != null) {
+      setState(() {
+        Order_data = jsonDecode(userData) as Map<dynamic, dynamic>;
+        List_order = Order_data["order_data"];
+        // print("${List_order.length.toInt()}  +++++++++kkk++++++");
+        item_no = List_order.length.toInt();
+      });
+    }
+  }
+
+  int item_no = 0;
+
+  List demoMyFiles = [
+    CloudStorageInfo(
+      title: "Total Order",
+      numOfFiles: 45,
+      svgSrc: Icons.shopping_cart,
+      // svgSrc: "assets/icons/shoping.svg",
+      color: primaryColor,
+      PageNo: 6,
+    ),
+    CloudStorageInfo(
+      title: "Total Product",
+      numOfFiles: 28,
+      svgSrc: Icons.wallet_giftcard,
+      // svgSrc: "assets/icons/google_drive.svg",
+      color: Color(0xFFFFA113),
+      PageNo: 4,
+    ),
+    CloudStorageInfo(
+      title: "Total User",
+      numOfFiles: 32,
+      svgSrc: Icons.person,
+      // svgSrc: "assets/icons/one_drive.svg",
+      color: Color(0xFFA4CDFF),
+
+      PageNo: 10,
+    ),
+    CloudStorageInfo(
+      title: "Inventry Management",
+      numOfFiles: 53,
+      svgSrc: Icons.inventory_rounded,
+      // svgSrc: "assets/icons/drop_box.svg",
+      color: Colors.green,
+
+      PageNo: 7,
+    ),
+    CloudStorageInfo(
+      title: "Out of stock",
+      numOfFiles: 34,
+      svgSrc: Icons.production_quantity_limits_outlined,
+      // svgSrc: "assets/icons/drop_box.svg",
+      color: Colors.yellow,
+
+      PageNo: 4,
+    ),
+  ];
+
+///////=======================================================================
   @override
   Widget build(BuildContext context) {
     List<charts.Series<BarChartModel, String>> series = [
@@ -108,7 +182,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   flex: 5,
                   child: Column(
                     children: [
-                      MyFiles(),
+                      MyFiles(demoMyFiles: demoMyFiles, quantity_no: 10),
+
                       SizedBox(height: defaultPadding),
 
                       Container(

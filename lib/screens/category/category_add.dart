@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new, unnecessary_cast, override_on_non_overriding_member, await_only_futures
 
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
@@ -18,7 +17,7 @@ import '../dashboard/components/header.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+// import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class CategoryAdd extends StatefulWidget {
   const CategoryAdd({super.key});
@@ -48,18 +47,12 @@ class _CategoryAddState extends State<CategoryAdd> {
       ? Firestore.instance
       : FirebaseFirestore.instance;
   @override
-  // void dispose() {
-  //   // Clean up the controller when the widget is disposed.
-  //   CategoryController.dispose();
-  //   SlugUrlController.dispose();
-  //   super.dispose();
-  // }
-
   clearText() {
     SlugUrlController.clear();
     CategoryController.clear();
     _dropDownValue = null;
     _StatusValue = null;
+    clear_imageData();
   }
 //////
 
@@ -84,18 +77,18 @@ class _CategoryAddState extends State<CategoryAdd> {
         final path = results.files.single.path;
         final fileName = results.files.single.name;
 
-        UploadFile(path!, fileName).then((value) {});
-        // print("$url_img  ++++++++vvvvv+++++++++");
-        setState(() async {
-          downloadURL = await FirebaseStorage.instance
-              .ref()
-              .child('media/$fileName')
-              .getDownloadURL();
-          url_img = downloadURL.toString();
+        // UploadFile(path!, fileName).then((value) {});
 
-          setState(() {
-            url_img = downloadURL.toString();
-          });
+        setState(() async {
+          url_img = await uploadFile(path!, fileName, db);
+
+          Comman_Cate_Data();
+          // image_addList(url_img);
+          // downloadURL = await FirebaseStorage.instance
+          //     .ref()
+          //     .child('media/$fileName')
+          //     .getDownloadURL();
+          // url_img = downloadURL.toString();
         });
       } else {
         themeAlert(context, 'Not find selected', type: "error");
@@ -119,7 +112,7 @@ class _CategoryAddState extends State<CategoryAdd> {
               .getDownloadURL();
           setState(() {
             url_img = downloadURL.toString();
-            image_addList(url_img);
+            // image_addList(url_img);
           });
 
           //   print("$url_img  +++++++88888888+++++++++");
@@ -135,40 +128,23 @@ class _CategoryAddState extends State<CategoryAdd> {
   ///
   String? downloadURL;
   List<String> _Storage_image_List = [];
-  Future listExample() async {
-    firebase_storage.ListResult result =
-        await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
-    result.items.forEach((firebase_storage.Reference ref) async {
-      var uri = await downloadURLExample("${ref.fullPath}");
-      _Storage_image_List.add(uri);
-      // image_addList(uri);
-    });
-    return _Storage_image_List;
-  }
+  // Future listExample() async {
+  //   firebase_storage.ListResult result =
+  //       await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
+  //   result.items.forEach((firebase_storage.Reference ref) async {
+  //     var uri = await downloadURLExample("${ref.fullPath}");
+  //     _Storage_image_List.add(uri);
+  //     // image_addList(uri);
+  //   });
+  //   return _Storage_image_List;
+  // }
 
-  Future downloadURLExample(image_path) async {
-    downloadURL =
-        await FirebaseStorage.instance.ref().child(image_path).getDownloadURL();
-    return downloadURL.toString();
-  }
+  // Future downloadURLExample(image_path) async {
+  //   downloadURL =
+  //       await FirebaseStorage.instance.ref().child(image_path).getDownloadURL();
+  //   return downloadURL.toString();
+  // }
 
-//////
-/////// add Category Data  =+++++++++++++++++++
-
-  Future<void> image_addList(image_url) {
-    CollectionReference _category =
-        FirebaseFirestore.instance.collection('window_image');
-    return _category
-        .add({'image_url': "$image_url", "date_at": "$Date_at"}).then((value) {
-      setState(() {
-        themeAlert(context, "Image upload successfully");
-        // _CateData();
-      });
-    }).catchError(
-            (error) => themeAlert(context, 'Failed to Submit', type: "error"));
-  }
-
-//////////
 ///////////  firebase property Database access  +++++++++++++++++++++++++++
 
 ////////
@@ -176,48 +152,49 @@ class _CategoryAddState extends State<CategoryAdd> {
 /////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
 
   List StoreDocs = [];
-  _CateData() async {
+
+  Comman_Cate_Data() async {
+    var temp2 = [];
     StoreDocs = [];
-    var collection = FirebaseFirestore.instance.collection('category');
-    var querySnapshot = await collection.get();
-    for (var queryDocumentSnapshot in querySnapshot.docs) {
-      // ignore:
-      Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
-      StoreDocs.add(data);
-      data["id"] = queryDocumentSnapshot.id;
-    }
+    Map<dynamic, dynamic> w = {
+      'table': "category",
+      //'status': "$_StatusValue",
+    };
+    var temp = (!kIsWeb && Platform.isWindows)
+        ? await All_dbFindDynamic(db, w)
+        : await dbFindDynamic(db, w);
+
     setState(() {
+      temp.forEach((k, v) {
+        StoreDocs.add(v);
+      });
+
+      // print("${temp2}  ++++++++++++++");
       progressWidget = false;
-      listExample();
-      //print("$StoreDocs ++++++++");
+    });
+    Windows_Image_data();
+  }
+
+/////////////  Media Image Call   +++++++++++++++++++++++++++++++++++++++++++++
+
+  Future Windows_Image_data() async {
+    var temp2 = [];
+    _Storage_image_List = [];
+    Map<dynamic, dynamic> w = {
+      'table': "window_image",
+      //'status': "$_StatusValue",
+    };
+    var temp = (!kIsWeb && Platform.isWindows)
+        ? await All_dbFindDynamic(db, w)
+        : await dbFindDynamic(db, w);
+
+    setState(() {
+      temp.forEach((k, v) {
+        _Storage_image_List.add(v["image_url"]);
+      });
+      progressWidget = false;
     });
   }
-
-/////////////
-
-  var Perent_cat;
-  var slugUrl;
-  var image;
-  var _Status;
-  var Catename;
-//////
-  Map<String, dynamic>? data;
-  Future Update_initial(id) async {
-    DocumentSnapshot pathData =
-        await FirebaseFirestore.instance.collection('category').doc(id).get();
-    if (pathData.exists) {
-      data = pathData.data() as Map<String, dynamic>?;
-      setState(() {
-        Perent_cat = data!['parent_cate'];
-        slugUrl = data!['slug_url'];
-        image = data!["image"];
-        _Status = data!['status'];
-        Catename = data!['category_name'];
-      });
-    }
-  }
-
-  ///
 
 /////// add Category Data  =+++++++++++++++++++
 
@@ -238,7 +215,7 @@ class _CategoryAddState extends State<CategoryAdd> {
     }).then((value) {
       setState(() {
         themeAlert(context, "Submitted Successfully ");
-        _CateData();
+        Comman_Cate_Data();
       });
     }).catchError(
         (error) => themeAlert(context, 'Failed to Submit', type: "error"));
@@ -254,21 +231,44 @@ class _CategoryAddState extends State<CategoryAdd> {
     return _category.doc(id).delete().then((value) {
       setState(() {
         themeAlert(context, "Deleted Successfully ");
-        _CateData();
+        Comman_Cate_Data();
       });
     }).catchError(
         (error) => themeAlert(context, 'Not find Data', type: "error"));
   }
 
-  ////////////
+/////  Update Catego
+
+  var slugUrl;
+  var image;
+
+  var Catename;
+//////
+  Map<String, dynamic>? data;
+  Future _Update_initial(id) async {
+    Map<dynamic, dynamic> w = {'table': "category", 'id': id};
+    data = await dbFind(w);
+    if (data != null) {
+      setState(() {
+        _dropDownValue = data!['parent_cate'];
+        slugUrl = data!['slug_url'];
+        image = data!["image"];
+        _StatusValue = (data!['status'] == "1")
+            ? "Active"
+            : (data!['status'] == "2")
+                ? "Inactive"
+                : "Select";
+        Catename = data!['category_name'];
+      });
+    }
+  }
+
   ///
-/////// Update
 
-  Future<void> updatelist(id, Catename, slugUrl, _Status, _perentCate, image) {
-    CollectionReference _category =
-        FirebaseFirestore.instance.collection('category');
-
-    return _category.doc(id).update({
+  updatelist(id, Catename, slugUrl, _Status, _perentCate, image) async {
+    Map<String, dynamic> w = {};
+    w = {
+      'table': "category",
       'category_name': "$Catename",
       "parent_cate": "$_perentCate",
       'slug_url': "$slugUrl",
@@ -279,17 +279,25 @@ class _CategoryAddState extends State<CategoryAdd> {
               : "0",
       "image": "$image",
       "date_at": "$Date_at"
-    }).then((value) {
-      themeAlert(context, "Successfully Update");
-      setState(() {
-        updateWidget = false;
-        _CateData();
-      });
-    }).catchError(
-        (error) => themeAlert(context, 'Failed to update', type: "error"));
+    };
+
+    w['id'] = update_id;
+    if (!kIsWeb && Platform.isWindows) {
+      await All_dbUpdate(
+        db,
+        w,
+      );
+    } else {
+      await dbUpdate(db, w);
+    }
+    themeAlert(context, "Successfully Updated !!");
+    setState(() {
+      updateWidget = false;
+      Comman_Cate_Data();
+    });
   }
 
-  ///
+  //////
 
 ///////////    Creating SLug Url Function +++++++++++++++++++++++++++++++++++++++
 
@@ -315,105 +323,9 @@ class _CategoryAddState extends State<CategoryAdd> {
 
   @override
   void initState() {
-    if (!kIsWeb && Platform.isWindows) {
-      _All_Platform_CateData();
-    } else {
-      _CateData();
-    }
-
+    Comman_Cate_Data();
     super.initState();
   }
-
-/////////////  For Cross PLatform Fuction   +++++++++++++++++++++++++++++++++++++++++++++
-
-  ///  Get Category data
-  _All_Platform_CateData() async {
-    StoreDocs = [];
-    final ref = Firestore.instance.collection('category');
-    final documents = await ref.get();
-    for (var document in documents) {
-      Map data = document.map as Map<String, dynamic>;
-      StoreDocs.add(data);
-      data["id"] = document.id;
-    }
-    print("$StoreDocs   +++++++++ ${Platform.isWindows}");
-    setState(() {
-      progressWidget = false;
-      Windows_Image_data();
-    });
-  }
-
-  Future Windows_Image_data() async {
-    var temp2 = [];
-    _Storage_image_List = [];
-    Map<dynamic, dynamic> w = {
-      'table': "window_image",
-      //'status': "$_StatusValue",
-    };
-    var temp = (!kIsWeb && Platform.isWindows)
-        ? await All_dbFindDynamic(db, w)
-        : await dbFindDynamic(db, w);
-
-    setState(() {
-      temp.forEach((k, v) {
-        _Storage_image_List.add(v["image_url"]);
-      });
-      progressWidget = false;
-    });
-  }
-/////  Update Catego
-
-//////
-
-  Future All_Update_initial(id) async {
-    var pathData =
-        await Firestore.instance.collection('category').document(id).get();
-    // await FirebaseFirestore.instance.collection('category').doc(id).get();
-    if (pathData != null) {
-      data = pathData.map as Map<String, dynamic>?;
-      setState(() {
-        Perent_cat = data!['parent_cate'];
-        slugUrl = data!['slug_url'];
-        image = data!["image"];
-        _Status = (data!['status'] == "1")
-            ? "Active"
-            : (data!['status'] == "2")
-                ? "Inactive"
-                : "Select";
-        Catename = data!['category_name'];
-      });
-    }
-  }
-
-  ///
-
-/////// Update
-
-  Future<void> All_updatelist(
-      id, Catename, slugUrl, _Status, _perentCate, image) async {
-    var _category = await Firestore.instance.collection('category');
-    return _category.document(id).update({
-      'category_name': "$Catename",
-      "parent_cate": "$_perentCate",
-      'slug_url': "$slugUrl",
-      'status': (_Status == "Active")
-          ? "1"
-          : (_Status == "Inactive")
-              ? "2"
-              : "0",
-      "image": "$image",
-      "date_at": "$Date_at"
-    }).then((value) {
-      themeAlert(context, "Successfully Update");
-      setState(() {
-        updateWidget = false;
-        _All_Platform_CateData();
-      });
-    }).catchError(
-        (error) => themeAlert(context, 'Failed to update', type: "error"));
-  }
-
-  ///
 
 ////////// delete Category Data ++++++++++++++++++
 
@@ -422,7 +334,7 @@ class _CategoryAddState extends State<CategoryAdd> {
     return _category.document(id).delete().then((value) {
       setState(() {
         themeAlert(context, "Deleted Successfully ");
-        _All_Platform_CateData();
+        Comman_Cate_Data();
       });
     }).catchError(
         (error) => themeAlert(context, 'Not find Data', type: "error"));
@@ -433,7 +345,7 @@ class _CategoryAddState extends State<CategoryAdd> {
 /////// add Category Data  =+++++++++++++++++++
 
   Future<void> All_addList() async {
-    print("$url_img  +++++++++++++");
+    // print("$url_img  +++++++++++++");
     var _category = await Firestore.instance.collection('category');
     return _category.add({
       'category_name': "$cate_name",
@@ -449,7 +361,7 @@ class _CategoryAddState extends State<CategoryAdd> {
     }).then((value) {
       setState(() {
         themeAlert(context, "Submitted Successfully ");
-        _All_Platform_CateData();
+        Comman_Cate_Data();
         Add_Category = false;
       });
     }).catchError(
@@ -505,6 +417,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                   onTap: () {
                     setState(() {
                       Add_Category = false;
+                      clearText();
                     });
                   },
                   child: Row(
@@ -850,6 +763,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
+                                      Comman_Cate_Data();
                                       _ImageSelect_Alert(context);
                                     },
                                     child: Container(
@@ -941,7 +855,6 @@ class _CategoryAddState extends State<CategoryAdd> {
                             await addList();
                           }
                           clearText();
-                          clear_imageData();
                         });
                       } else {
                         themeAlert(context, 'Image value required!',
@@ -1271,11 +1184,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                         setState(() {
                           updateWidget = true;
                           update_id = iid;
-                          if (kIsWeb) {
-                            Update_initial(iid);
-                          } else if (!kIsWeb) {
-                            All_Update_initial(iid);
-                          }
+
+                          _Update_initial(iid);
                         });
                       },
                       icon: Icon(
@@ -1379,7 +1289,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                 setState(() {
                                   updateWidget = true;
                                   update_id = iid;
-                                  Update_initial(iid);
+                                  _Update_initial(iid);
                                 });
                               },
                               icon: Icon(
@@ -1441,6 +1351,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                   onTap: () {
                     setState(() {
                       updateWidget = false;
+                      clearText();
                     });
                   },
                   child: Row(
@@ -1661,7 +1572,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                             dropdownColor: Colors.white,
                                             hint: _StatusValue == null
                                                 ? Text(
-                                                    '$_Status',
+                                                    'Select',
                                                     style: TextStyle(
                                                         color: Colors.black),
                                                   )
@@ -1739,7 +1650,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                               dropdownColor: Colors.white,
                                               hint: _dropDownValue == null
                                                   ? Text(
-                                                      '$Perent_cat',
+                                                      'select',
                                                       style: TextStyle(
                                                           color: Colors.black),
                                                     )
@@ -1819,7 +1730,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                             dropdownColor: Colors.white,
                                             hint: _dropDownValue == null
                                                 ? Text(
-                                                    '$Perent_cat',
+                                                    'Select',
                                                     style: TextStyle(
                                                         color: Colors.black),
                                                   )
@@ -1937,6 +1848,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                       children: [
                                         GestureDetector(
                                           onTap: () {
+                                            Comman_Cate_Data();
                                             _ImageSelect_Alert(context);
                                           },
                                           child: Container(
@@ -2009,27 +1921,16 @@ class _CategoryAddState extends State<CategoryAdd> {
                             children: [
                               themeButton3(context, () {
                                 setState(() {
-                                  if (kIsWeb) {
-                                    updatelist(
-                                        id,
-                                        Catename,
-                                        slugUrl,
-                                        _StatusValue,
-                                        _dropDownValue,
-                                        (url_img == null || url_img.isEmpty)
-                                            ? image
-                                            : url_img);
-                                  } else if (!kIsWeb) {
-                                    All_updatelist(
-                                        id,
-                                        Catename,
-                                        slugUrl,
-                                        _StatusValue,
-                                        _dropDownValue,
-                                        (url_img == null || url_img.isEmpty)
-                                            ? image
-                                            : url_img);
-                                  }
+                                  updatelist(
+                                      id,
+                                      Catename,
+                                      slugUrl,
+                                      _StatusValue,
+                                      _dropDownValue,
+                                      (url_img == null || url_img.isEmpty)
+                                          ? image
+                                          : url_img);
+
                                   clearText();
                                 });
                               }, buttonColor: Colors.blue, label: "Update"),
@@ -2086,7 +1987,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                 ],
               ),
               content: Container(
-                height: 400,
+                height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width - 400,
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(8.0),

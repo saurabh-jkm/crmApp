@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/style.dart';
@@ -21,6 +22,25 @@ class ProfileDetails extends StatefulWidget {
 }
 
 class _ProfileDetailsState extends State<ProfileDetails> {
+  /////// get user data  +++++++++++++++++++++++++++++++++++++++++++++++++++
+  Map<dynamic, dynamic> user = new Map();
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic userData = (prefs.getString('user'));
+    if (userData != null) {
+      setState(() {
+        user = jsonDecode(userData) as Map<dynamic, dynamic>;
+      });
+    }
+  }
+
+///////=======================================================================
+  @override
+  void initState() {
+    _getUser();
+    super.initState();
+  }
+
   ///
   @override
   Widget build(BuildContext context) {
@@ -32,20 +52,20 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         ),
         SizedBox(height: defaultPadding),
         build_top(context),
-        listList(context),
+        listList(context, user),
       ],
     ));
   }
 
 //// Widget for Start_up
 
-  Widget listList(BuildContext context) {
+  Widget listList(BuildContext context, user) {
     return Container(
       // height: MediaQuery.of(context).size.height,
       margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
-        color: secondaryColor,
+        color: Colors.white30,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
@@ -79,10 +99,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         child: TextField(
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            hintText: 'Guddu',
+                            hintText: '${user["fname"]}',
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
                       Container(
                         margin: EdgeInsets.all(8.0),
                         padding: EdgeInsets.all(8.0),
@@ -99,7 +124,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         child: TextField(
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            hintText: 'Singh',
+                            hintText: '${user["lname"]}',
                           ),
                         ),
                       ),
@@ -124,13 +149,18 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         child: TextField(
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            hintText: 'Guddu@gmail.com',
+                            hintText: '${user["email"]}',
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
                       Container(
                         margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(5.0),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: Colors.green),
@@ -144,86 +174,25 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         child: TextField(
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            hintText: '9935643216',
+                            hintText: '${user["phone"]}',
                           ),
                         ),
                       ),
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.green),
-                        child: Text(
-                          "Commany",
-                          style: TextStyle(
-                              color: Colors.yellowAccent, fontSize: 20),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'JKM GLOBAL',
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.green),
-                        child: Text(
-                          "Location",
-                          style: TextStyle(
-                              color: Colors.yellowAccent, fontSize: 20),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Noida',
-                          ),
-                        ),
-                      ),
-                    ],
+                  SizedBox(
+                    height: 30,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Container(
-                        margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Color.fromARGB(255, 26, 162, 196)),
-                        child: Text(
-                          "Update",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 246, 246, 244),
-                              fontSize: 20),
-                        ),
+                      themeButton3(context, () {},
+                          buttonColor: themeBG3, label: "Update"),
+                      SizedBox(
+                        width: 10,
                       ),
-                      Container(
-                        margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Color.fromARGB(255, 26, 162, 196)),
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 246, 246, 244),
-                              fontSize: 20),
-                        ),
-                      ),
+                      themeButton3(context, () {},
+                          label: "Cancel", buttonColor: Colors.black),
                     ],
                   ),
                 ],
@@ -314,8 +283,10 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                  image: NetworkImage(
-                      "https://mir-s3-cdn-cf.behance.net/project_modules/fs/bd59d257035687.59c5f04c1361c.png"),
+                  image: (user.isNotEmpty && user != "")
+                      ? NetworkImage("${user["avatar"]}")
+                      : NetworkImage(
+                          "https://img.freepik.com/premium-vector/account-icon-user-icon-vector-graphics_292645-552.jpg?w=2000"),
                   // AssetImage("assets/images/sl1.jpg"),
                   fit: BoxFit.fill)),
         ),

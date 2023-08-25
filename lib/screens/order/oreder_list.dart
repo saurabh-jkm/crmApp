@@ -14,7 +14,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/firebase_functions.dart';
@@ -181,10 +181,11 @@ class _OrderListState extends State<OrderList> {
     var temp = (!kIsWeb && Platform.isWindows)
         ? await All_dbFindDynamic(db, w)
         : await dbFindDynamic(db, w);
-    setState(() {
+    setState(() async {
       temp.forEach((k, v) {
         OrderList.add(v);
       });
+
       _CateData();
       Pro_Data_Drop();
       progressWidget = false;
