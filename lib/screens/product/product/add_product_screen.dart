@@ -39,17 +39,16 @@ class addStockScreen extends StatefulWidget {
 }
 
 class _addStockScreenState extends State<addStockScreen> {
-  List<String> suggestons = [
-    "USA",
-    "UK",
-    "Uganda",
-    "Uruguay",
-    "United Arab Emirates"
-  ];
+  // function get all list & name
+  initList() async {
+    await controller.init_functions();
+    setState(() {});
+  }
 
   @override
   void initState() {
     // TODO: implement initState
+    initList();
     super.initState();
   }
 
@@ -77,26 +76,26 @@ class _addStockScreenState extends State<addStockScreen> {
                           child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          themeSpaceVertical(10.0),
+                          themeHeading2("Basic Details"),
+                          themeSpaceVertical(15.0),
                           Row(
                             children: [
                               // fireld 1 ==========================
                               Expanded(
-                                child: formInput(context, "Product Name",
+                                child: autoCompleteFormInput(
+                                    controller.ListName,
+                                    "Product Name",
                                     controller.nameController,
                                     padding: 8.0),
                               ),
 
                               // fireld 2 ==========================
                               Expanded(
-                                child: formInput(context, "Category",
+                                child: autoCompleteFormInput(
+                                    controller.ListCategory,
+                                    "Category",
                                     controller.categoryController,
-                                    padding: 8.0),
-                              ),
-
-                              // Brand ==========================
-                              Expanded(
-                                child: formInput(context, "Brand",
-                                    controller.brandController,
                                     padding: 8.0),
                               ),
 
@@ -119,33 +118,74 @@ class _addStockScreenState extends State<addStockScreen> {
                               ),
                             ],
                           ),
+
+                          // 2nd row =============================================
+                          themeSpaceVertical(18.0),
+                          themeHeading2("Attributes"),
+                          themeSpaceVertical(4.0),
+                          Row(
+                            children: [
+                              for (String key
+                                  in controller.dynamicControllers.keys)
+                                Expanded(
+                                  child: autoCompleteFormInput(
+                                      controller
+                                          .ListAttribute[key.toLowerCase()],
+                                      "${capitalize(key)}",
+                                      controller.dynamicControllers[key],
+                                      padding: 8.0),
+                                ),
+                            ],
+                          ),
+
+                          // 3nd row =============================================
+                          themeSpaceVertical(18.0),
+                          Row(
+                            children: [
+                              themeHeading2("Product Location"),
+                              SizedBox(width: 10.0),
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.add,
+                                    color: themeBG,
+                                    size: 20.0,
+                                  )),
+                            ],
+                          ),
+                          themeSpaceVertical(4.0),
+                          Row(
+                            children: [
+                              Container(
+                                width:
+                                    MediaQuery.of(context).size.width / 2 - 10,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: formInput(context, "Location",
+                                          controller.locationControllers['1'],
+                                          padding: 8.0),
+                                    ),
+                                    Expanded(
+                                      child: formInput(
+                                          context,
+                                          "Quantity",
+                                          controller
+                                              .locationQuntControllers['1'],
+                                          padding: 8.0),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                           //field
                         ],
                       )),
                     ),
                     SizedBox(width: defaultPadding),
                   ]),
-
-                  Autocomplete(
-                    optionsBuilder: (TextEditingValue textEditingValue) {
-                      if (textEditingValue.text == '') {
-                        return const Iterable<String>.empty();
-                      } else {
-                        List<String> matches = <String>[];
-                        matches.addAll(suggestons);
-
-                        matches.retainWhere((s) {
-                          return s
-                              .toLowerCase()
-                              .contains(textEditingValue.text.toLowerCase());
-                        });
-                        return matches;
-                      }
-                    },
-                    onSelected: (String selection) {
-                      print('You just selected $selection');
-                    },
-                  ),
+                  // auto complete =================================
 
                   // buttom submit
                   themeSpaceVertical(20.0),

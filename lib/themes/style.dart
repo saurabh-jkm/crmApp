@@ -82,6 +82,29 @@ themeTextStyle(
       fontFamily: (ftFamily == 'Lora') ? "Lora" : "Montserrat-Regular");
 }
 
+// text field style
+inputStyle(lable) {
+  return InputDecoration(
+    labelText: '$lable',
+    fillColor: Colors.black,
+    labelStyle: textStyle1,
+    hintStyle: TextStyle(color: Colors.black),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.0),
+      borderSide: BorderSide(
+        color: Color.fromARGB(255, 133, 133, 133),
+        width: 1.0,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.0),
+      borderSide: BorderSide(
+        color: const Color.fromARGB(214, 33, 149, 243),
+      ),
+    ),
+  );
+}
+
 Widget progress() {
   return Container(
     child: Column(
