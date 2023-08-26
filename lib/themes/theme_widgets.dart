@@ -551,3 +551,36 @@ void showSnackbar(context, color, message) {
     ),
   );
 }
+
+Widget formInput(BuildContext context, label, controller, {padding: 5.0}) {
+  return Container(
+    padding: EdgeInsets.all(padding),
+    child: TextFormField(
+        controller: controller,
+        style: textStyle1,
+        decoration: InputDecoration(
+          labelText: '${label}',
+          fillColor: Colors.black,
+          labelStyle: textStyle1,
+          hintStyle: TextStyle(color: Colors.black),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(
+              color: Color.fromARGB(255, 133, 133, 133),
+              width: 1.0,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(
+              color: const Color.fromARGB(214, 33, 149, 243),
+            ),
+          ),
+        )),
+  );
+}
+
+// space
+Widget themeSpaceVertical(height) {
+  return SizedBox(height: height);
+}
