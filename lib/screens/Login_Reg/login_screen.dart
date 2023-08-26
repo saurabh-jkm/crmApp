@@ -79,43 +79,39 @@ class _Login_CopyState extends State<Login_Copy> {
         _isLoading = true;
       });
       for (var i = 0; i <= user_data.length; i++) {
-        if (email == "${user_data[i]["email"]}") {
-          // break;
-          if (password == "${user_data[i]["password"]}") {
-            var userData = {
-              'type': user_data[i]["user_category"],
-              'id': user_data[i]["user_category"],
-              'name':
-                  "${user_data[i]["first_name"]} ${user_data[i]["last_name"]}",
-              'fname': user_data[i]["first_name"],
-              'lname': user_data[i]["last_name"],
-              'phone': user_data[i]["mobile_no"],
-              'email': user_data[i]["email"],
-              'user_type': user_data[i]["user_type"],
-              'profile_complete': user_data[i]["user_category"],
-              'avatar': user_data[i]["avatar"],
-            };
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            await prefs.setString('user', jsonEncode(userData));
-            // print("${userData}  ++++++tt+++++");
-            themeAlert(context, "Successfully Sign In !!");
-            await Future.delayed(const Duration(seconds: 3), () {
-              nextScreenReplace(
-                context,
-                MultiProvider(providers: [
-                  ChangeNotifierProvider(
-                    create: (context) => MenuAppController(),
+        if (password == "${user_data[i]["password"]}" &&
+            email == "${user_data[i]["email"]}") {
+          var userData = {
+            'type': user_data[i]["user_category"],
+            'id': user_data[i]["user_category"],
+            'name':
+                "${user_data[i]["first_name"]} ${user_data[i]["last_name"]}",
+            'fname': user_data[i]["first_name"],
+            'lname': user_data[i]["last_name"],
+            'phone': user_data[i]["mobile_no"],
+            'email': user_data[i]["email"],
+            'user_type': user_data[i]["user_type"],
+            'profile_complete': user_data[i]["user_category"],
+            'avatar': user_data[i]["avatar"],
+          };
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user', jsonEncode(userData));
+          // print("${userData}  ++++++tt+++++");
+          themeAlert(context, "Successfully Sign In !!");
+          await Future.delayed(const Duration(seconds: 3), () {
+            nextScreenReplace(
+              context,
+              MultiProvider(providers: [
+                ChangeNotifierProvider(
+                  create: (context) => MenuAppController(),
+                ),
+              ], child: MainScreen(pageNo: 1) // MainScreen(),
                   ),
-                ], child: MainScreen(pageNo: 1) // MainScreen(),
-                    ),
-              );
-            });
-          } else {
-            themeAlert(context, "Your password incorrect  !!", type: "error");
-          }
+            );
+          });
           break;
         } else {
-          themeAlert(context, "Account dosen't exist !!", type: "error");
+          //   themeAlert(context, "Account dosen't exist !!", type: "error");
         }
       }
     } else {

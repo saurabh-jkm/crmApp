@@ -116,14 +116,15 @@ class _Login_CopyState extends State<Login_Copy> {
           break;
         } else {
           if (i < user_data.length && email != "${user_data[i]["email"]}") {
-            print("$i +++++tt");
+            print("$i  +++++tt");
           } else if (i <= user_data.length &&
               email != "${user_data[i]["email"]}") {
-            themeAlert(context, "Account dosen't exist !!", type: "error");
+            print("$i +++++tt");
+            // themeAlert(context, "Account dosen't exist !!", type: "error");
             break;
           } else {
             print("$i +++++tt");
-            themeAlert(context, "Account dosen't exist !!", type: "error");
+            // themeAlert(context, "Account dosen't exist !!", type: "error");
             break;
           }
         }
@@ -464,6 +465,19 @@ class _Login_CopyState extends State<Login_Copy> {
                                 children: [
                                   themeButton3(context, () {
                                     login();
+                                    // nextScreenReplace(
+                                    //   context,
+                                    //   MultiProvider(
+                                    //       providers: [
+                                    //         ChangeNotifierProvider(
+                                    //           create: (context) =>
+                                    //               MenuAppController(),
+                                    //         ),
+                                    //       ],
+                                    //       child: MainScreen(
+                                    //           pageNo: 1) // MainScreen(),
+                                    //       ),
+                                    // );
                                   },
                                       buttonColor: Colors.green,
                                       label: "Log In"),

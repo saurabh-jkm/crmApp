@@ -233,11 +233,28 @@ class _ProductAddState extends State<ProductAdd> {
 /////////// firebase Storage Image data calll   +++++++++++++++++++
   String? downloadURL;
   var _Storage_image_List = [];
+  // Future Image_data() async {
+  //   firebase_storage.ListResult result =
+  //       await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
+  //   result.items.forEach((firebase_storage.Reference ref) async {
+  //     var uri = await downloadURLExample("${ref.fullPath}");
+  //     _Storage_image_List.add(uri);
+  //   });
+  //   return _Storage_image_List;
+  // }
+
+  // Future downloadURLExample(image_path) async {
+  //   downloadURL =
+  //       await FirebaseStorage.instance.ref().child(image_path).getDownloadURL();
+  //   return downloadURL.toString();
+  // }
+
   Future Windows_Image_data() async {
     var temp2 = [];
     _Storage_image_List = [];
     Map<dynamic, dynamic> w = {
       'table': "window_image",
+      //'status': "$_StatusValue",
     };
     var temp = (!kIsWeb && Platform.isWindows)
         ? await All_dbFindDynamic(db, w)
@@ -256,6 +273,8 @@ class _ProductAddState extends State<ProductAdd> {
 ////////////////////  add list   ++++++++++++++++++++++++++++++++++++++++++++++
 
   addList() async {
+    // print("$_itemCtr   ==g===g");
+    //var arrData = new Map();
     var alert = '';
 
     Map<dynamic, dynamic> itemField = {};
@@ -281,19 +300,83 @@ class _ProductAddState extends State<ProductAdd> {
       }
     });
 
+////////  Loop For Product Detais Hold
+
+    _controllers.forEach((k, val) {
+      var tempVar = _controllers['$k']?.text;
+      var temp = k.split("___");
+      var key = temp[0];
+      var field = temp[1];
+      var tempData = (itemField[key] == null) ? {} : itemField[key];
+
+      totalItem = (field == 'no_item' &&
+              tempVar != '' &&
+              Submit_subProductBox.contains(key))
+          ? totalItem + int.parse(tempVar.toString())
+          : totalItem;
+
+      alert = (tempVar!.length < 1)
+          ? 'Please Enter valid ${field.toUpperCase()}'
+          : alert;
+      // check image
+      if (_itemCtr[key] == null) {
+        //alert = "${key.toUpperCase()} Product Image Required";
+      } else {
+        List<dynamic> tempImgs = [];
+        _itemCtr[key]['img'].forEach((k, v) {
+          featureImg = (featureImg == '') ? k : featureImg;
+          tempImgs.add(k);
+        });
+        tempData['img'] = tempImgs;
+      }
+
+      tempData[field] = tempVar;
+      if (basic_Product == false && Submit_subProductBox.contains(key)) {
+        itemField[key] = tempData;
+      } else {
+        itemField[key] = tempData;
+      }
+
+      tempData['img'] = (tempData['img'] == null) ? {} : tempData['img'];
+
+      // print("&&&&& ${tempData}");
+    });
+
+    if (alert != '') {
+      themeAlert(context, alert, type: 'error');
+      return false;
+    }
+
     Map<String, dynamic> w = {};
-    w = {
-      'table': "product",
-      'name': "${NameController.text}",
-      'slug_url': "${SlugUrlController.text}",
-      "location_of_product": location_pro,
-      'product_type': "featured",
-      "price_details": itemField,
-      "no_item": totalItem,
-      'category': "$_PerentCate",
-      'status': "$_StatusValue",
-      "date_at": "$Date_at",
-    };
+    w = (basic_Product == true)
+        ? {
+            'table': "product",
+            'name': "${NameController.text}",
+            'slug_url': "${SlugUrlController.text}",
+            "location_of_product": location_pro,
+            'product_type': "basic",
+            "price_details": itemField,
+            "no_item": "${itemField["basic"]["no_item"]}",
+            "img": featureImg,
+            'category': "$_PerentCate",
+            'status': "$_StatusValue",
+            "date_at": "$Date_at",
+          }
+        : {
+            'table': "product",
+            'name': "${NameController.text}",
+            'slug_url': "${SlugUrlController.text}",
+            "location_of_product": location_pro,
+            'product_type': "featured",
+            "price_details": itemField,
+            "no_item": totalItem,
+            "img": featureImg,
+            'category': "$_PerentCate",
+            'status': "$_StatusValue",
+            "date_at": "$Date_at",
+            'attribute': selectedCheck,
+            'attributeInner': Submit_subProductBox,
+          };
     if (edit) {
       w['id'] = update_id;
       if (!kIsWeb && Platform.isWindows) {
@@ -670,8 +753,6 @@ class _ProductAddState extends State<ProductAdd> {
                   onTap: () {
                     setState(() {
                       clearText();
-
-                      edit = false;
                       Add_product = false;
                     });
                   },
@@ -748,6 +829,9 @@ class _ProductAddState extends State<ProductAdd> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // (!kIsWeb && Platform.isWindows)
+                                //     ? Text("Windos")
+                                //     : Text("web"),
                                 Container(
                                     child: Text("Category",
                                         style: themeTextStyle(
@@ -908,9 +992,7 @@ class _ProductAddState extends State<ProductAdd> {
                     color: Colors.black12,
                   ),
 
-                  ///  Address Details Of Prod   ============================================================
-                  /// =======================================================================================
-                  /// =======================================================================================
+                  ///  Address Details Of Prod
                   Column(
                     children: [
                       SizedBox(height: 20.0),
@@ -939,13 +1021,182 @@ class _ProductAddState extends State<ProductAdd> {
                       SizedBox(height: 10.0),
                     ],
                   ),
-/////////////////////////======================================================
-                  ///=============================================================================
 
+                  ///
                   Divider(
                     thickness: 1.5,
                     color: Colors.black12,
                   ),
+                  //////////  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+                  Column(
+                    children: [
+                      SizedBox(height: 30),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.production_quantity_limits_sharp,
+                            size: 30,
+                            color: Colors.blue,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Type Of Product",
+                              style: GoogleFonts.alike(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18)),
+                        ],
+                      ),
+                      Row(children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              basic_Product = true;
+                              _controllers = new Map();
+                            });
+                          },
+                          child: Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 5, vertical: 20),
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: (basic_Product == true)
+                                      ? Colors.green
+                                      : Colors.grey,
+                                  border: Border.all(color: Colors.black38),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Text("Basic Product")),
+                        ),
+                        GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                basic_Product = false;
+                                _controllers = new Map();
+                              });
+                            },
+                            child: Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 5, vertical: 20),
+                                height: 40,
+                                decoration: BoxDecoration(
+                                    color: (basic_Product == false)
+                                        ? Colors.green
+                                        : Colors.grey,
+                                    border: Border.all(color: Colors.black38),
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Text("Featured Product"))),
+                      ]),
+                    ],
+                  ),
+
+                  /////////  Basic Product Rate Deatils +++++++++++++++++++++++
+
+                  (basic_Product == true)
+                      ? wd_sub_product_details(context, 'Product Details')
+                      :
+                      /////////  Featured Product Rate Deatils +++++++++++++++++++++++
+
+                      Column(children: [
+                          Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.5),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Attribute",
+                                        style: themeTextStyle(
+                                            color: Colors.black,
+                                            size: 15,
+                                            fw: FontWeight.bold)),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        for (var index = 0;
+                                            index < myAttr.length;
+                                            index++)
+                                          Container(
+                                              height: 25,
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 5),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: Row(
+                                                children: [
+                                                  Checkbox(
+                                                    activeColor: Colors.green,
+                                                    side: BorderSide(
+                                                        width: 2,
+                                                        color: Colors.black),
+                                                    value: (selectedCheck[Attri_data[
+                                                                        index][
+                                                                    "attribute_name"]
+                                                                .toLowerCase()] ==
+                                                            null)
+                                                        ? false
+                                                        : selectedCheck[Attri_data[
+                                                                    index][
+                                                                "attribute_name"]
+                                                            .toLowerCase()],
+                                                    onChanged: (Value) {
+                                                      _fnChangeCheckVal(
+                                                          Attri_data[index][
+                                                              "attribute_name"],
+                                                          Value,
+                                                          'main');
+                                                    },
+                                                  ),
+                                                  Text(
+                                                    "${Attri_data[index]["attribute_name"]}",
+                                                    style: TextStyle(
+                                                        color: Colors.black),
+                                                  )
+                                                ],
+                                              )),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          // sub attribute ---------------------------------
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 113, 174, 234),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                for (var i = 0; i < myAttr.length; i++)
+                                  wd_subAttr_Row(context, myAttr[i], i),
+                              ],
+                            ),
+                          ),
+
+                          //// sub product list =======================================================
+                          for (var title in subProductBox)
+                            wd_sub_product_details(context, title)
+                          // sub attribute ---------------------------------
+                        ]),
 
                   SizedBox(
                     height: 20,
@@ -2268,6 +2519,249 @@ class _ProductAddState extends State<ProductAdd> {
             child: Icon(Icons.cancel_outlined, color: Colors.red, size: 15)));
   }
 
+// ///////////  Map text field   ++++++++++++++++++++++++++++
+//   Widget Text_field_rate(
+//       BuildContext context, ctr_type, controller_name, hint) {
+//     if (ctr_type == '1') {
+//       var tempStr = (_controllers["$controller_name"]?.text == null)
+//           ? ''
+//           : _controllers["$controller_name"]?.text;
+//       _controllers["$controller_name"] = TextEditingController();
+//       _controllers["$controller_name"]?.text = tempStr.toString();
+//     } else {
+//       var tempStr = (_controllers2["$controller_name"]?.text == null)
+//           ? ''
+//           : _controllers2["$controller_name"]?.text;
+//       _controllers2["$controller_name"] = TextEditingController();
+//       _controllers2["$controller_name"]?.text = tempStr.toString();
+//     }
+//     return Container(
+//       height: 40,
+//       margin: EdgeInsets.only(
+//         top: 10,
+//         bottom: 10,
+//       ),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(10),
+//       ),
+//       child: TextFormField(
+//         obscureText: false,
+//         controller: (ctr_type == '1')
+//             ? _controllers["$controller_name"]
+//             : _controllers2["$controller_name"],
+//         onChanged: (value) async {
+//           if (ctr_type == '1') {
+//             if (_controllers["mrp_price"]!.text.isNotEmpty &&
+//                 _controllers["$controller_name"]!.text ==
+//                     _controllers["selling_price"]!.text) {
+//               Mp_Discount_cal(_controllers["mrp_price"]!.text,
+//                   _controllers["selling_price"]!.text);
+//             }
+//           }
+//           if (ctr_type == '2') {
+//             if (_controllers2["mrp_price"]!.text.isNotEmpty &&
+//                 _controllers2["$controller_name"]!.text ==
+//                     _controllers2["selling_price"]!.text) {
+//               Mp_Discount_cal(_controllers2["mrp_price"]!.text,
+//                   _controllers2["selling_price"]!.text);
+//             }
+//           }
+//         },
+//         validator: (value) {
+//           if (value == null || value.isEmpty) {
+//             return 'Please Enter value';
+//           }
+//         },
+//         decoration: InputDecoration(
+//           border: InputBorder.none,
+//           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+//           hintText: '$hint',
+//           hintStyle: TextStyle(
+//             color: Colors.grey,
+//             fontSize: 16,
+//           ),
+//           suffixIcon: Container(
+//             height: 10,
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.spaceAround,
+//               children: [
+//                 GestureDetector(
+//                   onTap: () {
+//                     if (ctr_type == '1') {
+//                       var mrpIncre =
+//                           int.parse(_controllers["$controller_name"]!.text);
+//                       setState(() {
+//                         mrpIncre++;
+//                         _controllers["$controller_name"]!.text =
+//                             mrpIncre.toString();
+//                       });
+//                     }
+//                     if (ctr_type == '2') {
+//                       var mrpIncre =
+//                           int.parse(_controllers2["$controller_name"]!.text);
+//                       setState(() {
+//                         mrpIncre++;
+//                         _controllers2["$controller_name"]!.text =
+//                             mrpIncre.toString();
+//                       });
+//                     }
+//                   },
+//                   child: Icon(Icons.expand_less_rounded,
+//                       size: 20, color: Colors.black),
+//                 ),
+//                 GestureDetector(
+//                   onTap: () {
+//                     if (ctr_type == '1') {
+//                       var mrpIncre =
+//                           int.parse(_controllers["$controller_name"]!.text);
+//                       setState(() {
+//                         mrpIncre--;
+//                         _controllers["$controller_name"]!.text =
+//                             mrpIncre.toString();
+//                       });
+//                     }
+//                     if (ctr_type == '2') {
+//                       var mrpIncre =
+//                           int.parse(_controllers2["$controller_name"]!.text);
+//                       setState(() {
+//                         mrpIncre--;
+//                         _controllers2["$controller_name"]!.text =
+//                             mrpIncre.toString();
+//                       });
+//                     }
+//                   },
+//                   child: Icon(Icons.expand_more_outlined,
+//                       size: 20, color: Colors.black),
+//                 )
+//               ],
+//             ),
+//           ),
+//         ),
+//         style: TextStyle(color: Colors.black),
+//         keyboardType: TextInputType.number,
+//         inputFormatters: <TextInputFormatter>[
+//           FilteringTextInputFormatter.digitsOnly
+//         ], // Onl
+//       ),
+//     );
+//   }
+// ////////////==============================================
+
+// //////////// update text widget ++++++++++++++++
+//   Widget Text_field_up(BuildContext context, ini_value, lebel, hint) {
+//     return Container(
+//         height: 40,
+//         margin: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(10),
+//         ),
+//         child: TextFormField(
+//           obscureText: false,
+//           controller: ini_value,
+//           onChanged: (value) async {
+//             if (mrp.isNotEmpty && ini_value == sell) {
+//               Mp_Discount_cal(mrp, sell);
+//             }
+//           },
+//           validator: (value) {
+//             if (value == null || value.isEmpty) {
+//               return 'Please Enter value';
+//             }
+//           },
+//           decoration: InputDecoration(
+//             border: InputBorder.none,
+//             contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+//             hintText: '$hint',
+//             hintStyle: TextStyle(
+//               color: Colors.grey,
+//               fontSize: 16,
+//             ),
+//             suffixIcon: Container(
+//               height: 10,
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+//                 children: [
+//                   GestureDetector(
+//                     onTap: () {
+//                       var mrpIncre = int.parse(ini_value!.text);
+//                       setState(() {
+//                         mrpIncre++;
+//                         ini_value = mrpIncre.toString();
+//                       });
+//                     },
+//                     child: Icon(Icons.expand_less_rounded,
+//                         size: 20, color: Colors.black),
+//                   ),
+//                   GestureDetector(
+//                     onTap: () {
+//                       var mrpIncre = int.parse(ini_value!.text);
+//                       setState(() {
+//                         mrpIncre--;
+//                         ini_value = mrpIncre.toString();
+//                       });
+//                     },
+//                     child: Icon(Icons.expand_more_outlined,
+//                         size: 20, color: Colors.black),
+//                   )
+//                 ],
+//               ),
+//             ),
+//           ),
+//           style: TextStyle(color: Colors.black),
+//           keyboardType: TextInputType.number,
+//           inputFormatters: <TextInputFormatter>[
+//             FilteringTextInputFormatter.digitsOnly
+//           ], // Onl
+//         ));
+//   }
+// //////
+
+// ////////  Data bases Image call  +++++++++++++++++++++++++++++++
+//   List<String> _selectedOptions = [];
+//   Widget All_media(BuildContext context, itemNo) {
+//     var Swidth = MediaQuery.of(context).size.width;
+//     var tempData = (_itemCtr[itemNo] != null) ? _itemCtr[itemNo] : {};
+//     var selectedImgs = (tempData['img'] != null) ? tempData['img'] : {};
+
+//     return Container(
+//       height: (Swidth.toInt() > 1400) ? 650 : 500,
+//       child: GridView.builder(
+//         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//           crossAxisCount: (Swidth.toInt() > 1400) ? 8 : 4,
+//         ),
+//         itemCount: _Storage_image_List.length,
+//         itemBuilder: (_, index) => Container(
+//             margin: EdgeInsets.all(10),
+//             decoration: BoxDecoration(
+//               border: Border.all(color: Colors.grey),
+//               image: DecorationImage(
+//                 image: NetworkImage('${_Storage_image_List[index]}'),
+//                 fit: BoxFit.contain,
+//               ),
+//             ),
+//             alignment: Alignment.topLeft,
+//             child: CheckboxListTile(
+//               checkColor: Colors.white,
+//               activeColor: Colors.green,
+//               side: BorderSide(width: 2, color: Colors.red),
+//               value: (selectedImgs[_Storage_image_List[index]] == null)
+//                   ? false
+//                   : true,
+//               onChanged: (value) {
+//                 setState(() {
+//                   _fnSelectImg(itemNo, _Storage_image_List[index], value);
+//                 });
+//               },
+//             )),
+//       ),
+//     );
+//   }
+// //////////
+
+////////  Data bases Image call   MOBILE +++++++++++++++++++++++++++++++
+
 ///////////// New Add text widget +++++++++++++++++++++
   Widget Text_field(BuildContext context, ctr_name, lebel, hint) {
     return Container(
@@ -2645,6 +3139,7 @@ class _ProductAddState extends State<ProductAdd> {
     int stringLength = (tempStr == null) ? 0 : tempStr.length;
     _controllers_Address[key]?.selection =
         TextSelection.collapsed(offset: stringLength);
+
     return Container(
       height: 40,
       margin: EdgeInsets.only(
@@ -2674,6 +3169,28 @@ class _ProductAddState extends State<ProductAdd> {
               color: Colors.grey,
               fontSize: 16,
             ),
+            // suffixIcon: (ctrName == "number_of_item")
+            //     ? Container(
+            //         height: 10,
+            //         child: Column(
+            //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //           children: [
+            //             GestureDetector(
+            //               onTap: () {
+            //                 setState(() {});
+            //               },
+            //               child: Icon(Icons.expand_less_rounded,
+            //                   size: 20, color: Colors.black),
+            //             ),
+            //             GestureDetector(
+            //               onTap: () {},
+            //               child: Icon(Icons.expand_more_outlined,
+            //                   size: 20, color: Colors.black),
+            //             )
+            //           ],
+            //         ),
+            //       )
+            //     : SizedBox()
           ),
           style: TextStyle(color: Colors.black),
           keyboardType: (ctrName == "number_of_item")

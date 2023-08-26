@@ -217,11 +217,6 @@ class _MainScreenState extends State<MainScreen> {
             horizontalTitleGap: 0.0,
             leading: Icon(Icons.production_quantity_limits_outlined,
                 color: Colors.white),
-            //  SvgPicture.asset(
-            //   "assets/icons/menu_task.svg",
-            //   color: Colors.white54,
-            //   height: 16,
-            // ),
             title: Text(
               "Products",
               style: TextStyle(color: Colors.white),
