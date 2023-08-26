@@ -23,6 +23,26 @@ class ProductController {
   final priceController = TextEditingController();
   final brandController = TextEditingController();
 
+  // temporary
+  Map<String, TextEditingController> dynamicControllers = new Map();
+
+  Map<String, TextEditingController> locationControllers = new Map();
+  Map<String, TextEditingController> locationQuntControllers = new Map();
+
+  // Suggation List =====================================
+  List<String> ListName = [];
+  List<String> ListCategory = [];
+  Map<String, dynamic> ListAttribute = {};
+
+  init_functions() async {
+    await getProductNameList();
+    await getCategoryList();
+    await getAttributeList();
+
+    locationControllers['1'] = TextEditingController();
+    locationQuntControllers['1'] = TextEditingController();
+  }
+
   // reset controller
   resetController() {
     nameController.text = '';
@@ -32,7 +52,42 @@ class ProductController {
     brandController.text = '';
   }
 
-// insert product
+  // get all product name List =============================
+  getProductNameList() async {
+    ListName = [];
+    var dbData = await db.collection('product').get();
+    dbData.forEach((doc) {
+      ListName.add(doc.map['name']);
+    });
+  }
+
+  // get all product Category List =============================
+  getCategoryList() async {
+    ListCategory = [];
+    var dbData = await db.collection('category').get();
+    dbData.forEach((doc) {
+      ListCategory.add(doc.map['category_name']);
+    });
+  }
+
+  // get all  Attribute List =============================
+  getAttributeList() async {
+    ListAttribute = {};
+    var dbData = await db.collection('attribute').get();
+    dbData.forEach((doc) {
+      List<String> temp = [];
+      if (doc.map['value'] != null) {
+        doc.map['value'].forEach((k, v) {
+          temp.add(k);
+        });
+      }
+      ListAttribute[doc.map['attribute_name'].toLowerCase()] = temp;
+      dynamicControllers[doc.map['attribute_name'].toLowerCase()] =
+          TextEditingController();
+    });
+  }
+
+// insert product ============================================
   insertProduct(context) async {
     var alert = '';
     if (nameController.text.length < 5) {
@@ -41,16 +96,47 @@ class ProductController {
       alert = "Quntity Required";
     }
 
+    if (alert != '') {
+      themeAlert(context, "$alert", type: 'error');
+      return false;
+    }
+
     var dbCollection = await db.collection('product');
-    return dbCollection.add({
+
+    // default value
+    var dbArr = {
       "name": nameController.text,
       "category": categoryController.text,
       "quantity": quantityController.text,
       "price": priceController.text,
-      "brand": brandController.text,
       "date_at": DateTime.now(),
       "status": true
-    }).then((value) {
+    };
+
+    // for attribute
+    dynamicControllers.forEach((key, value) {
+      if (value.text != '') {
+        dbArr[key.toLowerCase()] = value.text;
+      }
+    });
+
+    // for address =================================
+    var tempLocation = {};
+    locationControllers.forEach((key, value) {
+      tempLocation[key] = value.text;
+    });
+
+    // location quantity
+    var location = {};
+    locationQuntControllers.forEach((key, value) {
+      if (tempLocation[key] != null) {
+        location[tempLocation[key]] = value.text;
+      }
+    });
+
+    dbArr['item_location'] = location;
+
+    return dbCollection.add(dbArr).then((value) {
       themeAlert(context, "Submitted Successfully ");
       resetController();
     }).catchError(

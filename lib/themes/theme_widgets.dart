@@ -552,35 +552,67 @@ void showSnackbar(context, color, message) {
   );
 }
 
-Widget formInput(BuildContext context, label, controller, {padding: 5.0}) {
+// form input field ===========================
+Widget formInput(BuildContext context, label, controller,
+    {padding: 5.0, editComplete: '', focusNode: '', currentController: ''}) {
   return Container(
     padding: EdgeInsets.all(padding),
-    child: TextFormField(
-        controller: controller,
-        style: textStyle1,
-        decoration: InputDecoration(
-          labelText: '${label}',
-          fillColor: Colors.black,
-          labelStyle: textStyle1,
-          hintStyle: TextStyle(color: Colors.black),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide(
-              color: Color.fromARGB(255, 133, 133, 133),
-              width: 1.0,
-            ),
+    child: (editComplete == '')
+        ? TextFormField(
+            controller: controller,
+            style: textStyle1,
+            decoration: inputStyle(label))
+        : TextFormField(
+            controller: controller,
+            style: textStyle1,
+            onEditingComplete: editComplete,
+            focusNode: focusNode,
+            decoration: inputStyle(label),
+            onChanged: (value) {
+              currentController.text = value;
+            },
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide(
-              color: const Color.fromARGB(214, 33, 149, 243),
-            ),
-          ),
-        )),
   );
 }
 
 // space
 Widget themeSpaceVertical(height) {
   return SizedBox(height: height);
+}
+
+// auto complete =================================
+autoCompleteFormInput(suggationList, label, myController, {padding: 10.0}) {
+  return Autocomplete(
+    fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
+      return formInput(context, "$label", controller,
+          editComplete: onEditingComplete,
+          focusNode: focusNode,
+          currentController: myController,
+          padding: padding);
+    },
+    optionsBuilder: (TextEditingValue textEditingValue) {
+      if (textEditingValue.text == '') {
+        return const Iterable<String>.empty();
+      } else {
+        List<String> matches = <String>[];
+        matches.addAll(suggationList);
+        matches.retainWhere((s) {
+          return s.toLowerCase().contains(textEditingValue.text.toLowerCase());
+        });
+        return matches;
+      }
+    },
+    onSelected: (String selection) {
+      myController.text = selection;
+    },
+  );
+}
+
+// theme heading
+Widget themeHeading2(label) {
+  return Padding(
+    padding: EdgeInsets.only(left: 16.0),
+    child: Text("$label",
+        style: themeTextStyle(color: themeBG, fw: FontWeight.bold, size: 16.0)),
+  );
 }
