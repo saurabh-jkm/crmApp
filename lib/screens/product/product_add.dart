@@ -38,11 +38,40 @@ class ProductAdd extends StatefulWidget {
 }
 
 class _ProductAddState extends State<ProductAdd> {
+  var db = (!kIsWeb && Platform.isWindows)
+      ? Firestore.instance
+      : FirebaseFirestore.instance;
   @override
   void initState() {
-    // TODO: implement initState
+    Pro_Data();
     super.initState();
   }
+
+////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
+  bool progressWidget = true;
+  List productList = [];
+
+  Pro_Data() async {
+    var temp2 = [];
+    productList = [];
+    Map<dynamic, dynamic> w = {
+      'table': "product",
+      //'status': "$_StatusValue",
+    };
+    var temp = (!kIsWeb && Platform.isWindows)
+        ? await All_dbFindDynamic(db, w)
+        : await dbFindDynamic(db, w);
+
+    setState(() {
+      temp.forEach((k, v) {
+        productList.add(v);
+      });
+      print("$productList  ++++++++++++++++");
+      progressWidget = false;
+    });
+  }
+
+/////////////=====================================================================
 
   addNewStock() {
     Navigator.push(
@@ -51,42 +80,212 @@ class _ProductAddState extends State<ProductAdd> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            //header ======================
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
-              decoration: BoxDecoration(color: themeBG2),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return (progressWidget == true)
+        ? Center(child: pleaseWait(context))
+        : Scaffold(
+            body: Container(
+              color: Colors.white,
+              child: Column(
                 children: [
+                  //header ======================
                   Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
+                    decoration: BoxDecoration(color: themeBG2),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // GestureDetector(
-                        //     onTap: () {
-                        //       Navigator.of(context).pop();
-                        //     },
-                        //     child: Icon(Icons.arrow_back, color: Colors.white)),
-                        // SizedBox(width: 20.0),
-                        Text("Stocks")
+                        Container(
+                          child: Row(
+                            children: [
+                              // GestureDetector(
+                              //     onTap: () {
+                              //       Navigator.of(context).pop();
+                              //     },
+                              //     child: Icon(Icons.arrow_back, color: Colors.white)),
+                              // SizedBox(width: 20.0),
+                              Text("Stocks")
+                            ],
+                          ),
+                        ),
+                        Container(
+                          child: themeButton3(context, addNewStock,
+                              label: 'Add New', radius: 5.0),
+                        )
                       ],
                     ),
                   ),
+
                   Container(
-                    child: themeButton3(context, addNewStock,
-                        label: 'Add New', radius: 5.0),
-                  )
+                    margin: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: secondaryColor,
+                    ),
+                    child: Table(
+                      defaultVerticalAlignment:
+                          TableCellVerticalAlignment.middle,
+                      border: TableBorder(
+                        horizontalInside:
+                            BorderSide(width: .5, color: Colors.grey),
+                      ),
+                      children: [
+                        TableRow(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).secondaryHeaderColor),
+                            children: [
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text('S.No.',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                              ),
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SizedBox(
+                                    child: Text("Name",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    width: 40,
+                                  ),
+                                ),
+                              ),
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text('Brand',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                              ),
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text('Category Name',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text("Qauntity",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text("Price",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text("Status",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Text("Date",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                            ]),
+                        for (var index = 0; index < productList.length; index++)
+                          tableRowWidget(
+                            index + 1,
+                            productList[index]['name'],
+                            productList[index]['brand'],
+                            productList[index]['category'],
+                            productList[index]['quantity'],
+                            productList[index]['price'],
+                            productList[index]['status'],
+                            productList[index]['date_at'],
+                          )
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            )
-          ],
+            ),
+          );
+  }
+
+  TableRow tableRowWidget(
+      Sno, name, BrandName, cate_name, items_no, price, status, date) {
+    return TableRow(children: [
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("$Sno",
+              style: GoogleFonts.alike(
+                  fontWeight: FontWeight.normal, fontSize: 11)),
         ),
       ),
-    );
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("$name",
+              style: GoogleFonts.alike(
+                  fontWeight: FontWeight.normal, fontSize: 11)),
+        ),
+      ),
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Text("$BrandName",
+            style:
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
+      ),
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Text("$cate_name",
+            style:
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
+      ),
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Text("$items_no",
+            style: GoogleFonts.alike(
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+            )),
+      ),
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Text("$price",
+            style: GoogleFonts.alike(
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+            )),
+      ),
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Text("$status",
+            style: GoogleFonts.alike(
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+            )),
+      ),
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Text("$date",
+            style:
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
+      ),
+    ]);
   }
 }
 
