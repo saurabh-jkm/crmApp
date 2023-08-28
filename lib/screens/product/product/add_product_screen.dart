@@ -29,7 +29,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:slug_it/slug_it.dart';
 import 'package:intl/intl.dart';
-import 'stock_header.dart';
+import 'product_widgets.dart';
 
 class addStockScreen extends StatefulWidget {
   const addStockScreen({super.key});
@@ -48,7 +48,12 @@ class _addStockScreenState extends State<addStockScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    initList();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (this.mounted) {
+        initList();
+      }
+    });
+
     super.initState();
   }
 
@@ -121,7 +126,23 @@ class _addStockScreenState extends State<addStockScreen> {
 
                           // 2nd row =============================================
                           themeSpaceVertical(18.0),
-                          themeHeading2("Attributes"),
+                          Row(children: [
+                            themeHeading2("Attributes"),
+                            SizedBox(width: 10.0),
+                            IconButton(
+                                onPressed: () {
+                                  addNewAttrbute(
+                                      context,
+                                      controller.newAttributeController,
+                                      addNewAttFn);
+                                },
+                                tooltip: "Add New Attribute",
+                                icon: Icon(
+                                  Icons.add,
+                                  color: themeBG,
+                                  size: 20.0,
+                                )),
+                          ]),
                           themeSpaceVertical(4.0),
                           Row(
                             children: [
@@ -145,38 +166,64 @@ class _addStockScreenState extends State<addStockScreen> {
                               themeHeading2("Product Location"),
                               SizedBox(width: 10.0),
                               IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    addNewLocation(context);
+                                  },
+                                  tooltip: "Add Location",
                                   icon: Icon(
                                     Icons.add,
                                     color: themeBG,
                                     size: 20.0,
                                   )),
+                              SizedBox(width: 10.0),
+                              (controller.totalLocation > 1)
+                                  ? IconButton(
+                                      onPressed: () {
+                                        removeLocation(context);
+                                      },
+                                      tooltip: "Remove Location",
+                                      icon: Icon(
+                                        Icons.remove,
+                                        color: Colors.red,
+                                        size: 20.0,
+                                      ))
+                                  : SizedBox(),
                             ],
                           ),
                           themeSpaceVertical(4.0),
                           Row(
                             children: [
-                              Container(
-                                width:
-                                    MediaQuery.of(context).size.width / 2 - 10,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: formInput(context, "Location",
-                                          controller.locationControllers['1'],
-                                          padding: 8.0),
-                                    ),
-                                    Expanded(
-                                      child: formInput(
-                                          context,
-                                          "Quantity",
-                                          controller
-                                              .locationQuntControllers['1'],
-                                          padding: 8.0),
-                                    ),
-                                  ],
+                              for (var i = 1;
+                                  i <= controller.totalLocation;
+                                  i++)
+                                Container(
+                                  color: Color.fromARGB(106, 211, 234, 255),
+                                  margin: EdgeInsets.only(right: 8.0),
+                                  width: MediaQuery.of(context).size.width /
+                                          controller.totalLocation -
+                                      30,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: formInput(
+                                            context,
+                                            "Location",
+                                            controller
+                                                .locationControllers['$i'],
+                                            padding: 8.0),
+                                      ),
+                                      Container(
+                                        width: 120.0,
+                                        child: formInput(
+                                            context,
+                                            "Quantity",
+                                            controller
+                                                .locationQuntControllers['$i'],
+                                            padding: 8.0),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                           //field
@@ -191,12 +238,12 @@ class _addStockScreenState extends State<addStockScreen> {
                   themeSpaceVertical(20.0),
                   Container(
                     child: Center(
-                      child: themeButton3(context, controller.insertProduct,
-                          arg: context,
-                          label: 'Submit',
-                          btnHeightSize: 45.0,
-                          radius: 8.0),
-                    ),
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              controller.insertProduct(context);
+                              //setState(() {});
+                            },
+                            child: Text('Submit'))),
                   ),
                 ],
               ),
@@ -207,6 +254,42 @@ class _addStockScreenState extends State<addStockScreen> {
         ),
       ),
     );
+  }
+
+  // Functions for setstate =================================================
+  // Functions for setstate =================================================
+  // Functions for setstate =================================================
+  // Functions for setstate =================================================
+
+  addNewAttFn(context) async {
+    // add new Attribute
+    await controller.fnAddAttribute(context);
+    setState(() {});
+  }
+
+  // add new location
+  addNewLocation(context) {
+    setState(() {
+      if (controller.totalLocation < 4) {
+        controller.totalLocation++;
+        controller.locationControllers['${controller.totalLocation}'] =
+            TextEditingController();
+        controller.locationQuntControllers['${controller.totalLocation}'] =
+            TextEditingController();
+      }
+    });
+  }
+
+  // remove new location
+  removeLocation(context) {
+    setState(() {
+      if (controller.totalLocation > 1) {
+        controller.locationControllers.remove('${controller.totalLocation}');
+        controller.locationQuntControllers
+            .remove('${controller.totalLocation}');
+        controller.totalLocation--;
+      }
+    });
   }
 }
 
