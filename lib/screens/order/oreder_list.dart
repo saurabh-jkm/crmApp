@@ -1833,89 +1833,6 @@ class _OrderListState extends State<OrderList> {
     );
   }
 
-// added product list ======================================================
-// added product list ======================================================
-  // Widget wd_added_product_list(BuildContext context) {
-  //   return Container(
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         wd_rows(context, 'Product', 'Quantity', 'Price', 'GST', 'Discount',
-  //             'total',
-  //             bg: true),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-//PRODUCT ROW ======================================================
-//PRODUCT ROW ======================================================
-  // Widget wd_rows(BuildContext context, td1, td2, td3, td4, td5, td6,
-  //     {bg: false}) {
-  //   return Container(
-  //     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 3.0),
-  //     decoration: BoxDecoration(
-  //         color: (!bg) ? Colors.transparent : themeBG,
-  //         border: Border(bottom: BorderSide(width: 1.0, color: Colors.white))),
-  //     child: Row(
-  //       children: [
-  //         SizedBox(
-  //           width: MediaQuery.of(context).size.width * 0.25,
-  //           child: Text(
-  //             "$td1",
-  //             style: themeTextStyle(size: 10.0, color: Colors.white),
-  //           ),
-  //         ),
-  //         // quntity
-  //         SizedBox(
-  //           width: MediaQuery.of(context).size.width * 0.1,
-  //           child: Text(
-  //             "$td2",
-  //             style: themeTextStyle(size: 10.0, color: Colors.white),
-  //           ),
-  //         ),
-  //         // price
-  //         SizedBox(
-  //           width: MediaQuery.of(context).size.width * 0.1,
-  //           child: Text(
-  //             "$td3",
-  //             style: themeTextStyle(size: 10.0, color: Colors.white),
-  //           ),
-  //         ),
-  //         // gst
-  //         SizedBox(
-  //           width: MediaQuery.of(context).size.width * 0.1,
-  //           child: Text(
-  //             "$td4",
-  //             style: themeTextStyle(size: 10.0, color: Colors.white),
-  //           ),
-  //         ),
-  //         // Discount
-  //         SizedBox(
-  //           width: MediaQuery.of(context).size.width * 0.1,
-  //           child: Text(
-  //             "$td5",
-  //             style: themeTextStyle(size: 8.0, color: Colors.white),
-  //           ),
-  //         ),
-  //         // Total
-  //         SizedBox(
-  //           width: MediaQuery.of(context).size.width * 0.1,
-  //           child: Text(
-  //             "$td6",
-  //             style: themeTextStyle(size: 10.0, color: Colors.white),
-  //           ),
-  //         ),
-  //         // Action
-  //         SizedBox(
-  //           child: Text(
-  //             "Action",
-  //             style: themeTextStyle(size: 10.0, color: Colors.white),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
   // }
 
 //////////////    @3c Product details_++++++++++++++++++++++++++++++++++++++++++
@@ -1961,7 +1878,6 @@ class _OrderListState extends State<OrderList> {
                       fontSize: 15,
                       color: Colors.black,
                     )),
-                Drowpdow_wd(context, "product_name", itemNo),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
