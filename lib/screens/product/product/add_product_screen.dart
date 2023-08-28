@@ -175,6 +175,19 @@ class _addStockScreenState extends State<addStockScreen> {
                                     color: themeBG,
                                     size: 20.0,
                                   )),
+                              SizedBox(width: 10.0),
+                              (controller.totalLocation > 1)
+                                  ? IconButton(
+                                      onPressed: () {
+                                        removeLocation(context);
+                                      },
+                                      tooltip: "Remove Location",
+                                      icon: Icon(
+                                        Icons.remove,
+                                        color: Colors.red,
+                                        size: 20.0,
+                                      ))
+                                  : SizedBox(),
                             ],
                           ),
                           themeSpaceVertical(4.0),
@@ -263,6 +276,18 @@ class _addStockScreenState extends State<addStockScreen> {
             TextEditingController();
         controller.locationQuntControllers['${controller.totalLocation}'] =
             TextEditingController();
+      }
+    });
+  }
+
+  // remove new location
+  removeLocation(context) {
+    setState(() {
+      if (controller.totalLocation > 1) {
+        controller.locationControllers.remove('${controller.totalLocation}');
+        controller.locationQuntControllers
+            .remove('${controller.totalLocation}');
+        controller.totalLocation--;
       }
     });
   }
