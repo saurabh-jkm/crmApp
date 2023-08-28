@@ -13,11 +13,11 @@ import '../product/add_product_screen.dart';
 
 class ProductController {
   //var db = FirebaseFirestore.instance;
-  //var db = Firestore.instance;
+  var db = Firestore.instance;
 
-  var db = (!kIsWeb && Platform.isWindows)
-      ? Firestore.instance
-      : FirebaseFirestore.instance;
+  //  var db = (!kIsWeb && Platform.isWindows)
+  //     ? Firestore.instance
+  //     : FirebaseFirestore.instance;
 
   final formKey = GlobalKey<FormState>();
 
@@ -65,66 +65,41 @@ class ProductController {
   // get all product name List =============================
   getProductNameList() async {
     ListName = [];
-    //var dbData = await db.collection('product').get();
-    var dbData = await dbFindDynamic(db, {'table': 'product'});
-    dbData.forEach((k, data) {
-      ListName.add(data['name']);
+    var dbData = await db.collection('product').get();
+
+    dbData.forEach((doc) {
+      ListName.add(doc.map['name']);
     });
   }
 
   // get all product Category List =============================
   getCategoryList() async {
     ListCategory = [];
-
-    // var dbData = await db.collection('category').get();
-    // dbData.forEach((doc) {
-    //   ListCategory.add(doc.map['category_name']);
-    // });
-
-    var dbData = await dbFindDynamic(db, {'table': 'category'});
-    dbData.forEach((k, data) {
-      ListCategory.add(data['category_name']);
+    var dbData = await db.collection('category').get();
+    dbData.forEach((doc) {
+      ListCategory.add(doc.map['category_name']);
     });
   }
 
   // get all  Attribute List =============================
   getAttributeList() async {
     ListAttribute = {};
-
-    var dbData = await dbFindDynamic(db, {'table': 'attribute'});
-    dbData.forEach((k, data) {
+    var dbData = await db.collection('attribute').get();
+    dbData.forEach((doc) {
       List<String> temp = [];
-      if (data['value'] != null) {
-        data['value'].forEach((k, v) {
+      if (doc.map['value'] != null) {
+        doc.map['value'].forEach((k, v) {
           temp.add(k);
         });
       }
-      ListAttribute[data['attribute_name'].toLowerCase()] = temp;
-
-      ListAttributeWithId[data['attribute_name'].toLowerCase()] = {
-        'id': data['id'],
-        'data': data
+      ListAttribute[doc.map['attribute_name'].toLowerCase()] = temp;
+      ListAttributeWithId[doc.map['attribute_name'].toLowerCase()] = {
+        'id': doc.id,
+        'data': doc.map
       };
-      dynamicControllers[data['attribute_name'].toLowerCase()] =
+      dynamicControllers[doc.map['attribute_name'].toLowerCase()] =
           TextEditingController();
     });
-
-    // var dbData = await db.collection('attribute').get();
-    // dbData.forEach((doc) {
-    //   List<String> temp = [];
-    //   if (doc.map['value'] != null) {
-    //     doc.map['value'].forEach((k, v) {
-    //       temp.add(k);
-    //     });
-    //   }
-    //   ListAttribute[doc.map['attribute_name'].toLowerCase()] = temp;
-    //   ListAttributeWithId[doc.map['attribute_name'].toLowerCase()] = {
-    //     'id': doc.id,
-    //     'data': doc.map
-    //   };
-    //   dynamicControllers[doc.map['attribute_name'].toLowerCase()] =
-    //       TextEditingController();
-    // });
   }
 
   // Attribute Value List =============================
@@ -135,20 +110,15 @@ class ProductController {
     tempArr[value] = {"name": value, "status": "1"};
     var dbArr = doc['data'];
     dbArr['value'] = tempArr;
-
-    dbArr['table'] = 'attribute';
-    dbArr['id'] = doc['id'];
-
-    await dbUpdate(db, dbArr);
+    await db.collection('attribute').document(doc['id']).set(dbArr);
   }
 
   // add new category
   fnAddNewCat(parentCat, context) async {
     // add new category
-
+    var dbCollection = await db.collection('category');
     // default value
     var dbArr = {
-      "table": 'category',
       "category_name": categoryController.text,
       "img": '',
       "parent_cate": (parentCat == 'Primary') ? '' : parentCat,
@@ -157,9 +127,12 @@ class ProductController {
       "slug_url": categoryController.text.replaceAll(" ", "-"),
     };
 
-    await dbSave(db, dbArr);
-    await getCategoryList();
-    await insertProduct(context);
+    return dbCollection.add(dbArr).then((value) async {
+      Navigator.of(context).pop();
+      await getCategoryList();
+      await insertProduct(context);
+    }).catchError((error) =>
+        themeAlert(context, 'Failed to Update Category', type: "error"));
   }
 
   // add attribute Funciton
@@ -168,7 +141,7 @@ class ProductController {
       return false;
     }
     Navigator.of(context).pop();
-
+    var dbCollection = await db.collection('attribute');
     if (ListAttribute.containsKey(newAttributeController.text.toLowerCase())) {
       themeAlert(context, "${newAttributeController.text} already added",
           type: 'error');
@@ -176,7 +149,6 @@ class ProductController {
 
     // default value
     var dbArr = {
-      "table": "attribute",
       "attribute_name": newAttributeController.text,
       "img": '',
       "date_at": DateTime.now(),
@@ -184,8 +156,11 @@ class ProductController {
       "value": {},
     };
 
-    await dbSave(db, dbArr);
-    await getAttributeList();
+    return await dbCollection.add(dbArr).then((value) async {
+      await getAttributeList();
+      newAttributeController.text = '';
+    }).catchError((error) =>
+        themeAlert(context, 'Failed to Update Category', type: "error"));
   }
 
 // insert product ============================================
@@ -211,11 +186,10 @@ class ProductController {
       return false;
     }
 
-    //var dbCollection = await db.collection('product');
+    var dbCollection = await db.collection('product');
 
     // default value
     var dbArr = {
-      "table": "product",
       "name": nameController.text,
       "category": categoryController.text,
       "quantity": quantityController.text,
@@ -252,20 +226,14 @@ class ProductController {
 
     // return false;
 
-    // return dbCollection.add(dbArr).then((value) {
-    //   themeAlert(context, "Submitted Successfully ");
-    //   resetController();
+    return dbCollection.add(dbArr).then((value) {
+      themeAlert(context, "Submitted Successfully ");
+      resetController();
 
-    //   Navigator.popAndPushNamed(context, '/add_stock');
+      Navigator.popAndPushNamed(context, '/add_stock');
 
-    //   //Navigator.pop(context, 'updated');
-    // }).catchError(
-    //     (error) => themeAlert(context, 'Failed to Submit', type: "error"));
-
-    //print(dbArr);
-
-    await dbSave(db, dbArr);
-    themeAlert(context, "Submitted Successfully ");
-    Navigator.popAndPushNamed(context, '/add_stock');
+      //Navigator.pop(context, 'updated');
+    }).catchError(
+        (error) => themeAlert(context, 'Failed to Submit', type: "error"));
   }
 }

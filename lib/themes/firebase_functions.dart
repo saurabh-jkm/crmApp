@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 
 //exmaple calling DB  function
 // Map<dynamic, dynamic> where = {
@@ -40,12 +41,20 @@ dbUpdate(db, where) {
   where.remove('id');
 
   // return false;
+  if (!kIsWeb && Platform.isWindows) {
+    db.collection(table).document(id).update(where).then((value) {
+      returnData = 'Updated';
+    }).catchError((error) {
+      returnData = "Updattion Failed: $error";
+    });
+  } else {
+    db.collection(table).doc(id).update(where).then((value) {
+      returnData = 'Updated';
+    }).catchError((error) {
+      returnData = "Updattion Failed: $error";
+    });
+  }
 
-  db.collection(table).doc(id).update(where).then((value) {
-    returnData = 'Updated';
-  }).catchError((error) {
-    returnData = "Updattion Failed: $error";
-  });
   return returnData;
 }
 
@@ -98,12 +107,15 @@ dbSave(db, where) async {
   var table = (where['table']);
   where.remove('table');
 
-  final data =
-      await db.collection(table).add(where).then((DocumentReference doc) {
-    return doc.id;
-  });
-
-  return data;
+  if (!kIsWeb && Platform.isWindows) {
+    return await db.collection(table).add(where).then((value) {
+      return value.id;
+    });
+  } else {
+    return await db.collection(table).add(where).then((DocumentReference doc) {
+      return doc.id;
+    });
+  }
 }
 
 win_dbSave(db, where) async {
@@ -144,7 +156,7 @@ dbFind(where) async {
 
   where.remove('id');
 
-  final data = (!kIsWeb && Platform.isWindows)
+  final data = (!kIsWeb && !kIsWeb && Platform.isWindows)
       ? await Firestore.instance
           .collection(table)
           .document(id)
@@ -187,7 +199,7 @@ dbFindDynamic(db, where) async {
   var table = (where['table']);
   where.remove('table');
 
-  var dbTable = db.collection(table);
+  var dbTable = await db.collection(table);
 
   // Order by
   if (where['orderBy'] != null) {
@@ -222,21 +234,25 @@ dbFindDynamic(db, where) async {
 
   query = (query == null || query == '') ? dbTable : query;
 
-  final data = await query.get().then(
+  final data = await dbTable.get().then(
     (res) {
       Map<int, dynamic> returnData2 = new Map();
-
       int k = 0;
-
-      for (var doc in res.docs) {
-        //returnData2[doc.id] = doc.data();
-        Map<String, dynamic> temp = doc.data();
-
-        temp['id'] = doc.id;
-
-        returnData2[k] = temp;
-
-        k++;
+      if (!kIsWeb && Platform.isWindows) {
+        for (var doc in res) {
+          Map<String, dynamic> temp = doc.map;
+          temp['id'] = doc.id;
+          returnData2[k] = temp;
+          k++;
+        }
+      } else {
+        for (var doc in res.docs) {
+          //returnData2[doc.id] = doc.data();
+          Map<String, dynamic> temp = doc.data();
+          temp['id'] = doc.id;
+          returnData2[k] = temp;
+          k++;
+        }
       }
       // print("${returnData2} =====j2 ");
       return returnData2;

@@ -38,6 +38,7 @@ class _Login_CopyState extends State<Login_Copy> {
 
   // ignore: unused_field
   bool _isLoading = false;
+
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
       : FirebaseFirestore.instance;
@@ -69,56 +70,44 @@ class _Login_CopyState extends State<Login_Copy> {
 ///////// Login  Fuction +++++++++++++++++++++++
 
   Future<void> login() async {
-    // CheckUserConnection();
-    // (user_data.isEmpty)
-    //               ? themeButton3(context, _fnCheckPhoneNumber, label: "Submit")
-    //               : themeButton3(context, _fnLoginNow, label: "Login Now")
-    // AuthService authService = AuthService();
-    if (formKey.currentState!.validate() && user_data.isNotEmpty) {
-      setState(() {
-        _isLoading = true;
+    setState(() {
+      _isLoading = true;
+    });
+
+    var dbData = await dbFindDynamic(
+        db, {'table': 'users', 'email': email, 'password': password});
+
+    if (dbData.isNotEmpty) {
+      var userData = dbData[0];
+      var userDataArr = {
+        'type': userData["user_category"],
+        'id': userData["user_category"],
+        'name': "${userData["first_name"]} ${userData["last_name"]}",
+        'fname': userData["first_name"],
+        'lname': userData["last_name"],
+        'phone': userData["mobile_no"],
+        'email': userData["email"],
+        'user_type': userData["user_type"],
+        'profile_complete': userData["user_category"],
+        'avatar': userData["avatar"],
+      };
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user', jsonEncode(userDataArr));
+      // print("${userData}  ++++++tt+++++");
+      themeAlert(context, "Successfully Sign In !!");
+      await Future.delayed(const Duration(seconds: 3), () {
+        nextScreenReplace(
+          context,
+          MultiProvider(providers: [
+            ChangeNotifierProvider(
+              create: (context) => MenuAppController(),
+            ),
+          ], child: MainScreen(pageNo: 1) // MainScreen(),
+              ),
+        );
       });
-      for (var i = 0; i <= user_data.length; i++) {
-        if (password == "${user_data[i]["password"]}" &&
-            email == "${user_data[i]["email"]}") {
-          var userData = {
-            'type': user_data[i]["user_category"],
-            'id': user_data[i]["user_category"],
-            'name':
-                "${user_data[i]["first_name"]} ${user_data[i]["last_name"]}",
-            'fname': user_data[i]["first_name"],
-            'lname': user_data[i]["last_name"],
-            'phone': user_data[i]["mobile_no"],
-            'email': user_data[i]["email"],
-            'user_type': user_data[i]["user_type"],
-            'profile_complete': user_data[i]["user_category"],
-            'avatar': user_data[i]["avatar"],
-          };
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('user', jsonEncode(userData));
-          // print("${userData}  ++++++tt+++++");
-          themeAlert(context, "Successfully Sign In !!");
-          await Future.delayed(const Duration(seconds: 3), () {
-            nextScreenReplace(
-              context,
-              MultiProvider(providers: [
-                ChangeNotifierProvider(
-                  create: (context) => MenuAppController(),
-                ),
-              ], child: MainScreen(pageNo: 1) // MainScreen(),
-                  ),
-            );
-          });
-          break;
-        } else {
-          //   themeAlert(context, "Account dosen't exist !!", type: "error");
-        }
-      }
     } else {
-      showSnackbar(context, Colors.red, "Invalid value !!");
-      setState(() {
-        _isLoading = false;
-      });
+      themeAlert(context, "Email Or Password MistMatch!!");
     }
   }
 

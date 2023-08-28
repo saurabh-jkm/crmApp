@@ -38,6 +38,7 @@ class ProductAdd extends StatefulWidget {
 }
 
 class _ProductAddState extends State<ProductAdd> {
+  final _controllers = TextEditingController();
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
       : FirebaseFirestore.instance;
@@ -50,7 +51,6 @@ class _ProductAddState extends State<ProductAdd> {
 ////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
   bool progressWidget = true;
   List productList = [];
-
   Pro_Data() async {
     var temp2 = [];
     productList = [];
@@ -66,9 +66,40 @@ class _ProductAddState extends State<ProductAdd> {
       temp.forEach((k, v) {
         productList.add(v);
       });
-      print("$productList  ++++++++++++++++");
+      filteredItems = productList;
+      // print("$productList  ++++++++++++++++");
       progressWidget = false;
     });
+  }
+
+///////  delete  Product ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  Future<void> delete_Pro(id) {
+    // var db = FirebaseFirestore.instance;
+    if (!kIsWeb && Platform.isWindows) {
+      final _product = Firestore.instance.collection('product');
+      return _product.document(id).delete().then((value) {
+        setState(() {
+          themeAlert(context, "Deleted Successfully ");
+          _controllers.clear();
+          productList2 = [];
+          Pro_Data();
+        });
+      }).catchError(
+          (error) => themeAlert(context, 'Not find Data', type: "error"));
+    } else {
+      CollectionReference _product =
+          FirebaseFirestore.instance.collection('product');
+      return _product.doc(id).delete().then((value) {
+        setState(() {
+          themeAlert(context, "Deleted Successfully ");
+          _controllers.clear();
+          productList2 = [];
+          Pro_Data();
+        });
+      }).catchError(
+          (error) => themeAlert(context, 'Not find Data', type: "error"));
+    }
   }
 
 /////////////=====================================================================
@@ -78,6 +109,7 @@ class _ProductAddState extends State<ProductAdd> {
         context, MaterialPageRoute(builder: (_) => addStockScreen()));
   }
 
+///////// ======================================================================
   @override
   Widget build(BuildContext context) {
     return (progressWidget == true)
@@ -85,7 +117,7 @@ class _ProductAddState extends State<ProductAdd> {
         : Scaffold(
             body: Container(
               color: Colors.white,
-              child: Column(
+              child: ListView(
                 children: [
                   //header ======================
                   Container(
@@ -121,98 +153,128 @@ class _ProductAddState extends State<ProductAdd> {
                     decoration: BoxDecoration(
                       color: secondaryColor,
                     ),
-                    child: Table(
-                      defaultVerticalAlignment:
-                          TableCellVerticalAlignment.middle,
-                      border: TableBorder(
-                        horizontalInside:
-                            BorderSide(width: .5, color: Colors.grey),
-                      ),
+                    child: Column(
                       children: [
-                        TableRow(
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).secondaryHeaderColor),
-                            children: [
-                              TableCell(
-                                verticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text('S.No.',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                              ),
-                              TableCell(
-                                verticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: SizedBox(
-                                    child: Text("Name",
+                        searchBar(context),
+                        Table(
+                          defaultVerticalAlignment:
+                              TableCellVerticalAlignment.middle,
+                          border: TableBorder(
+                            horizontalInside:
+                                BorderSide(width: .5, color: Colors.grey),
+                          ),
+                          children: [
+                            TableRow(
+                                decoration: BoxDecoration(
+                                    color:
+                                        Theme.of(context).secondaryHeaderColor),
+                                children: [
+                                  TableCell(
+                                    verticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text('S.No.',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    verticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: SizedBox(
+                                        child: Text("Name",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                        width: 40,
+                                      ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    verticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text('Brand',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    verticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    child: Text('Category Name',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
-                                    width: 40,
                                   ),
-                                ),
-                              ),
-                              TableCell(
-                                verticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text('Brand',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                              ),
-                              TableCell(
-                                verticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                child: Text('Category Name',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              TableCell(
-                                verticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                child: Text("Qauntity",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              TableCell(
-                                verticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                child: Text("Price",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              TableCell(
-                                verticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                child: Text("Status",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              TableCell(
-                                verticalAlignment:
-                                    TableCellVerticalAlignment.middle,
-                                child: Text("Date",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                            ]),
-                        for (var index = 0; index < productList.length; index++)
-                          tableRowWidget(
-                            index + 1,
-                            productList[index]['name'],
-                            productList[index]['brand'],
-                            productList[index]['category'],
-                            productList[index]['quantity'],
-                            productList[index]['price'],
-                            productList[index]['status'],
-                            productList[index]['date_at'],
-                          )
+                                  TableCell(
+                                    verticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    child: Text("Qauntity",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  TableCell(
+                                    verticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    child: Text("Price",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  TableCell(
+                                    verticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    child: Text("Status",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  TableCell(
+                                    verticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    child: Text("Date",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  TableCell(
+                                    verticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                    child: Text("Actions",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                ]),
+                            if (productList2.isEmpty)
+                              for (var index = 0;
+                                  index < productList.length;
+                                  index++)
+                                tableRowWidget(
+                                    index + 1,
+                                    productList[index]['name'],
+                                    productList[index]['brand'],
+                                    productList[index]['category'],
+                                    productList[index]['quantity'],
+                                    productList[index]['price'],
+                                    productList[index]['status'],
+                                    productList[index]['date_at'],
+                                    productList[index]['id']),
+                            if (productList2.isNotEmpty)
+                              for (var index = 0;
+                                  index < productList2.length;
+                                  index++)
+                                tableRowWidget(
+                                    index + 1,
+                                    productList2[index]['name'],
+                                    productList2[index]['brand'],
+                                    productList2[index]['category'],
+                                    productList2[index]['quantity'],
+                                    productList2[index]['price'],
+                                    productList2[index]['status'],
+                                    productList2[index]['date_at'],
+                                    productList2[index]['id']),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -223,7 +285,7 @@ class _ProductAddState extends State<ProductAdd> {
   }
 
   TableRow tableRowWidget(
-      Sno, name, BrandName, cate_name, items_no, price, status, date) {
+      Sno, name, BrandName, cate_name, items_no, price, status, date, iid) {
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -285,8 +347,219 @@ class _ProductAddState extends State<ProductAdd> {
             style:
                 GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
+      TableCell(
+          verticalAlignment: TableCellVerticalAlignment.middle,
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              children: [
+                Container(
+                    height: 30,
+                    width: 30,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.1),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            // update_id = iid;
+                            // Update_initial(iid);
+                          });
+                        },
+                        icon: Icon(
+                          Icons.edit,
+                          size: 15,
+                          color: Colors.blue,
+                        )) ////
+                    ),
+                SizedBox(width: 10),
+                Container(
+                    height: 30,
+                    width: 30,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: IconButton(
+                        onPressed: () {
+                          showExitPopup(iid);
+                        },
+                        icon: Icon(
+                          Icons.delete_outline_outlined,
+                          size: 15,
+                          color: Colors.red,
+                        ))),
+              ],
+            ),
+          )),
     ]);
   }
+////
+///////// search Bar For Product  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  Widget searchBar(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(10)),
+          margin: EdgeInsets.only(top: 20, right: 10, bottom: 10),
+          padding: EdgeInsets.all(8.0),
+          height: MediaQuery.of(context).size.height * 0.05,
+          width: MediaQuery.of(context).size.width * 0.25,
+          child: TextField(
+            controller: _controllers,
+            onChanged: ((value) {
+              _filterItems(value);
+            }),
+            style: TextStyle(color: Colors.black),
+            decoration: InputDecoration(
+                hintText: 'Search Product & Categories ....',
+                hintStyle: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 13,
+                ),
+                border: InputBorder.none,
+                suffixIcon: (_controllers.text.isEmpty)
+                    ? Icon(Icons.search, size: 30, color: Colors.blue)
+                    : GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _controllers.clear();
+                            productList2 = [];
+                            Pro_Data();
+                          });
+                        },
+                        child: Icon(Icons.search_off, color: Colors.red))),
+          ),
+        )
+      ],
+    );
+  }
+
+/////////   Search Fuction  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  var filteredItems = [];
+  bool show_drop_list = false;
+  List<String>? foodListSearch;
+
+  ///
+  List productList2 = [];
+  void _filterItems(String query) {
+    productList2 = [];
+    for (var i = 0; i < productList.length; i++) {
+      String pro_name = productList[i]["name"];
+      String pro_cat = productList[i]["category"];
+
+      if (pro_name.toLowerCase() == query.toLowerCase() ||
+          pro_cat.toLowerCase() == query.toLowerCase()) {
+        setState(() {
+          if (productList2.contains(productList[i])) {
+          } else {
+            productList2.add(productList[i]);
+          }
+        });
+      } else {
+        print("not fond  ++++++++++++++++++");
+        setState(() {
+          if (show_drop_list == false && _controllers.text.isNotEmpty) {
+            show_drop_list = true;
+          }
+        });
+      }
+    }
+  }
+  ////////////////////  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//////////////////////==============================================================
+
+///////// Alart Popup  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  Future<bool> showExitPopup(iid_delete) async {
+    return await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: Colors.white,
+            title: Row(
+              children: [
+                Icon(
+                  Icons.delete_forever_outlined,
+                  color: Colors.red,
+                  size: 35,
+                ),
+                SizedBox(
+                  width: 10.0,
+                ),
+                Text(
+                  'CRM App says',
+                  style: themeTextStyle(
+                      size: 20.0,
+                      ftFamily: 'ms',
+                      fw: FontWeight.bold,
+                      color: themeBG2),
+                ),
+              ],
+            ),
+            content: Text(
+              'Are you sure to delete this Product ?',
+              style: themeTextStyle(
+                  size: 16.0,
+                  ftFamily: 'ms',
+                  fw: FontWeight.normal,
+                  color: Colors.black87),
+            ),
+            actions: [
+              Container(
+                height: 30,
+                width: 60,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(
+                    'No',
+                    style: themeTextStyle(
+                        size: 16.0,
+                        ftFamily: 'ms',
+                        fw: FontWeight.normal,
+                        color: Colors.red),
+                  ),
+                ),
+              ),
+              Container(
+                height: 30,
+                width: 60,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
+                child: TextButton(
+                  onPressed: () async {
+                    await delete_Pro(iid_delete);
+                    Navigator.of(context).pop(false);
+                  },
+                  child: Text(
+                    'Yes',
+                    style: themeTextStyle(
+                        size: 16.0,
+                        ftFamily: 'ms',
+                        fw: FontWeight.normal,
+                        color: themeBG4),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ) ??
+        false; //if showDialouge had returned null, then return false
+  }
+/////////  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 }
 
 /// Class CLose
