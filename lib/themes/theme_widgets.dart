@@ -555,6 +555,9 @@ void showSnackbar(context, color, message) {
 // form input field ===========================
 Widget formInput(BuildContext context, label, controller,
     {padding: 5.0, editComplete: '', focusNode: '', currentController: ''}) {
+  if (editComplete != '' && currentController.text == '') {
+    controller.text = currentController.text;
+  }
   return Container(
     padding: EdgeInsets.all(padding),
     child: (editComplete == '')
@@ -563,6 +566,7 @@ Widget formInput(BuildContext context, label, controller,
             style: textStyle1,
             decoration: inputStyle(label))
         : TextFormField(
+            // this is for auto complete
             controller: controller,
             style: textStyle1,
             onEditingComplete: editComplete,
@@ -581,12 +585,13 @@ Widget themeSpaceVertical(height) {
 }
 
 // auto complete =================================
-autoCompleteFormInput(suggationList, label, myController, {padding: 10.0}) {
+autoCompleteFormInput(suggationList, label, myController,
+    {padding: 10.0, myFocusNode: ''}) {
   return Autocomplete(
     fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
       return formInput(context, "$label", controller,
           editComplete: onEditingComplete,
-          focusNode: focusNode,
+          focusNode: (myFocusNode == '') ? focusNode : myFocusNode,
           currentController: myController,
           padding: padding);
     },

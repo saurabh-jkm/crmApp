@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crm_demo/screens/product/product/add_product_screen.dart';
 import 'package:crm_demo/shared/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firedart/firedart.dart';
@@ -99,6 +100,9 @@ class _MyAppState extends State<MyApp> {
 
                   ////MainScreen(pageNo: 1) // MainScreen(),
                   ),
+              routes: {
+                '/add_stock': (context) => addStockScreen(),
+              },
             );
           }
           return CircularProgressIndicator();

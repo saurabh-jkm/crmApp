@@ -158,7 +158,7 @@ themeButton_sm(label, btnColor, icon, iconSize, w, h, fontsize) {
 themeAlert(context, msg, {type = 'success'}) {
   return ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text("$msg"),
+      content: Text("$msg", style: TextStyle(color: Colors.white)),
       backgroundColor: (type == 'success')
           ? Color.fromARGB(255, 72, 170, 137)
           : Color.fromARGB(255, 214, 99, 12),
