@@ -322,3 +322,26 @@ dbDelete(db, where) {
 
   return returnData;
 }
+
+win_dbDelete(db, where) {
+  var returnData = '';
+  if (where == null || where == '') {
+    return "Map data is empty";
+  }
+  if (where['table'] == null) {
+    return "Table name required!!";
+  }
+
+  db
+      .collection(where['table'])
+      .document(where['id'])
+      .delete()
+      .then((value) {})
+      .catchError((error) {
+    returnData = "Updattion Failed: $error";
+  });
+
+  return returnData;
+}
+
+////////  =================================================================================

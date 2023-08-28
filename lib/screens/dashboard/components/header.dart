@@ -131,7 +131,7 @@ class _ProfileCardState extends State<ProfileCard> {
     if (userData != null) {
       setState(() {
         user = jsonDecode(userData) as Map<dynamic, dynamic>;
-        print("${user["avatar"]}     ++++++tt+++++ ");
+        // print("${user["avatar"]}     ++++++tt+++++ ");
       });
     }
   }
@@ -158,24 +158,11 @@ class _ProfileCardState extends State<ProfileCard> {
       ),
       child: Row(
         children: [
-          // Container(
-          //   height: 50,
-          //   decoration: BoxDecoration(
-          //       shape: BoxShape.circle,
-          //       image:
-          //           DecorationImage(image: NetworkImage("${user["avatar"]}"))),
-          // ),
-
           CircleAvatar(
               backgroundImage: (user.isNotEmpty && user["avatar"] != null)
                   ? NetworkImage("${user["avatar"]}")
                   : NetworkImage(
-                      "https://img.freepik.com/premium-vector/account-icon-user-icon-vector-graphics_292645-552.jpg?w=2000")
-
-              //   backgroundImage: Image.network(
-              //   "${user["avatar"]}",
-              // )
-              ),
+                      "https://img.freepik.com/premium-vector/account-icon-user-icon-vector-graphics_292645-552.jpg?w=2000")),
           if (!Responsive.isMobile(context))
             Padding(
               padding:
