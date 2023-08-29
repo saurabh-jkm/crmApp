@@ -554,7 +554,11 @@ void showSnackbar(context, color, message) {
 
 // form input field ===========================
 Widget formInput(BuildContext context, label, controller,
-    {padding: 5.0, editComplete: '', focusNode: '', currentController: ''}) {
+    {padding: 5.0,
+    editComplete: '',
+    focusNode: '',
+    currentController: '',
+    isNumber: false}) {
   // if (editComplete != '' && currentController.text == '') {
   //   controller.text = currentController.text;
   // }
