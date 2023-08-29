@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/product/product/add_product_screen.dart';
+import 'package:crm_demo/screens/product/product/edit_product_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:firedart/generated/google/firestore/v1/document.pb.dart';
@@ -58,9 +59,7 @@ class _ProductAddState extends State<ProductAdd> {
       'table': "product",
       //'status': "$_StatusValue",
     };
-    var temp = (!kIsWeb && Platform.isWindows)
-        ? await All_dbFindDynamic(db, w)
-        : await dbFindDynamic(db, w);
+    var temp = await dbFindDynamic(db, w);
 
     setState(() {
       temp.forEach((k, v) {
@@ -258,7 +257,8 @@ class _ProductAddState extends State<ProductAdd> {
                                     productList[index]['price'],
                                     productList[index]['status'],
                                     productList[index]['date_at'],
-                                    productList[index]['id']),
+                                    productList[index]['id'],
+                                    productList[index]),
                             if (productList2.isNotEmpty)
                               for (var index = 0;
                                   index < productList2.length;
@@ -272,7 +272,8 @@ class _ProductAddState extends State<ProductAdd> {
                                     productList2[index]['price'],
                                     productList2[index]['status'],
                                     productList2[index]['date_at'],
-                                    productList2[index]['id']),
+                                    productList2[index]['id'],
+                                    productList[index]),
                           ],
                         ),
                       ],
@@ -284,8 +285,8 @@ class _ProductAddState extends State<ProductAdd> {
           );
   }
 
-  TableRow tableRowWidget(
-      Sno, name, BrandName, cate_name, items_no, price, status, date, iid) {
+  TableRow tableRowWidget(Sno, name, BrandName, cate_name, items_no, price,
+      status, date, iid, data) {
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -362,11 +363,18 @@ class _ProductAddState extends State<ProductAdd> {
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            // update_id = iid;
-                            // Update_initial(iid);
-                          });
+                        onPressed: () async {
+                          final temp = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => editStockScreen(
+                                        data: data,
+                                      )));
+                          if (temp == 'updated') {
+                            Pro_Data();
+                          }
+                          // update_id = iid;
+                          // Update_initial(iid);
                         },
                         icon: Icon(
                           Icons.edit,
@@ -559,7 +567,7 @@ class _ProductAddState extends State<ProductAdd> {
         ) ??
         false; //if showDialouge had returned null, then return false
   }
-/////////  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/////////  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 }
 
 /// Class CLose

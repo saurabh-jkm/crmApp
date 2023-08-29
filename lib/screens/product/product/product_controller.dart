@@ -189,7 +189,7 @@ class ProductController {
   }
 
 // insert product ============================================
-  insertProduct(context) async {
+  insertProduct(context, {docId: ''}) async {
     var alert = '';
     if (nameController.text.length < 5) {
       alert = "Please Enter Valid Product Name";
@@ -264,8 +264,18 @@ class ProductController {
 
     //print(dbArr);
 
-    await dbSave(db, dbArr);
-    themeAlert(context, "Submitted Successfully ");
-    Navigator.popAndPushNamed(context, '/add_stock');
+    if (docId == '') {
+      await dbSave(db, dbArr);
+      themeAlert(context, "Submitted Successfully ");
+      Navigator.popAndPushNamed(context, '/add_stock');
+    } else {
+      dbArr['id'] = docId;
+      var rData = await dbUpdate(db, dbArr);
+
+      if (rData != null) {
+        themeAlert(context, "Updated Successfully !!");
+        Navigator.pop(context, 'updated');
+      }
+    }
   }
 }

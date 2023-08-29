@@ -15,7 +15,7 @@ import '../category/category_add.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../inventry/inventry_list.dart';
 import '../order/oreder_list.dart';
-import '../product/product_add.dart';
+import '../product/product_list.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({required this.pageNo}) : super();
