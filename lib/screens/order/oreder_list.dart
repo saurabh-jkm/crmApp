@@ -1878,6 +1878,7 @@ class _OrderListState extends State<OrderList> {
                       fontSize: 15,
                       color: Colors.black,
                     )),
+                Drowpdow_wd(context, "product_name", itemNo),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
