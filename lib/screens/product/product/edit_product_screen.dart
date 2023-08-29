@@ -30,28 +30,64 @@ import 'package:slug_it/slug_it.dart';
 import 'package:intl/intl.dart';
 import 'product_widgets.dart';
 
-class addStockScreen extends StatefulWidget {
-  const addStockScreen({super.key});
+class editStockScreen extends StatefulWidget {
+  final data;
+  const editStockScreen({super.key, this.data});
 
   @override
-  State<addStockScreen> createState() => _addStockScreenState();
+  State<editStockScreen> createState() => _editStockScreenState();
 }
 
-class _addStockScreenState extends State<addStockScreen> {
+class _editStockScreenState extends State<editStockScreen> {
+  var documentId;
   // function get all list & name
   initList() async {
     await controller.init_functions();
+
+    // update all controllers
+    documentId = widget.data['id'];
+    controller.nameController.text = widget.data['name'];
+    controller.categoryController.text = widget.data['category'];
+    controller.quantityController.text = widget.data['quantity'];
+    controller.priceController.text = widget.data['price'];
+
+    controller.dynamicControllers.forEach((k, v) {
+      if (widget.data[k] != null) {
+        controller.dynamicControllers[k]?.text = widget.data[k];
+      }
+    });
+
+    var i = 1;
+    widget.data['item_location'].forEach((k, v) {
+      controller.totalLocation = i;
+      if (i == 1) {
+        controller.locationControllers['${i}']!.text = k;
+        controller.locationQuntControllers['${i}']!.text = v;
+      } else {
+        controller.locationControllers['${i}'] = TextEditingController();
+        controller.locationQuntControllers['${i}'] = TextEditingController();
+
+        controller.locationControllers['${i}']!.text = k;
+        controller.locationQuntControllers['${i}']!.text = v;
+      }
+
+      i++;
+    });
+
     setState(() {});
   }
 
   @override
   void initState() {
+    print(widget.data);
     // TODO: implement initState
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (this.mounted) {
-        initList();
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   if (this.mounted) {
+    //     initList();
+    //   }
+    // });
+
+    initList();
 
     super.initState();
   }
@@ -239,7 +275,8 @@ class _addStockScreenState extends State<addStockScreen> {
                     child: Center(
                         child: ElevatedButton(
                             onPressed: () async {
-                              controller.insertProduct(context);
+                              controller.insertProduct(context,
+                                  docId: documentId);
                               //setState(() {});
                             },
                             child: Text('Submit'))),

@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crm_demo/screens/product/product-backup.dart';
 import 'package:crm_demo/screens/product/product/add_product_screen.dart';
 import 'package:crm_demo/shared/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -105,6 +106,7 @@ class _MyAppState extends State<MyApp> {
                   ),
               routes: {
                 '/add_stock': (context) => addStockScreen(),
+                '/stock_list': (context) => ProductAdd(),
               },
             );
           }
