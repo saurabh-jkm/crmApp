@@ -796,7 +796,6 @@ class _OrderListState extends State<OrderList> {
           child: Text("$_product",
               style: GoogleFonts.alike(
                   fontWeight: FontWeight.normal, fontSize: 11))),
-
       TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
           child: Text("${pricett["Pro_name"]}",
@@ -834,52 +833,6 @@ class _OrderListState extends State<OrderList> {
                       fontSize: 12.5))),
         ),
       ),
-      // TableCell(
-      //   verticalAlignment: TableCellVerticalAlignment.middle,
-      //   child: Padding(
-      //     padding: const EdgeInsets.all(10.0),
-      //     child: Container(
-      //       height: 30,
-      //       decoration: BoxDecoration(border: Border.all(color: Colors.white)),
-      //       child: DropdownButton(
-      //         hint: _StatusValue == null
-      //             ? Text('Dropdown')
-      //             : Text(
-      //                 _StatusValue,
-      //                 style: TextStyle(color: Colors.white),
-      //               ),
-      //         underline: SizedBox(),
-      //         dropdownColor: Colors.white,
-      //         isExpanded: true,
-      //         iconSize: 30.0,
-      //         style: TextStyle(color: Colors.white),
-      //         items: [
-      //           'Pending',
-      //           'Processing',
-      //           'Confirm',
-      //           'Cancelled',
-      //           'Out of Delivery',
-      //           'Delivered',
-      //           "Return"
-      //         ].map(
-      //           (val) {
-      //             return DropdownMenuItem<String>(
-      //               value: val,
-      //               child: Text(val, style: TextStyle(color: Colors.black)),
-      //             );
-      //           },
-      //         ).toList(),
-      //         onChanged: (val) {
-      //           setState(
-      //             () {
-      //               _StatusValue = val!;
-      //             },
-      //           );
-      //         },
-      //       ),
-      //     ),
-      //   ),
-      // ),
       TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
           child: Text("$pay_date",

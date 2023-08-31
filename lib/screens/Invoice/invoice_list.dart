@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/screens/Invoice/pdf.dart';
 import 'package:crm_demo/screens/product/product/add_product_screen.dart';
 import 'package:crm_demo/screens/product/product/edit_product_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -32,16 +33,19 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:slug_it/slug_it.dart';
 import 'package:intl/intl.dart';
 
-import 'product/detail_product_screen.dart';
+import '../order/invoice_service.dart';
+import '../order/syncPdf.dart';
+import 'invoice_service.dart';
 
-class ProductAdd extends StatefulWidget {
-  const ProductAdd({super.key});
+// ignore: camel_case_types
+class Invoice_List extends StatefulWidget {
+  const Invoice_List({super.key});
 
   @override
-  State<ProductAdd> createState() => _ProductAddState();
+  State<Invoice_List> createState() => _Invoice_ListState();
 }
 
-class _ProductAddState extends State<ProductAdd> {
+class _Invoice_ListState extends State<Invoice_List> {
   final _controllers = TextEditingController();
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
@@ -74,38 +78,6 @@ class _ProductAddState extends State<ProductAdd> {
     });
   }
 
-///////  delete  Product ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-  Future<void> delete_Pro(id) {
-    // var db = FirebaseFirestore.instance;
-    if (!kIsWeb && Platform.isWindows) {
-      final _product = Firestore.instance.collection('product');
-      return _product.document(id).delete().then((value) {
-        setState(() {
-          themeAlert(context, "Deleted Successfully ");
-          _controllers.clear();
-          productList2 = [];
-          Pro_Data();
-        });
-      }).catchError(
-          (error) => themeAlert(context, 'Not find Data', type: "error"));
-    } else {
-      CollectionReference _product =
-          FirebaseFirestore.instance.collection('product');
-      return _product.doc(id).delete().then((value) {
-        setState(() {
-          themeAlert(context, "Deleted Successfully ");
-          _controllers.clear();
-          productList2 = [];
-          Pro_Data();
-        });
-      }).catchError(
-          (error) => themeAlert(context, 'Not find Data', type: "error"));
-    }
-  }
-
-/////////////=====================================================================
-
   addNewStock() {
     Navigator.push(
         context,
@@ -115,7 +87,7 @@ class _ProductAddState extends State<ProductAdd> {
 
   var selected_pro = {};
 ///////// ======================================================================
-
+  bool ascen = true;
   Future<void> _fetchDataAsc(bool boolvalue, String where) async {
     final _product = await Firestore.instance
         .collection('product')
@@ -147,9 +119,31 @@ class _ProductAddState extends State<ProductAdd> {
     progressWidget = false;
   }
 
-  ///
-  bool ascen = true;
+  ///////// PDF  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+  Future<void> savePdfFile(String fileName, Uint8List byteList) async {
+    if (kIsWeb) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Invoice_pdf(BytesCode: byteList),
+        ),
+      );
+    } else {
+      // final output = await getTemporaryDirectory();
+      // var filePath = "${output.path}/$fileName.pdf";
+      // final file = File(filePath);
+      // await file.writeAsBytes(byteList);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Invoice_pdf(BytesCode: byteList),
+        ),
+      );
+    }
+  }
+
+/////////////////////////=======================================================
   ///
   @override
   Widget build(BuildContext context) {
@@ -228,16 +222,6 @@ class _ProductAddState extends State<ProductAdd> {
                                         TableCellVerticalAlignment.middle,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text('Select',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
                                       child: GestureDetector(
                                         onTap: () async {
                                           if (ascen == true) {
@@ -247,25 +231,6 @@ class _ProductAddState extends State<ProductAdd> {
                                           }
                                         },
                                         child: Text("Name",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
-                                      ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: GestureDetector(
-                                        onTap: () async {
-                                          if (ascen == true) {
-                                            await _fetchDataAsc(ascen, "brand");
-                                          } else if (ascen == false) {
-                                            await _fetchDataAsc(ascen, "brand");
-                                          }
-                                        },
-                                        child: Text('Brand',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold)),
                                       ),
@@ -374,7 +339,7 @@ class _ProductAddState extends State<ProductAdd> {
   }
 
   TableRow tableRowWidget(Sno, name, BrandName, cate_name, items_no, price,
-      status, date, iid, data) {
+      status, date, iid, edata) {
     var statuss = statusOF(status);
     final formattedDate = formatDate(date);
     return TableRow(children: [
@@ -388,25 +353,6 @@ class _ProductAddState extends State<ProductAdd> {
         ),
       ),
       TableCell(
-          verticalAlignment: TableCellVerticalAlignment.middle,
-          child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: CheckboxListTile(
-                checkColor: Colors.white,
-                activeColor: Colors.red,
-                side: BorderSide(width: 2, color: Colors.green),
-                value: (selected_pro[iid] == null) ? false : true,
-                onChanged: (value) {
-                  setState(() {
-                    if (value == true) {
-                      selected_pro[iid] = true;
-                    } else {
-                      selected_pro.remove(iid);
-                    }
-                  });
-                },
-              ))),
-      TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -414,12 +360,6 @@ class _ProductAddState extends State<ProductAdd> {
               style: GoogleFonts.alike(
                   fontWeight: FontWeight.normal, fontSize: 11)),
         ),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$BrandName",
-            style:
-                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -468,51 +408,28 @@ class _ProductAddState extends State<ProductAdd> {
                     width: 30,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: IconButton(
-                        onPressed: () async {
-                          final temp = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => editStockScreen(
-                                        data: data,
-                                        header_name: "Edit product details",
-                                      )));
-                          if (temp == 'updated') {
-                            Pro_Data();
-                          }
-                        },
-                        icon: Icon(
-                          Icons.edit,
-                          size: 15,
-                          color: Colors.blue,
-                        )) ////
-                    ),
-                SizedBox(width: 10),
-                Container(
-                    height: 30,
-                    width: 30,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
                       color: Colors.green.withOpacity(0.1),
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => Details_product(
-                                        header_name: "View details of product",
-                                        MapData: data,
-                                      )));
+                        onPressed: () async {
+                          // print("Tedj    +++++++888++++");
+                          final data = await InvoiceService(
+                            orderID: "$name",
+                            category: "$name",
+                            oderDate: "$name",
+                            buyername: "$name",
+                            BuyerMobile: "$name",
+                            BuyerEmail: "$name",
+                            BuyerAddress: "$name",
+                          ).createInvoice();
+                          // final data = await service.createInvoice();
+                          await savePdfFile("invoice", data);
                         },
                         icon: Icon(
-                          Icons.link,
-                          size: 15,
+                          Icons.download,
                           color: Colors.green,
+                          size: 15,
                         ))),
                 SizedBox(width: 10),
                 Container(
@@ -520,17 +437,23 @@ class _ProductAddState extends State<ProductAdd> {
                     width: 30,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.1),
+                      color: Colors.blue.withOpacity(0.1),
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: IconButton(
                         onPressed: () {
-                          showExitPopup(iid);
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (_) => Details_product(
+                          //               header_name: "View details of product",
+                          //               MapData: data,
+                          //             )));
                         },
                         icon: Icon(
-                          Icons.delete_outline_outlined,
+                          Icons.link,
                           size: 15,
-                          color: Colors.red,
+                          color: Colors.blue,
                         ))),
               ],
             ),
@@ -549,20 +472,6 @@ class _ProductAddState extends State<ProductAdd> {
             : MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          ////  Delete Selected Product +++++++++++++++++++++++++++++++++++++++
-          if (selected_pro.isNotEmpty && selected_pro != {})
-            themeButton3(context, () {
-              selected_pro.forEach(
-                  (k, v) async => await delete_Pro(k) //   showExitPopup(k)
-                  );
-              setState(() {
-                selected_pro = {};
-              });
-            },
-                label: "Delete selected items : ${selected_pro.length}",
-                buttonColor: Colors.red,
-                radius: 10.0),
-
           //////// Search ++++++++++
           Container(
             decoration: BoxDecoration(
@@ -649,89 +558,6 @@ class _ProductAddState extends State<ProductAdd> {
 
 //////////////////////==============================================================
 
-///////// Alart Popup  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  Future<bool> showExitPopup(iid_delete) async {
-    return await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: Colors.white,
-            title: Row(
-              children: [
-                Icon(
-                  Icons.delete_forever_outlined,
-                  color: Colors.red,
-                  size: 35,
-                ),
-                SizedBox(
-                  width: 10.0,
-                ),
-                Text(
-                  'CRM App says',
-                  style: themeTextStyle(
-                      size: 20.0,
-                      ftFamily: 'ms',
-                      fw: FontWeight.bold,
-                      color: themeBG2),
-                ),
-              ],
-            ),
-            content: Text(
-              'Are you sure to delete this Product ?',
-              style: themeTextStyle(
-                  size: 16.0,
-                  ftFamily: 'ms',
-                  fw: FontWeight.normal,
-                  color: Colors.black87),
-            ),
-            actions: [
-              Container(
-                height: 30,
-                width: 60,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                child: TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(
-                    'No',
-                    style: themeTextStyle(
-                        size: 16.0,
-                        ftFamily: 'ms',
-                        fw: FontWeight.normal,
-                        color: Colors.red),
-                  ),
-                ),
-              ),
-              Container(
-                height: 30,
-                width: 60,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                child: TextButton(
-                  onPressed: () async {
-                    await delete_Pro(iid_delete);
-                    Navigator.of(context).pop(false);
-                  },
-                  child: Text(
-                    'Yes',
-                    style: themeTextStyle(
-                        size: 16.0,
-                        ftFamily: 'ms',
-                        fw: FontWeight.normal,
-                        color: themeBG4),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ) ??
-        false; //if showDialouge had returned null, then return false
-  }
 /////////  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 }
 

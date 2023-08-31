@@ -32,8 +32,8 @@ import 'product_widgets.dart';
 
 class editStockScreen extends StatefulWidget {
   final data;
-  const editStockScreen({super.key, this.data});
-
+  const editStockScreen({super.key, this.data, required this.header_name});
+  final String header_name;
   @override
   State<editStockScreen> createState() => _editStockScreenState();
 }
@@ -80,12 +80,6 @@ class _editStockScreenState extends State<editStockScreen> {
   @override
   void initState() {
     print(widget.data);
-    // TODO: implement initState
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   if (this.mounted) {
-    //     initList();
-    //   }
-    // });
 
     initList();
 
@@ -102,7 +96,7 @@ class _editStockScreenState extends State<editStockScreen> {
         child: Column(
           children: [
             //header ======================
-            themeHeader2(context, "Add New Stock"),
+            themeHeader2(context, "${widget.header_name}"),
             // formField =======================
             Form(
               key: controller.formKey,

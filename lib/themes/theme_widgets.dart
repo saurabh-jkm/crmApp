@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_equal_for_default_values, avoid_unnecessary_containers, deprecated_member_use, no_leading_underscores_for_local_identifiers, prefer_const_literals_to_create_immutables, unnecessary_brace_in_string_interps, sort_child_properties_last, sized_box_for_whitespace, non_constant_identifier_names, deprecated_colon_for_default_value
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../constants.dart';
@@ -563,24 +564,29 @@ Widget formInput(BuildContext context, label, controller,
   //   controller.text = currentController.text;
   // }
   return Container(
-    padding: EdgeInsets.all(padding),
-    child: (editComplete == '')
-        ? TextFormField(
-            controller: controller,
-            style: textStyle1,
-            decoration: inputStyle(label))
-        : TextFormField(
-            // this is for auto complete
-            controller: controller,
-            style: textStyle1,
-            onEditingComplete: editComplete,
-            focusNode: focusNode,
-            decoration: inputStyle(label),
-            onChanged: (value) {
-              currentController.text = value;
-            },
-          ),
-  );
+      padding: EdgeInsets.all(padding),
+      child: (editComplete == '')
+          ? TextFormField(
+              controller: controller,
+              style: textStyle1,
+              decoration: inputStyle(label),
+              keyboardType: TextInputType.number,
+              inputFormatters: (label == "Quantity" || label == "Price")
+                  ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
+                  : <TextInputFormatter>[
+                      FilteringTextInputFormatter.singleLineFormatter
+                    ])
+          : TextFormField(
+              // this is for auto complete
+              controller: controller,
+              style: textStyle1,
+              onEditingComplete: editComplete,
+              focusNode: focusNode,
+              decoration: inputStyle(label),
+              onChanged: (value) {
+                currentController.text = value;
+              },
+            ));
 }
 
 // space

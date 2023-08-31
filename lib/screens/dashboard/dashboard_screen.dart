@@ -31,7 +31,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   void initState() {
-    _getUser();
+    // _getUser();
     super.initState();
   }
 
@@ -75,22 +75,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
   ];
   /////
   /////// get user data  +++++++++++++++++++++++++++++++++++++++++++++++++++
-  Map<dynamic, dynamic> Order_data = new Map();
-  var List_order = [];
+  // Map<dynamic, dynamic> Order_data = new Map();
+  // var List_order = [];
 
-  _getUser() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    dynamic userData = (prefs.getString('user'));
+  // _getUser() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   dynamic userData = (prefs.getString('user'));
 
-    if (userData != null) {
-      setState(() {
-        Order_data = jsonDecode(userData) as Map<dynamic, dynamic>;
-        List_order = Order_data["order_data"];
-        // print("${List_order.length.toInt()}  +++++++++kkk++++++");
-        item_no = List_order.length.toInt();
-      });
-    }
-  }
+  //   if (userData != null) {
+  //     setState(() {
+  //       Order_data = jsonDecode(userData) as Map<dynamic, dynamic>;
+  //       List_order = Order_data["order_data"];
+  //       // print("${List_order.length.toInt()}  +++++++++kkk++++++");
+  //       item_no = List_order.length.toInt();
+  //     });
+  //   }
+  // }
 
   int item_no = 0;
 

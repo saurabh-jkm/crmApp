@@ -293,6 +293,7 @@ class _CategoryAddState extends State<CategoryAdd> {
     }
     themeAlert(context, "Successfully Updated !!");
     setState(() {
+      clearText();
       updateWidget = false;
       Comman_Cate_Data();
     });
@@ -1914,12 +1915,10 @@ class _CategoryAddState extends State<CategoryAdd> {
                                       Catename,
                                       slugUrl,
                                       _StatusValue,
-                                      _dropDownValue,
+                                      _PerentCate,
                                       (url_img == null || url_img.isEmpty)
                                           ? image
                                           : url_img);
-
-                                  clearText();
                                 });
                               }, buttonColor: Colors.blue, label: "Update"),
                               SizedBox(height: 20.0),

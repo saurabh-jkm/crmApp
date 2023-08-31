@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_new, prefer_equal_for_default_values, unused_local_variable, avoid_function_literals_in_foreach_calls, prefer_collection_literals, depend_on_referenced_packages, deprecated_colon_for_default_value
+// ignore_for_file: non_constant_identifier_names, unnecessary_new, prefer_equal_for_default_values, unused_local_variable, avoid_function_literals_in_foreach_calls, prefer_collection_literals, depend_on_referenced_packages, deprecated_colon_for_default_value, prefer_typing_uninitialized_variables
 
 import 'package:intl/intl.dart';
 // import 'package:url_launcher/url_launcher.dart';
@@ -43,6 +43,21 @@ Map<dynamic, dynamic> certificateStatus = {
 bool matchString(str, search) {
   bool returnData = str.contains(new RegExp('$search', caseSensitive: false));
   return returnData;
+}
+
+statusOF(bool boool) {
+  var returnData;
+  if (boool == true) {
+    returnData = "Active";
+  } else {
+    returnData = "Inactive";
+  }
+  return returnData;
+}
+
+String formatDate(DateTime dateTime) {
+  final formatter = DateFormat("dd-MM-yyyy h:mm a");
+  return formatter.format(dateTime);
 }
 
 // shcedule time

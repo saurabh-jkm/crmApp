@@ -208,7 +208,7 @@ dbFindDynamic(db, where) async {
       dbTable = dbTable.orderBy(where['orderBy'].replaceAll("-", ""),
           descending: true);
     } else {
-      //dbTable.orderBy(where['orderBy']);
+      dbTable.orderBy(where['orderBy'], descending: true);
     }
     where.remove('orderBy');
   }

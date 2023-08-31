@@ -105,7 +105,9 @@ class _MyAppState extends State<MyApp> {
                   ////MainScreen(pageNo: 1) // MainScreen(),
                   ),
               routes: {
-                '/add_stock': (context) => addStockScreen(),
+                '/add_stock': (context) => addStockScreen(
+                      header_name: "Add New Stock",
+                    ),
                 '/stock_list': (context) => ProductAdd(),
               },
             );

@@ -9,6 +9,7 @@ import '../../controllers/MenuAppController.dart';
 import '../../responsive.dart';
 import '../About/about_us.dart';
 import '../Attributes/attribute_add.dart';
+import '../Invoice/invoice_list.dart';
 import '../Profile/profile_details.dart';
 import '../Sub Admin/Add_SubAdmin.dart';
 import '../category/category_add.dart';
@@ -87,11 +88,11 @@ class _MainScreenState extends State<MainScreen> {
                 flex: 5,
                 child: ProductAdd(),
               )
-            // else if (sidemenu == 5)
-            //   Expanded(
-            //     flex: 5,
-            //     child: CategoryAdd(),
-            //   )
+            else if (sidemenu == 5)
+              Expanded(
+                flex: 5,
+                child: Invoice_List(),
+              )
             else if (sidemenu == 6)
               Expanded(
                 flex: 5,
@@ -222,25 +223,26 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(color: Colors.white),
             ),
           ),
-          // ListTile(
-          //   tileColor:(sidemenu == 5)? const Color.fromARGB(127, 33, 149, 243)  : const Color.fromARGB(0, 255, 255, 255),
-          //   onTap: () {
-          //     setState(() {
-          //       sidemenu = 5;
-          //        if (Responsive.isMobile(context))
-          //            {
-          //             Navigator.of(context).pop();
-          //            }
-          //     });
-          //   },
-          //   horizontalTitleGap: 0.0,
-          //   leading:   Icon(Icons.collections_bookmark_outlined,color: Colors.white),
-
-          //   title: Text(
-          //     "Stock List",
-          //     style: TextStyle(color: Colors.white),
-          //   ),
-          // ),
+          ListTile(
+            tileColor: (sidemenu == 5)
+                ? const Color.fromARGB(127, 33, 149, 243)
+                : const Color.fromARGB(0, 255, 255, 255),
+            onTap: () {
+              setState(() {
+                sidemenu = 5;
+                if (Responsive.isMobile(context)) {
+                  Navigator.of(context).pop();
+                }
+              });
+            },
+            horizontalTitleGap: 0.0,
+            leading:
+                Icon(Icons.collections_bookmark_outlined, color: Colors.white),
+            title: Text(
+              "Invoice List",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
           ListTile(
             tileColor: (sidemenu == 6)
                 ? const Color.fromARGB(127, 33, 149, 243)
