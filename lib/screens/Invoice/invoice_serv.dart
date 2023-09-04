@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors, unused_local_variable, non_constant_identifier_names, prefer_typing_uninitialized_variables, depend_on_referenced_packages, unnecessary_cast, unnecessary_new, prefer_collection_literals, unnecessary_string_interpolations
-import 'package:crm_demo/main.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
@@ -18,6 +17,7 @@ class InvoiceService {
   final PriceDetail;
 
   Future<Uint8List> createInvoice() async {
+    // print("$PriceDetail   +++++88++++++");
     var myTheme = ThemeData.withFont(
       base: Font.ttf(await rootBundle.load("assets/OpenSans-Regular.ttf")),
     );
@@ -26,7 +26,7 @@ class InvoiceService {
     //     (await rootBundle.load("assets/images/qrr.png")).buffer.asUint8List();
     int a = int.parse(PriceDetail["price"]);
     int b = int.parse(PriceDetail["quantity"]);
-    final formattedDate = formatDate(PriceDetail["date_at"]);
+    // final formattedDate = formatDate(PriceDetail["date_at"]);
     var amount = a * b;
     final qrrrImage = pdf.addPage(
       pw.Page(
@@ -79,6 +79,7 @@ class InvoiceService {
                   ])
                 ],
               ),
+
               pw.SizedBox(height: 20),
               Container(
                   child: pw.Row(children: [
@@ -88,7 +89,58 @@ class InvoiceService {
                         height: 60,
                         decoration: BoxDecoration(
                             border:
-                                Border.all(color: PdfColors.black, width: 2)),
+                                Border.all(color: PdfColors.black, width: 1)),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Name",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: PdfColors.black)),
+                              Text("Mobile No.",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: PdfColors.black)),
+                              Text("Email Id",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: PdfColors.black)),
+                            ]))),
+                pw.Expanded(
+                  child: pw.Container(
+                      padding: EdgeInsets.all(4),
+                      height: 60,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: PdfColors.black, width: 1)),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            pw.Text("Mr. xyz",
+                                style: pw.TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: PdfColors.black)),
+                            pw.Text("+919999999998",
+                                style: pw.TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: PdfColors.black)),
+                            pw.Text("xyz99@gmail.com",
+                                style: pw.TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: PdfColors.black)),
+                          ])),
+                )
+              ])),
+              Container(
+                  child: pw.Row(children: [
+                pw.Expanded(
+                    child: Container(
+                        padding: EdgeInsets.all(4),
+                        height: 60,
+                        decoration: BoxDecoration(
+                            border:
+                                Border.all(color: PdfColors.black, width: 1)),
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +163,7 @@ class InvoiceService {
                         height: 60,
                         padding: EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          border: Border.all(color: PdfColors.black, width: 2),
+                          border: Border.all(color: PdfColors.black, width: 1),
                         ),
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -127,7 +179,7 @@ class InvoiceService {
                                       fontSize: 11,
                                       fontWeight: FontWeight.normal,
                                       color: PdfColors.black)),
-                              Text("$formattedDate",
+                              Text("formattedDate",
                                   style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.normal,
@@ -137,7 +189,7 @@ class InvoiceService {
               pw.SizedBox(height: 20),
               pw.Container(
                 decoration: pw.BoxDecoration(
-                    border: Border.all(color: PdfColors.black, width: 2.0)),
+                    border: Border.all(color: PdfColors.black, width: 1.0)),
                 height: 35,
                 child: pw.Row(
                   children: [
@@ -175,7 +227,25 @@ class InvoiceService {
                             decoration: BoxDecoration(
                                 border: Border.all(color: PdfColors.black)),
                             alignment: Alignment.center,
-                            child: Text("Quantity",
+                            child: Text("Qty.",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: PdfColors.black)))),
+                    Expanded(
+                        child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: PdfColors.black)),
+                            alignment: Alignment.center,
+                            child: Text("GST",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: PdfColors.black)))),
+                    Expanded(
+                        child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: PdfColors.black)),
+                            alignment: Alignment.center,
+                            child: Text("Disc %",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: PdfColors.black)))),
@@ -193,7 +263,7 @@ class InvoiceService {
               ),
               pw.Container(
                 decoration: pw.BoxDecoration(
-                    border: Border.all(color: PdfColors.black, width: 2.0)),
+                    border: Border.all(color: PdfColors.black, width: 1.0)),
                 height: 100,
                 child: pw.Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -204,7 +274,7 @@ class InvoiceService {
                         padding: EdgeInsets.all(2),
                         decoration: BoxDecoration(
                             border:
-                                Border.all(color: PdfColors.black, width: 2.0)),
+                                Border.all(color: PdfColors.black, width: 1.0)),
                         alignment: Alignment.topCenter,
                         child: Text("1",
                             style: TextStyle(
@@ -259,10 +329,38 @@ class InvoiceService {
                                 border: Border.all(color: PdfColors.black)),
                             alignment: Alignment.topCenter,
                             child:
+                                //  for (var i = 1; i <= PriceDetail.length; i++)
+                                Text(
+                                    "${PriceDetail["price"]}", //"${ff["Product No. ${i}___quantity"]}",
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.normal,
+                                        color: PdfColors.black)))),
+                    Expanded(
+                        child: Container(
+                            padding: EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: PdfColors.black)),
+                            alignment: Alignment.topCenter,
+                            child:
+                                // for (var i = 1; i <= PriceDetail.length; i++)
+                                Text(
+                                    "${PriceDetail["quantity"]}", //"${ff["Product No. ${i}___price"]}",
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.normal,
+                                        color: PdfColors.black)))),
+                    Expanded(
+                        child: Container(
+                            padding: EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: PdfColors.black)),
+                            alignment: Alignment.topCenter,
+                            child:
 
                                 /// for (var i = 1; i <= PriceDetail.length; i++)
                                 Text(
-                                    "$amount", //"${ff["Product No. ${i}___gst"]}",
+                                    "$amount Rs", //"${ff["Product No. ${i}___gst"]}",
                                     style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.normal,
@@ -273,7 +371,7 @@ class InvoiceService {
 
               pw.Container(
                 decoration: pw.BoxDecoration(
-                    border: Border.all(color: PdfColors.black, width: 2.0)),
+                    border: Border.all(color: PdfColors.black, width: 1.0)),
                 height: 35,
                 child: pw.Row(
                   children: [
@@ -281,8 +379,9 @@ class InvoiceService {
                     Container(
                         padding: EdgeInsets.all(2),
                         width: 180,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: PdfColors.black)),
+                        // decoration: BoxDecoration(
+                        //     //   border: Border.all(color: PdfColors.black)
+                        //     ),
                         alignment: Alignment.center,
                         child: Text("Total",
                             style: TextStyle(
@@ -291,32 +390,11 @@ class InvoiceService {
                                 color: PdfColors.black))),
                     Expanded(
                         child: Container(
-                            padding: EdgeInsets.all(2),
                             decoration: BoxDecoration(
                                 border: Border.all(color: PdfColors.black)),
-                            alignment: Alignment.center,
-                            child: Text("${PriceDetail["price"]}.00 Rs",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: PdfColors.black)))),
-                    Expanded(
-                        child: Container(
-                            padding: EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: PdfColors.black)),
-                            alignment: Alignment.center,
-                            child: Text("${PriceDetail["quantity"]}",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: PdfColors.black)))),
-                    Expanded(
-                        child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(color: PdfColors.black)),
-                            alignment: Alignment.center,
-                            child: Text("$amount.00 Rs",
+                            padding: EdgeInsets.only(right: 10),
+                            alignment: Alignment.centerRight,
+                            child: Text("$amount  /-",
                                 style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,

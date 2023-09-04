@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, use_build_context_synchronously, file_names, avoid_print, unnecessary_brace_in_string_interps, dead_code
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, use_build_context_synchronously, file_names, avoid_print, unnecessary_brace_in_string_interps, dead_code, camel_case_types, duplicate_ignore, prefer_typing_uninitialized_variables
 
 import 'dart:convert';
 import 'dart:io';
@@ -7,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Login_Reg/register_page.dart';
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'package:crm_demo/themes/style.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firedart/firedart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,15 +14,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../constants.dart';
 import '../../controllers/MenuAppController.dart';
-import '../../helper/helper_function.dart';
-import '../../responsive.dart';
-import '../../themes/auth_service.dart';
-import '../../themes/database_service.dart';
 import '../../themes/theme_widgets.dart';
 import '../main/main_screen.dart';
 
+// ignore: camel_case_types
 class Login_Copy extends StatefulWidget {
   const Login_Copy({super.key});
 
@@ -142,7 +137,6 @@ class _Login_CopyState extends State<Login_Copy> {
   @override
   void initState() {
     User_Data();
-    // TODO: implement initState
     super.initState();
   }
 

@@ -1,15 +1,8 @@
-import 'package:crm_demo/screens/product/product/add_product_screen.dart';
 import 'package:crm_demo/screens/product/product/product_widgets.dart';
-import 'package:crm_demo/themes/firebase_functions.dart';
 import 'package:crm_demo/themes/style.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'package:firedart/firestore/firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
-import '../product/add_product_screen.dart';
 
 class ProductController {
   //var db = FirebaseFirestore.instance;

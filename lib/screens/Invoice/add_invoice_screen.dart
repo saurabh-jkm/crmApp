@@ -264,7 +264,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                 // Quantity
                                                 Expanded(
                                                   child: autoCompleteFormInput(
-                                                      Incontroller.ListPrice,
+                                                      Incontroller.ListName,
                                                       "Quantity",
                                                       Incontroller
                                                           // .Customer_nameController,
@@ -278,7 +278,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                       "Price",
                                                       Incontroller
                                                           // .Customer_nameController,
-                                                          .ProductPriceControllers[i],
+                                                          .ProductNameControllers[i],
                                                       padding: 8.0),
                                                 ),
 
