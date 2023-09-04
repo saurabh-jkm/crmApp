@@ -38,7 +38,14 @@ class invoiceController {
 
   Map<String, TextEditingController> locationControllers = new Map();
   Map<String, TextEditingController> locationQuntControllers = new Map();
-  Map<String, TextEditingController> ProductNameControllers = new Map();
+
+  // product controllers
+  Map<int, TextEditingController> ProductNameControllers = new Map();
+  Map<int, TextEditingController> ProductQuntControllers = new Map();
+  Map<int, TextEditingController> ProductPriceControllers = new Map();
+  Map<int, TextEditingController> ProductTotalControllers = new Map();
+  Map<int, TextEditingController> ProductGstControllers = new Map();
+  Map<int, TextEditingController> ProductDiscountControllers = new Map();
 
   // Suggation List =====================================
   List<String> ListName = [];
@@ -47,15 +54,23 @@ class invoiceController {
   Map<String, dynamic> ListAttributeWithId = {};
 
   int totalLocation = 1;
+  int totalProduct = 1;
 
   init_functions() async {
     await getProductNameList();
     await getCategoryList();
     await getAttributeList();
 
-    locationControllers['1'] = TextEditingController();
-    ProductNameControllers['1'] = TextEditingController();
-    locationQuntControllers['1'] = TextEditingController();
+    // locationControllers['1'] = TextEditingController();
+    // locationQuntControllers['1'] = TextEditingController();
+
+    // init default controllers
+    ProductNameControllers[1] = TextEditingController();
+    ProductQuntControllers[1] = TextEditingController();
+    ProductPriceControllers[1] = TextEditingController();
+    ProductTotalControllers[1] = TextEditingController();
+    ProductGstControllers[1] = TextEditingController();
+    ProductDiscountControllers[1] = TextEditingController();
   }
 
   // reset controller
