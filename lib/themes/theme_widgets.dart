@@ -560,7 +560,9 @@ Widget formInput(BuildContext context, label, controller,
     editComplete: '',
     focusNode: '',
     currentController: '',
-    isNumber: false}) {
+    isNumber: false,
+    method: '',
+    methodArg: ''}) {
   // if (editComplete != '' && currentController.text == '') {
   //   controller.text = currentController.text;
   // }
@@ -572,13 +574,21 @@ Widget formInput(BuildContext context, label, controller,
               style: textStyle1,
               decoration: inputStyle(label),
               keyboardType: TextInputType.number,
-              inputFormatters: (label == "Quantity" ||
-                      label == "Price" ||
-                      label == "Mobile No.")
+              inputFormatters: (isNumber)
                   ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
                   : <TextInputFormatter>[
                       FilteringTextInputFormatter.singleLineFormatter
-                    ])
+                    ],
+              onChanged: (value) {
+                if (method != '') {
+                  if (methodArg != '') {
+                    method(methodArg);
+                  } else {
+                    method();
+                  }
+                }
+              },
+            )
           : TextFormField(
               // this is for auto complete
               controller: controller,
@@ -599,7 +609,7 @@ Widget themeSpaceVertical(height) {
 
 // auto complete =================================
 autoCompleteFormInput(suggationList, label, myController,
-    {padding: 10.0, myFocusNode: ''}) {
+    {padding: 10.0, myFocusNode: '', method: '', methodArg: ''}) {
   return Autocomplete(
     fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
       controller.text = myController.text;
@@ -623,6 +633,14 @@ autoCompleteFormInput(suggationList, label, myController,
     },
     onSelected: (String selection) {
       myController.text = selection;
+      // if method call
+      if (method != '') {
+        if (methodArg != '') {
+          method(methodArg);
+        } else {
+          method();
+        }
+      }
     },
   );
 }
