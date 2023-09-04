@@ -78,16 +78,19 @@ class _Login_CopyState extends State<Login_Copy> {
         db, {'table': 'users', 'email': email, 'password': password});
 
     if (dbData.isNotEmpty) {
-      var userData = dbData[0];
+      var userData = dbData[2];
+      // print("$userData  +++++");
       var userDataArr = {
         'type': userData["user_category"],
-        'id': userData["user_category"],
+        'id': userData["id"],
         'name': "${userData["first_name"]} ${userData["last_name"]}",
         'fname': userData["first_name"],
         'lname': userData["last_name"],
         'phone': userData["mobile_no"],
         'email': userData["email"],
         'user_type': userData["user_type"],
+        "status": userData["status"],
+        "date_at": userData["date_at"],
         'profile_complete': userData["user_category"],
         'avatar': userData["avatar"],
       };

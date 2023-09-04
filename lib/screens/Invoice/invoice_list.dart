@@ -35,7 +35,7 @@ import 'package:intl/intl.dart';
 
 import '../order/invoice_service.dart';
 import '../order/syncPdf.dart';
-import 'invoice_service.dart';
+import 'invoice_serv.dart';
 
 // ignore: camel_case_types
 class Invoice_List extends StatefulWidget {
@@ -78,12 +78,12 @@ class _Invoice_ListState extends State<Invoice_List> {
     });
   }
 
-  addNewStock() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => addStockScreen(header_name: "Add New Stock")));
-  }
+  // addNewStock() {
+  //   Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //           builder: (_) => addStockScreen(header_name: "Add New Stock")));
+  // }
 
   var selected_pro = {};
 ///////// ======================================================================
@@ -174,14 +174,14 @@ class _Invoice_ListState extends State<Invoice_List> {
                                 ),
                               ),
                               SizedBox(width: 20.0),
-                              Text("Stocks", style: GoogleFonts.alike())
+                              Text("Invoice List", style: GoogleFonts.alike())
                             ],
                           ),
                         ),
-                        Container(
-                          child: themeButton3(context, addNewStock,
-                              label: 'Add New', radius: 5.0),
-                        )
+                        // Container(
+                        //   child: themeButton3(context, addNewStock,
+                        //       label: 'Add New', radius: 5.0),
+                        // )
                       ],
                     ),
                   ),
@@ -413,15 +413,10 @@ class _Invoice_ListState extends State<Invoice_List> {
                     ),
                     child: IconButton(
                         onPressed: () async {
+                          // print("$edata  ++++++");
                           // print("Tedj    +++++++888++++");
                           final data = await InvoiceService(
-                            orderID: "$name",
-                            category: "$name",
-                            oderDate: "$name",
-                            buyername: "$name",
-                            BuyerMobile: "$name",
-                            BuyerEmail: "$name",
-                            BuyerAddress: "$name",
+                            PriceDetail: edata,
                           ).createInvoice();
                           // final data = await service.createInvoice();
                           await savePdfFile("invoice", data);

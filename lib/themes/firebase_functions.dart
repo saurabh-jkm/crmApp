@@ -43,15 +43,15 @@ dbUpdate(db, where) {
   // return false;
   if (!kIsWeb && Platform.isWindows) {
     db.collection(table).document(id).update(where).then((value) {
-      returnData = 'Updated';
+      returnData = 'Succefully Updated !!';
     }).catchError((error) {
-      returnData = "Updattion Failed: $error";
+      returnData = "Updation Failed: $error !!";
     });
   } else {
     db.collection(table).doc(id).update(where).then((value) {
-      returnData = 'Updated';
+      returnData = 'Succefully Updated !!';
     }).catchError((error) {
-      returnData = "Updattion Failed: $error";
+      returnData = "Updation Failed: $error  !!";
     });
   }
 
