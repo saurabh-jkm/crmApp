@@ -556,6 +556,7 @@ void showSnackbar(context, color, message) {
 // form input field ===========================
 Widget formInput(BuildContext context, label, controller,
     {padding: 5.0,
+    suggationList,
     editComplete: '',
     focusNode: '',
     currentController: '',
@@ -571,7 +572,9 @@ Widget formInput(BuildContext context, label, controller,
               style: textStyle1,
               decoration: inputStyle(label),
               keyboardType: TextInputType.number,
-              inputFormatters: (label == "Quantity" || label == "Price")
+              inputFormatters: (label == "Quantity" ||
+                      label == "Price" ||
+                      label == "Mobile No.")
                   ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
                   : <TextInputFormatter>[
                       FilteringTextInputFormatter.singleLineFormatter

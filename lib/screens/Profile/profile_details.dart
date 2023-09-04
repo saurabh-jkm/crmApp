@@ -55,6 +55,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   Future<void> _Update_initial(id) async {
     Map<dynamic, dynamic> w = {'table': "users", 'id': id};
     data = await dbFind(w);
+    print("$data kk++++++");
   }
 
 //////// =======================================================================
@@ -94,7 +95,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   ///
   @override
   Widget build(BuildContext context) {
-    print("$user ++++++");
+    // print("$user ++++++");
     return Scaffold(
       body: ListView(
         children: [

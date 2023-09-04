@@ -35,6 +35,7 @@ import 'package:intl/intl.dart';
 
 import '../order/invoice_service.dart';
 import '../order/syncPdf.dart';
+import 'add_invoice_screen.dart';
 import 'invoice_serv.dart';
 
 // ignore: camel_case_types
@@ -77,13 +78,6 @@ class _Invoice_ListState extends State<Invoice_List> {
       progressWidget = false;
     });
   }
-
-  // addNewStock() {
-  //   Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //           builder: (_) => addStockScreen(header_name: "Add New Stock")));
-  // }
 
   var selected_pro = {};
 ///////// ======================================================================
@@ -144,6 +138,14 @@ class _Invoice_ListState extends State<Invoice_List> {
   }
 
 /////////////////////////=======================================================
+  addNewStock() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => addInvoiceScreen(header_name: "Add New Invoice")));
+  }
+
+  ///
   ///
   @override
   Widget build(BuildContext context) {
@@ -178,10 +180,10 @@ class _Invoice_ListState extends State<Invoice_List> {
                             ],
                           ),
                         ),
-                        // Container(
-                        //   child: themeButton3(context, addNewStock,
-                        //       label: 'Add New', radius: 5.0),
-                        // )
+                        Container(
+                          child: themeButton3(context, addNewStock,
+                              label: 'Add New', radius: 5.0),
+                        )
                       ],
                     ),
                   ),
