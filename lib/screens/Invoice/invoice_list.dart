@@ -365,16 +365,6 @@ class _Invoice_ListState extends State<Invoice_List> {
                                             fontWeight: FontWeight.bold)),
                                   ),
                                 ),
-                                // TableCell(
-                                //   verticalAlignment:
-                                //       TableCellVerticalAlignment.middle,
-                                //   child: Padding(
-                                //     padding: const EdgeInsets.all(5.0),
-                                //     child: Text("Delivery Status",
-                                //         style: TextStyle(
-                                //             fontWeight: FontWeight.bold)),
-                                //   ),
-                                // ),
                                 TableCell(
                                   verticalAlignment:
                                       TableCellVerticalAlignment.middle,
@@ -401,13 +391,11 @@ class _Invoice_ListState extends State<Invoice_List> {
                         "${index + 1}",
                         OrderList[index]['id'],
                         OrderList[index]['customer_name'],
-                        OrderList[index]['price'],
+                        OrderList[index]['mobile'],
+                        OrderList[index]['total'],
                         OrderList[index]['status'],
                         OrderList[index]['date_at'],
-                        OrderList[index]['price'],
-                        OrderList[index]['mobile'],
                         OrderList[index]['customer_name'],
-                        OrderList[index]['products'],
                       )
                   ],
                 ),
@@ -446,17 +434,8 @@ class _Invoice_ListState extends State<Invoice_List> {
     return prrr;
   }
 
-  TableRow tableRowWidget(
-      String index,
-      odID,
-      user,
-      _price,
-      pro_status, //del_status,
-      pay_date,
-      buyer_mobile,
-      buyer_email,
-      buyer_address,
-      price_details) {
+  TableRow tableRowWidget(String index, odID, user, buyer_mobile, _price,
+      pro_status, pay_date, price_details) {
     var statuss = statusOF(pro_status);
 //////// Product Detailll ++++++++++++++++++++++
     // var pricett = price_de(price_details);

@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crm_demo/screens/Invoice/add_invoice_screen.dart';
 import 'package:crm_demo/screens/product/product-backup.dart';
 import 'package:crm_demo/screens/product/product/add_product_screen.dart';
 import 'package:crm_demo/shared/constants.dart';
@@ -109,6 +110,9 @@ class _MyAppState extends State<MyApp> {
                       header_name: "Add New Stock",
                     ),
                 '/stock_list': (context) => ProductAdd(),
+                '/new_invoice': (context) => addInvoiceScreen(
+                      header_name: "New Invoice",
+                    ),
               },
             );
           }

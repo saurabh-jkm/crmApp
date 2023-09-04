@@ -234,7 +234,8 @@ dbFindDynamic(db, where) async {
 
   query = (query == null || query == '') ? dbTable : query;
 
-  final data = await dbTable.get().then(
+  //final data = await dbTable.get().then(
+  final data = await query.get().then(
     (res) {
       Map<int, dynamic> returnData2 = new Map();
       int k = 0;
@@ -343,5 +344,9 @@ win_dbDelete(db, where) {
 
   return returnData;
 }
+
+
+
+
 
 ////////  =================================================================================
