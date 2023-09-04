@@ -49,11 +49,11 @@ class invoiceController {
 
   // Suggation List =====================================
   List<String> ListName = [];
+  List<String> ListPrice = [];
   List<String> ListCategory = [];
   Map<String, dynamic> ListAttribute = {};
   Map<String, dynamic> ListAttributeWithId = {};
 
-  int totalLocation = 1;
   int totalProduct = 1;
 
   init_functions() async {
@@ -92,6 +92,7 @@ class invoiceController {
     var dbData = await dbFindDynamic(db, {'table': 'product'});
     dbData.forEach((k, data) {
       ListName.add(data['name']);
+      ListPrice.add(data['price']);
     });
   }
 

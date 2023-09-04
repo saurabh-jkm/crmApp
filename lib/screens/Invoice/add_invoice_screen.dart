@@ -68,7 +68,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
     return Scaffold(
       body: Container(
         color: Colors.white,
-        child: Column(
+        child: ListView(
           children: [
             //header ======================
             themeHeader2(context, "${widget.header_name}"),
@@ -261,25 +261,24 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                           .ProductNameControllers[i],
                                                       padding: 8.0),
                                                 ),
-                                                // Price
-                                                Expanded(
-                                                  child: autoCompleteFormInput(
-                                                      Incontroller.ListName,
-                                                      "Price",
-                                                      Incontroller
-                                                          // .Customer_nameController,
-                                                          .ProductNameControllers[i],
-                                                      padding: 8.0),
-                                                ),
-
                                                 // Quantity
                                                 Expanded(
                                                   child: autoCompleteFormInput(
-                                                      Incontroller.ListName,
+                                                      Incontroller.ListPrice,
                                                       "Quantity",
                                                       Incontroller
                                                           // .Customer_nameController,
-                                                          .ProductNameControllers[i],
+                                                          .ProductQuntControllers[i],
+                                                      padding: 8.0),
+                                                ),
+                                                // Price
+                                                Expanded(
+                                                  child: autoCompleteFormInput(
+                                                      Incontroller.ListPrice,
+                                                      "Price",
+                                                      Incontroller
+                                                          // .Customer_nameController,
+                                                          .ProductPriceControllers[i],
                                                       padding: 8.0),
                                                 ),
 
@@ -290,7 +289,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                       "GST",
                                                       Incontroller
                                                           // .Customer_nameController,
-                                                          .ProductNameControllers[i],
+                                                          .ProductGstControllers[i],
                                                       padding: 8.0),
                                                 ),
 
@@ -301,7 +300,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                       "Discount",
                                                       Incontroller
                                                           // .Customer_nameController,
-                                                          .ProductNameControllers[i],
+                                                          .ProductDiscountControllers[i],
                                                       padding: 8.0),
                                                 ),
 
@@ -312,7 +311,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                       "Total",
                                                       Incontroller
                                                           // .Customer_nameController,
-                                                          .ProductNameControllers[i],
+                                                          .ProductTotalControllers[i],
                                                       padding: 8.0),
                                                 ),
                                               ],
@@ -362,6 +361,16 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
         Incontroller.totalProduct++;
         Incontroller.ProductNameControllers[Incontroller.totalProduct] =
             TextEditingController();
+        Incontroller.ProductQuntControllers[Incontroller.totalProduct] =
+            TextEditingController();
+        Incontroller.ProductPriceControllers[Incontroller.totalProduct] =
+            TextEditingController();
+        Incontroller.ProductGstControllers[Incontroller.totalProduct] =
+            TextEditingController();
+        Incontroller.ProductDiscountControllers[Incontroller.totalProduct] =
+            TextEditingController();
+        Incontroller.ProductTotalControllers[Incontroller.totalProduct] =
+            TextEditingController();
       }
     });
   }
@@ -371,6 +380,12 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
     setState(() {
       if (Incontroller.totalProduct > 1) {
         Incontroller.ProductNameControllers.remove(Incontroller.totalProduct);
+        Incontroller.ProductQuntControllers.remove(Incontroller.totalProduct);
+        Incontroller.ProductPriceControllers.remove(Incontroller.totalProduct);
+        Incontroller.ProductGstControllers.remove(Incontroller.totalProduct);
+        Incontroller.ProductDiscountControllers.remove(
+            Incontroller.totalProduct);
+        Incontroller.ProductTotalControllers.remove(Incontroller.totalProduct);
         Incontroller.totalProduct--;
       }
     });
