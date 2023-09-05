@@ -73,7 +73,7 @@ class _Login_CopyState extends State<Login_Copy> {
         db, {'table': 'users', 'email': email, 'password': password});
 
     if (dbData.isNotEmpty) {
-      var userData = dbData[2];
+      var userData = dbData[0];
       // print("$userData  +++++");
       var userDataArr = {
         'type': userData["user_category"],
@@ -105,7 +105,7 @@ class _Login_CopyState extends State<Login_Copy> {
         );
       });
     } else {
-      themeAlert(context, "Email Or Password MistMatch!!");
+      themeAlert(context, "Email Or Password MistMatch!!", type: 'error');
     }
   }
 
@@ -273,7 +273,7 @@ class _Login_CopyState extends State<Login_Copy> {
                                 }, buttonColor: Colors.green, label: "Log In"),
                               ],
                             ),
-                            SizedBox(
+                            /*SizedBox(
                               height: 10,
                             ),
                             Row(
@@ -301,7 +301,7 @@ class _Login_CopyState extends State<Login_Copy> {
                                   ),
                                 )
                               ],
-                            ),
+                            ),*/
                           ],
                         )),
                   ),
