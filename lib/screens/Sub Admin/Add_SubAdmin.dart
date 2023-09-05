@@ -181,7 +181,7 @@ class _SubAdminState extends State<SubAdmin> {
         _mobile = data!['mobile_no'];
         _passwd = data!['password'];
         _date = data!['date_at'];
-        _User_Cate = data!['user_category'];
+        _User_Cate = data!['user_type'];
         _StatusValue = (data!['status'] == "1")
             ? "Active"
             : (data!['status'] == "2")
@@ -213,8 +213,8 @@ class _SubAdminState extends State<SubAdmin> {
         "email": email,
         "mobile_no": Mobile,
         "password": password,
-        "user_category": user_Cate,
-        "user_type": "sub",
+        //"user_type": user_Cate,
+        "user_type": user_Cate,
         "status": _Status,
         "avatar": "",
         "date_at": date_at,
@@ -292,7 +292,7 @@ class _SubAdminState extends State<SubAdmin> {
         'email': _email,
         'mobile_no': "$_mobile",
         "password": _passwd,
-        "user_category": user_cat,
+        "user_type": user_cat,
         "status": (_Status == "Active")
             ? "1"
             : (_Status == "Inactive")
@@ -328,7 +328,7 @@ class _SubAdminState extends State<SubAdmin> {
         'email': _email,
         'mobile_no': "$_mobile",
         "password": _passwd,
-        "user_category": user_cat,
+        "user_type": user_cat,
         "status": (_Status == "Active")
             ? "1"
             : (_Status == "Inactive")
@@ -462,7 +462,7 @@ class _SubAdminState extends State<SubAdmin> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                  child: Text("User Category*",
+                                  child: Text("Role *",
                                       style: themeTextStyle(
                                           color: Colors.black,
                                           size: 15,
@@ -1054,7 +1054,7 @@ class _SubAdminState extends State<SubAdmin> {
                                 TableCell(
                                   verticalAlignment:
                                       TableCellVerticalAlignment.middle,
-                                  child: Text("User Type",
+                                  child: Text("Role",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)),
                                 ),
@@ -1091,7 +1091,7 @@ class _SubAdminState extends State<SubAdmin> {
                       (Responsive.isMobile(context))
                           ? tableRowWidget_mobile(
                               "${StoreDocs[index]["first_name"]} ${StoreDocs[index]["last_name"]}",
-                              "${StoreDocs[index]["user_category"]}",
+                              "${StoreDocs[index]["user_type"]}",
                               "${StoreDocs[index]["email"]}",
                               (StoreDocs[index]["status"] == "1")
                                   ? "Active"
@@ -1103,7 +1103,7 @@ class _SubAdminState extends State<SubAdmin> {
                           : tableRowWidget(
                               "${index + 1}",
                               "${StoreDocs[index]["first_name"]} ${StoreDocs[index]["last_name"]}",
-                              "${StoreDocs[index]["user_category"]}",
+                              "${StoreDocs[index]["user_type"]}",
                               "${StoreDocs[index]["email"]}",
                               (StoreDocs[index]["status"] == "1")
                                   ? "Active"
@@ -1300,8 +1300,7 @@ class _SubAdminState extends State<SubAdmin> {
                       view_SubAdmin_info = true;
                       if (!kIsWeb && Platform.isWindows) {
                         All_Update_initial(iid);
-                      }
-                      {
+                      } else {
                         Update_initial(iid);
                       }
                     });
@@ -1395,7 +1394,7 @@ class _SubAdminState extends State<SubAdmin> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                      child: Text("User Category*",
+                                      child: Text("Role *",
                                           style: themeTextStyle(
                                               color: Colors.black,
                                               size: 15,
@@ -2061,13 +2060,11 @@ class _SubAdminState extends State<SubAdmin> {
               child: (data == null)
                   ? Center(child: CircularProgressIndicator())
                   : Column(children: [
-                      themeListRow(context, "First Name", "$firstName",
+                      themeListRow(
+                          context, "First Name", "$firstName $lastName",
                           descColor: Colors.black, headColor: Colors.black),
                       SizedBox(height: defaultPadding),
-                      themeListRow(context, "User Category", "$_User_Cate",
-                          descColor: Colors.black, headColor: Colors.black),
-                      SizedBox(height: defaultPadding),
-                      themeListRow(context, "Last Name", "$lastName",
+                      themeListRow(context, "Role", "$_User_Cate",
                           descColor: Colors.black, headColor: Colors.black),
                       SizedBox(height: defaultPadding),
                       themeListRow(context, "Email Id", "$_email",
