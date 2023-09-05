@@ -314,14 +314,12 @@ class _MainScreenState extends State<MainScreen> {
                 }
               });
             },
-
-            ///
-            // horizontalTitleGap: 0.0,
-            // leading: Icon(Icons.description_sharp, color: Colors.white),
-            // title: Text(
-            //   "About Us",
-            //   style: TextStyle(color: Colors.white),
-            // ),
+            horizontalTitleGap: 0.0,
+            leading: Icon(Icons.description_sharp, color: Colors.white),
+            title: Text(
+              "About Us",
+              style: TextStyle(color: Colors.white),
+            ),
           ),
 
           (user["user_type"] == "admin")

@@ -613,9 +613,19 @@ class _ProductAddState extends State<ProductAdd> {
     productList2 = [];
     for (var i = 0; i < productList.length; i++) {
       String pro_name = productList[i]["name"];
+
       String pro_cat = productList[i]["category"];
-      String pro_brand = productList[i]["brand"];
-      String pro_color = productList[i]["colors"];
+
+      String pro_brand = "";
+      (productList[i]["brand"] != null)
+          ? pro_brand = productList[i]["brand"]
+          : "";
+
+      String pro_color = "";
+      (productList[i]["colors"] != null)
+          ? pro_color = productList[i]["colors"]
+          : "";
+
       //   String pro_location = productList[i]["item_location"];
       var tempList = [
         pro_name.toLowerCase(),
@@ -623,7 +633,7 @@ class _ProductAddState extends State<ProductAdd> {
         pro_brand.toLowerCase(),
         pro_color.toLowerCase()
       ];
-
+      print("$tempList ++++++++++++++++++");
       // var foolist = tempList
       //     .where((element) => element.contains(query.toLowerCase()))
       //     .toList();
