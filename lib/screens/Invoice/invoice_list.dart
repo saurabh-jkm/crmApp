@@ -77,7 +77,6 @@ class _Invoice_ListState extends State<Invoice_List> {
 
       progressWidget = false;
     });
-    print("$OrderList  ++++++++");
   }
 ////////////////////////////////////////========================================
 
@@ -107,11 +106,20 @@ class _Invoice_ListState extends State<Invoice_List> {
 
 /////////////////////////=======================================================
 /////////////////////////  Add New Invoice +++++++++++++++++++++++++++
-  addNewInvoice() {
-    Navigator.push(
+  addNewInvoice() async {
+    final temp = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => addInvoiceScreen(header_name: "Add New Invoice")));
+            builder: (_) => addInvoiceScreen(header_name: "New Invoice")));
+
+    if (temp == 'updated') {
+      OrderList_data();
+    }
+
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (_) => addInvoiceScreen(header_name: "Add New Invoice")));
   }
 
 /////////////////////////  View Invoice Details  +++++++++++++++++++++++++++++

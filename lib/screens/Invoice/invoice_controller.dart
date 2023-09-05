@@ -29,6 +29,7 @@ class invoiceController {
   final quantityController = TextEditingController();
   final priceController = TextEditingController();
   final brandController = TextEditingController();
+  final invoiceDateController = TextEditingController();
 
   // for new attribute
   final newAttributeController = TextEditingController();
@@ -49,20 +50,29 @@ class invoiceController {
 
   // Suggation List =====================================
   List<String> ListName = [];
-  List<String> ListCategory = [];
-  Map<String, dynamic> ListAttribute = {};
-  Map<String, dynamic> ListAttributeWithId = {};
+  List<String> ListCustomer = [];
+  Map<String, dynamic> CustomerArr = {};
+  // List<String> ListCategory = [];
+  // Map<String, dynamic> ListAttribute = {};
+  // Map<String, dynamic> ListAttributeWithId = {};
 
   Map<dynamic, dynamic> productDBdata = {};
 
   int totalLocation = 1;
   int totalProduct = 1;
   int totalPrice = 0;
+  int totalGst = 0;
 
   init_functions() async {
     await getProductNameList();
-    await getCategoryList();
-    await getAttributeList();
+    await getCustomerNameList();
+    // await getCategoryList();
+    // await getAttributeList();
+
+    DateTime DateNow = DateTime.now();
+    String dateIs = DateFormat('dd/MM/yyyy').format(DateNow);
+
+    invoiceDateController.text = dateIs;
 
     // locationControllers['1'] = TextEditingController();
     // locationQuntControllers['1'] = TextEditingController();
@@ -91,10 +101,22 @@ class invoiceController {
   // get all product name List =============================
   getProductNameList() async {
     ListName = [];
-    //var dbData = await db.collection('product').get();
     var dbData = await dbFindDynamic(db, {'table': 'product'});
     dbData.forEach((k, data) {
       ListName.add(data['name']);
+    });
+  }
+
+  // get all Customer name List =============================
+  getCustomerNameList() async {
+    ListCustomer = [];
+    var dbData = await dbFindDynamic(db, {'table': 'customer'});
+
+    dbData.forEach((k, data) {
+      if (data['name'] != null) {
+        ListCustomer.add(data['name']);
+        CustomerArr[data['name']] = data;
+      }
     });
   }
 
@@ -110,7 +132,7 @@ class invoiceController {
   }
 
   // get all product Category List =============================
-  getCategoryList() async {
+  /*getCategoryList() async {
     ListCategory = [];
 
     // var dbData = await db.collection('category').get();
@@ -122,10 +144,10 @@ class invoiceController {
     dbData.forEach((k, data) {
       ListCategory.add(data['category_name']);
     });
-  }
+  }*/
 
   // get all  Attribute List =============================
-  getAttributeList() async {
+  /*getAttributeList() async {
     ListAttribute = {};
 
     var dbData = await dbFindDynamic(db, {'table': 'attribute'});
@@ -163,9 +185,10 @@ class invoiceController {
     //       TextEditingController();
     // });
   }
+  */
 
   // Attribute Value List =============================
-  fnUpdateAttrVal(key, value) async {
+  /*fnUpdateAttrVal(key, value) async {
     var doc = ListAttributeWithId[key];
     var tempArr = doc['data']['value'];
 
@@ -177,30 +200,10 @@ class invoiceController {
     dbArr['id'] = doc['id'];
 
     await dbUpdate(db, dbArr);
-  }
-
-  // add new category
-  fnAddNewCat(parentCat, context) async {
-    // add new category
-
-    // default value
-    var dbArr = {
-      "table": 'category',
-      "category_name": categoryController.text,
-      "img": '',
-      "parent_cate": (parentCat == 'Primary') ? '' : parentCat,
-      "date_at": DateFormat('dd-MM-yyyy').format(DateTime.now()),
-      "status": "1",
-      "slug_url": categoryController.text.replaceAll(" ", "-"),
-    };
-
-    await dbSave(db, dbArr);
-    await getCategoryList();
-    // await insertProduct(context);
-  }
+  }*/
 
   // add attribute Funciton
-  fnAddAttribute(context) async {
+  /*fnAddAttribute(context) async {
     if (newAttributeController.text == '') {
       return false;
     }
@@ -223,7 +226,7 @@ class invoiceController {
 
     await dbSave(db, dbArr);
     await getAttributeList();
-  }
+  }*/
 
 // insert product ============================================
   insertInvoiceDetails(context, {docId: ''}) async {
@@ -254,7 +257,7 @@ class invoiceController {
       // "quantity": quantityController.text,
       "total": totalPrice,
       "date_at": DateTime.now(),
-      //"invoice_date": TODO
+      "invoice_date": invoiceDateController.text,
       "status": true
     };
 
@@ -303,7 +306,7 @@ class invoiceController {
       // add customer also =======================
       var customerData = {
         "table": "customer",
-        "customer_name": Customer_nameController.text,
+        "name": Customer_nameController.text,
         "mobile": Customer_MobileController.text,
         "email": Customer_emailController.text,
         "address": Customer_AddressController.text,
@@ -368,11 +371,16 @@ class invoiceController {
   ctrGrandTotal() {
     // total calculate
     var i = 1;
+    totalGst = 0;
     totalPrice = 0;
     while (i <= totalProduct) {
       if (ProductTotalControllers[i] != null &&
           ProductTotalControllers[i]!.text != '') {
         totalPrice += int.parse(ProductTotalControllers[i]!.text);
+
+        totalGst += (productDBdata[i] != null)
+            ? int.parse(productDBdata[i]['gst'].toString())
+            : 0;
       }
       i++;
     }

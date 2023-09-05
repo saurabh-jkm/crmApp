@@ -239,11 +239,11 @@ class _MainScreenState extends State<MainScreen> {
             leading:
                 Icon(Icons.collections_bookmark_outlined, color: Colors.white),
             title: Text(
-              "Invoice List",
+              "Invoice",
               style: TextStyle(color: Colors.white),
             ),
           ),
-          ListTile(
+          /*ListTile(
             tileColor: (sidemenu == 6)
                 ? const Color.fromARGB(127, 33, 149, 243)
                 : const Color.fromARGB(0, 255, 255, 255),
@@ -281,7 +281,7 @@ class _MainScreenState extends State<MainScreen> {
               "Inventry Manage",
               style: TextStyle(color: Colors.white),
             ),
-          ),
+          ),*/
 
           ListTile(
             tileColor: (sidemenu == 8)
@@ -316,12 +316,12 @@ class _MainScreenState extends State<MainScreen> {
             },
 
             ///
-            horizontalTitleGap: 0.0,
-            leading: Icon(Icons.description_sharp, color: Colors.white),
-            title: Text(
-              "About Us",
-              style: TextStyle(color: Colors.white),
-            ),
+            // horizontalTitleGap: 0.0,
+            // leading: Icon(Icons.description_sharp, color: Colors.white),
+            // title: Text(
+            //   "About Us",
+            //   style: TextStyle(color: Colors.white),
+            // ),
           ),
 
           (user["user_type"] == "admin")

@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/screens/Invoice/invoice_widgets.dart';
 import 'package:crm_demo/screens/product/product/product_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
@@ -81,7 +82,8 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
         child: Column(
           children: [
             //header ======================
-            themeHeader2(context, "${widget.header_name}"),
+            themeHeader2(context, "${widget.header_name}",
+                widthBack: 'updated'),
             // formField =======================
             (isWait)
                 ? pleaseWait(context)
@@ -113,13 +115,13 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                         //       padding: 8.0),
                                         // ),
                                         Expanded(
-                                          child: formInput(
-                                              context,
-                                              "Customer Name",
-                                              controller
-                                                  .Customer_nameController,
-                                              padding: 8.0),
-                                        ),
+                                            child: autoCompleteFormInput(
+                                                controller.ListCustomer,
+                                                "Customer Name",
+                                                controller
+                                                    .Customer_nameController,
+                                                method: fnFetchCutomerDetails)),
+
                                         Expanded(
                                           child: formInput(
                                             context,
@@ -138,32 +140,6 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                   .Customer_emailController,
                                               padding: 8.0),
                                         ),
-                                        // fireld 2 ==========================
-                                        // Expanded(
-                                        //   child: autoCompleteFormInput(
-                                        //       controller.ListCategory,
-                                        //       "Category",
-                                        //       controller.categoryController,
-                                        //       padding: 8.0),
-                                        // ),
-
-                                        // // fireld 3 ==========================
-                                        // Expanded(
-                                        //   child: Row(
-                                        //     children: [
-                                        //       Expanded(
-                                        //         child: formInput(context, "Quantity",
-                                        //             controller.quantityController,
-                                        //             padding: 8.0),
-                                        //       ),
-                                        //       Expanded(
-                                        //         child: formInput(context, "Price",
-                                        //             controller.priceController,
-                                        //             padding: 8.0),
-                                        //       ),
-                                        //     ],
-                                        //   ),
-                                        // ),
                                       ],
                                     ),
                                     Row(
@@ -174,6 +150,13 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                               "Address",
                                               controller
                                                   .Customer_AddressController,
+                                              padding: 8.0),
+                                        ),
+                                        Expanded(
+                                          child: formInput(
+                                              context,
+                                              "Invoice Date",
+                                              controller.invoiceDateController,
                                               padding: 8.0),
                                         ),
                                         Expanded(child: Text("")),
@@ -269,7 +252,13 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                               child: Row(
                                                 children: [
                                                   // product Name
-                                                  Expanded(
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                    .size
+                                                                    .width /
+                                                                3 -
+                                                            10,
                                                     child: autoCompleteFormInput(
                                                         controller.ListName,
                                                         "Products Name",
@@ -309,7 +298,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                   Expanded(
                                                     child: formInput(
                                                         context,
-                                                        "GST",
+                                                        "GST (%)",
                                                         controller
                                                             .ProductGstControllers[i],
                                                         padding: 8.0,
@@ -328,14 +317,42 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                   ),
 
                                                   // Total
-                                                  Expanded(
-                                                    child: formInput(
-                                                        context,
-                                                        "Total",
-                                                        controller
-                                                            .ProductTotalControllers[i],
-                                                        padding: 8.0,
-                                                        isNumber: true),
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width /
+                                                            4,
+                                                    child: Row(
+                                                      children: [
+                                                        // sub total
+                                                        Expanded(
+                                                            child: totalWidgets(
+                                                                context,
+                                                                'Sub Total',
+                                                                "${(controller.productDBdata[i] != null) ? int.parse(controller.ProductTotalControllers[i]!.text) - int.parse(controller.productDBdata[i]['gst']) : '0'}")),
+                                                        //GST
+                                                        Expanded(
+                                                            child: totalWidgets(
+                                                                context,
+                                                                'GST',
+                                                                "${(controller.productDBdata[i] != null) ? controller.productDBdata[i]['gst'] : '0'}")),
+                                                        // Total
+                                                        Expanded(
+                                                            child: totalWidgets(
+                                                                context,
+                                                                'Total',
+                                                                "${(controller.productDBdata[i] != null) ? controller.ProductTotalControllers[i]!.text : '0'}")),
+                                                        // Expanded(
+                                                        //     child: formInput(
+                                                        //         context,
+                                                        //         "Total",
+                                                        //         controller
+                                                        //             .ProductTotalControllers[i],
+                                                        //         padding: 8.0,
+                                                        //         isNumber: true)),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -375,15 +392,62 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      Text(
-                                        "Total:",
-                                        style: themeTextStyle(
-                                            size: 20.0, fw: FontWeight.bold),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                "SubTotal : ",
+                                                style:
+                                                    themeTextStyle(size: 12.0),
+                                              ),
+                                              Text(
+                                                "₹${controller.totalPrice - controller.totalGst}",
+                                                style:
+                                                    themeTextStyle(size: 15.0),
+                                              )
+                                            ],
+                                          ),
+                                          // GST
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                "GST : ",
+                                                style:
+                                                    themeTextStyle(size: 12.0),
+                                              ),
+                                              Text(
+                                                "₹${controller.totalGst}",
+                                                style:
+                                                    themeTextStyle(size: 15.0),
+                                              )
+                                            ],
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        "₹${controller.totalPrice}",
-                                        style: themeTextStyle(size: 25.0),
-                                      )
+                                      SizedBox(width: 30.0),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            "Total:",
+                                            style: themeTextStyle(
+                                                size: 20.0,
+                                                fw: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            "₹${controller.totalPrice}",
+                                            style: themeTextStyle(size: 25.0),
+                                          )
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -456,9 +520,25 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
     }
   }
 
+  // Fetch all detials
+  fnFetchCutomerDetails() {
+    print("yesss");
+    var tName = controller.Customer_nameController.text;
+    var tempData = (tName != '' && controller.CustomerArr[tName] != null)
+        ? controller.CustomerArr[tName]
+        : {};
+    if (tempData.isNotEmpty) {
+      controller.Customer_MobileController.text = tempData['mobile'];
+      controller.Customer_emailController.text = tempData['email'];
+      controller.Customer_AddressController.text = tempData['address'];
+    }
+  }
+
   // Total Price
   fnTotalPrice(controllerId) async {
     await controller.ctrTotalCalculate(controllerId);
     setState(() {});
   }
-}/// Class CLose
+}
+
+/// Class CLose
