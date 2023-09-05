@@ -33,9 +33,10 @@ import 'package:intl/intl.dart';
 import 'invoice_controller.dart';
 
 class viewInvoiceScreen extends StatefulWidget {
-  const viewInvoiceScreen({super.key, required this.header_name});
+  const viewInvoiceScreen(
+      {super.key, required this.header_name, required this.data});
   final String header_name;
-
+  final Map data;
   @override
   State<viewInvoiceScreen> createState() => _viewInvoiceScreenState();
 }
@@ -46,32 +47,9 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
     super.initState();
   }
 
-  var priceData = {
-    "order_id": "0KNbOzxfrp8w3SbxwJYU",
-    "oder_Date": "17-08-2023",
-    "buyer_name": "ssss335",
-    "buyer_mobile": "3334445566",
-    "buyer_address": "11113",
-    "buyer_email": "sry@gmail.com",
-    "Pro_name": "Water Heater",
-    "Pro_quantity": "1",
-    "Pro_price": "3.00 rs",
-    "Pro_gst": "44",
-    "total_price": "56.00 rs",
-    "product_details": {
-      "Product No. 1": {
-        "total_price": "56",
-        "gst": '44',
-        "price": "3",
-        "product_name": "Water Heater",
-        "quantity": "125",
-        "discount": "55"
-      }
-    }
-  };
-
   @override
   Widget build(BuildContext context) {
+    var OrderData = widget.data;
     return Scaffold(
       body: Container(
         color: Colors.white,
@@ -81,7 +59,7 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
             themeHeader2(context, "${widget.header_name}"),
             // formField =======================
 
-            Details_view(context, priceData)
+            Details_view(context, OrderData)
             // end form ====================================
           ],
         ),
@@ -90,24 +68,33 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
   }
 
 ////////////////// @2 Detaials View ++++++++++++++++++++++++++++++++++++++++++++
+  var tempList = [];
+  var Price = 0;
+  var Qty = 0;
+  Widget Details_view(BuildContext context, OrderData) {
+    Qty = 0;
+    Price = 0;
+    tempList = [];
 
-  Widget Details_view(BuildContext context, priceData) {
-    var ffff = priceData["product_details"] as Map;
+    var ffff = OrderData["products"] as Map;
     var ff = new Map();
     if (ffff.isNotEmpty) {
-      if (ffff.isNotEmpty) {
-        ffff.forEach((k, v) {
-          v.forEach((ke, vl) {
-            var key = "${k}___$ke";
-            ff[key];
-            ff[key] = vl;
-          });
-        });
-      }
-    }
+      ffff.forEach((k, v) {
+        setState(() {
+          tempList.add(v["name"]);
 
-    for (var i = 1; i <= ffff.length; i++) {
-      print("${i} ${ff["Product No. ${i}___product_name"]}  ++++hhhhh++++");
+          if (Qty == 0) {
+            Qty = Qty + int.parse(v["quantity"]);
+          } else {
+            Qty = Qty + int.parse(v["quantity"]);
+          }
+          if (Price == 0) {
+            Price = Price + int.parse(v["price"]);
+          } else {
+            Price = Price + int.parse(v["price"]);
+          }
+        });
+      });
     }
 
     return Container(
@@ -126,114 +113,213 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
               margin: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                color: Colors.black12,
+                color: const Color.fromARGB(255, 240, 240, 240),
                 // borderRadius:
                 //     const BorderRadius.all(Radius.circular(10)),
               ),
-              child: (priceData == null)
+              child: (OrderData == null)
                   ? Center(child: CircularProgressIndicator())
                   : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.shopping_bag_rounded,
-                                    size: 30,
-                                    color: Colors.blue,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    "Order Details",
-                                    style: GoogleFonts.alike(
-                                        fontSize: 20,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              themeListRow(context, "Product Name",
-                                  "${priceData["Pro_name"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(context, "Order ID",
-                                  "${priceData["order_id"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(
-                                  context, "Price", "${priceData["Pro_price"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(context, "Quantity",
-                                  "${priceData["Pro_quantity"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(
-                                  context, "GST", "${priceData["Pro_gst"]} %",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(context, "Total",
-                                  "${priceData["total_price"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                            ]),
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.location_history,
-                                    size: 30,
-                                    color: Colors.blue,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    "Shipping Details",
-                                    style: GoogleFonts.alike(
-                                        fontSize: 20,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              themeListRow(context, "Customer",
-                                  "${priceData["buyer_name"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(context, "Mobile No.",
-                                  "${priceData["buyer_mobile"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(context, "Email Id",
-                                  "${priceData["buyer_email"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(context, "Address",
-                                  "${priceData["buyer_address"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                            ]),
+                        Container(
+                          width: 300,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: const [
+                                BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 5,
+                                    spreadRadius: 1,
+                                    offset: Offset(4, 4)),
+                              ],
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.shopping_bag_rounded,
+                                      size: 30,
+                                      color: Colors.blue,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "Order Details",
+                                      style: GoogleFonts.alike(
+                                          fontSize: 20,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                ),
+                                Divider(
+                                  thickness: 2,
+                                  color: const Color.fromARGB(62, 0, 0, 0),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                themeListRow(
+                                    context, "Order ID", "${OrderData["id"]}",
+                                    descColor: Colors.black,
+                                    fontsize: 11,
+                                    headColor: Colors.black),
+                                Divider(
+                                  thickness: 1,
+                                  color: const Color.fromARGB(17, 0, 0, 0),
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Products",
+                                      style: themeTextStyle(
+                                          size: 12.0,
+                                          color: Colors.black,
+                                          ftFamily: 'ms',
+                                          fw: FontWeight.bold),
+                                    ),
+                                    Container(
+                                        margin: EdgeInsets.only(left: 50),
+                                        child: Text(": ",
+                                            style: GoogleFonts.alike(
+                                              color: Colors.black,
+                                            ))),
+                                    for (var i = 0; i < tempList.length; i++)
+                                      Text("${tempList[i]} ,",
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          style: GoogleFonts.alike(
+                                            fontSize: 11,
+                                            color: Colors.black,
+                                          ))
+                                  ],
+                                ),
+                                Divider(
+                                  thickness: 1,
+                                  color: const Color.fromARGB(17, 0, 0, 0),
+                                ),
+                                themeListRow(context, "Price", "$Price",
+                                    descColor: Colors.black,
+                                    fontsize: 11,
+                                    headColor: Colors.black),
+                                Divider(
+                                  thickness: 1,
+                                  color: const Color.fromARGB(17, 0, 0, 0),
+                                ),
+                                themeListRow(context, "Quantity", "$Qty",
+                                    descColor: Colors.black,
+                                    fontsize: 11,
+                                    headColor: Colors.black),
+                                Divider(
+                                  thickness: 1,
+                                  color: const Color.fromARGB(17, 0, 0, 0),
+                                ),
+                                themeListRow(
+                                    context, "GST", "${OrderData["gst"]} ",
+                                    descColor: Colors.black,
+                                    fontsize: 11,
+                                    headColor: Colors.black),
+                                Divider(
+                                  thickness: 1,
+                                  color: const Color.fromARGB(17, 0, 0, 0),
+                                ),
+                                themeListRow(context, "Sub Total",
+                                    "${OrderData["subtotal"]} ",
+                                    descColor: Colors.black,
+                                    fontsize: 11,
+                                    headColor: Colors.black),
+                                Divider(
+                                  thickness: 1,
+                                  color: const Color.fromARGB(17, 0, 0, 0),
+                                ),
+                                themeListRow(
+                                    context, "Total", "${OrderData["total"]}",
+                                    descColor: Colors.black,
+                                    fontsize: 11,
+                                    headColor: Colors.black),
+                                SizedBox(height: defaultPadding),
+                              ]),
+                        ),
+                        SizedBox(width: 100),
+                        Container(
+                          width: 300,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: const [
+                                BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 5,
+                                    spreadRadius: 1,
+                                    offset: Offset(4, 4)),
+                              ],
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.location_history,
+                                      size: 30,
+                                      color: Colors.blue,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "Shipping Details",
+                                      style: GoogleFonts.alike(
+                                          fontSize: 20,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                ),
+                                Divider(
+                                  thickness: 2,
+                                  color: const Color.fromARGB(62, 0, 0, 0),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                themeListRow(context, "Customer",
+                                    "${OrderData["customer_name"]}",
+                                    descColor: Colors.black,
+                                    headColor: Colors.black),
+                                Divider(
+                                  thickness: 1,
+                                  color: const Color.fromARGB(17, 0, 0, 0),
+                                ),
+                                themeListRow(context, "Mobile No.",
+                                    "${OrderData["mobile"]}",
+                                    descColor: Colors.black,
+                                    headColor: Colors.black),
+                                Divider(
+                                  thickness: 1,
+                                  color: const Color.fromARGB(17, 0, 0, 0),
+                                ),
+                                themeListRow(context, "Email Id",
+                                    "${OrderData["email"]}",
+                                    descColor: Colors.black,
+                                    headColor: Colors.black),
+                                Divider(
+                                  thickness: 1,
+                                  color: const Color.fromARGB(17, 0, 0, 0),
+                                ),
+                                themeListRow(context, "Address",
+                                    "${OrderData["address"]}",
+                                    descColor: Colors.black,
+                                    headColor: Colors.black),
+                                SizedBox(height: defaultPadding),
+                              ]),
+                        ),
                       ],
                     ))
         ],

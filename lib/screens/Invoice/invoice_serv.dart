@@ -10,23 +10,38 @@ import '../../themes/function.dart';
 String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
 class InvoiceService {
-  const InvoiceService({
+  InvoiceService({
     this.PriceDetail,
   }) : super();
 
   final PriceDetail;
 
+  Map eedata = {
+    "watt": "20 W",
+    "date_at": "2023-08-31 04:06:09.526280",
+    "sizes": "small",
+    "item_location": {"room 3": "11", "room 1": "10"},
+    "status": "true",
+    "colors": "green",
+    "name": 'Test2',
+    "brand": "phillips",
+    "price": '122',
+    'voltage': "400",
+    "category": 'electronics',
+    "quantity": '10',
+    'id': 'bLLUwPamLTNBpMjd76sK'
+  };
   Future<Uint8List> createInvoice() async {
-    // print("$PriceDetail   +++++88++++++");
+    Map tt = PriceDetail["products"];
     var myTheme = ThemeData.withFont(
       base: Font.ttf(await rootBundle.load("assets/OpenSans-Regular.ttf")),
     );
     final pdf = pw.Document(theme: myTheme);
     // final image =
     //     (await rootBundle.load("assets/images/qrr.png")).buffer.asUint8List();
-    int a = int.parse(PriceDetail["price"]);
-    int b = int.parse(PriceDetail["quantity"]);
-    // final formattedDate = formatDate(PriceDetail["date_at"]);
+    int a = int.parse(eedata["price"]);
+    int b = int.parse(eedata["quantity"]);
+    // final formattedDate = formatDate(eedata["date_at"]);
     var amount = a * b;
     final qrrrImage = pdf.addPage(
       pw.Page(
@@ -86,7 +101,7 @@ class InvoiceService {
                 pw.Expanded(
                     child: Container(
                         padding: EdgeInsets.all(4),
-                        height: 60,
+                        height: 80,
                         decoration: BoxDecoration(
                             border:
                                 Border.all(color: PdfColors.black, width: 1)),
@@ -94,7 +109,7 @@ class InvoiceService {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Name",
+                              Text("Customer Name",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: PdfColors.black)),
@@ -106,26 +121,34 @@ class InvoiceService {
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: PdfColors.black)),
+                              Text("Address",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: PdfColors.black)),
                             ]))),
                 pw.Expanded(
                   child: pw.Container(
                       padding: EdgeInsets.all(4),
-                      height: 60,
+                      height: 80,
                       decoration: BoxDecoration(
                           border: Border.all(color: PdfColors.black, width: 1)),
                       child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            pw.Text("Mr. xyz",
+                            pw.Text("${PriceDetail["customer_name"]}",
                                 style: pw.TextStyle(
                                     fontWeight: FontWeight.normal,
                                     color: PdfColors.black)),
-                            pw.Text("+919999999998",
+                            pw.Text("${PriceDetail["mobile"]}",
                                 style: pw.TextStyle(
                                     fontWeight: FontWeight.normal,
                                     color: PdfColors.black)),
-                            pw.Text("xyz99@gmail.com",
+                            pw.Text("${PriceDetail["email"]}",
+                                style: pw.TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: PdfColors.black)),
+                            pw.Text("${PriceDetail["address"]}",
                                 style: pw.TextStyle(
                                     fontWeight: FontWeight.normal,
                                     color: PdfColors.black)),
@@ -149,7 +172,7 @@ class InvoiceService {
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: PdfColors.black)),
-                              Text("Product Id",
+                              Text("Invoice Id",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: PdfColors.black)),
@@ -179,7 +202,7 @@ class InvoiceService {
                                       fontSize: 11,
                                       fontWeight: FontWeight.normal,
                                       color: PdfColors.black)),
-                              Text("formattedDate",
+                              Text("${PriceDetail["invoice_date"]}",
                                   style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.normal,
@@ -236,7 +259,7 @@ class InvoiceService {
                             decoration: BoxDecoration(
                                 border: Border.all(color: PdfColors.black)),
                             alignment: Alignment.center,
-                            child: Text("GST",
+                            child: Text("Disc ",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: PdfColors.black)))),
@@ -245,7 +268,7 @@ class InvoiceService {
                             decoration: BoxDecoration(
                                 border: Border.all(color: PdfColors.black)),
                             alignment: Alignment.center,
-                            child: Text("Disc %",
+                            child: Text("GST %",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: PdfColors.black)))),
@@ -276,95 +299,100 @@ class InvoiceService {
                             border:
                                 Border.all(color: PdfColors.black, width: 1.0)),
                         alignment: Alignment.topCenter,
-                        child: Text("1",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: PdfColors.black))),
+                        child: Column(children: [
+                          for (var i = 0; i < tt.length; i++)
+                            Text("${"${i + 1}"}",
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.normal,
+                                    color: PdfColors.black))
+                        ])),
                     pw.Container(
                         padding: EdgeInsets.all(2),
                         width: 180,
                         decoration: BoxDecoration(
                             border: Border.all(color: PdfColors.black)),
                         alignment: Alignment.topCenter,
-                        child:
-                            // for (var i = 1; i <= PriceDetail.length; i++)
-                            Text(
-                                "${PriceDetail["name"]}", //"${ff["Product No. ${i}___product_name"]}",
+                        child: Column(children: [
+                          for (var i = 0; i < tt.length; i++)
+                            Text("${tt["$i"]["name"]} ",
                                 style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.normal,
-                                    color: PdfColors.black))),
+                                    color: PdfColors.black))
+                        ])),
                     Expanded(
                         child: Container(
                             padding: EdgeInsets.all(2),
                             decoration: BoxDecoration(
                                 border: Border.all(color: PdfColors.black)),
                             alignment: Alignment.topCenter,
-                            child:
-                                //  for (var i = 1; i <= PriceDetail.length; i++)
-                                Text(
-                                    "${PriceDetail["price"]}", //"${ff["Product No. ${i}___quantity"]}",
+                            child: Column(children: [
+                              for (var i = 0; i < tt.length; i++)
+                                Text("${tt["$i"]["subtotal"]} ",
                                     style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.normal,
-                                        color: PdfColors.black)))),
+                                        color: PdfColors.black))
+                            ]))),
                     Expanded(
                         child: Container(
                             padding: EdgeInsets.all(2),
                             decoration: BoxDecoration(
                                 border: Border.all(color: PdfColors.black)),
                             alignment: Alignment.topCenter,
-                            child:
-                                // for (var i = 1; i <= PriceDetail.length; i++)
-                                Text(
-                                    "${PriceDetail["quantity"]}", //"${ff["Product No. ${i}___price"]}",
+                            child: Column(children: [
+                              for (var i = 0; i < tt.length; i++)
+                                Text("${tt["$i"]["quantity"]} ",
                                     style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.normal,
-                                        color: PdfColors.black)))),
+                                        color: PdfColors.black))
+                            ])
+                            // for (var i = 1; i <= eedata.length; i++)
+                            )),
                     Expanded(
                         child: Container(
                             padding: EdgeInsets.all(2),
                             decoration: BoxDecoration(
                                 border: Border.all(color: PdfColors.black)),
                             alignment: Alignment.topCenter,
-                            child:
-                                //  for (var i = 1; i <= PriceDetail.length; i++)
-                                Text(
-                                    "${PriceDetail["price"]}", //"${ff["Product No. ${i}___quantity"]}",
+                            child: Column(children: [
+                              for (var i = 0; i < tt.length; i++)
+                                Text("${tt["$i"]["discount"]}",
                                     style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.normal,
-                                        color: PdfColors.black)))),
+                                        color: PdfColors.black))
+                            ]))),
                     Expanded(
                         child: Container(
                             padding: EdgeInsets.all(2),
                             decoration: BoxDecoration(
                                 border: Border.all(color: PdfColors.black)),
                             alignment: Alignment.topCenter,
-                            child:
-                                // for (var i = 1; i <= PriceDetail.length; i++)
-                                Text(
-                                    "${PriceDetail["quantity"]}", //"${ff["Product No. ${i}___price"]}",
+                            child: Column(children: [
+                              for (var i = 0; i < tt.length; i++)
+                                Text("${tt["$i"]["gst_per"]} %",
                                     style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.normal,
-                                        color: PdfColors.black)))),
+                                        color: PdfColors.black))
+                            ]))),
                     Expanded(
                         child: Container(
                             padding: EdgeInsets.all(2),
                             decoration: BoxDecoration(
                                 border: Border.all(color: PdfColors.black)),
                             alignment: Alignment.topCenter,
-                            child:
-
-                                /// for (var i = 1; i <= PriceDetail.length; i++)
-                                Text(
-                                    "$amount Rs", //"${ff["Product No. ${i}___gst"]}",
+                            child: Column(children: [
+                              for (var i = 0; i < tt.length; i++)
+                                Text("${tt["$i"]["total"]} /-",
                                     style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.normal,
-                                        color: PdfColors.black)))),
+                                        color: PdfColors.black))
+                            ])))
                   ],
                 ),
               ),
@@ -394,7 +422,7 @@ class InvoiceService {
                                 border: Border.all(color: PdfColors.black)),
                             padding: EdgeInsets.only(right: 10),
                             alignment: Alignment.centerRight,
-                            child: Text("$amount  /-",
+                            child: Text("${PriceDetail["total"]} Rs /-",
                                 style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,

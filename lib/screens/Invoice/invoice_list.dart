@@ -115,12 +115,12 @@ class _Invoice_ListState extends State<Invoice_List> {
   }
 
 /////////////////////////  View Invoice Details  +++++++++++++++++++++++++++++
-  viewInvoice() {
+  viewInvoice(data) {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) =>
-                viewInvoiceScreen(header_name: "View Invoice Details")));
+            builder: (_) => viewInvoiceScreen(
+                header_name: "View Invoice Details", data: data)));
   }
 /////////////////////////=======================================================
 
@@ -395,7 +395,7 @@ class _Invoice_ListState extends State<Invoice_List> {
                         OrderList[index]['total'],
                         OrderList[index]['status'],
                         OrderList[index]['date_at'],
-                        OrderList[index]['customer_name'],
+                        OrderList[index],
                       )
                   ],
                 ),
@@ -435,7 +435,7 @@ class _Invoice_ListState extends State<Invoice_List> {
   }
 
   TableRow tableRowWidget(String index, odID, user, buyer_mobile, _price,
-      pro_status, pay_date, price_details) {
+      pro_status, pay_date, edata) {
     var statuss = statusOF(pro_status);
 //////// Product Detailll ++++++++++++++++++++++
     // var pricett = price_de(price_details);
@@ -513,33 +513,15 @@ class _Invoice_ListState extends State<Invoice_List> {
         child: RowFor_Mobile_web(
           context,
           () async {
-            // print("$edata  ++++++");
-
-            var eedata = {
-              "watt": "20 W",
-              "date_at": "2023-08-31 04:06:09.526280",
-              "sizes": "small",
-              "item_location": {"room 3": "11", "room 1": "10"},
-              "status": "true",
-              "colors": "green",
-              "name": 'Test2',
-              "brand": "phillips",
-              "price": '122',
-              'voltage': "400",
-              "category": 'electronics',
-              "quantity": '10',
-              'id': 'bLLUwPamLTNBpMjd76sK'
-            };
-
             final data = await InvoiceService(
-              PriceDetail: eedata,
+              PriceDetail: edata,
             ).createInvoice();
             // final data = await service.createInvoice();
             await savePdfFile("invoice", data);
           },
           () {
             setState(() {
-              viewInvoice();
+              viewInvoice(edata);
               //  _Details_wd = true;
               // priceData["order_id"] = "$odID";
               // priceData["oder_Date"] = "$pay_date";
