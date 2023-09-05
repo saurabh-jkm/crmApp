@@ -609,7 +609,11 @@ Widget themeSpaceVertical(height) {
 
 // auto complete =================================
 autoCompleteFormInput(suggationList, label, myController,
-    {padding: 10.0, myFocusNode: '', method: '', methodArg: ''}) {
+    {padding: 10.0,
+    myFocusNode: '',
+    method: '',
+    methodArg: '',
+    strinFilter: ''}) {
   return Autocomplete(
     fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
       controller.text = myController.text;

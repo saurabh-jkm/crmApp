@@ -35,20 +35,24 @@ import 'package:intl/intl.dart';
 
 import 'invoice_controller.dart';
 
-class addInvoiceScreen extends StatefulWidget {
-  const addInvoiceScreen({super.key, required this.header_name});
+class editInvoice extends StatefulWidget {
+  final data;
+  const editInvoice({super.key, this.data, required this.header_name});
   final String header_name;
 
   @override
-  State<addInvoiceScreen> createState() => _addInvoiceScreenState();
+  State<editInvoice> createState() => _editInvoiceState();
 }
 
-class _addInvoiceScreenState extends State<addInvoiceScreen> {
+class _editInvoiceState extends State<editInvoice> {
+  var documentId;
   bool isWait = true;
   // function get all list & name
   initList() async {
-    await controller.init_functions();
+    await controller.init_functions(dbData: widget.data);
+
     setState(() {
+      documentId = widget.data['id'];
       isWait = false;
     });
   }
@@ -299,13 +303,13 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                             child: totalWidgets(
                                                                 context,
                                                                 'Sub Total',
-                                                                "${(controller.productDBdata[i] != null) ? int.parse(controller.ProductTotalControllers[i]!.text) - int.parse(controller.productDBdata[i]['gst']) : '0'}")),
+                                                                "${(controller.productDBdata[i] != null && controller.productDBdata[i]['gst'] != null) ? int.parse(controller.ProductTotalControllers[i]!.text) - int.parse(controller.productDBdata[i]['gst']) : '0'}")),
                                                         //GST
                                                         Expanded(
                                                             child: totalWidgets(
                                                                 context,
                                                                 'GST',
-                                                                "${(controller.productDBdata[i] != null) ? controller.productDBdata[i]['gst'] : '0'}")),
+                                                                "${(controller.productDBdata[i] != null && controller.productDBdata[i]['gst'] != null) ? controller.productDBdata[i]['gst'] : '0'}")),
                                                         // Total
                                                         Expanded(
                                                             child: totalWidgets(
@@ -347,11 +351,12 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                   child: Center(
                                     child: ElevatedButton(
                                         onPressed: () async {
-                                          controller
-                                              .insertInvoiceDetails(context);
+                                          controller.insertInvoiceDetails(
+                                              context,
+                                              docId: widget.data['id']);
                                           //setState(() {});
                                         },
-                                        child: Text('Submit')),
+                                        child: Text('Update')),
                                   ),
                                 ),
                               ),

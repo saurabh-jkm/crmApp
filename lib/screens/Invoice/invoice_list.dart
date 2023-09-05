@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/screens/Invoice/edit_invoice.dart';
 import 'package:crm_demo/screens/Invoice/pdf.dart';
 import 'package:crm_demo/screens/Invoice/view_invoice_screen.dart';
-import 'package:crm_demo/screens/product/product/add_product_screen.dart';
-import 'package:crm_demo/screens/product/product/edit_product_screen.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:firedart/firedart.dart' as fd;
@@ -396,15 +396,15 @@ class _Invoice_ListState extends State<Invoice_List> {
                               ]),
                     for (var index = 0; index < OrderList.length; index++)
                       tableRowWidget(
-                        "${index + 1}",
-                        OrderList[index]['id'],
-                        OrderList[index]['customer_name'],
-                        OrderList[index]['mobile'],
-                        OrderList[index]['total'],
-                        OrderList[index]['status'],
-                        OrderList[index]['date_at'],
-                        OrderList[index],
-                      )
+                          "${index + 1}",
+                          OrderList[index]['id'],
+                          OrderList[index]['customer_name'],
+                          OrderList[index]['mobile'],
+                          OrderList[index]['total'],
+                          OrderList[index]['status'],
+                          OrderList[index]['date_at'],
+                          OrderList[index],
+                          dbData: OrderList[index])
                   ],
                 ),
               ],
@@ -443,7 +443,8 @@ class _Invoice_ListState extends State<Invoice_List> {
   }
 
   TableRow tableRowWidget(String index, odID, user, buyer_mobile, _price,
-      pro_status, pay_date, edata) {
+      pro_status, pay_date, edata,
+      {dbData: ''}) {
     var statuss = statusOF(pro_status);
 //////// Product Detailll ++++++++++++++++++++++
     // var pricett = price_de(price_details);
@@ -518,42 +519,37 @@ class _Invoice_ListState extends State<Invoice_List> {
               style: GoogleFonts.alike(color: Colors.white, fontSize: 11))),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: RowFor_Mobile_web(
-          context,
-          () async {
-            final data = await InvoiceService(
-              PriceDetail: edata,
-            ).createInvoice();
-            // final data = await service.createInvoice();
-            await savePdfFile("invoice", data);
-          },
-          () {
-            setState(() {
-              viewInvoice(edata);
-              //  _Details_wd = true;
-              // priceData["order_id"] = "$odID";
-              // priceData["oder_Date"] = "$pay_date";
-              // priceData["buyer_name"] = "$user";
-              // priceData["buyer_mobile"] = "$buyer_mobile";
-              // priceData["buyer_address"] = "$buyer_address";
-              // priceData["buyer_email"] = "$buyer_email";
-              // priceData["Pro_name"] = "${pricett["Pro_name"]}";
-              // priceData["Pro_quantity"] = "${pricett["quantity"]}";
-              // priceData["Pro_price"] = "${pricett["price"]}";
-              // priceData["Pro_gst"] = "${pricett["Pro_gst"]}";
-              // priceData["total_price"] = "${pricett["Pro_total_price"]}";
+        child: RowFor_Mobile_web(context, () async {
+          final data = await InvoiceService(
+            PriceDetail: edata,
+          ).createInvoice();
+          // final data = await service.createInvoice();
+          await savePdfFile("invoice", data);
+        }, () {
+          setState(() {
+            viewInvoice(edata);
+            //  _Details_wd = true;
+            // priceData["order_id"] = "$odID";
+            // priceData["oder_Date"] = "$pay_date";
+            // priceData["buyer_name"] = "$user";
+            // priceData["buyer_mobile"] = "$buyer_mobile";
+            // priceData["buyer_address"] = "$buyer_address";
+            // priceData["buyer_email"] = "$buyer_email";
+            // priceData["Pro_name"] = "${pricett["Pro_name"]}";
+            // priceData["Pro_quantity"] = "${pricett["quantity"]}";
+            // priceData["Pro_price"] = "${pricett["price"]}";
+            // priceData["Pro_gst"] = "${pricett["Pro_gst"]}";
+            // priceData["total_price"] = "${pricett["Pro_total_price"]}";
 
-              // priceData["product_details"] = price_details;
-            });
-          },
-          () {
-            setState(() {
-              // _Update_wd = true;
-              // _Order_ID = odID;
-              // Update_initial(odID);
-            });
-          },
-        ),
+            // priceData["product_details"] = price_details;
+          });
+        }, () {
+          setState(() {
+            // _Update_wd = true;
+            // _Order_ID = odID;
+            // Update_initial(odID);
+          });
+        }, dbData: dbData),
       ),
     ]);
   }
@@ -562,7 +558,8 @@ class _Invoice_ListState extends State<Invoice_List> {
   ///
 
   Widget RowFor_Mobile_web(
-      BuildContext context, _invoice, _details_view, _Update) {
+      BuildContext context, _invoice, _details_view, _Update,
+      {dbData: ''}) {
     return Padding(
         padding: EdgeInsets.only(
           bottom: 1.0,
@@ -610,7 +607,18 @@ class _Invoice_ListState extends State<Invoice_List> {
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
                 child: IconButton(
-                    onPressed: _Update,
+                    onPressed: () async {
+                      final temp = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => editInvoice(
+                                    data: dbData,
+                                    header_name: "Edit Invoice",
+                                  )));
+                      if (temp == 'updated') {
+                        OrderList_data();
+                      }
+                    },
                     icon: Icon(
                       Icons.edit,
                       color: Colors.yellow,
