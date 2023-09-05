@@ -376,7 +376,7 @@ class _ProductAddState extends State<ProductAdd> {
   TableRow tableRowWidget(Sno, name, BrandName, cate_name, items_no, price,
       status, date, iid, data) {
     var statuss = statusOF(status);
-    final formattedDate = formatDate(date.toDate());
+    final formattedDate = formatDate(date);
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,

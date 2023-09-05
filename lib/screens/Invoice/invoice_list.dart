@@ -423,7 +423,7 @@ class _Invoice_ListState extends State<Invoice_List> {
     var statuss = statusOF(pro_status);
 //////// Product Detailll ++++++++++++++++++++++
 
-    final formattedDate = formatDate(pay_date.toDate());
+    final formattedDate = formatDate(pay_date);
 //////////////////// ++++++++++++++++++++++++++++++++++++++++++++++
     return TableRow(children: [
       TableCell(
@@ -502,6 +502,26 @@ class _Invoice_ListState extends State<Invoice_List> {
         }, () {
           setState(() {
             viewInvoice(edata);
+            //  _Details_wd = true;
+            // priceData["order_id"] = "$odID";
+            // priceData["oder_Date"] = "$pay_date";
+            // priceData["buyer_name"] = "$user";
+            // priceData["buyer_mobile"] = "$buyer_mobile";
+            // priceData["buyer_address"] = "$buyer_address";
+            // priceData["buyer_email"] = "$buyer_email";
+            // priceData["Pro_name"] = "${pricett["Pro_name"]}";
+            // priceData["Pro_quantity"] = "${pricett["quantity"]}";
+            // priceData["Pro_price"] = "${pricett["price"]}";
+            // priceData["Pro_gst"] = "${pricett["Pro_gst"]}";
+            // priceData["total_price"] = "${pricett["Pro_total_price"]}";
+
+            // priceData["product_details"] = price_details;
+          });
+        }, () {
+          setState(() {
+            // _Update_wd = true;
+            // _Order_ID = odID;
+            // Update_initial(odID);
           });
         }, dbData: dbData),
       ),
@@ -511,7 +531,8 @@ class _Invoice_ListState extends State<Invoice_List> {
 /////////////////////////////////////  Row GOt Action Button  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   ///
 
-  Widget RowFor_Mobile_web(BuildContext context, _invoice, _details_view,
+  Widget RowFor_Mobile_web(
+      BuildContext context, _invoice, _details_view, _Update,
       {dbData: ''}) {
     return Padding(
         padding: EdgeInsets.only(
