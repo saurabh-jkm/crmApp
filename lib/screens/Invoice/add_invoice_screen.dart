@@ -227,16 +227,17 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                                     .width /
                                                                 3 -
                                                             10,
-                                                    child: autoCompleteFormInput(
-                                                        controller.ListName,
-                                                        "Products Name",
-                                                        controller
-                                                            // .Customer_nameController,
-                                                            .ProductNameControllers[i],
-                                                        padding: 8.0,
-                                                        method: fnCalcualtePrice,
-                                                        methodArg: i,
-                                                        strinFilter: '- Out Of Stock'),
+                                                    child:
+                                                        autoCompleteFormInput(
+                                                      controller.ListName,
+                                                      "Products Name",
+                                                      controller
+                                                          // .Customer_nameController,
+                                                          .ProductNameControllers[i],
+                                                      padding: 8.0,
+                                                      method: fnCalcualtePrice,
+                                                      methodArg: i,
+                                                    ),
                                                   ),
                                                   // Price
                                                   Expanded(
@@ -247,7 +248,9 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                             // .Customer_nameController,
                                                             .ProductPriceControllers[i],
                                                         padding: 8.0,
-                                                        isNumber: true),
+                                                        isNumber: true,
+                                                        method: fnTotalPrice,
+                                                        methodArg: i),
                                                   ),
 
                                                   // Quantity
@@ -271,7 +274,9 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                         controller
                                                             .ProductGstControllers[i],
                                                         padding: 8.0,
-                                                        isNumber: true),
+                                                        isNumber: true,
+                                                        method: fnTotalPrice,
+                                                        methodArg: i),
                                                   ),
 
                                                   // Discount
@@ -282,7 +287,9 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                         controller
                                                             .ProductDiscountControllers[i],
                                                         padding: 8.0,
-                                                        isNumber: true),
+                                                        isNumber: true,
+                                                        method: fnTotalPrice,
+                                                        methodArg: i),
                                                   ),
 
                                                   // Total
@@ -473,7 +480,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
               (rData != null && rData['price'] != null) ? rData['price'] : 0;
           controller.ProductGstControllers[controllerId]!.text =
               (controller.ProductGstControllers[controllerId]!.text == '')
-                  ? '18'
+                  ? '0'
                   : controller.ProductGstControllers[controllerId]!.text;
 
           controller.ProductQuntControllers[controllerId]!.text =

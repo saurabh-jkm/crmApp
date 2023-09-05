@@ -66,6 +66,11 @@ class invoiceController {
   int totalPrice = 0;
   int totalGst = 0;
 
+  // init Function for all =========================================
+  //================================================================
+  //================================================================
+  //================================================================
+
   init_functions({dbData: ''}) async {
     await getProductNameList();
     await getCustomerNameList();
@@ -88,6 +93,8 @@ class invoiceController {
     ProductGstControllers[1] = TextEditingController();
     ProductDiscountControllers[1] = TextEditingController();
     ProductQuntControllers[1]!.text = '1';
+    ProductDiscountControllers[1]!.text = '0';
+    ProductGstControllers[1]!.text = '0';
 
     // set edit value for edit page =========================================
     if (dbData != '') {
@@ -123,7 +130,9 @@ class invoiceController {
 
           productDBdata[i] =
               (productArr[v['id']] != null) ? productArr[v['id']] : {};
-          editProductQnt[v['id']] = v;
+          if (productArr[v['id']] != null) {
+            editProductQnt[v['id']] = v;
+          }
 
           ctrTotalCalculate(i);
 
@@ -188,7 +197,8 @@ class invoiceController {
     var alert = '';
     if (Customer_nameController.text.length < 4) {
       alert = "Valid Customer Name  Required !!";
-    } else if (Customer_MobileController.text.length < 10) {
+    } else if (Customer_MobileController.text != '' &&
+        Customer_MobileController.text.length < 10) {
       alert = "Valid Mobile Number Required !!";
     } else if (totalProduct == 0) {
       alert = "Minimum 1 product required";
@@ -288,8 +298,14 @@ class invoiceController {
     });
 
     // check customer already exist ====================
-    var testDbData = await dbFindDynamic(
-        db, {'table': 'customer', 'mobile': Customer_MobileController.text});
+    var w = {'table': 'customer'};
+    if (Customer_MobileController.text != '') {
+      w['mobile'] = Customer_MobileController.text;
+    } else {
+      w['name'] = Customer_nameController.text;
+    }
+
+    var testDbData = await dbFindDynamic(db, w);
 
     if (testDbData.isEmpty) {
       // add customer also =======================
@@ -323,18 +339,19 @@ class invoiceController {
   // calculate all =========================================
   ctrTotalCalculate(controllerId) async {
     String pName = ProductNameControllers[controllerId]!.text;
-    ProductGstControllers[controllerId]!.text =
-        (ProductGstControllers[controllerId]!.text == '')
-            ? '18'
-            : ProductGstControllers[controllerId]!.text;
-    int gst = int.parse(ProductGstControllers[controllerId]!.text.toString());
 
-    ProductDiscountControllers[controllerId]!.text =
-        (ProductDiscountControllers[controllerId]!.text == '')
-            ? '0'
-            : ProductDiscountControllers[controllerId]!.text;
-    int discount =
-        int.parse(ProductDiscountControllers[controllerId]!.text.toString());
+    var tempGst = '0';
+    if (ProductGstControllers[controllerId]!.text != '') {
+      tempGst = ProductGstControllers[controllerId]!.text;
+    }
+    int gst = int.parse(tempGst);
+
+    var tempDiscount = '0';
+    if (ProductDiscountControllers[controllerId]!.text != '') {
+      tempDiscount = ProductDiscountControllers[controllerId]!.text;
+    }
+
+    int discount = int.parse(tempDiscount);
     // qunatity
     var tempQnt = '1';
     if (ProductQuntControllers[controllerId]!.text != '') {
@@ -346,6 +363,9 @@ class invoiceController {
         ? 0.toString()
         : ProductPriceControllers[controllerId]!.text.toString());
     if (pName != '' && price != '' && qunt != '') {
+      productDBdata[controllerId] = (productDBdata[controllerId] != null)
+          ? productDBdata[controllerId]
+          : {};
       // calculate
       int subTotal = int.parse(((price * qunt) - discount).round().toString());
       int totalGst = int.parse((((subTotal * gst) / 100).round()).toString());
@@ -386,6 +406,8 @@ class invoiceController {
     ProductTotalControllers[ctrId] = TextEditingController();
 
     ProductQuntControllers[ctrId]!.text = '1';
+    ProductDiscountControllers[ctrId]!.text = '0';
+    ProductGstControllers[ctrId]!.text = '0';
   }
 
   // remove  row
