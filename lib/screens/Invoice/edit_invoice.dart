@@ -250,7 +250,9 @@ class _editInvoiceState extends State<editInvoice> {
                                                             // .Customer_nameController,
                                                             .ProductPriceControllers[i],
                                                         padding: 8.0,
-                                                        isNumber: true),
+                                                        isNumber: true,
+                                                        method: fnTotalPrice,
+                                                        methodArg: i),
                                                   ),
 
                                                   // Quantity
@@ -274,7 +276,9 @@ class _editInvoiceState extends State<editInvoice> {
                                                         controller
                                                             .ProductGstControllers[i],
                                                         padding: 8.0,
-                                                        isNumber: true),
+                                                        isNumber: true,
+                                                        method: fnTotalPrice,
+                                                        methodArg: i),
                                                   ),
 
                                                   // Discount
@@ -285,7 +289,9 @@ class _editInvoiceState extends State<editInvoice> {
                                                         controller
                                                             .ProductDiscountControllers[i],
                                                         padding: 8.0,
-                                                        isNumber: true),
+                                                        isNumber: true,
+                                                        method: fnTotalPrice,
+                                                        methodArg: i),
                                                   ),
 
                                                   // Total
@@ -315,14 +321,6 @@ class _editInvoiceState extends State<editInvoice> {
                                                                 context,
                                                                 'Total',
                                                                 "${(controller.productDBdata[i] != null) ? controller.ProductTotalControllers[i]!.text : '0'}")),
-                                                        // Expanded(
-                                                        //     child: formInput(
-                                                        //         context,
-                                                        //         "Total",
-                                                        //         controller
-                                                        //             .ProductTotalControllers[i],
-                                                        //         padding: 8.0,
-                                                        //         isNumber: true)),
                                                       ],
                                                     ),
                                                   ),

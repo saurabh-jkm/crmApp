@@ -185,8 +185,20 @@ class _ProductAddState extends State<ProductAdd> {
                           ),
                         ),
                         Container(
-                          child: themeButton3(context, addNewStock,
-                              label: 'Add New', radius: 5.0),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Pro_Data();
+                                },
+                                icon: Icon(Icons.refresh),
+                                tooltip: 'Refresh',
+                              ),
+                              SizedBox(width: 20.0),
+                              themeButton3(context, addNewStock,
+                                  label: 'Add New', radius: 5.0),
+                            ],
+                          ),
                         )
                       ],
                     ),

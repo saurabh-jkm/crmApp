@@ -115,11 +115,6 @@ class _Invoice_ListState extends State<Invoice_List> {
     if (temp == 'updated') {
       OrderList_data();
     }
-
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (_) => addInvoiceScreen(header_name: "Add New Invoice")));
   }
 
 /////////////////////////  View Invoice Details  +++++++++++++++++++++++++++++
@@ -166,8 +161,20 @@ class _Invoice_ListState extends State<Invoice_List> {
                           ),
                         ),
                         Container(
-                          child: themeButton3(context, addNewInvoice,
-                              label: 'Add New', radius: 5.0),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  OrderList_data();
+                                },
+                                icon: Icon(Icons.refresh),
+                                tooltip: 'Refresh',
+                              ),
+                              SizedBox(width: 20.0),
+                              themeButton3(context, addNewInvoice,
+                                  label: 'Add New', radius: 5.0),
+                            ],
+                          ),
                         )
                       ],
                     ),

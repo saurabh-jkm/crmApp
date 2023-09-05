@@ -146,34 +146,13 @@ class _SubAdminState extends State<SubAdmin> {
 //////
   Map<String, dynamic>? data;
   Future Update_initial(id) async {
-    DocumentSnapshot pathData =
-        await FirebaseFirestore.instance.collection('users').doc(id).get();
-    if (pathData.exists) {
-      data = pathData.data() as Map<String, dynamic>?;
-      setState(() {
-        firstName = data!['first_name'];
-        lastName = data!['last_name'];
-        _email = data!["email"];
-        _mobile = data!['mobile_no'];
-        _passwd = data!['password'];
-        _date = data!['date_at'];
-        _User_Cate = data!['user_category'];
-        _StatusValue = (data!['status'] == "1")
-            ? "Active"
-            : (data!['status'] == "2")
-                ? "Inactive"
-                : "Select";
-
-        // print("$_User_Cate bjjj====");
-      });
-    }
+    await All_Update_initial(id);
   }
 
   Future All_Update_initial(id) async {
-    var pathData =
-        await Firestore.instance.collection('users').document(id).get();
-    if (pathData != null) {
-      data = pathData.map as Map<String, dynamic>?;
+    var dbData = await dbFindDynamic(db, {'table': 'users', 'uid': id});
+    if (dbData.isNotEmpty) {
+      data = dbData[0];
       setState(() {
         firstName = data!['first_name'];
         lastName = data!['last_name'];
@@ -384,7 +363,7 @@ class _SubAdminState extends State<SubAdmin> {
                             ? listList(context, "Add / Edit")
                             : Update_SubAdmin_Data(context, update_id, "Edit")
                         : listCon(context, "Add New Sub Admin")
-                    : View_SubAdmin_Data(context, "Veiw Details")
+                    : View_SubAdmin_Data(context, "View Details")
               ],
             ),
           ));
