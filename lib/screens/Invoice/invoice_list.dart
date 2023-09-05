@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals, unused_local_variable, deprecated_member_use, unused_element
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals, unused_local_variable, deprecated_member_use, unused_element, camel_case_types
 
 import 'dart:convert';
 import 'dart:io' show Platform;
@@ -416,40 +416,14 @@ class _Invoice_ListState extends State<Invoice_List> {
   }
 
 ///////////////////////////////////////////////
-  price_de(price_details) {
-    var prrr = {};
-    var ffff = price_details as Map;
-    var ff = new Map();
-    if (ffff.isNotEmpty) {
-      if (ffff.isNotEmpty) {
-        ffff.forEach((k, v) {
-          v.forEach((ke, vl) {
-            var key = "${k}___$ke";
-            ff[key];
-            ff[key] = vl;
-          });
-        });
-      }
-    }
-    setState(() {
-      prrr["price"] = "${ff["Product No. 1___price"]}.00 rs";
-      prrr["quantity"] = "${ffff.length}";
-      prrr["Pro_name"] = "${ff["Product No. 1___product_name"]}";
-      prrr["Pro_gst"] = "${ff["Product No. 1___gst"]}";
-      prrr["Pro_total_price"] = "${ff["Product No. 1___total_price"]}.00 rs";
-    });
-    // int i = index as int;
-    return prrr;
-  }
 
   TableRow tableRowWidget(String index, odID, user, buyer_mobile, _price,
       pro_status, pay_date, edata,
       {dbData: ''}) {
     var statuss = statusOF(pro_status);
 //////// Product Detailll ++++++++++++++++++++++
-    // var pricett = price_de(price_details);
-    // print("$price_details  ++++");
-    final formattedDate = formatDate(pay_date);
+
+    final formattedDate = formatDate(pay_date.toDate());
 //////////////////// ++++++++++++++++++++++++++++++++++++++++++++++
     return TableRow(children: [
       TableCell(
@@ -528,26 +502,6 @@ class _Invoice_ListState extends State<Invoice_List> {
         }, () {
           setState(() {
             viewInvoice(edata);
-            //  _Details_wd = true;
-            // priceData["order_id"] = "$odID";
-            // priceData["oder_Date"] = "$pay_date";
-            // priceData["buyer_name"] = "$user";
-            // priceData["buyer_mobile"] = "$buyer_mobile";
-            // priceData["buyer_address"] = "$buyer_address";
-            // priceData["buyer_email"] = "$buyer_email";
-            // priceData["Pro_name"] = "${pricett["Pro_name"]}";
-            // priceData["Pro_quantity"] = "${pricett["quantity"]}";
-            // priceData["Pro_price"] = "${pricett["price"]}";
-            // priceData["Pro_gst"] = "${pricett["Pro_gst"]}";
-            // priceData["total_price"] = "${pricett["Pro_total_price"]}";
-
-            // priceData["product_details"] = price_details;
-          });
-        }, () {
-          setState(() {
-            // _Update_wd = true;
-            // _Order_ID = odID;
-            // Update_initial(odID);
           });
         }, dbData: dbData),
       ),
@@ -557,8 +511,7 @@ class _Invoice_ListState extends State<Invoice_List> {
 /////////////////////////////////////  Row GOt Action Button  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   ///
 
-  Widget RowFor_Mobile_web(
-      BuildContext context, _invoice, _details_view, _Update,
+  Widget RowFor_Mobile_web(BuildContext context, _invoice, _details_view,
       {dbData: ''}) {
     return Padding(
         padding: EdgeInsets.only(
