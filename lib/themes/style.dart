@@ -20,6 +20,8 @@ final Color alertSuccess = Color.fromARGB(255, 72, 170, 137);
 final Color alertError = Color.fromARGB(255, 214, 99, 12);
 final TextStyle textStyle1 =
     TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: themeBlue);
+final TextStyle textStyle2 =
+    TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: themeBlue);
 
 final BoxDecoration loginBoxDeco = BoxDecoration(
   color: Color(0xFFffd83f),
