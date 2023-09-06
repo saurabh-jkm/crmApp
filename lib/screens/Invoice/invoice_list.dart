@@ -196,8 +196,6 @@ class _Invoice_ListState extends State<Invoice_List> {
       margin: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        // borderRadius:
-        //     const BorderRadius.all(Radius.circular(10)),
       ),
       child: ListView(
         children: [
@@ -297,110 +295,93 @@ class _Invoice_ListState extends State<Invoice_List> {
                     horizontalInside: BorderSide(width: .5, color: Colors.grey),
                   ),
                   children: [
-                    (Responsive.isMobile(context))
-                        ? TableRow(
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).secondaryHeaderColor),
-                            children: [
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text("Order List",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold))),
-                                ),
-                              ])
-                        :
-                        //S.No.	OrderId	User	Product	Price	Payment Status	Delivery Status	Payment Date	Actions
-                        TableRow(
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).secondaryHeaderColor),
-                            children: [
-                                TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Text('S.No.',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                    )),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: SizedBox(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Text('OrderId',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                    width: 40,
-                                  ),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Buyer Name",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Mobile no.",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Text("Price",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Status",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Date",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Text("Action",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                ),
-                              ]),
+                    TableRow(
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).secondaryHeaderColor),
+                        children: [
+                          TableCell(
+                              verticalAlignment:
+                                  TableCellVerticalAlignment.middle,
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text('S.No.',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              )),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: SizedBox(
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text('OrderId',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              width: 40,
+                            ),
+                          ),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text("Buyer Name",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text("Mobile no.",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text("Price",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text("Status",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text("Date",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text("Action",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                        ]),
                     for (var index = 0; index < OrderList.length; index++)
                       tableRowWidget(
                           "${index + 1}",
@@ -428,8 +409,6 @@ class _Invoice_ListState extends State<Invoice_List> {
       pro_status, pay_date, edata,
       {dbData: ''}) {
     var statuss = statusOF(pro_status);
-//////// Product Detailll ++++++++++++++++++++++
-
     final formattedDate = formatDate(pay_date);
 //////////////////// ++++++++++++++++++++++++++++++++++++++++++++++
     return TableRow(children: [
@@ -509,26 +488,6 @@ class _Invoice_ListState extends State<Invoice_List> {
         }, () {
           setState(() {
             viewInvoice(edata);
-            //  _Details_wd = true;
-            // priceData["order_id"] = "$odID";
-            // priceData["oder_Date"] = "$pay_date";
-            // priceData["buyer_name"] = "$user";
-            // priceData["buyer_mobile"] = "$buyer_mobile";
-            // priceData["buyer_address"] = "$buyer_address";
-            // priceData["buyer_email"] = "$buyer_email";
-            // priceData["Pro_name"] = "${pricett["Pro_name"]}";
-            // priceData["Pro_quantity"] = "${pricett["quantity"]}";
-            // priceData["Pro_price"] = "${pricett["price"]}";
-            // priceData["Pro_gst"] = "${pricett["Pro_gst"]}";
-            // priceData["total_price"] = "${pricett["Pro_total_price"]}";
-
-            // priceData["product_details"] = price_details;
-          });
-        }, () {
-          setState(() {
-            // _Update_wd = true;
-            // _Order_ID = odID;
-            // Update_initial(odID);
           });
         }, dbData: dbData),
       ),
@@ -538,8 +497,7 @@ class _Invoice_ListState extends State<Invoice_List> {
 /////////////////////////////////////  Row GOt Action Button  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   ///
 
-  Widget RowFor_Mobile_web(
-      BuildContext context, _invoice, _details_view, _Update,
+  Widget RowFor_Mobile_web(BuildContext context, _invoice, _details_view,
       {dbData: ''}) {
     return Padding(
         padding: EdgeInsets.only(

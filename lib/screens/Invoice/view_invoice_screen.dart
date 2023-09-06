@@ -124,8 +124,8 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          width: 300,
-                          height: MediaQuery.of(context).size.height * 0.5,
+                          // width: 300,
+                          // height: MediaQuery.of(context).size.height * 0.5,
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                               color: Colors.white,
@@ -248,8 +248,8 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                         ),
                         SizedBox(width: 100),
                         Container(
-                          width: 300,
-                          height: MediaQuery.of(context).size.height * 0.5,
+                          // width: 300,
+                          // height: MediaQuery.of(context).size.height * 0.5,
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                               color: Colors.white,

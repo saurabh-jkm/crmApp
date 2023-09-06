@@ -16,33 +16,13 @@ class InvoiceService {
 
   final PriceDetail;
 
-  Map eedata = {
-    "watt": "20 W",
-    "date_at": "2023-08-31 04:06:09.526280",
-    "sizes": "small",
-    "item_location": {"room 3": "11", "room 1": "10"},
-    "status": "true",
-    "colors": "green",
-    "name": 'Test2',
-    "brand": "phillips",
-    "price": '122',
-    'voltage': "400",
-    "category": 'electronics',
-    "quantity": '10',
-    'id': 'bLLUwPamLTNBpMjd76sK'
-  };
   Future<Uint8List> createInvoice() async {
     Map tt = PriceDetail["products"];
     var myTheme = ThemeData.withFont(
       base: Font.ttf(await rootBundle.load("assets/OpenSans-Regular.ttf")),
     );
     final pdf = pw.Document(theme: myTheme);
-    // final image =
-    //     (await rootBundle.load("assets/images/qrr.png")).buffer.asUint8List();
-    int a = int.parse(eedata["price"]);
-    int b = int.parse(eedata["quantity"]);
-    // final formattedDate = formatDate(eedata["date_at"]);
-    var amount = a * b;
+
     final qrrrImage = pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
