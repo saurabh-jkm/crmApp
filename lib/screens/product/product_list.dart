@@ -54,10 +54,12 @@ class _ProductAddState extends State<ProductAdd> {
 
 ////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
   bool progressWidget = true;
+  List finalProductList = [];
   List productList = [];
   Pro_Data() async {
     var temp2 = [];
-    productList = [];
+    productList = finalProductList = [];
+
     Map<dynamic, dynamic> w = {
       'table': "product",
       "orderBy": "date_at"
@@ -67,9 +69,19 @@ class _ProductAddState extends State<ProductAdd> {
 
     setState(() {
       temp.forEach((k, v) {
+        var tempLocation = '';
+
+        if (v['item_location'] != null && v['item_location'].isNotEmpty) {
+          v['item_location'].forEach((ke, vl) {
+            tempLocation = (tempLocation == '') ? "$ke" : '$tempLocation , $ke';
+          });
+        }
+        v['location'] = tempLocation;
+
         productList.add(v);
       });
       filteredItems = productList;
+      finalProductList = productList;
       progressWidget = false;
     });
   }
@@ -317,6 +329,13 @@ class _ProductAddState extends State<ProductAdd> {
                                   TableCell(
                                     verticalAlignment:
                                         TableCellVerticalAlignment.middle,
+                                    child: Text("Location",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  TableCell(
+                                    verticalAlignment:
+                                        TableCellVerticalAlignment.middle,
                                     child: Text("Price",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
@@ -343,40 +362,25 @@ class _ProductAddState extends State<ProductAdd> {
                                             fontWeight: FontWeight.bold)),
                                   ),
                                 ]),
-                            if (productList2.isEmpty)
-                              for (var index = 0;
-                                  index < productList.length;
-                                  index++)
-                                tableRowWidget(
-                                    index + 1,
-                                    productList[index]['name'],
-                                    (productList[index]['brand'] == null)
-                                        ? ""
-                                        : productList[index]['brand'],
-                                    productList[index]['category'],
-                                    productList[index]['quantity'],
-                                    (productList[index]['price'] != "")
-                                        ? productList[index]['price']
-                                        : 00.00,
-                                    productList[index]['status'],
-                                    productList[index]['date_at'],
-                                    productList[index]['id'],
-                                    productList[index]),
-                            if (productList2.isNotEmpty)
-                              for (var index = 0;
-                                  index < productList2.length;
-                                  index++)
-                                tableRowWidget(
-                                    index + 1,
-                                    productList2[index]['name'],
-                                    productList2[index]['brand'],
-                                    productList2[index]['category'],
-                                    productList2[index]['quantity'],
-                                    productList2[index]['price'],
-                                    productList2[index]['status'],
-                                    productList2[index]['date_at'],
-                                    productList2[index]['id'],
-                                    productList2[index]),
+                            for (var index = 0;
+                                index < productList.length;
+                                index++)
+                              tableRowWidget(
+                                  index + 1,
+                                  productList[index]['name'],
+                                  (productList[index]['brand'] == null)
+                                      ? ""
+                                      : productList[index]['brand'],
+                                  productList[index]['category'],
+                                  productList[index]['quantity'],
+                                  productList[index]['location'],
+                                  (productList[index]['price'] != "")
+                                      ? productList[index]['price']
+                                      : 00.00,
+                                  productList[index]['status'],
+                                  productList[index]['date_at'],
+                                  productList[index]['id'],
+                                  productList[index]),
                           ],
                         ),
                       ],
@@ -388,8 +392,8 @@ class _ProductAddState extends State<ProductAdd> {
           );
   }
 
-  TableRow tableRowWidget(Sno, name, BrandName, cate_name, items_no, price,
-      status, date, iid, data) {
+  TableRow tableRowWidget(Sno, name, BrandName, cate_name, items_no, location,
+      price, status, date, iid, data) {
     var statuss = statusOF(status);
     final formattedDate = formatDate(date);
     return TableRow(children: [
@@ -445,6 +449,14 @@ class _ProductAddState extends State<ProductAdd> {
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Text("$items_no",
+            style: GoogleFonts.alike(
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+            )),
+      ),
+      TableCell(
+        verticalAlignment: TableCellVerticalAlignment.middle,
+        child: Text("$location",
             style: GoogleFonts.alike(
               fontWeight: FontWeight.bold,
               fontSize: 11,
@@ -617,7 +629,7 @@ class _ProductAddState extends State<ProductAdd> {
     );
   }
 
-/////////   Search Fuction  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/////////   Search filter  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   var filteredItems = [];
   bool show_drop_list = false;
   List<String>? foodListSearch;
@@ -625,50 +637,20 @@ class _ProductAddState extends State<ProductAdd> {
   ///
   List productList2 = [];
   void _filterItems(String query) {
-    productList2 = [];
-    for (var i = 0; i < productList.length; i++) {
-      String pro_name = productList[i]["name"];
-
-      String pro_cat = productList[i]["category"];
-
-      String pro_brand = "";
-      (productList[i]["brand"] != null)
-          ? pro_brand = productList[i]["brand"]
-          : "";
-
-      String pro_color = "";
-      (productList[i]["colors"] != null)
-          ? pro_color = productList[i]["colors"]
-          : "";
-
-      //   String pro_location = productList[i]["item_location"];
-      var tempList = [
-        pro_name.toLowerCase(),
-        pro_cat.toLowerCase(),
-        pro_brand.toLowerCase(),
-        pro_color.toLowerCase()
-      ];
-      print("$tempList ++++++++++++++++++");
-      // var foolist = tempList
-      //     .where((element) => element.contains(query.toLowerCase()))
-      //     .toList();
-      // print("$foolist ++hh+++++");
-      if (tempList.contains(query.toLowerCase())) {
-        setState(() {
-          if (productList2.contains(productList[i])) {
-          } else {
-            productList2.add(productList[i]);
-          }
-        });
-      } else {
-        print("not fond  ++++++++++++++++++");
-        // setState(() {
-        //   if (show_drop_list == false && _controllers.text.isNotEmpty) {
-        //     show_drop_list = true;
-        //   }
-        //});
-      }
-    }
+    List<String> searchField = ['name', 'category', 'brand', 'location'];
+    productList = [];
+    finalProductList.forEach((e) {
+      bool isFind = false;
+      searchField.forEach((key) {
+        if (!isFind &&
+            e['$key'] != null &&
+            e['$key'].toLowerCase().contains(query.toLowerCase())) {
+          productList.add(e);
+          isFind = true;
+        }
+      });
+    });
+    setState(() {});
   }
   ////////////////////  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
