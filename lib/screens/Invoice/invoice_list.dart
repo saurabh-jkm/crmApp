@@ -64,6 +64,7 @@ class _Invoice_ListState extends State<Invoice_List> {
 ///////////////////////// Order List Data fetch fn ++++++++++++++++++++++++++++
 
   List OrderList = [];
+  List finalOrderList = [];
   OrderList_data() async {
     OrderList = [];
     Map<dynamic, dynamic> w = {
@@ -72,8 +73,12 @@ class _Invoice_ListState extends State<Invoice_List> {
     var temp = await dbFindDynamic(db, w);
     setState(() {
       temp.forEach((k, v) {
+        v['date'] = DateFormat('dd/MM/yyyy').format(v['date_at']);
+        v['statusIs'] =
+            (v['status'] != null && v['status']) ? 'Active' : 'InActive';
         OrderList.add(v);
       });
+      finalOrderList = OrderList;
 
       progressWidget = false;
     });
@@ -283,7 +288,8 @@ class _Invoice_ListState extends State<Invoice_List> {
                             margin: EdgeInsets.symmetric(horizontal: 10),
                             height: MediaQuery.of(context).size.height * 0.05,
                             width: MediaQuery.of(context).size.width * 0.4,
-                            child: SearchField())
+                            child: SearchBox(context,
+                                label: "Search", searchFn: SearchFn))
                       ],
                     )),
                 SizedBox(
@@ -565,6 +571,32 @@ class _Invoice_ListState extends State<Invoice_List> {
                     ))),
           ],
         ));
+  }
+
+  // search ==================================================
+
+  SearchFn(query) {
+    List<String> searchField = [
+      'id',
+      'customer_name',
+      'customer_mobile',
+      'date',
+      'statusIs'
+    ];
+    OrderList = [];
+
+    finalOrderList.forEach((e) {
+      bool isFind = false;
+      searchField.forEach((key) {
+        if (!isFind &&
+            e['$key'] != null &&
+            e['$key'].toLowerCase().contains(query.toLowerCase())) {
+          OrderList.add(e);
+          isFind = true;
+        }
+      });
+    });
+    setState(() {});
   }
 
 /////////////////////////////////////////////=====================================================
