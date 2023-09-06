@@ -19,16 +19,15 @@ class ProductController {
       ? Firestore.instance
       : FirebaseFirestore.instance;
 
-  final formKey = GlobalKey<FormState>();
+  var formKey = GlobalKey<FormState>();
 
-  final nameController = TextEditingController();
-  final categoryController = TextEditingController();
-  final quantityController = TextEditingController();
-  final priceController = TextEditingController();
-  final brandController = TextEditingController();
-
+  var nameController = TextEditingController();
+  var categoryController = TextEditingController();
+  var quantityController = TextEditingController();
+  var priceController = TextEditingController();
+  var brandController = TextEditingController();
   // for new attribute
-  final newAttributeController = TextEditingController();
+  var newAttributeController = TextEditingController();
 
   // temporary
   Map<String, TextEditingController> dynamicControllers = new Map();
@@ -44,6 +43,7 @@ class ProductController {
 
   int totalLocation = 1;
 
+  //init controller ==========================================
   init_functions() async {
     await getProductNameList();
     await getCategoryList();
@@ -53,13 +53,28 @@ class ProductController {
     locationQuntControllers['1'] = TextEditingController();
   }
 
-  // reset controller
+  // reset controller =====================================
   resetController() {
-    nameController.text = '';
-    categoryController.text = '';
-    quantityController.text = '';
-    priceController.text = '';
-    brandController.text = '';
+    formKey = GlobalKey<FormState>();
+    nameController = TextEditingController();
+    categoryController = TextEditingController();
+    quantityController = TextEditingController();
+    priceController = TextEditingController();
+    brandController = TextEditingController();
+    // for new attribute
+    newAttributeController = TextEditingController();
+    // temporary
+    dynamicControllers = new Map();
+
+    locationControllers = new Map();
+    locationQuntControllers = new Map();
+
+    // Suggation List =====================================
+    ListName = [];
+    ListCategory = [];
+    ListAttribute = {};
+    ListAttributeWithId = {};
+    totalLocation = 1;
   }
 
   // get all product name List =============================
@@ -204,6 +219,15 @@ class ProductController {
       return false;
     }
 
+    // check product already added
+    var checkDB = await dbFindDynamic(
+        db, {'table': 'product', 'name': nameController.text});
+    if (docId == '' && (checkDB.isNotEmpty)) {
+      themeAlert(context, ' "${nameController.text}" Already Added',
+          type: 'error');
+      return false;
+    }
+
     if (!ListCategory.contains(categoryController.text)) {
       addNewCategory(
           context, categoryController.text, ListCategory, fnAddNewCat,
@@ -266,8 +290,10 @@ class ProductController {
 
     if (docId == '') {
       await dbSave(db, dbArr);
+      await resetController();
+      await init_functions();
       themeAlert(context, "Submitted Successfully ");
-      Navigator.popAndPushNamed(context, '/add_stock');
+      //Navigator.popAndPushNamed(context, '/add_stock');
     } else {
       dbArr['id'] = docId;
       var rData = await dbUpdate(db, dbArr);

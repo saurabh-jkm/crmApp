@@ -106,11 +106,14 @@ class _ProductAddState extends State<ProductAdd> {
 
 /////////////=====================================================================
 
-  addNewStock() {
-    Navigator.push(
+  addNewStock() async {
+    final temp = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (_) => addStockScreen(header_name: "Add New Stock")));
+    if (temp == 'updated') {
+      Pro_Data();
+    }
   }
 
   var selected_pro = {};

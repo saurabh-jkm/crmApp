@@ -65,7 +65,8 @@ class _addStockScreenState extends State<addStockScreen> {
         child: Column(
           children: [
             //header ======================
-            themeHeader2(context, "${widget.header_name}"),
+            themeHeader2(context, "${widget.header_name}",
+                widthBack: 'updated'),
             // formField =======================
             Form(
               key: controller.formKey,
@@ -109,12 +110,12 @@ class _addStockScreenState extends State<addStockScreen> {
                                     Expanded(
                                       child: formInput(context, "Quantity",
                                           controller.quantityController,
-                                          padding: 8.0),
+                                          padding: 8.0, isNumber: true),
                                     ),
                                     Expanded(
                                       child: formInput(context, "Price",
                                           controller.priceController,
-                                          padding: 8.0),
+                                          padding: 8.0, isNumber: true),
                                     ),
                                   ],
                                 ),
@@ -238,8 +239,8 @@ class _addStockScreenState extends State<addStockScreen> {
                     child: Center(
                         child: ElevatedButton(
                             onPressed: () async {
-                              controller.insertProduct(context);
-                              //setState(() {});
+                              await controller.insertProduct(context);
+                              setState(() {});
                             },
                             child: Text('Submit'))),
                   ),
