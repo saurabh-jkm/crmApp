@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, deprecated_member_use, sized_box_for_whitespace, non_constant_identifier_names, unrelated_type_equality_checks, dead_code, unnecessary_string_interpolations, use_build_context_synchronously, unnecessary_new, prefer_collection_literals, unused_element, avoid_print, sort_child_properties_last
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, deprecated_member_use, sized_box_for_whitespace, non_constant_identifier_names, unrelated_type_equality_checks, dead_code, unnecessary_string_interpolations, use_build_context_synchronously, unnecessary_new, prefer_collection_literals, unused_element, avoid_print, sort_child_properties_last, prefer_typing_uninitialized_variables
 
 import 'dart:convert';
 import 'dart:io';
@@ -125,7 +125,6 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
     Map<dynamic, dynamic> w = {'table': "users", 'id': id};
     data = await dbFind(w);
     setState(() {
-      print("$data   ");
       fnameController.text = data!["first_name"];
       lnameController.text = data!["last_name"];
       phoneController.text = data!["mobile_no"];
@@ -141,23 +140,63 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
   updatelist(
     id,
   ) async {
-    Map<String, dynamic> w = {};
-    w = {
-      "table": "users",
-      "first_name": fnameController.text.trim(),
-      "last_name": lnameController.text.trim(),
-      "mobile_no": phoneController.text.trim(),
-      "password": passController.text.trim(),
-      "email": emailnameController.text.trim(),
-      "avatar": "$url_img",
-      "date_at": "$Date_at"
-    };
-    w['id'] = id;
-    var msg = await dbUpdate(db, w);
-    if (msg != null) {
-      themeAlert(context, "Updated Successfully !!");
-      Navigator.pop(context, 'updated');
+    var alert = '';
+    if (emailnameController.text.isEmpty ||
+        emailnameController.text.length < 6) {
+      alert = "Please enter valid Email";
+    } else if (phoneController.text.isEmpty ||
+        phoneController.text.length < 10) {
+      alert = "Please enter valid Phone Number";
+    } else if (fnameController.text.isEmpty ||
+        fnameController.text.length < 2) {
+      alert = "Please enter valid first Name";
+    } else if (lnameController.text.isEmpty) {
+      alert = "Please enter valid Last Name";
+    } else if (passController.text.isEmpty || passController.text.length < 6) {
+      alert = "Please enter valid password";
     }
+
+    if (alert != '') {
+      themeAlert(context, alert, type: "error");
+    } else {
+      Map<String, dynamic> w = {};
+      w = {
+        "table": "users",
+        "first_name": fnameController.text.trim(),
+        "last_name": lnameController.text.trim(),
+        "mobile_no": phoneController.text.trim(),
+        "password": passController.text.trim(),
+        "email": emailnameController.text.trim(),
+        "avatar": "$url_img",
+        "date_at": "$Date_at"
+      };
+      w['id'] = id;
+      var msg = await dbUpdate(db, w);
+      await _Update_initial(widget.iid);
+
+      await shared_pref_update();
+      if (msg != null) {
+        themeAlert(context, "Updated Successfully !!");
+        Navigator.pop(context, true);
+      }
+    }
+  }
+
+  shared_pref_update() async {
+    var userDataArr = {
+      'user_type': data!["user_type"],
+      'id': widget.iid,
+      'name': "${data!["first_name"]} ${data!["last_name"]}",
+      'fname': data!["first_name"],
+      'lname': data!["last_name"],
+      'phone': data!["mobile_no"],
+      'email': data!["email"],
+      "status": data!["status"],
+      "date_at": data!["date_at"],
+      'avatar': data!["avatar"],
+    };
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user', jsonEncode(userDataArr));
   }
 
 ////// =========================================================================
@@ -429,9 +468,9 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                       SizedBox(
                         width: 10,
                       ),
-                      themeButton3(context, () {
-                        setState(() {});
-                      }, label: "Cancel", buttonColor: Colors.black),
+                      // themeButton3(context, () {
+                      //   setState(() {});
+                      // }, label: "Cancel", buttonColor: Colors.black),
                     ],
                   ),
                 ],

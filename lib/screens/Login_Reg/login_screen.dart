@@ -76,7 +76,6 @@ class _Login_CopyState extends State<Login_Copy> {
       var userData = dbData[0];
       // print("$userData  +++++");
       var userDataArr = {
-        'type': userData["user_category"],
         'id': userData["id"],
         'name': "${userData["first_name"]} ${userData["last_name"]}",
         'fname': userData["first_name"],
@@ -86,7 +85,6 @@ class _Login_CopyState extends State<Login_Copy> {
         'user_type': userData["user_type"],
         "status": userData["status"],
         "date_at": userData["date_at"],
-        'profile_complete': userData["user_category"],
         'avatar': userData["avatar"],
       };
       SharedPreferences prefs = await SharedPreferences.getInstance();
