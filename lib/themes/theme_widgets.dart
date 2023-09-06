@@ -657,3 +657,37 @@ Widget themeHeading2(label) {
         style: themeTextStyle(color: themeBG, fw: FontWeight.bold, size: 16.0)),
   );
 }
+
+// Search box
+Widget SearchBox(BuildContext context, {searchFn: '', label: 'Search'}) {
+  return TextField(
+    style: TextStyle(color: Color.fromARGB(255, 27, 27, 27)),
+    onChanged: (value) {
+      if (searchFn != '') {
+        searchFn(value);
+      }
+    },
+    decoration: InputDecoration(
+      hintText: "$label",
+      hintStyle: TextStyle(color: Colors.black),
+      fillColor: Colors.white,
+      filled: true,
+      border: OutlineInputBorder(
+        borderSide: BorderSide.none,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+      ),
+      suffixIcon: InkWell(
+        onTap: () {},
+        child: Container(
+          padding: EdgeInsets.all(defaultPadding * 0.75),
+          margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+          decoration: BoxDecoration(
+            color: primaryColor,
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+          ),
+          child: Icon(Icons.search),
+        ),
+      ),
+    ),
+  );
+}
