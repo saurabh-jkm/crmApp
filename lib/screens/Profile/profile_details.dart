@@ -56,7 +56,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         context,
         MaterialPageRoute(
             builder: (_) => EditProfileDetails(
-                header_name: "Edit Profile Details", iid: user["id"])));
+                header_name: "Edit Profile Details",
+                iid: "my0Zs0h3wAY6bF0d4xHF")));
   }
 
 ////// =========================================================================
