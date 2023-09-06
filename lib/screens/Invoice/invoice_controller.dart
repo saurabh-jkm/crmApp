@@ -98,11 +98,17 @@ class invoiceController {
 
     // set edit value for edit page =========================================
     if (dbData != '') {
-      Customer_nameController.text = dbData['customer_name'];
-      Customer_MobileController.text = dbData['mobile'];
-      Customer_emailController.text = dbData['email'];
-      Customer_AddressController.text = dbData['address'];
-      invoiceDateController.text = dbData['invoice_date'];
+      Customer_nameController.text =
+          (dbData['customer_name'] != null) ? dbData['customer_name'] : '';
+      Customer_MobileController.text =
+          (dbData['mobile'] != null) ? dbData['mobile'] : '';
+      Customer_emailController.text =
+          (dbData['email'] != null) ? dbData['email'] : '';
+      Customer_AddressController.text =
+          (dbData['address'] != null) ? dbData['address'] : '';
+      invoiceDateController.text = (dbData['invoice_date'] != null)
+          ? dbData['invoice_date']
+          : DateFormat('dd/MM/yyyy').format(dbData['date_at']);
 
       // for products
       var i = 1;
