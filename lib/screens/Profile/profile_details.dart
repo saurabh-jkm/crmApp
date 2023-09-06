@@ -1,9 +1,10 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, deprecated_member_use, sized_box_for_whitespace, non_constant_identifier_names, unrelated_type_equality_checks, dead_code, unnecessary_string_interpolations, use_build_context_synchronously
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, deprecated_member_use, sized_box_for_whitespace, non_constant_identifier_names, unrelated_type_equality_checks, dead_code, unnecessary_string_interpolations, use_build_context_synchronously, unnecessary_new, prefer_collection_literals
 
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/screens/Profile/edit_profile.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -50,40 +51,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     }
   }
 
-/////////////  Update Data +++++++++++++++++++++++++++++++++++++++++++++++++++++
-  Map<String, dynamic>? data;
-  Future<void> _Update_initial(id) async {
-    Map<dynamic, dynamic> w = {'table': "users", 'id': id};
-    data = await dbFind(w);
-    print("$data kk++++++");
-  }
-
-//////// =======================================================================
-////////  Update Data of User Profile ++++++++++++++++++++++++++++++++++++++++++
-
-  updatelist(
-    id,
-  ) async {
-    Map<String, dynamic> w = {};
-    w = {
-      "table": "users",
-      "first_name": fnameController.text.trim(),
-      "last_name": lnameController.text.trim(),
-      "mobile_no": phoneController.text.trim(),
-      "password": passController.text.trim(),
-      "email": emailnameController.text.trim(),
-      'status': "1",
-      "avatar": "",
-      "date_at": "$Date_at"
-    };
-    w['id'] = id;
-    var msg = await dbUpdate(db, w);
-    themeAlert(context, "$msg !!");
-    setState(() {});
+  addNewStock() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => EditProfileDetails(
+                header_name: "Edit Profile Details", iid: user["id"])));
   }
 
 ////// =========================================================================
-
   @override
   void initState() {
     _getUser();
@@ -102,7 +78,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           Header(
             title: "My Profile",
           ),
-          (update == true) ? Edit_List(context, data) : Show_info(context)
+          Show_info(context)
         ],
       ),
     );
@@ -144,10 +120,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
               children: [
                 ElevatedButton(
                     onPressed: () {
-                      setState(() {
-                        _Update_initial("${user["id"]}");
-                        update = true;
-                      });
+                      addNewStock();
+                      // setState(() {
+                      //   _Update_initial("${user["id"]}");
+                      //   update = true;
+                      // });
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Colors.green, // Background color
@@ -271,216 +248,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     );
   }
 
-//// Widget for Start_up
-
-  Widget Edit_List(BuildContext context, userr) {
-    bool passwordVisible = true;
-    return Container(
-      // height: MediaQuery.of(context).size.height,
-      margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-      padding: EdgeInsets.all(defaultPadding),
-      decoration: BoxDecoration(
-        color: Colors.white30,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.account_circle_outlined,
-                color: Colors.blue,
-                size: 30,
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text("Account settings",
-                  style: GoogleFonts.alike(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20)),
-            ],
-          ),
-          SizedBox(
-            height: 20,
-            child: Divider(thickness: 1, color: Colors.white),
-          ),
-          Container(
-              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
-              width: double.infinity,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white),
-                        child: Text(
-                          "Frist Name",
-                          style: TextStyle(color: Colors.black, fontSize: 15),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: fnameController,
-                          decoration: InputDecoration(
-                            hintText: '${userr["first_name"]}',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white),
-                        child: Text(
-                          "Last Name",
-                          style: TextStyle(color: Colors.black, fontSize: 15),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: lnameController,
-                          decoration: InputDecoration(
-                            hintText: '${userr["last_name"]}',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white),
-                        child: Text(
-                          "Email",
-                          style: TextStyle(color: Colors.black, fontSize: 15),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: emailnameController,
-                          decoration: InputDecoration(
-                            hintText: '${userr["email"]}',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white),
-                        child: Text(
-                          "Mobile Number",
-                          style: TextStyle(color: Colors.black, fontSize: 15),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: phoneController,
-                          decoration: InputDecoration(
-                            hintText: '${userr["mobile_no"]}',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.white),
-                        child: Text(
-                          "Change Pin",
-                          style: TextStyle(color: Colors.black, fontSize: 15),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: passController,
-                          obscureText: passwordVisible,
-                          decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                passwordVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: Colors.blue,
-                                size: 20,
-                              ),
-                              onPressed: () {
-                                setState(
-                                  () {
-                                    passwordVisible = !passwordVisible;
-                                  },
-                                );
-                              },
-                            ),
-                            hintText: '******',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      themeButton3(context, () {
-                        setState(() {
-                          updatelist("${user["id"]}");
-                        });
-                      }, buttonColor: themeBG3, label: "Update"),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      themeButton3(context, () {
-                        setState(() {
-                          update = false;
-                        });
-                      }, label: "Cancel", buttonColor: Colors.black),
-                    ],
-                  ),
-                ],
-              )),
-        ],
-      ),
-    );
-  }
-
-  final double coverHeight = 220;
-
 /////  Profile image +====
-
+  final double coverHeight = 220;
   Widget profile_image() => Container(
         padding: EdgeInsets.all(5),
         decoration: BoxDecoration(
