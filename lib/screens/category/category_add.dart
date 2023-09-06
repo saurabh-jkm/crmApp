@@ -161,15 +161,11 @@ class _CategoryAddState extends State<CategoryAdd> {
       'table': "category",
       //'status': "$_StatusValue",
     };
-    var temp = (!kIsWeb && Platform.isWindows)
-        ? await All_dbFindDynamic(db, w)
-        : await dbFindDynamic(db, w);
-
+    var temp = await dbFindDynamic(db, w);
     setState(() {
       temp.forEach((k, v) {
         StoreDocs.add(v);
       });
-
       // print("${temp2}  ++++++++++++++");
       progressWidget = false;
     });

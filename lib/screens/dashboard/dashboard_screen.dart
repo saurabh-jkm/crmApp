@@ -1,8 +1,10 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, avoid_returning_null_for_void, no_leading_underscores_for_local_identifiers, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, sized_box_for_whitespace, unused_import, unnecessary_new, unnecessary_brace_in_string_interps, prefer_collection_literals
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, avoid_returning_null_for_void, no_leading_underscores_for_local_identifiers, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, sized_box_for_whitespace, unused_import, unnecessary_new, unnecessary_brace_in_string_interps, prefer_collection_literals, unused_local_variable
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants.dart';
 import '../../models/MyFiles.dart';
 import '../../responsive.dart';
+import '../../themes/firebase_functions.dart';
+import '../../themes/theme_widgets.dart';
 import 'components/header.dart';
 import 'components/my_fields.dart';
 import 'components/recent_files.dart';
@@ -28,12 +32,120 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   //////Crosss file picker
   final GlobalKey exportKey = GlobalKey();
+  /////// get user data  +++++++++++++++++++++++++++++++++++++++++++++++++++
+  Map<dynamic, dynamic> user = new Map();
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic userData = (prefs.getString('user'));
+    if (userData != null) {
+      setState(() async {
+        await invo_Data();
+        await Stock_Data();
+        await User_Data();
+        await OutofStock_Data();
+        user = await jsonDecode(userData) as Map<dynamic, dynamic>;
+      });
+    }
+  }
 
   @override
   void initState() {
-    // _getUser();
+    _getUser();
+
     super.initState();
   }
+
+  var db = (!kIsWeb && Platform.isWindows)
+      ? Firestore.instance
+      : FirebaseFirestore.instance;
+  bool progressWidget = true;
+  ////////// inoive ==============================================================
+  late int invoiceNo;
+  invo_Data() async {
+    List StoreDocs = [];
+    Map<dynamic, dynamic> w = {
+      'table': "order",
+      //'status': "$_StatusValue",
+    };
+    var temp = await dbFindDynamic(db, w);
+    setState(() {
+      temp.forEach((k, v) {
+        StoreDocs.add(v);
+        invoiceNo = StoreDocs.length;
+        progressWidget = false;
+      });
+    });
+  }
+
+  /////////=====================================================================
+  late int StockNo;
+  Stock_Data() async {
+    List StoreDocs = [];
+    Map<dynamic, dynamic> w = {
+      'table': "product",
+      //'status': "$_StatusValue",
+    };
+    var temp = await dbFindDynamic(db, w);
+    setState(() {
+      temp.forEach((k, v) {
+        StoreDocs.add(v);
+        StockNo = StoreDocs.length;
+      });
+    });
+  }
+
+////////////////
+  ///
+  /////////=====================================================================
+  late int UserNo;
+  User_Data() async {
+    List StoreDocs = [];
+    Map<dynamic, dynamic> w = {
+      'table': "users",
+      //'status': "$_StatusValue",
+    };
+    var temp = await dbFindDynamic(db, w);
+    setState(() {
+      temp.forEach((k, v) {
+        StoreDocs.add(v);
+        UserNo = StoreDocs.length;
+      });
+    });
+  }
+
+////////////////
+  ///
+  /////////=====================================================================
+  late int Out_of_Stock_No;
+  OutofStock_Data() async {
+    List StoreDocs = [];
+
+    var _category = await Firestore.instance
+        .collection('product')
+        .where("quantity", isEqualTo: "0")
+        .get()
+        .then(
+      (querySnapshot) {
+        for (var docSnapshot in querySnapshot) {
+          setState(() {
+            StoreDocs.add(docSnapshot.map);
+            Out_of_Stock_No = StoreDocs.length;
+          });
+        }
+      },
+    );
+
+    // var temp = await dbFindDynamic(db, w);
+    setState(() {
+      // temp.forEach((k, v) {
+      //   StoreDocs.add(v);
+      //   UserNo = StoreDocs.length;
+      //});
+    });
+  }
+////////////////
+  ///
+  ///
 
   final List<BarChartModel> data = [
     BarChartModel(
@@ -73,39 +185,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
       color2: charts.ColorUtil.fromDartColor(Colors.yellow),
     ),
   ];
-  /////
-  /////// get user data  +++++++++++++++++++++++++++++++++++++++++++++++++++
-  // Map<dynamic, dynamic> Order_data = new Map();
-  // var List_order = [];
 
-  // _getUser() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   dynamic userData = (prefs.getString('user'));
-
-  //   if (userData != null) {
-  //     setState(() {
-  //       Order_data = jsonDecode(userData) as Map<dynamic, dynamic>;
-  //       List_order = Order_data["order_data"];
-  //       // print("${List_order.length.toInt()}  +++++++++kkk++++++");
-  //       item_no = List_order.length.toInt();
-  //     });
-  //   }
-  // }
-
-  int item_no = 0;
-
-  List demoMyFiles = [
+  late List demoMyFiles = [
     CloudStorageInfo(
-      title: "Total Order",
-      numOfFiles: 45,
+      title: "Total Invoice",
+      numOfFiles: invoiceNo,
       svgSrc: Icons.shopping_cart,
       // svgSrc: "assets/icons/shoping.svg",
       color: primaryColor,
-      PageNo: 6,
+      PageNo: 5,
     ),
     CloudStorageInfo(
-      title: "Total Product",
-      numOfFiles: 28,
+      title: "Total Stocks",
+      numOfFiles: StockNo,
       svgSrc: Icons.wallet_giftcard,
       // svgSrc: "assets/icons/google_drive.svg",
       color: Color(0xFFFFA113),
@@ -113,7 +205,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ),
     CloudStorageInfo(
       title: "Total User",
-      numOfFiles: 32,
+      numOfFiles: UserNo,
       svgSrc: Icons.person,
       // svgSrc: "assets/icons/one_drive.svg",
       color: Color(0xFFA4CDFF),
@@ -131,7 +223,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ),
     CloudStorageInfo(
       title: "Out of stock",
-      numOfFiles: 34,
+      numOfFiles: Out_of_Stock_No,
       svgSrc: Icons.production_quantity_limits_outlined,
       // svgSrc: "assets/icons/drop_box.svg",
       color: Colors.yellow,
@@ -166,132 +258,138 @@ class _DashboardScreenState extends State<DashboardScreen> {
         colorFn: (BarChartModel series, _) => series.color2,
       ),
     ];
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(defaultPadding),
-        child: ListView(
-          children: [
-            Header(
-              title: "Dashboard",
-            ),
-            SizedBox(height: defaultPadding),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: Column(
+    return (user.isEmpty)
+        ? Center(child: pleaseWait(context))
+        : Scaffold(
+            body: Container(
+              padding: EdgeInsets.all(defaultPadding),
+              child: ListView(
+                children: [
+                  Header(
+                    title: "Dashboard",
+                  ),
+                  SizedBox(height: defaultPadding),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      MyFiles(demoMyFiles: demoMyFiles, quantity_no: 10),
+                      Expanded(
+                        flex: 5,
+                        child: Column(
+                          children: [
+                            MyFiles(demoMyFiles: demoMyFiles, quantity_no: 10),
 
-                      SizedBox(height: defaultPadding),
+                            SizedBox(height: defaultPadding),
 
-                      Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(defaultPadding),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                          ),
-                          child: Column(children: [
-                            SizedBox(
-                                child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Icon(
-                                      Icons.business,
-                                      size: 30,
-                                      color: Colors.black,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text("Company Performance",
-                                        style: GoogleFonts.alike(
-                                            fontSize: 15,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Icon(
-                                      Icons.currency_rupee_outlined,
-                                      size: 30,
-                                      color: Colors.black,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                        "Sales , Expenses and Profit : 2017 - 2023",
-                                        style: GoogleFonts.alike(
-                                            fontSize: 13,
-                                            color: Colors.black45,
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.normal)),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        demo_color(
-                                            context, Colors.green, "Sale"),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        demo_color(
-                                            context, Colors.red, "Expenses"),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        demo_color(
-                                            context, Colors.yellow, "Profit")
-                                      ],
-                                    ),
-                                  ],
-                                )
-                              ],
-                            )),
                             Container(
-                              margin: EdgeInsets.only(top: 20),
-                              width: double.infinity,
-                              height: 500,
-                              child: charts.BarChart(
-                                series,
-                                animate: true,
-                              ),
-                            )
-                          ]))
+                                width: double.infinity,
+                                padding: EdgeInsets.all(defaultPadding),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                ),
+                                child: Column(children: [
+                                  SizedBox(
+                                      child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Icon(
+                                            Icons.business,
+                                            size: 30,
+                                            color: Colors.black,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text("Company Performance",
+                                              style: GoogleFonts.alike(
+                                                  fontSize: 15,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold)),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Icon(
+                                            Icons.currency_rupee_outlined,
+                                            size: 30,
+                                            color: Colors.black,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                              "Sales , Expenses and Profit : 2017 - 2023",
+                                              style: GoogleFonts.alike(
+                                                  fontSize: 13,
+                                                  color: Colors.black45,
+                                                  fontStyle: FontStyle.italic,
+                                                  fontWeight:
+                                                      FontWeight.normal)),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              demo_color(context, Colors.green,
+                                                  "Sale"),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              demo_color(context, Colors.red,
+                                                  "Expenses"),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              demo_color(context, Colors.yellow,
+                                                  "Profit")
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  )),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 20),
+                                    width: double.infinity,
+                                    height: 500,
+                                    child: charts.BarChart(
+                                      series,
+                                      animate: true,
+                                    ),
+                                  )
+                                ]))
 
-                      // ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Back")),
-                      // RecentFiles(),
+                            // ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Back")),
+                            // RecentFiles(),
 
-                      // if (Responsive.isMobile(context))
-                      //   SizedBox(height: defaultPadding),
-                      // if (Responsive.isMobile(context))
-                      // StarageDetails(),
+                            // if (Responsive.isMobile(context))
+                            //   SizedBox(height: defaultPadding),
+                            // if (Responsive.isMobile(context))
+                            // StarageDetails(),
+                          ],
+                        ),
+                      ),
+                      // if (!Responsive.isMobile(context))
+                      //   SizedBox(width: defaultPadding),
+                      // // On Mobile means if the screen is less than 850 we dont want to show it
+                      // if (!Responsive.isMobile(context))
+                      //   Expanded(
+                      //     flex: 2,
+                      //     child:
+                      //     StarageDetails(),
+                      //   ),
                     ],
                   ),
-                ),
-                // if (!Responsive.isMobile(context))
-                //   SizedBox(width: defaultPadding),
-                // // On Mobile means if the screen is less than 850 we dont want to show it
-                // if (!Responsive.isMobile(context))
-                //   Expanded(
-                //     flex: 2,
-                //     child:
-                //     StarageDetails(),
-                //   ),
-              ],
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 
   Widget demo_color(BuildContext context, clr, name) {
