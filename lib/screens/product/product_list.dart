@@ -234,6 +234,19 @@ class _ProductAddState extends State<ProductAdd> {
                             horizontalInside:
                                 BorderSide(width: .5, color: Colors.grey),
                           ),
+                          columnWidths: {
+                            0: FlexColumnWidth(0.01),
+                            1: FlexColumnWidth(0.3),
+                            2: FlexColumnWidth(0.6),
+                            3: FlexColumnWidth(0.3),
+                            4: FlexColumnWidth(0.4),
+                            5: FlexColumnWidth(0.2),
+                            6: FlexColumnWidth(0.3),
+                            7: FlexColumnWidth(0.3),
+                            8: FlexColumnWidth(0.2),
+                            9: FlexColumnWidth(0.3),
+                            10: IntrinsicColumnWidth(),
+                          },
                           children: [
                             TableRow(
                                 decoration: BoxDecoration(
@@ -245,7 +258,7 @@ class _ProductAddState extends State<ProductAdd> {
                                         TableCellVerticalAlignment.middle,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text('S.No.',
+                                      child: Text('#',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold)),
                                     ),
@@ -255,9 +268,10 @@ class _ProductAddState extends State<ProductAdd> {
                                         TableCellVerticalAlignment.middle,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text('Select',
+                                      child: Text('',
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold)),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10.0)),
                                     ),
                                   ),
                                   TableCell(
@@ -275,7 +289,8 @@ class _ProductAddState extends State<ProductAdd> {
                                         },
                                         child: Text("Name",
                                             style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 10.0)),
                                       ),
                                     ),
                                   ),
@@ -294,7 +309,8 @@ class _ProductAddState extends State<ProductAdd> {
                                         },
                                         child: Text('Brand',
                                             style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 10.0)),
                                       ),
                                     ),
                                   ),
@@ -315,51 +331,58 @@ class _ProductAddState extends State<ProductAdd> {
                                         },
                                         child: Text('Category',
                                             style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 10.0)),
                                       ),
                                     ),
                                   ),
                                   TableCell(
                                     verticalAlignment:
                                         TableCellVerticalAlignment.middle,
-                                    child: Text("Qauntity",
+                                    child: Text("Qnt.",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10.0)),
                                   ),
                                   TableCell(
                                     verticalAlignment:
                                         TableCellVerticalAlignment.middle,
                                     child: Text("Location",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10.0)),
                                   ),
                                   TableCell(
                                     verticalAlignment:
                                         TableCellVerticalAlignment.middle,
-                                    child: Text("Price",
+                                    child: Text("Price (₹)",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10.0)),
                                   ),
                                   TableCell(
                                     verticalAlignment:
                                         TableCellVerticalAlignment.middle,
                                     child: Text("Status",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10.0)),
                                   ),
                                   TableCell(
                                     verticalAlignment:
                                         TableCellVerticalAlignment.middle,
                                     child: Text("Date",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10.0)),
                                   ),
                                   TableCell(
                                     verticalAlignment:
                                         TableCellVerticalAlignment.middle,
                                     child: Text("Actions",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10.0)),
                                   ),
                                 ]),
                             for (var index = 0;
@@ -464,7 +487,7 @@ class _ProductAddState extends State<ProductAdd> {
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$price.0 ₹",
+        child: Text("$price",
             style: GoogleFonts.alike(
               fontWeight: FontWeight.bold,
               fontSize: 11,
@@ -482,7 +505,7 @@ class _ProductAddState extends State<ProductAdd> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Text("$formattedDate",
             style:
-                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
+                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 9)),
       ),
       TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,

@@ -161,11 +161,15 @@ class _CategoryAddState extends State<CategoryAdd> {
       'table': "category",
       //'status': "$_StatusValue",
     };
-    var temp = await dbFindDynamic(db, w);
+    var temp = (!kIsWeb && Platform.isWindows)
+        ? await All_dbFindDynamic(db, w)
+        : await dbFindDynamic(db, w);
+
     setState(() {
       temp.forEach((k, v) {
         StoreDocs.add(v);
       });
+
       // print("${temp2}  ++++++++++++++");
       progressWidget = false;
     });
@@ -336,7 +340,9 @@ class _CategoryAddState extends State<CategoryAdd> {
     };
 
     // var dbData = await dbFindDynamic(db, w);
-    var dbData = dbFindDynamic(db, w);
+    var dbData = (!kIsWeb && Platform.isWindows)
+        ? await All_dbFindDynamic(db, w)
+        : await dbFindDynamic(db, w);
     dbData.forEach((k, v) {
       Cate_Name_list[v['category_name']] = v['category_name'];
     });

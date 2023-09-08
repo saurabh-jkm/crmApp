@@ -296,6 +296,16 @@ class _Invoice_ListState extends State<Invoice_List> {
                   height: 5,
                 ),
                 Table(
+                  columnWidths: {
+                    0: FlexColumnWidth(0.2),
+                    1: FlexColumnWidth(0.7),
+                    2: FlexColumnWidth(0.7),
+                    3: FlexColumnWidth(0.5),
+                    4: FlexColumnWidth(0.2),
+                    5: FlexColumnWidth(0.3),
+                    6: FlexColumnWidth(0.4),
+                    7: IntrinsicColumnWidth(),
+                  },
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   border: TableBorder(
                     horizontalInside: BorderSide(width: .5, color: Colors.grey),
@@ -310,7 +320,7 @@ class _Invoice_ListState extends State<Invoice_List> {
                                   TableCellVerticalAlignment.middle,
                               child: Padding(
                                 padding: const EdgeInsets.all(5.0),
-                                child: Text('S.No.',
+                                child: Text('#',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
                               )),
@@ -321,8 +331,9 @@ class _Invoice_ListState extends State<Invoice_List> {
                               child: Padding(
                                 padding: const EdgeInsets.all(5.0),
                                 child: Text('OrderId',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10.0)),
                               ),
                               width: 40,
                             ),
@@ -333,8 +344,9 @@ class _Invoice_ListState extends State<Invoice_List> {
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Text("Buyer Name",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10.0)),
                             ),
                           ),
                           TableCell(
@@ -343,8 +355,9 @@ class _Invoice_ListState extends State<Invoice_List> {
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Text("Mobile no.",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10.0)),
                             ),
                           ),
                           TableCell(
@@ -353,8 +366,9 @@ class _Invoice_ListState extends State<Invoice_List> {
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: Text("Price",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10.0)),
                             ),
                           ),
                           TableCell(
@@ -363,8 +377,9 @@ class _Invoice_ListState extends State<Invoice_List> {
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Text("Status",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10.0)),
                             ),
                           ),
                           TableCell(
@@ -373,8 +388,9 @@ class _Invoice_ListState extends State<Invoice_List> {
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Text("Date",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10.0)),
                             ),
                           ),
                           TableCell(
@@ -383,8 +399,9 @@ class _Invoice_ListState extends State<Invoice_List> {
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Text("Action",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10.0)),
                             ),
                           ),
                         ]),
@@ -433,7 +450,7 @@ class _Invoice_ListState extends State<Invoice_List> {
           padding: const EdgeInsets.all(5.0),
           child: Text("$odID",
               style: GoogleFonts.alike(
-                  fontWeight: FontWeight.normal, fontSize: 11)),
+                  fontWeight: FontWeight.normal, fontSize: 10)),
         ),
       ),
       TableCell(

@@ -309,7 +309,7 @@ class InvoiceService {
                             alignment: Alignment.topCenter,
                             child: Column(children: [
                               for (var i = 0; i < tt.length; i++)
-                                Text("${tt["$i"]["subtotal"]} ",
+                                Text("${tt["$i"]["price"]} ",
                                     style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.normal,

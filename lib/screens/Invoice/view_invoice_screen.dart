@@ -98,7 +98,7 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
 
 ////////////////// @2 Detaials View ++++++++++++++++++++++++++++++++++++++++++++
   var tempList = [];
-  var Price = 0;
+  var Price = 0.0;
   var Qty = 0;
   Widget Details_view(BuildContext context, OrderData, pageWidth) {
     Qty = 0;
@@ -107,24 +107,24 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
 
     var ffff = OrderData["products"] as Map;
     var ff = new Map();
-    if (ffff.isNotEmpty) {
-      ffff.forEach((k, v) {
-        setState(() {
-          tempList.add(v["name"]);
+    // if (ffff.isNotEmpty) {
+    //   ffff.forEach((k, v) {
+    //     setState(() {
+    //       tempList.add(v["name"]);
 
-          if (Qty == 0) {
-            Qty = Qty + int.parse(v["quantity"]);
-          } else {
-            Qty = Qty + int.parse(v["quantity"]);
-          }
-          if (Price == 0) {
-            Price = Price + int.parse(v["price"]);
-          } else {
-            Price = Price + int.parse(v["price"]);
-          }
-        });
-      });
-    }
+    //       if (Qty == 0) {
+    //         Qty = Qty + int.parse(v["quantity"]);
+    //       } else {
+    //         Qty = Qty + int.parse(v["quantity"]);
+    //       }
+    //       if (Price == 0) {
+    //         Price = Price + double.parse(v["price"]);
+    //       } else {
+    //         Price = Price + double.parse(v["price"]);
+    //       }
+    //     });
+    //   });
+    // }
 
     return Container(
       child: Column(
@@ -485,7 +485,7 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                                         i < OrderData['products'].length;
                                         i++)
                                       Text(
-                                          "${OrderData['products']["$i"]["subtotal"]} ",
+                                          "${OrderData['products']["$i"]["price"]} ",
                                           style: TextStyle(
                                               fontSize: 10,
                                               fontWeight: FontWeight.normal,

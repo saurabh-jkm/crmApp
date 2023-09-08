@@ -350,24 +350,25 @@ class invoiceController {
     if (ProductGstControllers[controllerId]!.text != '') {
       tempGst = ProductGstControllers[controllerId]!.text;
     }
-    int gst = int.parse(tempGst);
+    double gst = double.parse(tempGst);
 
     var tempDiscount = '0';
     if (ProductDiscountControllers[controllerId]!.text != '') {
       tempDiscount = ProductDiscountControllers[controllerId]!.text;
     }
 
-    int discount = int.parse(tempDiscount);
+    double discount = double.parse(tempDiscount);
     // qunatity
     var tempQnt = '1';
     if (ProductQuntControllers[controllerId]!.text != '') {
       tempQnt = ProductQuntControllers[controllerId]!.text;
     }
 
-    int qunt = int.parse(tempQnt);
-    int price = int.parse((ProductPriceControllers[controllerId]!.text == '')
-        ? 0.toString()
-        : ProductPriceControllers[controllerId]!.text.toString());
+    double qunt = double.parse(tempQnt);
+    double price = double.parse(
+        (ProductPriceControllers[controllerId]!.text == '')
+            ? 0.toString()
+            : ProductPriceControllers[controllerId]!.text.toString());
     if (pName != '' && price != '' && qunt != '') {
       productDBdata[controllerId] = (productDBdata[controllerId] != null)
           ? productDBdata[controllerId]

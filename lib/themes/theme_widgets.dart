@@ -561,6 +561,7 @@ Widget formInput(BuildContext context, label, controller,
     focusNode: '',
     currentController: '',
     isNumber: false,
+    isFloat: false,
     method: '',
     methodArg: ''}) {
   // if (editComplete != '' && currentController.text == '') {
@@ -573,12 +574,28 @@ Widget formInput(BuildContext context, label, controller,
               controller: controller,
               style: textStyle1,
               decoration: inputStyle(label),
-              keyboardType: TextInputType.number,
-              inputFormatters: (isNumber)
-                  ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
-                  : <TextInputFormatter>[
-                      FilteringTextInputFormatter.singleLineFormatter
-                    ],
+              keyboardType:
+                  (isNumber) ? TextInputType.number : TextInputType.text,
+
+              //inputFormatters: [DecimalTextInputFormatter(decimalRange: 1)],
+
+              // inputFormatters: (isNumber)
+              //     ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
+              //     : <TextInputFormatter>[
+              //         FilteringTextInputFormatter.singleLineFormatter
+              //       ],
+              inputFormatters: (isNumber && isFloat)
+                  ? <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'[0-9]+[,.]{0,1}[0-9]*'))
+                    ]
+                  : (isNumber)
+                      ? <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ]
+                      : <TextInputFormatter>[
+                          FilteringTextInputFormatter.singleLineFormatter
+                        ],
               onChanged: (value) {
                 if (method != '') {
                   if (methodArg != '') {

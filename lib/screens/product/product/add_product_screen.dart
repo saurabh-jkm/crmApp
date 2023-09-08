@@ -115,7 +115,9 @@ class _addStockScreenState extends State<addStockScreen> {
                                     Expanded(
                                       child: formInput(context, "Price",
                                           controller.priceController,
-                                          padding: 8.0, isNumber: true),
+                                          padding: 8.0,
+                                          isNumber: true,
+                                          isFloat: true),
                                     ),
                                   ],
                                 ),

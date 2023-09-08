@@ -38,13 +38,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic userData = (prefs.getString('user'));
     if (userData != null) {
-      setState(() async {
-        await invo_Data();
-        await Stock_Data();
-        await User_Data();
-        await OutofStock_Data();
-        user = await jsonDecode(userData) as Map<dynamic, dynamic>;
-      });
+      await invo_Data();
+      await Stock_Data();
+      await User_Data();
+      await OutofStock_Data();
+      user = await jsonDecode(userData) as Map<dynamic, dynamic>;
+
+      setState(() {});
     }
   }
 
@@ -116,7 +116,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 ////////////////
   ///
   /////////=====================================================================
-  late int Out_of_Stock_No;
+  int Out_of_Stock_No = 0;
   OutofStock_Data() async {
     List StoreDocs = [];
 
@@ -226,7 +226,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       numOfFiles: Out_of_Stock_No,
       svgSrc: Icons.production_quantity_limits_outlined,
       // svgSrc: "assets/icons/drop_box.svg",
-      color: Colors.yellow,
+      color: Color.fromARGB(255, 119, 143, 31),
 
       PageNo: 4,
     ),
