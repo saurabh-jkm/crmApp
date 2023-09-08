@@ -33,7 +33,7 @@ class FileInfoCard extends StatelessWidget {
           );
         },
         child: Container(
-            margin: EdgeInsets.symmetric(vertical: 30, horizontal: 5),
+            //margin: EdgeInsets.symmetric(vertical: 30, horizontal: 5),
             decoration: const BoxDecoration(
               color: secondaryColor,
               borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -109,7 +109,7 @@ class FileInfoCard extends StatelessWidget {
                                   info.svgSrc,
                                   color: info.color,
                                   size:
-                                      MediaQuery.of(context).size.height * 0.08,
+                                      MediaQuery.of(context).size.height * 0.06,
                                 )
                                 //Icon(info.svgSrc,color: info.color)
                                 //  SvgPicture.asset(

@@ -37,14 +37,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic userData = (prefs.getString('user'));
+
     if (userData != null) {
-      await invo_Data();
-      await Stock_Data();
-      await User_Data();
-      await OutofStock_Data();
       user = await jsonDecode(userData) as Map<dynamic, dynamic>;
 
-      setState(() {});
+      invo_Data();
+      Stock_Data();
+      User_Data();
+      OutofStock_Data();
     }
   }
 
@@ -60,7 +60,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       : FirebaseFirestore.instance;
   bool progressWidget = true;
   ////////// inoive ==============================================================
-  late int invoiceNo;
+  int invoiceNo = 0;
   invo_Data() async {
     List StoreDocs = [];
     Map<dynamic, dynamic> w = {
@@ -78,7 +78,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   /////////=====================================================================
-  late int StockNo;
+  int StockNo = 0;
   Stock_Data() async {
     List StoreDocs = [];
     Map<dynamic, dynamic> w = {
@@ -97,7 +97,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 ////////////////
   ///
   /////////=====================================================================
-  late int UserNo;
+  int UserNo = 0;
   User_Data() async {
     List StoreDocs = [];
     Map<dynamic, dynamic> w = {

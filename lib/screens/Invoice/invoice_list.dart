@@ -73,7 +73,7 @@ class _Invoice_ListState extends State<Invoice_List> {
     var temp = await dbFindDynamic(db, w);
     setState(() {
       temp.forEach((k, v) {
-        v['date'] = DateFormat('dd/MM/yyyy').format(v['date_at']);
+        v['date'] = formatDate(v['date_at'], formate: "dd/MM/yyyy");
         v['statusIs'] =
             (v['status'] != null && v['status']) ? 'Active' : 'InActive';
         OrderList.add(v);
@@ -473,7 +473,7 @@ class _Invoice_ListState extends State<Invoice_List> {
       ),
       TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
-          child: Text((_price != null) ? "$_price.0 ₹" : "--/--",
+          child: Text((_price != null) ? "$_price" : "--/--",
               style: GoogleFonts.alike(
                   fontWeight: FontWeight.normal, fontSize: 11))),
       TableCell(

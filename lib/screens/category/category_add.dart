@@ -344,9 +344,10 @@ class _CategoryAddState extends State<CategoryAdd> {
         ? await All_dbFindDynamic(db, w)
         : await dbFindDynamic(db, w);
     dbData.forEach((k, v) {
-      Cate_Name_list[v['category_name']] = v['category_name'];
+      if (v['category_name'] != '') {
+        Cate_Name_list[v['category_name']] = v['category_name'];
+      }
     });
-    // print("$Cate_Name_list  +++++++++++++++++++++");
   }
   ///////============================================================
 ////////// delete Category Data ++++++++++++++++++
@@ -628,7 +629,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                        child: Text("Parent Category",
+                                        child: Text(
+                                            "Parent Category ${_PerentCate}",
                                             style: themeTextStyle(
                                                 color: Colors.black,
                                                 size: 15,
@@ -645,7 +647,10 @@ class _CategoryAddState extends State<CategoryAdd> {
                                           EdgeInsets.only(left: 10, right: 10),
                                       child: DropdownButton(
                                         dropdownColor: Colors.white,
-                                        value: _PerentCate,
+                                        value: Cate_Name_list.containsKey(
+                                                _PerentCate)
+                                            ? _PerentCate
+                                            : '',
                                         underline: Container(),
                                         isExpanded: true,
                                         icon: Icon(
@@ -690,7 +695,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                      child: Text("-Parent Category",
+                                      child: Text("Parent Category",
                                           style: themeTextStyle(
                                               color: Colors.black,
                                               size: 15,
@@ -1628,77 +1633,78 @@ class _CategoryAddState extends State<CategoryAdd> {
 
                                     //   Text_field(context,"slug_url","Slug Url","Enter Slug Url"),
 
-                                    Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                              child: Text("Parent Category",
-                                                  style: themeTextStyle(
-                                                      color: Colors.black,
-                                                      size: 15,
-                                                      fw: FontWeight.bold))),
-                                          Container(
-                                            height: 40,
-                                            margin: EdgeInsets.only(
-                                                top: 10, bottom: 10, right: 10),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            padding: EdgeInsets.only(
-                                                left: 10, right: 10),
-                                            child: DropdownButton(
-                                              dropdownColor: Colors.white,
-                                              hint: _dropDownValue == null
-                                                  ? Text(
-                                                      'select',
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    )
-                                                  : Text(
-                                                      _dropDownValue!,
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    ),
-                                              underline: Container(),
-                                              isExpanded: true,
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                                color: Colors.black,
-                                              ),
-                                              iconSize: 35,
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 1, 1, 2)),
-                                              items: [
-                                                'Select',
-                                                'One',
-                                                'Two',
-                                                'Three'
-                                              ].map(
-                                                (val) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: val,
-                                                    child: Text(val),
-                                                  );
-                                                },
-                                              ).toList(),
-                                              onChanged: (val) {
-                                                setState(
-                                                  () {
-                                                    _dropDownValue = val!;
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
+                                    // Container(
+                                    //   child: Column(
+                                    //     crossAxisAlignment:
+                                    //         CrossAxisAlignment.start,
+                                    //     children: [
+                                    //       Container(
+                                    //           child: Text("Parent Category",
+                                    //               style: themeTextStyle(
+                                    //                   color: Colors.black,
+                                    //                   size: 15,
+                                    //                   fw: FontWeight.bold))),
+                                    //       Container(
+                                    //         height: 40,
+                                    //         margin: EdgeInsets.only(
+                                    //             top: 10, bottom: 10, right: 10),
+                                    //         decoration: BoxDecoration(
+                                    //           color: Colors.white,
+                                    //           borderRadius:
+                                    //               BorderRadius.circular(10),
+                                    //         ),
+                                    //         padding: EdgeInsets.only(
+                                    //             left: 10, right: 10),
+                                    //         child: DropdownButton(
+                                    //           dropdownColor: Colors.white,
+                                    //           hint: _dropDownValue == null
+                                    //               ? Text(
+                                    //                   'select',
+                                    //                   style: TextStyle(
+                                    //                       color: Colors.black),
+                                    //                 )
+                                    //               : Text(
+                                    //                   _dropDownValue!,
+                                    //                   style: TextStyle(
+                                    //                       color: Colors.black),
+                                    //                 ),
+                                    //           underline: Container(),
+                                    //           isExpanded: true,
+                                    //           icon: Icon(
+                                    //             Icons.arrow_drop_down,
+                                    //             color: Colors.black,
+                                    //           ),
+                                    //           iconSize: 35,
+                                    //           style: TextStyle(
+                                    //               color: Color.fromARGB(
+                                    //                   255, 1, 1, 2)),
+                                    //           items: [
+                                    //             'Select',
+                                    //             'One',
+                                    //             'Two',
+                                    //             'Three'
+                                    //           ].map(
+                                    //             (val) {
+                                    //               return DropdownMenuItem<
+                                    //                   String>(
+                                    //                 value: val,
+                                    //                 child: Text(val),
+                                    //               );
+                                    //             },
+                                    //           ).toList(),
+                                    //           onChanged: (val) {
+                                    //             setState(
+                                    //               () {
+                                    //                 _dropDownValue = val!;
+                                    //               },
+                                    //             );
+                                    //           },
+                                    //         ),
+                                    //       ),
+                                    //     ],
+                                    //   ),
+                                    // )
+                                    SizedBox()
                                 ],
                               ),
                             ),
@@ -1714,7 +1720,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Container(
-                                            child: Text("Parent Category",
+                                            child: Text("Parent Category ",
                                                 style: themeTextStyle(
                                                     color: Colors.black,
                                                     size: 15,
@@ -1732,7 +1738,10 @@ class _CategoryAddState extends State<CategoryAdd> {
                                               left: 10, right: 10),
                                           child: DropdownButton(
                                             dropdownColor: Colors.white,
-                                            value: _PerentCate,
+                                            value: Cate_Name_list.containsKey(
+                                                    _PerentCate)
+                                                ? _PerentCate
+                                                : '',
                                             underline: Container(),
                                             isExpanded: true,
                                             icon: Icon(

@@ -1281,7 +1281,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                                                 size: 15, // Sizes
                                                 fw: FontWeight.normal)),
                                       ),
-                                      (Head_Name != "Sizes")
+                                      (Head_Name == "Colors")
                                           ? Padding(
                                               padding:
                                                   const EdgeInsets.all(5.0),
@@ -1385,19 +1385,20 @@ class _AttributeAddState extends State<AttributeAdd> {
                                                     width: 10,
                                                     decoration: BoxDecoration(
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
+                                                            BorderRadius.circular(
+                                                                10),
                                                         border: Border.all(
                                                             color: Colors.white,
                                                             width: 5.0),
-                                                        color: (Color_list[i]
-                                                                    ['color'] ==
-                                                                null)
+                                                        color: (Color_list[i]['color'] !=
+                                                                    null ||
+                                                                Color_list[i]['color'] !=
+                                                                    'null')
                                                             ? Color.fromARGB(
                                                                 0, 0, 0, 0)
                                                             : Color(int.parse(
-                                                                Color_list[i][
-                                                                        'color']
+                                                                Color_list[i]
+                                                                        ['color']
                                                                     .toString()))),
                                                   ),
                                                 ),

@@ -156,7 +156,7 @@ dbFind(where) async {
 
   where.remove('id');
 
-  final data = (!kIsWeb && !kIsWeb && Platform.isWindows)
+  final data = (!kIsWeb && Platform.isWindows)
       ? await Firestore.instance
           .collection(table)
           .document(id)
