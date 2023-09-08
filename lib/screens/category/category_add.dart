@@ -1199,7 +1199,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                         color: Colors.blue,
                       )) ////
                   ),
-              SizedBox(width: 10),
+              /*SizedBox(width: 10),
               Container(
                   height: 30,
                   width: 30,
@@ -1209,6 +1209,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                   ),
                   child: IconButton(
+                      tooltip: "Delete",
                       onPressed: () {
                         showExitPopup(iid);
                       },
@@ -1216,7 +1217,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                         Icons.delete_outline_outlined,
                         size: 15,
                         color: Colors.red,
-                      ))),
+                      ))),*/
             ],
           )),
     ]);
