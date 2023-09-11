@@ -39,9 +39,12 @@ class addStockScreen extends StatefulWidget {
 
 class _addStockScreenState extends State<addStockScreen> {
   // function get all list & name
+  bool isWait = true;
   initList() async {
     await controller.init_functions();
-    setState(() {});
+    setState(() {
+      isWait = false;
+    });
   }
 
   @override
@@ -60,108 +63,210 @@ class _addStockScreenState extends State<addStockScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            //header ======================
-            themeHeader2(context, "${widget.header_name}",
-                widthBack: 'updated'),
-            // formField =======================
-            Form(
-              key: controller.formKey,
-              child: Column(
-                children: <Widget>[
-                  // Add TextFormFields and ElevatedButton here.
-                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                          child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          themeSpaceVertical(10.0),
-                          themeHeading2("Basic Details"),
-                          themeSpaceVertical(15.0),
-                          Row(
+      body: (isWait)
+          ? pleaseWait(context)
+          : Container(
+              color: Colors.white,
+              padding: EdgeInsets.only(bottom: 30.0),
+              child: ListView(
+                children: [
+                  //header ======================
+                  themeHeader2(context, "${widget.header_name}",
+                      widthBack: 'updated'),
+                  // formField =======================
+                  Form(
+                    key: controller.formKey,
+                    child: Column(
+                      children: <Widget>[
+                        // Add TextFormFields and ElevatedButton here.
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // fireld 1 ==========================
                               Expanded(
-                                child: autoCompleteFormInput(
-                                    controller.ListName,
-                                    "Product Name",
-                                    controller.nameController,
-                                    padding: 8.0),
-                              ),
-
-                              // fireld 2 ==========================
-                              Expanded(
-                                child: autoCompleteFormInput(
-                                    controller.ListCategory,
-                                    "Category",
-                                    controller.categoryController,
-                                    padding: 8.0),
-                              ),
-
-                              // fireld 3 ==========================
-                              Expanded(
-                                child: Row(
+                                flex: 2,
+                                child: Container(
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: formInput(context, "Quantity",
-                                          controller.quantityController,
-                                          padding: 8.0, isNumber: true),
-                                    ),
-                                    Expanded(
-                                      child: formInput(context, "Price",
-                                          controller.priceController,
-                                          padding: 8.0,
-                                          isNumber: true,
-                                          isFloat: true),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                                    themeSpaceVertical(10.0),
+                                    themeHeading2("Basic Details"),
+                                    themeSpaceVertical(15.0),
+                                    Row(
+                                      children: [
+                                        // fireld 1 ==========================
+                                        Expanded(
+                                          child: autoCompleteFormInput(
+                                              controller.ListName,
+                                              "Product Name",
+                                              controller.nameController,
+                                              padding: 8.0),
+                                        ),
 
-                          // 2nd row =============================================
-                          themeSpaceVertical(18.0),
-                          Row(children: [
-                            themeHeading2("Attributes"),
-                            SizedBox(width: 10.0),
-                            IconButton(
-                                onPressed: () {
-                                  addNewAttrbute(
-                                      context,
-                                      controller.newAttributeController,
-                                      addNewAttFn);
-                                },
-                                tooltip: "Add New Attribute",
-                                icon: Icon(
-                                  Icons.add,
-                                  color: themeBG,
-                                  size: 20.0,
-                                )),
-                          ]),
-                          themeSpaceVertical(4.0),
-                          Row(
-                            children: [
-                              for (String key
-                                  in controller.dynamicControllers.keys)
-                                Expanded(
-                                  child: autoCompleteFormInput(
-                                      controller
-                                          .ListAttribute[key.toLowerCase()],
-                                      "${capitalize(key)}",
-                                      controller.dynamicControllers[key],
-                                      padding: 8.0),
-                                ),
-                            ],
-                          ),
+                                        // fireld 2 ==========================
+                                        Expanded(
+                                          child: autoCompleteFormInput(
+                                              controller.ListCategory,
+                                              "Category",
+                                              controller.categoryController,
+                                              padding: 8.0),
+                                        ),
 
-                          // 3nd row =============================================
-                          themeSpaceVertical(18.0),
+                                        // fireld 3 ==========================
+                                        Expanded(
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: formInput(
+                                                    context,
+                                                    "Quantity",
+                                                    controller
+                                                        .quantityController,
+                                                    padding: 8.0,
+                                                    isNumber: true,
+                                                    readOnly: true),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    // 2nd row =============================================
+                                    themeSpaceVertical(40.0),
+                                    Row(children: [
+                                      themeHeading2("Products"),
+                                      SizedBox(width: 10.0),
+                                      IconButton(
+                                          onPressed: () {
+                                            addNewProduct(context);
+                                          },
+                                          tooltip: "Add New Product",
+                                          icon: Icon(
+                                            Icons.add,
+                                            color: themeBG,
+                                            size: 20.0,
+                                          )),
+                                      SizedBox(width: 10.0),
+                                      (controller.totalProduct > 1)
+                                          ? IconButton(
+                                              onPressed: () {
+                                                removeProduct(context);
+                                              },
+                                              tooltip: "Remove Product",
+                                              icon: Icon(
+                                                Icons.remove,
+                                                color: Colors.red,
+                                                size: 20.0,
+                                              ))
+                                          : SizedBox(),
+                                    ]),
+                                    themeSpaceVertical(3.0),
+                                    for (var i = 1;
+                                        i <= controller.totalProduct;
+                                        i++)
+                                      Container(
+                                          margin: EdgeInsets.only(
+                                              left: 10.0,
+                                              right: 10.0,
+                                              bottom: 20.0),
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: (controller.alertRow ==
+                                                          '$i')
+                                                      ? Color.fromARGB(
+                                                          255, 250, 66, 66)
+                                                      : Color.fromARGB(
+                                                          255, 234, 242, 250)),
+                                              color: Color.fromARGB(
+                                                  255, 234, 242, 250)),
+                                          child: Column(children: [
+                                            themeSpaceVertical(5.0),
+
+                                            // Row(children: [
+                                            //   themeHeading2("Attributes"),
+                                            //   SizedBox(width: 10.0),
+                                            //   IconButton(
+                                            //       onPressed: () {
+                                            //         addNewAttrbute(
+                                            //             context,
+                                            //             controller.newAttributeController,
+                                            //             addNewAttFn);
+                                            //       },
+                                            //       tooltip: "Add New Attribute",
+                                            //       icon: Icon(
+                                            //         Icons.add,
+                                            //         color: themeBG,
+                                            //         size: 20.0,
+                                            //       )),
+                                            // ]),
+                                            // themeSpaceVertical(4.0),
+
+                                            (controller.dynamicControllers[
+                                                        '$i'] !=
+                                                    null)
+                                                ? Row(
+                                                    children: [
+                                                      for (String key
+                                                          in controller
+                                                              .dynamicControllers[
+                                                                  '$i']
+                                                              .keys)
+                                                        Expanded(
+                                                          child: autoCompleteFormInput(
+                                                              controller
+                                                                      .ListAttribute[
+                                                                  key
+                                                                      .toLowerCase()],
+                                                              "${capitalize(key)}",
+                                                              controller
+                                                                      .dynamicControllers[
+                                                                  '$i'][key],
+                                                              padding: 8.0),
+                                                        ),
+                                                    ],
+                                                  )
+                                                : SizedBox(),
+                                            // Price , Quantity & Location
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: formInput(
+                                                      context,
+                                                      "Price",
+                                                      controller
+                                                              .productPriceController[
+                                                          '$i'],
+                                                      padding: 8.0,
+                                                      isNumber: true,
+                                                      isFloat: true),
+                                                ),
+                                                Expanded(
+                                                  child: formInput(
+                                                      context,
+                                                      "Quantity",
+                                                      controller
+                                                              .productQntController[
+                                                          '$i'],
+                                                      padding: 8.0,
+                                                      isNumber: true,
+                                                      method: fnTotalQnt),
+                                                ),
+                                                Expanded(
+                                                  child: autoCompleteFormInput(
+                                                      controller.RackList,
+                                                      "Item Location ",
+                                                      controller
+                                                              .productLocationController[
+                                                          '$i'],
+                                                      padding: 8.0),
+                                                ),
+                                              ],
+                                            ),
+                                            themeSpaceVertical(5.0),
+                                          ])),
+
+                                    // 3nd row =============================================
+                                    /*themeSpaceVertical(18.0),
                           Row(
                             children: [
                               themeHeading2("Product Location"),
@@ -226,34 +331,39 @@ class _addStockScreenState extends State<addStockScreen> {
                                   ),
                                 ),
                             ],
-                          ),
-                          //field
-                        ],
-                      )),
-                    ),
-                    SizedBox(width: defaultPadding),
-                  ]),
-                  // auto complete =================================
+                          ),*/
+                                    //field
+                                  ],
+                                )),
+                              ),
+                              SizedBox(width: defaultPadding),
+                            ]),
+                        // auto complete =================================
 
-                  // buttom submit
-                  themeSpaceVertical(20.0),
-                  Container(
-                    child: Center(
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await controller.insertProduct(context);
-                              setState(() {});
-                            },
-                            child: Text('Submit'))),
-                  ),
+                        // buttom submit
+                        themeSpaceVertical(20.0),
+                        Container(
+                          child: Center(
+                              child: ElevatedButton(
+                                  onPressed: () async {
+                                    setState(() {
+                                      isWait = true;
+                                    });
+                                    await controller.insertProduct(context);
+                                    setState(() {
+                                      isWait = false;
+                                    });
+                                  },
+                                  child: Text('Submit'))),
+                        ),
+                      ],
+                    ),
+                  )
+
+                  // end form ====================================
                 ],
               ),
-            )
-
-            // end form ====================================
-          ],
-        ),
-      ),
+            ),
     );
   }
 
@@ -261,6 +371,20 @@ class _addStockScreenState extends State<addStockScreen> {
   // Functions for setstate =================================================
   // Functions for setstate =================================================
   // Functions for setstate =================================================
+
+  // add new product
+  addNewProduct(context) async {
+    await controller.fnAddNewProduct(context);
+
+    setState(() {});
+  }
+
+  // Remove Product
+  removeProduct(context) async {
+    await controller.fnRemoveProduct(context);
+
+    setState(() {});
+  }
 
   addNewAttFn(context) async {
     // add new Attribute
@@ -291,6 +415,19 @@ class _addStockScreenState extends State<addStockScreen> {
         controller.totalLocation--;
       }
     });
+  }
+
+  // calculate total quantity
+  fnTotalQnt() {
+    int total = 0;
+    for (var i = 1; i <= controller.totalProduct; i++) {
+      if (controller.productQntController['$i'] != null) {
+        var tempQ = controller.productQntController['$i']!.text.toString();
+        tempQ = (tempQ == '') ? '0' : tempQ;
+        total = total + int.parse(tempQ);
+      }
+    }
+    controller.quantityController.text = total.toString();
   }
 }
 

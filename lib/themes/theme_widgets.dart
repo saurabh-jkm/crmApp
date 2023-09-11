@@ -563,7 +563,8 @@ Widget formInput(BuildContext context, label, controller,
     isNumber: false,
     isFloat: false,
     method: '',
-    methodArg: ''}) {
+    methodArg: '',
+    readOnly: false}) {
   // if (editComplete != '' && currentController.text == '') {
   //   controller.text = currentController.text;
   // }
@@ -584,6 +585,7 @@ Widget formInput(BuildContext context, label, controller,
               //     : <TextInputFormatter>[
               //         FilteringTextInputFormatter.singleLineFormatter
               //       ],
+              readOnly: readOnly,
               inputFormatters: (isNumber && isFloat)
                   ? <TextInputFormatter>[
                       FilteringTextInputFormatter.allow(

@@ -26,6 +26,10 @@ class ProductController {
   // temporary
   Map<String, TextEditingController> dynamicControllers = new Map();
 
+  Map<String, TextEditingController> productPriceController = new Map();
+  Map<String, TextEditingController> productQntController = new Map();
+  Map<String, TextEditingController> productLocationController = new Map();
+
   Map<String, TextEditingController> locationControllers = new Map();
   Map<String, TextEditingController> locationQuntControllers = new Map();
 
@@ -36,6 +40,7 @@ class ProductController {
   Map<String, dynamic> ListAttributeWithId = {};
 
   int totalLocation = 1;
+  int totalProduct = 1;
 
   init_functions() async {
     await getProductNameList();
