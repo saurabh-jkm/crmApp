@@ -21,6 +21,7 @@ class ProductController {
       : FirebaseFirestore.instance;
 
   var formKey = GlobalKey<FormState>();
+  List<LogicalKeyboardKey> Keys = [];
 
   var nameController = TextEditingController();
   var categoryController = TextEditingController();
@@ -52,12 +53,49 @@ class ProductController {
   int totalProduct = 1;
 
   //init controller ==========================================
-  init_functions() async {
+  init_functions({data: ''}) async {
     await getRackList();
     await getProductNameList();
     await getCategoryList();
     await getAttributeList();
     await default_var_set();
+
+    // this is for edit ===========================================
+    if (data != '') {
+      //      documentId = widget.data['id'];
+      nameController.text = data['name'];
+      categoryController.text = data['category'];
+      quantityController.text = data['quantity'];
+
+      totalProduct = 0;
+      await data['item_list'].forEach((i, v) {
+        totalProduct++;
+        // set product ==============================
+
+        if (ListAttribute.isNotEmpty) {
+          ListAttribute.forEach((key, value) {
+            Map<String, TextEditingController> temp =
+                (dynamicControllers['$totalProduct'] != null)
+                    ? dynamicControllers["$totalProduct"]
+                    : new Map();
+            temp[key] = TextEditingController();
+            if (v[key.toLowerCase()] != null) {
+              temp[key]!.text = v[key.toLowerCase()];
+            }
+            dynamicControllers["$totalProduct"] = temp;
+          });
+        }
+
+        productPriceController['$totalProduct'] = TextEditingController();
+        productQntController['$totalProduct'] = TextEditingController();
+        productLocationController['$totalProduct'] = TextEditingController();
+
+        productPriceController['$totalProduct']!.text = v['price'];
+        productQntController['$totalProduct']!.text = v['quantity'];
+        productLocationController['$totalProduct']!.text = v['location'];
+        // End product ==============================
+      });
+    }
   }
 
   default_var_set() async {
@@ -394,37 +432,9 @@ class ProductController {
     }
 
     // // for address =================================
-    // var tempLocation = {};
-    // locationControllers.forEach((key, value) {
-    //   tempLocation[key] = value.text;
-    // });
-
-    // // location quantity
-    // var location = {};
-    // locationQuntControllers.forEach((key, value) {
-    //   if (tempLocation[key] != '') {
-    //     location[tempLocation[key]] = value.text;
-    //   }
-    // });
 
     dbArr['item_location'] = location;
     dbArr['item_list'] = itemList;
-
-    // print(dbArr);
-
-    // return false;
-
-    // return dbCollection.add(dbArr).then((value) {
-    //   themeAlert(context, "Submitted Successfully ");
-    //   resetController();
-
-    //   Navigator.popAndPushNamed(context, '/add_stock');
-
-    //   //Navigator.pop(context, 'updated');
-    // }).catchError(
-    //     (error) => themeAlert(context, 'Failed to Submit', type: "error"));
-
-    //print(dbArr);
 
     if (docId == '') {
       await dbSave(db, dbArr);
@@ -440,6 +450,38 @@ class ProductController {
         themeAlert(context, "Updated Successfully !!");
         Navigator.pop(context, 'updated');
       }
+    }
+  }
+
+  // key press function
+  cntrKeyPressFun(e, context) {
+    final key = e.logicalKey;
+    if (e is RawKeyDownEvent) {
+      if (e.isKeyPressed(LogicalKeyboardKey.escape)) {
+        Navigator.pop(context, 'updated');
+      }
+
+      if (e.isKeyPressed(LogicalKeyboardKey.keyD) ||
+          e.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
+        Keys.add(key);
+      }
+      // ctr + D => addnewproduct
+      if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
+          Keys.contains(LogicalKeyboardKey.keyD)) {
+        fnAddNewProduct(context);
+
+        Keys = [];
+        return true;
+      }
+      // ctr + R => RemoveProduct
+      if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
+          Keys.contains(LogicalKeyboardKey.keyR)) {
+        fnRemoveProduct(context);
+        Keys = [];
+        return true;
+      }
+    } else {
+      Keys.remove(key);
     }
   }
 }

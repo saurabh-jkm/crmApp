@@ -35,13 +35,32 @@ class Details_product extends StatefulWidget {
       {super.key, required this.header_name, required this.MapData});
   final String header_name;
   final Map MapData;
+
   @override
   State<Details_product> createState() => _Details_productState();
 }
 
 class _Details_productState extends State<Details_product> {
+  List<String> tableHeading = ['price', 'location', 'quantity'];
+
+  headListCreate(data) {
+    if (data['item_list'] != null && data['item_list'] != '') {
+      data['item_list'].forEach((k, vData) {
+        if (vData.isNotEmpty) {
+          vData.forEach((label, val) {
+            if (!tableHeading.contains(label)) {
+              tableHeading.add(label);
+            }
+          });
+        }
+      });
+    }
+    setState(() {});
+  }
+
   @override
   void initState() {
+    headListCreate(widget.MapData);
     super.initState();
   }
 
@@ -57,7 +76,7 @@ class _Details_productState extends State<Details_product> {
             //header ======================
             themeHeader2(context, "${widget.header_name}"),
             // formField =======================
-            Details_view(context, widget.MapData)
+            Details_view(context, widget.MapData, tableHeading)
             // end form ====================================
           ],
         ),
@@ -65,22 +84,13 @@ class _Details_productState extends State<Details_product> {
     );
   }
 
-  Widget Details_view(BuildContext context, priceData) {
-    var Location = priceData["item_location"];
-    List Loca = [];
-
-    Location.forEach((k, v) {
-      setState(() {
-        Loca.add('${k} & ${v}');
-      });
-    });
-    // print("$Loca ++++");
+  Widget Details_view(BuildContext context, priceData, tableHeading) {
     return Container(
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         color: Colors.white,
       ),
-      child: Column(
+      child: ListView(
         children: [
           Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
@@ -122,83 +132,53 @@ class _Details_productState extends State<Details_product> {
                                   child: Divider(
                                       thickness: 4, color: Colors.blue)),
                               SizedBox(height: 20),
-                              themeListRow(context, "Product Name",
-                                  "${priceData["name"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(
-                                  context, "Product's ID", "${priceData["id"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(
-                                  context, "Price", "${priceData["price"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(context, "Quantity",
-                                  "${priceData["quantity"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(context, "Category",
-                                  "${priceData["category"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(
-                                  context, "Watt", "${priceData["watt"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(context, "Status",
-                                  statusOF(priceData["status"]),
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(
-                                  context, "Brand", "${priceData["brand"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(
-                                  context, "Size", "${priceData["sizes"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
-                              themeListRow(
-                                  context, "Color", "${priceData["colors"]}",
-                                  descColor: Colors.black,
-                                  headColor: Colors.black),
-                              SizedBox(height: defaultPadding),
                               Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(
-                                    width: 100,
-                                    child: Text(
-                                      "Location & Qauntity",
-                                      style: themeTextStyle(
-                                          size: 12.0,
-                                          color: Colors.black,
-                                          ftFamily: 'ms',
-                                          fw: FontWeight.bold),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 3,
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        right: BorderSide(
+                                            width: 3.0,
+                                            color:
+                                                Color.fromARGB(31, 72, 86, 92)),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        for (String key in priceData.keys)
+                                          productRow(
+                                              context, key, priceData[key])
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(
-                                      child: Column(
-                                    children: [
-                                      for (var i = 0; i < Loca.length; i++)
-                                        Text(": ${Loca[i]}",
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            style: GoogleFonts.alike(
-                                              color: Colors.black,
-                                            )),
-                                    ],
-                                  ))
+                                  // item list =========================
+                                  Container(
+                                    margin: EdgeInsets.only(left: 30.0),
+                                    width: (MediaQuery.of(context).size.width -
+                                        (MediaQuery.of(context).size.width / 3 +
+                                            120)),
+                                    child: Column(
+                                      children: [
+                                        // heading
+
+                                        productTableHeading(
+                                            context, tableHeading),
+                                        // details
+                                        for (String key
+                                            in priceData['item_list'].keys)
+                                          productTableRow(
+                                              context,
+                                              key,
+                                              priceData['item_list'],
+                                              tableHeading)
+                                      ],
+                                    ),
+                                  ),
                                 ],
-                              )
+                              ),
                             ]),
                       ],
                     ))

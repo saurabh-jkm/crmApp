@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:crm_demo/themes/function.dart';
 import 'package:crm_demo/themes/style.dart';
 import 'package:crm_demo/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
@@ -194,4 +195,79 @@ addNewAttrbute(context, controller, addNewAttFn) async {
                   ])));
         });
   }
+}
+
+// single product  list ==========================
+Widget productRow(context, key, data) {
+  if (key == 'item_list') {
+    return SizedBox();
+  } else {
+    var val = data;
+    if (key == 'date_at') {
+      val = formatDate(data);
+    } else if (key == 'status') {
+      val = (data) ? "Active" : "In-Active";
+    }
+    return Container(
+      margin: EdgeInsets.only(bottom: 10.0),
+      child: Row(
+        children: [
+          Container(
+            width: 120.0,
+            child: Text("${capitalize(key)}",
+                style: TextStyle(
+                    color: themeBG2,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11.0)),
+          ),
+          SizedBox(width: 20.0),
+          Text(": ${val}",
+              style: TextStyle(fontSize: 12.0, color: Colors.black)),
+        ],
+      ),
+    );
+  }
+}
+
+// single product  list ==========================
+Widget productTableRow(context, key, data, headingList) {
+  data = (data[key] == null) ? {} : data[key];
+  return Container(
+    margin: EdgeInsets.only(bottom: 1.0),
+    padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+    decoration: BoxDecoration(color: themeBG),
+    child: Row(
+      children: [
+        for (String k in headingList)
+          Expanded(
+            child: Container(
+              child: Text("${(data[k] == null) ? '-' : capitalize(data[k])}",
+                  style: TextStyle(fontSize: 12.0, color: Colors.black)),
+            ),
+          ),
+      ],
+    ),
+  );
+}
+
+// single product  list ==========================
+Widget productTableHeading(context, data) {
+  return Container(
+    margin: EdgeInsets.only(bottom: 1.0),
+    padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+    decoration: BoxDecoration(color: themeBG2),
+    child: Row(
+      children: [
+        for (String k in data)
+          Expanded(
+            child: Container(
+              child: Text("${capitalize(k)}",
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      color: const Color.fromARGB(255, 201, 201, 201))),
+            ),
+          ),
+      ],
+    ),
+  );
 }

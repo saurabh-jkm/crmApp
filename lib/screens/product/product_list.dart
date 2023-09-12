@@ -510,9 +510,34 @@ class _ProductAddState extends State<ProductAdd> {
       TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
           child: Container(
+            padding: EdgeInsets.only(right: 20.0),
             margin: EdgeInsets.symmetric(vertical: 8.0),
             child: Row(
               children: [
+                Container(
+                    height: 30,
+                    width: 30,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => Details_product(
+                                        header_name: "View details of product",
+                                        MapData: data,
+                                      )));
+                        },
+                        icon: Icon(
+                          Icons.remove_red_eye_outlined,
+                          size: 15,
+                          color: Colors.green,
+                        ))),
+                SizedBox(width: 10),
                 Container(
                     height: 30,
                     width: 30,
@@ -540,30 +565,6 @@ class _ProductAddState extends State<ProductAdd> {
                           color: Colors.blue,
                         )) ////
                     ),
-                SizedBox(width: 10),
-                Container(
-                    height: 30,
-                    width: 30,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => Details_product(
-                                        header_name: "View details of product",
-                                        MapData: data,
-                                      )));
-                        },
-                        icon: Icon(
-                          Icons.link,
-                          size: 15,
-                          color: Colors.green,
-                        ))),
                 SizedBox(width: 10),
                 Container(
                     height: 30,
