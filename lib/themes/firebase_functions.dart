@@ -19,7 +19,7 @@ import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 //dbDelete(db, 'users', 'LQJbIfdB15SHDCf51p03');
 //print(dbFindDynamic(db, where));
 
-dbUpdate(db, where) {
+dbUpdate(db, where) async {
   var returnData = '';
   if (where == null || where == '') {
     return "Map data is empty";
@@ -41,21 +41,22 @@ dbUpdate(db, where) {
   where.remove('id');
 
   // return false;
+  var rData = '';
   if (!kIsWeb && Platform.isWindows) {
-    db.collection(table).document(id).update(where).then((value) {
-      returnData = 'Succefully Updated !!';
+    rData = await db.collection(table).document(id).update(where).then((value) {
+      return returnData = 'Succefully Updated !!';
     }).catchError((error) {
-      returnData = "Updation Failed: $error !!";
+      return returnData = "Updation Failed: $error !!";
     });
   } else {
-    db.collection(table).doc(id).update(where).then((value) {
-      returnData = 'Succefully Updated !!';
+    rData = await db.collection(table).doc(id).update(where).then((value) {
+      return returnData = 'Succefully Updated !!';
     }).catchError((error) {
-      returnData = "Updation Failed: $error  !!";
+      return returnData = "Updation Failed: $error  !!";
     });
   }
 
-  return returnData;
+  return rData;
 }
 
 //////////// All dbUpdate

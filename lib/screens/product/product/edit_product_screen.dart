@@ -68,7 +68,7 @@ class _editStockScreenState extends State<editStockScreen> {
       focusNode: FocusNode(),
       onKey: (e) {
         var rData = controller.cntrKeyPressFun(e, context);
-        if (rData) {
+        if (rData != null && rData) {
           setState(() {});
         }
       },

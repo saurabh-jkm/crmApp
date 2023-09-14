@@ -103,11 +103,11 @@ class _SubAdminState extends State<SubAdmin> {
     setState(() {
       String base64String;
       String decodedString;
-      for (var i = 0; i < StoreDocs.length; i++) {
+      /*for (var i = 0; i < StoreDocs.length; i++) {
         base64String = '${StoreDocs[i]["uid"]}';
         decodedString = utf8.decode(base64.decode(base64String));
         UserIDcheck.add(decodedString);
-      }
+      }*/
       progressWidget = false;
       _CateData();
     });
@@ -150,9 +150,9 @@ class _SubAdminState extends State<SubAdmin> {
   }
 
   Future All_Update_initial(id) async {
-    var dbData = await dbFindDynamic(db, {'table': 'users', 'uid': id});
+    var dbData = await dbFind({'table': 'users', 'id': id});
     if (dbData.isNotEmpty) {
-      data = dbData[0];
+      data = dbData;
       setState(() {
         firstName = data!['first_name'];
         lastName = data!['last_name'];
@@ -1069,6 +1069,7 @@ class _SubAdminState extends State<SubAdmin> {
                     for (var index = 0; index < StoreDocs.length; index++)
                       (Responsive.isMobile(context))
                           ? tableRowWidget_mobile(
+                              StoreDocs[index],
                               "${StoreDocs[index]["first_name"]} ${StoreDocs[index]["last_name"]}",
                               "${StoreDocs[index]["user_type"]}",
                               "${StoreDocs[index]["email"]}",
@@ -1080,6 +1081,7 @@ class _SubAdminState extends State<SubAdmin> {
                               "${StoreDocs[index]["date_at"]}",
                               "${StoreDocs[index]["uid"]}")
                           : tableRowWidget(
+                              StoreDocs[index],
                               "${index + 1}",
                               "${StoreDocs[index]["first_name"]} ${StoreDocs[index]["last_name"]}",
                               "${StoreDocs[index]["user_type"]}",
@@ -1103,7 +1105,7 @@ class _SubAdminState extends State<SubAdmin> {
     );
   }
 
-  TableRow tableRowWidget(sno, name, U_type, email, status, date, iid) {
+  TableRow tableRowWidget(data, sno, name, U_type, email, status, date, iid) {
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -1155,7 +1157,7 @@ class _SubAdminState extends State<SubAdmin> {
     ]);
   }
 
-  TableRow tableRowWidget_mobile(name, U_type, email, status, date, iid) {
+  TableRow tableRowWidget_mobile(data, name, U_type, email, status, date, iid) {
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -1197,7 +1199,7 @@ class _SubAdminState extends State<SubAdmin> {
                             ftFamily: 'ms',
                             fw: FontWeight.normal),
                       ),
-                      Action_btn(context, iid)
+                      Action_btn(context, data['id'])
                     ],
                   )
                 ],

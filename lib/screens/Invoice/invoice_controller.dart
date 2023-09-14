@@ -10,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
 class invoiceController {
   //var db = FirebaseFirestore.instance;
@@ -20,6 +21,7 @@ class invoiceController {
       : FirebaseFirestore.instance;
 
   final formKeyInvoice = GlobalKey<FormState>();
+  List<LogicalKeyboardKey> Keys = [];
 
   final Customer_nameController = TextEditingController();
   final Customer_MobileController = TextEditingController();
@@ -54,6 +56,8 @@ class invoiceController {
   List<String> ListCustomer = [];
   Map<String, dynamic> CustomerArr = {};
   Map<String, dynamic> editProductQnt = {};
+  // all product
+  Map<String, dynamic> allProductList = {};
 
   // List<String> ListCategory = [];
   // Map<String, dynamic> ListAttribute = {};
@@ -116,7 +120,7 @@ class invoiceController {
         dbData['products'].forEach((k, v) async {
           totalProduct = i;
           // initiate
-          ctrNewRow(i);
+          ctrNewRow(ctrNewId: i);
           // set data
           ProductNameControllers[i]!.text =
               (v != null && v['name'] != null) ? v['name'] : '';
@@ -134,14 +138,22 @@ class invoiceController {
 
           // get product details form product table
 
-          productDBdata[i] =
-              (productArr[v['id']] != null) ? productArr[v['id']] : {};
-          if (productArr[v['id']] != null) {
-            editProductQnt[v['id']] = v;
+          productDBdata[i] = (allProductList[v['name']] != null)
+              ? allProductList[v['name']]
+              : {};
+          if (allProductList[v['name']] != null) {
+            editProductQnt['$i'] = v;
           }
 
-          ctrTotalCalculate(i);
+          // productDBdata[i] =
+          //     (productArr[v['id']] != null) ? productArr[v['id']] : {};
+          // print("---------------------");
+          // print(productArr[v['id']]);
+          // if (productArr[v['id']] != null) {
+          //   editProductQnt[v['id']] = v;
+          // }
 
+          ctrTotalCalculate(i);
           i++;
         });
       }
@@ -163,12 +175,34 @@ class invoiceController {
   // get all product name List =============================
   getProductNameList() async {
     ListName = [];
+    allProductList = {};
     var dbData = await dbFindDynamic(db, {'table': 'product'});
     dbData.forEach((k, data) {
       if (data['quantity'] != null &&
           int.parse(data['quantity'].toString()) < 1) {
+        // then not add in list
       } else {
-        ListName.add(data['name']);
+        if (data['item_list'] != null && data['item_list'].isNotEmpty) {
+          data['item_list'].forEach((i, vl) {
+            var tempName = '${data['name']} -';
+            if (vl.isNotEmpty) {
+              vl.forEach((k, v) {
+                if (v == '' ||
+                    v == null ||
+                    k == 'price' ||
+                    k == 'quantity' ||
+                    k == 'location') {
+                } else {
+                  tempName = '$tempName ${v}';
+                }
+              });
+              ListName.add(tempName);
+              vl['id'] = data['id'];
+              vl['list_item_id'] = i;
+              allProductList[tempName] = vl;
+            }
+          });
+        }
       }
       productArr[data['id']] = data;
     });
@@ -189,16 +223,94 @@ class invoiceController {
 
   // get product details ======================================
   getProductDetails(productName) async {
-    var dbData =
-        await dbFindDynamic(db, {'table': 'product', 'name': productName});
-    if (dbData.isEmpty) {
-      return Map();
+    if (allProductList[productName] != null) {
+      return allProductList[productName];
     } else {
-      return dbData[0];
+      return Map();
+    }
+    // var dbData =
+    //     await dbFindDynamic(db, {'table': 'product', 'name': productName});
+    // if (dbData.isEmpty) {
+    //   return Map();
+    // } else {
+    //   return dbData[0];
+    // }
+  }
+
+  // quantity update
+  upateQunatity(docId, k, v) async {
+    int increaseDbQtt = 0;
+    int decreaseDbQtt = 0;
+    Map<String, dynamic> tempW = new Map();
+    if (v['quantity'] != null && ProductQuntControllers[k] != null) {
+      if (docId != '' &&
+          editProductQnt['$k'] != null &&
+          (int.parse(editProductQnt['$k']['quantity'].toString()) !=
+              int.parse(ProductQuntControllers[k]!.text.toString()))) {
+        // variable
+        int editCurrentQnt =
+            int.parse(editProductQnt['$k']['quantity'].toString());
+        int ctrQnt = int.parse(ProductQuntControllers[k]!.text.toString());
+        if (editCurrentQnt > ctrQnt) {
+          increaseDbQtt = (editCurrentQnt - ctrQnt);
+        } else {
+          decreaseDbQtt = (ctrQnt - editCurrentQnt);
+        }
+      }
+
+      // update
+
+      var productData = await dbFind({'table': 'product', 'id': v['id']});
+      if (productData['item_list'] != null) {
+        //print(productData);
+        var tempListData = productData['item_list'];
+        int quantity = (productData['quantity'] == null)
+            ? 0
+            : int.parse(productData['quantity'].toString());
+        var tempEditListData = tempListData[v['list_item_id']];
+
+        if (tempEditListData != null && tempEditListData['quantity'] != null) {
+          // variable area =====================
+          int tempCurentQnt = 0;
+
+          if (docId == '') {
+            tempCurentQnt =
+                int.parse(ProductQuntControllers[k]!.text.toString());
+          }
+
+          tempEditListData['quantity'] =
+              (int.parse(tempEditListData['quantity'].toString()) -
+                      tempCurentQnt +
+                      increaseDbQtt -
+                      decreaseDbQtt)
+                  .toString();
+
+          quantity = (quantity - tempCurentQnt + increaseDbQtt - decreaseDbQtt);
+
+          // update data
+          tempListData[v['list_item_id']] = tempEditListData;
+
+          tempW = {
+            'table': 'product',
+            'id': v['id'],
+            'quantity': '$quantity',
+            'item_list': tempListData,
+          };
+        }
+      }
+    }
+    if (tempW.isNotEmpty) {
+      var r = await dbUpdate(db, tempW);
+      return r;
+    } else {
+      return '';
     }
   }
 
-// insert product ============================================
+// ***************************************************************
+// insert product
+// ***************************************************************
+
   insertInvoiceDetails(context, {docId: ''}) async {
     var alert = '';
     if (Customer_nameController.text.length < 4) {
@@ -276,32 +388,14 @@ class invoiceController {
     dbArr['title'] = tempTitle;
 
     //product quntity calculate with product table
-    productDBdata.forEach((k, v) async {
-      if (v['quantity'] != null && ProductQuntControllers[k] != null) {
-        var tTotalQnt = int.parse(v['quantity'].toString()) -
-            int.parse(ProductQuntControllers[k]!.text.toString());
-        Map<String, dynamic> tempW = new Map();
-        // when edit conditon
-        if (docId == '') {
-          tempW = {'table': 'product', 'id': v['id'], 'quantity': '$tTotalQnt'};
-        } else if (docId != '' &&
-            editProductQnt[v['id']] != null &&
-            (int.parse(editProductQnt[v['id']]['quantity'].toString()) !=
-                int.parse(ProductQuntControllers[k]!.text.toString()))) {
-          int currentQnt =
-              int.parse(editProductQnt[v['id']]['quantity'].toString());
-          int ctrQnt = int.parse(ProductQuntControllers[k]!.text.toString());
-          int dbQnt = int.parse(v['quantity'].toString());
 
-          tTotalQnt = (currentQnt > ctrQnt)
-              ? dbQnt + (currentQnt - ctrQnt)
-              : dbQnt - (ctrQnt - currentQnt);
-          tempW = {'table': 'product', 'id': v['id'], 'quantity': '$tTotalQnt'};
-        }
-
-        await dbUpdate(db, tempW);
+    Future<void> callUpdateFn() async {
+      for (var k in productDBdata.keys) {
+        await upateQunatity(docId, k, productDBdata[k]);
       }
-    });
+    }
+
+    await callUpdateFn();
 
     // check customer already exist ====================
     var w = {'table': 'customer'};
@@ -324,7 +418,10 @@ class invoiceController {
         "date_at": DateTime.now(),
         "status": true
       };
-      await dbSave(db, customerData);
+      var customerId = await dbSave(db, customerData);
+      dbArr["customer_id"] = customerId;
+    } else {
+      dbArr["customer_id"] = testDbData[0]['id'];
     }
 
     if (docId == '') {
@@ -404,7 +501,15 @@ class invoiceController {
   }
 
   // new row
-  ctrNewRow(ctrId) async {
+  ctrNewRow({ctrNewId = 0}) async {
+    var ctrId = ctrNewId;
+    if (ctrNewId == 0) {
+      totalProduct++;
+      ctrId = totalProduct;
+    } else {
+      ctrId = ctrNewId;
+    }
+
     ProductNameControllers[ctrId] = TextEditingController();
     ProductPriceControllers[ctrId] = TextEditingController();
     ProductQuntControllers[ctrId] = TextEditingController();
@@ -415,16 +520,56 @@ class invoiceController {
     ProductQuntControllers[ctrId]!.text = '1';
     ProductDiscountControllers[ctrId]!.text = '0';
     ProductGstControllers[ctrId]!.text = '0';
+    ProductTotalControllers[ctrId]!.text = '0';
   }
 
   // remove  row
-  ctrRemoveRow(ctrId) async {
-    ProductNameControllers.remove(ctrId);
-    ProductPriceControllers.remove(ctrId);
-    ProductQuntControllers.remove(ctrId);
-    ProductGstControllers.remove(ctrId);
-    ProductDiscountControllers.remove(ctrId);
-    ProductTotalControllers.remove(ctrId);
-    ctrGrandTotal();
+  ctrRemoveRow(context) async {
+    if (totalProduct > 1) {
+      var ctrId = totalProduct;
+      ProductNameControllers.remove(ctrId);
+      ProductPriceControllers.remove(ctrId);
+      ProductQuntControllers.remove(ctrId);
+      ProductGstControllers.remove(ctrId);
+      ProductDiscountControllers.remove(ctrId);
+      ProductTotalControllers.remove(ctrId);
+      await ctrGrandTotal();
+      totalProduct--;
+    }
+  }
+
+  // keyboard listner
+  // key press function
+  cntrKeyPressFun(e, context) {
+    final key = e.logicalKey;
+    if (e is RawKeyDownEvent) {
+      if (e.isKeyPressed(LogicalKeyboardKey.escape)) {
+        Navigator.pop(context, 'updated');
+      }
+
+      if (e.isKeyPressed(LogicalKeyboardKey.keyD) ||
+          e.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
+        Keys.add(key);
+      }
+      // ctr + D OR C => addnewproduct
+      if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
+          (Keys.contains(LogicalKeyboardKey.keyD) ||
+              Keys.contains(LogicalKeyboardKey.keyC))) {
+        ctrNewRow();
+
+        Keys = [];
+        return true;
+      }
+      // ctr + R OR X => RemoveProduct
+      if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
+          (Keys.contains(LogicalKeyboardKey.keyR) ||
+              Keys.contains(LogicalKeyboardKey.keyX))) {
+        ctrRemoveRow(context);
+        Keys = [];
+        return true;
+      }
+    } else {
+      Keys.remove(key);
+    }
   }
 }

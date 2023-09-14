@@ -465,17 +465,19 @@ class ProductController {
           e.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
         Keys.add(key);
       }
-      // ctr + D => addnewproduct
+      // ctr + D OR C => addnewproduct
       if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
-          Keys.contains(LogicalKeyboardKey.keyD)) {
+          (Keys.contains(LogicalKeyboardKey.keyD) ||
+              Keys.contains(LogicalKeyboardKey.keyC))) {
         fnAddNewProduct(context);
 
         Keys = [];
         return true;
       }
-      // ctr + R => RemoveProduct
+      // ctr + R OR X => RemoveProduct
       if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
-          Keys.contains(LogicalKeyboardKey.keyR)) {
+          (Keys.contains(LogicalKeyboardKey.keyR) ||
+              Keys.contains(LogicalKeyboardKey.keyX))) {
         fnRemoveProduct(context);
         Keys = [];
         return true;

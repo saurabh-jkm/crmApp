@@ -711,3 +711,39 @@ Widget SearchBox(BuildContext context, {searchFn: '', label: 'Search'}) {
     ),
   );
 }
+
+// Table Heading ==========================
+Widget TableHeading(context, data, {rowColor: '', textColor: ''}) {
+  return Container(
+    margin: EdgeInsets.only(bottom: 1.0),
+    padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+    decoration: BoxDecoration(color: (rowColor == '') ? themeBG2 : rowColor),
+    child: Row(
+      children: [
+        for (String k in data)
+          (k == '#')
+              ? Container(
+                  width: 40.0,
+                  child: Container(
+                    child: Text("${capitalize(k)}",
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            color: (textColor == '')
+                                ? Color.fromARGB(255, 201, 201, 201)
+                                : textColor)),
+                  ),
+                )
+              : Expanded(
+                  child: Container(
+                    child: Text("${capitalize(k)}",
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            color: (textColor == '')
+                                ? Color.fromARGB(255, 201, 201, 201)
+                                : textColor)),
+                  ),
+                ),
+      ],
+    ),
+  );
+}

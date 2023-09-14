@@ -71,7 +71,7 @@ class _addStockScreenState extends State<addStockScreen> {
       focusNode: FocusNode(),
       onKey: (e) {
         var rData = controller.cntrKeyPressFun(e, context);
-        if (rData) {
+        if (rData != null && rData) {
           setState(() {});
         }
       },
@@ -147,33 +147,59 @@ class _addStockScreenState extends State<addStockScreen> {
 
                                       // 2nd row =============================================
                                       themeSpaceVertical(40.0),
-                                      Row(children: [
-                                        themeHeading2("Products"),
-                                        SizedBox(width: 10.0),
-                                        IconButton(
-                                            onPressed: () {
-                                              addNewProduct(context);
-                                            },
-                                            tooltip: "Add New Product",
-                                            icon: Icon(
-                                              Icons.add,
-                                              color: themeBG,
-                                              size: 20.0,
-                                            )),
-                                        SizedBox(width: 10.0),
-                                        (controller.totalProduct > 1)
-                                            ? IconButton(
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          // add new product
+                                          Row(children: [
+                                            themeHeading2("Products"),
+                                            SizedBox(width: 10.0),
+                                            IconButton(
                                                 onPressed: () {
-                                                  removeProduct(context);
+                                                  addNewProduct(context);
                                                 },
-                                                tooltip: "Remove Product",
+                                                tooltip: "Add New Product",
                                                 icon: Icon(
-                                                  Icons.remove,
-                                                  color: Colors.red,
+                                                  Icons.add,
+                                                  color: themeBG,
                                                   size: 20.0,
-                                                ))
-                                            : SizedBox(),
-                                      ]),
+                                                )),
+                                            SizedBox(width: 10.0),
+                                            (controller.totalProduct > 1)
+                                                ? IconButton(
+                                                    onPressed: () {
+                                                      removeProduct(context);
+                                                    },
+                                                    tooltip: "Remove Product",
+                                                    icon: Icon(
+                                                      Icons.remove,
+                                                      color: Colors.red,
+                                                      size: 20.0,
+                                                    ))
+                                                : SizedBox(),
+                                          ]),
+                                          // new attribute
+                                          Row(children: [
+                                            themeHeading2("Attributes"),
+                                            SizedBox(width: 10.0),
+                                            IconButton(
+                                                onPressed: () {
+                                                  addNewAttrbute(
+                                                      context,
+                                                      controller
+                                                          .newAttributeController,
+                                                      addNewAttFn);
+                                                },
+                                                tooltip: "Add New Attribute",
+                                                icon: Icon(
+                                                  Icons.add,
+                                                  color: themeBG,
+                                                  size: 20.0,
+                                                )),
+                                          ]),
+                                        ],
+                                      ),
                                       themeSpaceVertical(3.0),
                                       for (var i = 1;
                                           i <= controller.totalProduct;
@@ -196,25 +222,6 @@ class _addStockScreenState extends State<addStockScreen> {
                                                     255, 234, 242, 250)),
                                             child: Column(children: [
                                               themeSpaceVertical(5.0),
-
-                                              // Row(children: [
-                                              //   themeHeading2("Attributes"),
-                                              //   SizedBox(width: 10.0),
-                                              //   IconButton(
-                                              //       onPressed: () {
-                                              //         addNewAttrbute(
-                                              //             context,
-                                              //             controller.newAttributeController,
-                                              //             addNewAttFn);
-                                              //       },
-                                              //       tooltip: "Add New Attribute",
-                                              //       icon: Icon(
-                                              //         Icons.add,
-                                              //         color: themeBG,
-                                              //         size: 20.0,
-                                              //       )),
-                                              // ]),
-                                              // themeSpaceVertical(4.0),
 
                                               (controller.dynamicControllers[
                                                           '$i'] !=
