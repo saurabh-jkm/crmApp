@@ -73,6 +73,22 @@ class _CustomerListState extends State<CustomerList> {
       color: Colors.white,
       child: ListView(
         children: [
+          // search
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  height: 60.0,
+                  width: 220.0,
+                  child: inputSearch(
+                      context, controller.searchTextController, 'Search',
+                      method: fnSearch),
+                )
+              ],
+            ),
+          ),
+          // table start
           TableHeading(context, controller.headintList,
               rowColor: Color.fromARGB(255, 94, 86, 204),
               textColor: Colors.white),
@@ -80,10 +96,17 @@ class _CustomerListState extends State<CustomerList> {
             CustomerTableRow(context, controller.listCustomer[key], key,
                 controller.listOrder,
                 rowColor: Color.fromARGB(255, 162, 155, 255),
-                textColor: const Color.fromARGB(255, 0, 0, 0)),
+                textColor: const Color.fromARGB(255, 0, 0, 0),
+                controller: controller),
         ],
       ),
     );
+  }
+
+  // functions =================================================================
+  fnSearch(search) async {
+    await controller.ctr_fn_search();
+    setState(() {});
   }
 }
 

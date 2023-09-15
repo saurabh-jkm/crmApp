@@ -669,6 +669,28 @@ autoCompleteFormInput(suggationList, label, myController,
   );
 }
 
+// search input
+Widget inputSearch(context, controller, label, {method: ''}) {
+  return TextFormField(
+    controller: controller,
+    style: textStyle1,
+    onChanged: (value) {
+      if (method != '') {
+        method(value);
+      }
+    },
+    decoration: InputDecoration(
+      contentPadding: EdgeInsets.only(left: 6.0),
+      hintText: 'Search',
+      hintStyle: themeTextStyle(
+          color: const Color.fromARGB(255, 156, 156, 156), size: 14.0),
+      enabledBorder: UnderlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          borderSide: BorderSide(color: themeBG4, width: 3.0)),
+    ),
+  );
+}
+
 // theme heading
 Widget themeHeading2(label) {
   return Padding(

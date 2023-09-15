@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 final Color themeBG = Color(0xFF2697FF);
 final Color themeBG2 = Color(0xff1a243f);
 final Color themeBG3 = Color.fromARGB(255, 44, 108, 161);
-final Color themeBG4 = Color(0xffff03a857);
+final Color themeBG4 = Color.fromARGB(255, 94, 86, 204);
+final Color themeBG5 = Color.fromARGB(255, 162, 155, 255);
 final Color buttonBG = Color(0xffff9100);
 
 const themeSecondaryColor = Color(0xFF2A2D3E);
