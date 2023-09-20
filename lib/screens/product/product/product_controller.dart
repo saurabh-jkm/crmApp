@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:crm_demo/screens/product/product/add_product_screen.dart';
 import 'package:crm_demo/screens/product/product/product_widgets.dart';
 import 'package:crm_demo/themes/firebase_functions.dart';
