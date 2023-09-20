@@ -10,6 +10,7 @@ final Color themeBG2 = Color(0xff1a243f);
 final Color themeBG3 = Color.fromARGB(255, 44, 108, 161);
 final Color themeBG4 = Color.fromARGB(255, 94, 86, 204);
 final Color themeBG5 = Color.fromARGB(255, 162, 155, 255);
+final Color themeBG6 = Color.fromARGB(255, 167, 187, 253);
 final Color buttonBG = Color(0xffff9100);
 
 const themeSecondaryColor = Color(0xFF2A2D3E);
@@ -23,6 +24,10 @@ final TextStyle textStyle1 =
     TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: themeBlue);
 final TextStyle textStyle2 =
     TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: themeBlue);
+
+final TextStyle textStyle3 = TextStyle(fontSize: 11, color: Colors.black);
+final TextStyle textStyleHeading1 =
+    TextStyle(fontWeight: FontWeight.bold, color: themeBG2, fontSize: 12);
 
 final BoxDecoration loginBoxDeco = BoxDecoration(
   color: Color(0xFFffd83f),
@@ -105,6 +110,17 @@ inputStyle(lable) {
         color: const Color.fromARGB(214, 33, 149, 243),
       ),
     ),
+  );
+}
+
+inputStyle2(lable) {
+  return InputDecoration(
+    contentPadding: EdgeInsets.only(bottom: 16.0),
+    labelText: '$lable',
+    fillColor: Colors.black,
+    labelStyle: textStyle1,
+    border: InputBorder.none,
+    hintStyle: TextStyle(color: Colors.black),
   );
 }
 

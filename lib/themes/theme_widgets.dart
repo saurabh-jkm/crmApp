@@ -669,6 +669,51 @@ autoCompleteFormInput(suggationList, label, myController,
   );
 }
 
+// dropdown ===============================================
+// form input field ===========================
+Widget inpuDropdDown(BuildContext context, label, itemList, value,
+    {padding: 5.0,
+    suggationList,
+    editComplete: '',
+    focusNode: '',
+    currentController: '',
+    isNumber: false,
+    isFloat: false,
+    method: '',
+    methodArg: '',
+    readOnly: false,
+    style: 1}) {
+  // if (editComplete != '' && currentController.text == '') {
+  //   controller.text = currentController.text;
+  // }
+
+  return Container(
+      padding: EdgeInsets.all(padding),
+      child: DropdownButtonFormField(
+        style: textStyle1,
+        dropdownColor: Colors.white,
+        value: '${value}',
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: Colors.black, // <-- SEE HERE
+        ),
+        decoration: (style == 2) ? inputStyle2(value) : inputStyle(label),
+        onChanged: (String? newValue) {
+          if (method == '') {
+            value = newValue;
+          } else {
+            method(newValue);
+          }
+        },
+        items: itemList.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      ));
+}
+
 // search input
 Widget inputSearch(context, controller, label, {method: ''}) {
   return TextFormField(
@@ -718,18 +763,18 @@ Widget SearchBox(BuildContext context, {searchFn: '', label: 'Search'}) {
         borderSide: BorderSide.none,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
-      suffixIcon: InkWell(
-        onTap: () {},
-        child: Container(
-          padding: EdgeInsets.all(defaultPadding * 0.75),
-          margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-          decoration: BoxDecoration(
-            color: primaryColor,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-          ),
-          child: Icon(Icons.search),
-        ),
-      ),
+      // suffixIcon: InkWell(
+      //   onTap: () {},
+      //   child: Container(
+      //     padding: EdgeInsets.all(defaultPadding * 0.75),
+      //     margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+      //     decoration: BoxDecoration(
+      //       color: primaryColor,
+      //       borderRadius: const BorderRadius.all(Radius.circular(10)),
+      //     ),
+      //     child: Icon(Icons.search),
+      //   ),
+      // ),
     ),
   );
 }

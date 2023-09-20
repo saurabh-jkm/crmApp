@@ -61,10 +61,6 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
         ),
       );
     } else {
-      // final output = await getTemporaryDirectory();
-      // var filePath = "${output.path}/$fileName.pdf";
-      // final file = File(filePath);
-      // await file.writeAsBytes(byteList);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -167,6 +163,10 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                                     data: OrderData,
                                     header_name: "Edit Invoice",
                                   )));
+
+                      if (temp == "updated") {
+                        Navigator.pop(context, 'updated');
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       primary: themeBG2,
@@ -193,430 +193,444 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                 decoration: BoxDecoration(color: Colors.white),
                 width: pageWidth,
-                child: Column(
+                child: Stack(
                   children: [
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      Text("Invoice",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25,
-                              color: themeBG2)),
-                    ]),
-                    SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    // water mark
+                    (OrderData["is_sale"] != null &&
+                            OrderData["is_sale"] == 'estimate')
+                        ? Positioned(
+                            top: 200.0,
+                            child: RotationTransition(
+                              turns: new AlwaysStoppedAnimation(15 / 180),
+                              child: Text("${OrderData["is_sale"]}",
+                                  style: TextStyle(
+                                      color: Color.fromARGB(255, 243, 243, 243),
+                                      fontSize: 150.0)),
+                            ),
+                          )
+                        : SizedBox(),
+
+                    // page data start
+                    Column(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Invoice",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 25,
+                                      color: themeBG2)),
+                            ]),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text("Geetanjali Electromart Private Limited",
-                                style: textStyle2),
-                            Text(
-                              "D-1/140, New Kondli, New Delhi 110096, India",
-                              style: textStyle2,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Geetanjali Electromart Private Limited",
+                                    style: textStyle2),
+                                Text(
+                                  "D-1/140, New Kondli, New Delhi 110096, India",
+                                  style: textStyle2,
+                                ),
+                                SizedBox(height: 5.0),
+                                Text(
+                                  "www.geetanjalielectromart.com",
+                                  style: textStyle1,
+                                ),
+                                Text(
+                                  "info@geetanjalielectromart.net",
+                                  style: textStyle1,
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 5.0),
-                            Text(
-                              "www.geetanjalielectromart.com",
-                              style: textStyle1,
-                            ),
-                            Text(
-                              "info@geetanjalielectromart.net",
-                              style: textStyle1,
-                            ),
+                            Column(children: [
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("e-Invoice",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black)),
+                                  ]),
+                              /////// Invoice Data fetch  ++++++++
+
+                              ////////  ============================
+                            ])
                           ],
                         ),
-                        Column(children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("e-Invoice",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black)),
-                              ]),
-                          /////// Invoice Data fetch  ++++++++
 
-                          ////////  ============================
-                        ])
-                      ],
-                    ),
+                        SizedBox(height: 20),
+                        Container(
+                            child: Row(children: [
+                          Expanded(
+                              child: Container(
+                                  padding: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: themeBG2, width: 1)),
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text("Customer Name",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: themeBG2)),
+                                        Text("Mobile No.",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: themeBG2)),
+                                        Text("Email Id",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: themeBG2)),
+                                        Text("Address",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: themeBG2)),
+                                      ]))),
+                          Expanded(
+                            child: Container(
+                                padding: EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: themeBG2, width: 1)),
+                                child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("${OrderData["customer_name"]}",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.normal,
+                                              color: themeBG2)),
+                                      Text("${OrderData["mobile"]}",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.normal,
+                                              color: themeBG2)),
+                                      Text("${OrderData["email"]}",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.normal,
+                                              color: themeBG2)),
+                                      Text("${OrderData["address"]}",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.normal,
+                                              color: themeBG2)),
+                                    ])),
+                          )
+                        ])),
+                        Container(
+                            child: Row(children: [
+                          Expanded(
+                              child: Container(
+                                  height: 70,
+                                  padding: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: themeBG2, width: 1)),
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text("Invoice Id",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: themeBG2)),
+                                        Text("Dated",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: themeBG2)),
+                                      ]))),
+                          Expanded(
+                              child: Container(
+                                  height: 70,
+                                  padding: EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: themeBG2, width: 1),
+                                  ),
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text("${OrderData["id"]}",
+                                            style: TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.normal,
+                                                color: themeBG2)),
+                                        Text("${OrderData["invoice_date"]}",
+                                            style: TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.normal,
+                                                color: themeBG2)),
+                                      ])))
+                        ])),
+                        SizedBox(height: 20),
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: themeBG2, width: 1.0)),
+                          height: 35,
+                          child: Row(
+                            children: [
+                              Container(
+                                  padding: EdgeInsets.all(5),
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: themeBG2)),
+                                  alignment: Alignment.center,
+                                  child:
+                                      Text("S.no.", style: textStyleHeading1)),
+                              Container(
+                                  padding: EdgeInsets.all(2),
+                                  width: 180,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: themeBG2)),
+                                  alignment: Alignment.center,
+                                  child: Text("Item Description",
+                                      style: textStyleHeading1)),
+                              Expanded(
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.center,
+                                      child: Text("Price (₹)",
+                                          style: textStyleHeading1))),
+                              Expanded(
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.center,
+                                      child: Text("Qty.",
+                                          style: textStyleHeading1))),
+                              Expanded(
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.center,
+                                      child: Text("Disc (₹) ",
+                                          style: textStyleHeading1))),
+                              Expanded(
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.center,
+                                      child: Text("SubTotal(₹)",
+                                          style: textStyleHeading1))),
+                              Expanded(
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.center,
+                                      child: Text("GST (%) ",
+                                          style: textStyleHeading1))),
+                              Expanded(
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.center,
+                                      child: Text("Amount",
+                                          style: textStyleHeading1))),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: themeBG2, width: 1.0)),
+                          height: 100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                  width: 40,
+                                  padding: EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: themeBG2, width: 1.0)),
+                                  alignment: Alignment.topCenter,
+                                  child: Column(children: [
+                                    for (var i = 0;
+                                        i < OrderData['products'].length;
+                                        i++)
+                                      Text("${"${i + 1}"}",
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.normal,
+                                              color: themeBG2))
+                                  ])),
+                              Container(
+                                  padding: EdgeInsets.all(2),
+                                  width: 180,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: themeBG2)),
+                                  alignment: Alignment.topCenter,
+                                  child: Column(children: [
+                                    for (var i = 0;
+                                        i < OrderData['products'].length;
+                                        i++)
+                                      Text(
+                                          "${OrderData['products']["$i"]["name"]} ",
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.normal,
+                                              color: themeBG2))
+                                  ])),
+                              Expanded(
+                                  child: Container(
+                                      padding: EdgeInsets.all(2),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.topCenter,
+                                      child: Column(children: [
+                                        for (var i = 0;
+                                            i < OrderData['products'].length;
+                                            i++)
+                                          Text(
+                                              "${OrderData['products']["$i"]["price"]} ",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: themeBG2))
+                                      ]))),
+                              Expanded(
+                                  child: Container(
+                                      padding: EdgeInsets.all(2),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.topCenter,
+                                      child: Column(children: [
+                                        for (var i = 0;
+                                            i < OrderData['products'].length;
+                                            i++)
+                                          Text(
+                                              "${OrderData['products']["$i"]["quantity"]} ",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: themeBG2))
+                                      ])
+                                      // for (var i = 1; i <= eedata.length; i++)
+                                      )),
+                              Expanded(
+                                  child: Container(
+                                      padding: EdgeInsets.all(2),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.topCenter,
+                                      child: Column(children: [
+                                        for (var i = 0;
+                                            i < OrderData['products'].length;
+                                            i++)
+                                          Text(
+                                              "${OrderData['products']["$i"]["discount"]}",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: themeBG2))
+                                      ]))),
+                              Expanded(
+                                  child: Container(
+                                      padding: EdgeInsets.all(2),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.topCenter,
+                                      child: Column(children: [
+                                        for (var i = 0;
+                                            i < OrderData['products'].length;
+                                            i++)
+                                          Text(
+                                              "${OrderData['products']["$i"]["subtotal"]}",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: themeBG2))
+                                      ]))),
+                              Expanded(
+                                  child: Container(
+                                      padding: EdgeInsets.all(2),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.topCenter,
+                                      child: Column(children: [
+                                        for (var i = 0;
+                                            i < OrderData['products'].length;
+                                            i++)
+                                          Text(
+                                              "${OrderData['products']["$i"]["gst"]} (${OrderData['products']["$i"]["gst_per"]}%)",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: themeBG2))
+                                      ]))),
+                              Expanded(
+                                  child: Container(
+                                      padding: EdgeInsets.all(2),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      alignment: Alignment.topCenter,
+                                      child: Column(children: [
+                                        for (var i = 0;
+                                            i < OrderData['products'].length;
+                                            i++)
+                                          Text(
+                                              "${OrderData['products']["$i"]["total"]} /-",
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: themeBG2))
+                                      ])))
+                            ],
+                          ),
+                        ),
 
-                    SizedBox(height: 20),
-                    Container(
-                        child: Row(children: [
-                      Expanded(
-                          child: Container(
-                              padding: EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: themeBG2, width: 1)),
-                              child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Customer Name",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: themeBG2)),
-                                    Text("Mobile No.",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: themeBG2)),
-                                    Text("Email Id",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: themeBG2)),
-                                    Text("Address",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: themeBG2)),
-                                  ]))),
-                      Expanded(
-                        child: Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: themeBG2, width: 1)),
-                            child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("${OrderData["customer_name"]}",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          color: themeBG2)),
-                                  Text("${OrderData["mobile"]}",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          color: themeBG2)),
-                                  Text("${OrderData["email"]}",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          color: themeBG2)),
-                                  Text("${OrderData["address"]}",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          color: themeBG2)),
-                                ])),
-                      )
-                    ])),
-                    Container(
-                        child: Row(children: [
-                      Expanded(
-                          child: Container(
-                              height: 70,
-                              padding: EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: themeBG2, width: 1)),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Invoice Id",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: themeBG2)),
-                                    Text("Dated",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: themeBG2)),
-                                  ]))),
-                      Expanded(
-                          child: Container(
-                              height: 70,
-                              padding: EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: themeBG2, width: 1),
-                              ),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("${OrderData["id"]}",
-                                        style: TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.normal,
-                                            color: themeBG2)),
-                                    Text("${OrderData["invoice_date"]}",
-                                        style: TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.normal,
-                                            color: themeBG2)),
-                                  ])))
-                    ])),
-                    SizedBox(height: 20),
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: themeBG2, width: 1.0)),
-                      height: 35,
-                      child: Row(
-                        children: [
-                          Container(
-                              padding: EdgeInsets.all(5),
-                              width: 40,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: themeBG2)),
-                              alignment: Alignment.center,
-                              child: Text("S.no.",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: themeBG2))),
-                          Container(
-                              padding: EdgeInsets.all(2),
-                              width: 180,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: themeBG2)),
-                              alignment: Alignment.center,
-                              child: Text("Item Description",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: themeBG2))),
-                          Expanded(
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.center,
-                                  child: Text("Price (₹)",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: themeBG2)))),
-                          Expanded(
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.center,
-                                  child: Text("Qty.",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: themeBG2)))),
-                          Expanded(
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.center,
-                                  child: Text("Disc (₹) ",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: themeBG2)))),
-                          Expanded(
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.center,
-                                  child: Text("SubTotal (₹) ",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: themeBG2)))),
-                          Expanded(
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.center,
-                                  child: Text("GST (%) ",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: themeBG2)))),
-                          Expanded(
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.center,
-                                  child: Text("Amount",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: themeBG2)))),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: themeBG2, width: 1.0)),
-                      height: 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              width: 40,
-                              padding: EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: themeBG2, width: 1.0)),
-                              alignment: Alignment.topCenter,
-                              child: Column(children: [
-                                for (var i = 0;
-                                    i < OrderData['products'].length;
-                                    i++)
-                                  Text("${"${i + 1}"}",
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.normal,
-                                          color: themeBG2))
-                              ])),
-                          Container(
-                              padding: EdgeInsets.all(2),
-                              width: 180,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: themeBG2)),
-                              alignment: Alignment.topCenter,
-                              child: Column(children: [
-                                for (var i = 0;
-                                    i < OrderData['products'].length;
-                                    i++)
-                                  Text(
-                                      "${OrderData['products']["$i"]["name"]} ",
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.normal,
-                                          color: themeBG2))
-                              ])),
-                          Expanded(
-                              child: Container(
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: themeBG2, width: 1.0)),
+                          height: 35,
+                          child: Row(
+                            children: [
+                              SizedBox(width: 40),
+                              Container(
                                   padding: EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.topCenter,
-                                  child: Column(children: [
-                                    for (var i = 0;
-                                        i < OrderData['products'].length;
-                                        i++)
-                                      Text(
-                                          "${OrderData['products']["$i"]["price"]} ",
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.normal,
-                                              color: themeBG2))
-                                  ]))),
-                          Expanded(
-                              child: Container(
-                                  padding: EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.topCenter,
-                                  child: Column(children: [
-                                    for (var i = 0;
-                                        i < OrderData['products'].length;
-                                        i++)
-                                      Text(
-                                          "${OrderData['products']["$i"]["quantity"]} ",
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.normal,
-                                              color: themeBG2))
-                                  ])
-                                  // for (var i = 1; i <= eedata.length; i++)
-                                  )),
-                          Expanded(
-                              child: Container(
-                                  padding: EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.topCenter,
-                                  child: Column(children: [
-                                    for (var i = 0;
-                                        i < OrderData['products'].length;
-                                        i++)
-                                      Text(
-                                          "${OrderData['products']["$i"]["discount"]}",
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.normal,
-                                              color: themeBG2))
-                                  ]))),
-                          Expanded(
-                              child: Container(
-                                  padding: EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.topCenter,
-                                  child: Column(children: [
-                                    for (var i = 0;
-                                        i < OrderData['products'].length;
-                                        i++)
-                                      Text(
-                                          "${OrderData['products']["$i"]["subtotal"]}",
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.normal,
-                                              color: themeBG2))
-                                  ]))),
-                          Expanded(
-                              child: Container(
-                                  padding: EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.topCenter,
-                                  child: Column(children: [
-                                    for (var i = 0;
-                                        i < OrderData['products'].length;
-                                        i++)
-                                      Text(
-                                          "${OrderData['products']["$i"]["gst"]} (${OrderData['products']["$i"]["gst_per"]}%)",
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.normal,
-                                              color: themeBG2))
-                                  ]))),
-                          Expanded(
-                              child: Container(
-                                  padding: EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.topCenter,
-                                  child: Column(children: [
-                                    for (var i = 0;
-                                        i < OrderData['products'].length;
-                                        i++)
-                                      Text(
-                                          "${OrderData['products']["$i"]["total"]} /-",
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.normal,
-                                              color: themeBG2))
-                                  ])))
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: themeBG2, width: 1.0)),
-                      height: 35,
-                      child: Row(
-                        children: [
-                          SizedBox(width: 40),
-                          Container(
-                              padding: EdgeInsets.all(2),
-                              width: 180,
-                              // decoration: BoxDecoration(
-                              //     //   border: Border.all(color: themeBG2)
-                              //     ),
-                              alignment: Alignment.center,
-                              child: Text("Total",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: themeBG2))),
-                          Expanded(
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  padding: EdgeInsets.only(right: 10),
-                                  alignment: Alignment.centerRight,
-                                  child: Text("${OrderData["total"]} Rs /-",
+                                  width: 180,
+                                  // decoration: BoxDecoration(
+                                  //     //   border: Border.all(color: themeBG2)
+                                  //     ),
+                                  alignment: Alignment.center,
+                                  child: Text("Total",
                                       style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
-                                          color: themeBG2)))),
-                        ],
-                      ),
-                    ),
+                                          color: themeBG2))),
+                              Expanded(
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: themeBG2)),
+                                      padding: EdgeInsets.only(right: 10),
+                                      alignment: Alignment.centerRight,
+                                      child: Text("${OrderData["total"]} Rs /-",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: themeBG2)))),
+                            ],
+                          ),
+                        ),
 
-                    ///////////  =============================================================================================
+                        ///////////  =============================================================================================
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -856,6 +870,5 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
     );*/
   }
 }
-
 
 /// Class CLose

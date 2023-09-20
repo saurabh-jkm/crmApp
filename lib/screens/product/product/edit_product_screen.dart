@@ -262,6 +262,17 @@ class _editStockScreenState extends State<editStockScreen> {
                                                         method: fnTotalQnt),
                                                   ),
                                                   Expanded(
+                                                    child: formInput(
+                                                      context,
+                                                      "Unit/Length ",
+                                                      controller
+                                                              .productUnitController[
+                                                          '$i'],
+                                                      padding: 8.0,
+                                                      isNumber: true,
+                                                    ),
+                                                  ),
+                                                  Expanded(
                                                     child: autoCompleteFormInput(
                                                         controller.RackList,
                                                         "Item Location *",

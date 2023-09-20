@@ -227,6 +227,7 @@ dbFindDynamic(db, where) async {
     //query.where('$k', isEqualTo: v);
     if (i == 1) {
       query = dbTable.where("$k", isEqualTo: "$v");
+      //query = dbTable.where("$k", isGreaterThan: v);
     } else {
       query = query.where("$k", isEqualTo: "$v");
     }
@@ -262,6 +263,39 @@ dbFindDynamic(db, where) async {
     onError: (e) => print("Error completing: $e"),
   );
 
+  return data;
+}
+
+// Raw Query =================================================================
+
+//var query = await db.collection('order').where("$k", isEqualTo: "$v");
+dbRawQuery(query) async {
+  final data = await query.get().then(
+    (res) {
+      Map<int, dynamic> returnData2 = new Map();
+      int k = 0;
+      if (!kIsWeb && Platform.isWindows) {
+        for (var doc in res) {
+          Map<String, dynamic> temp = doc.map;
+          temp['id'] = doc.id;
+          returnData2[k] = temp;
+          k++;
+        }
+      } else {
+        for (var doc in res.docs) {
+          //returnData2[doc.id] = doc.data();
+          Map<String, dynamic> temp = doc.data();
+          print("${doc.data()} =====j2 ");
+          temp['id'] = doc.id;
+          returnData2[k] = temp;
+          k++;
+        }
+      }
+
+      return returnData2;
+    },
+    onError: (e) => print("Error completing: $e"),
+  );
   return data;
 }
 

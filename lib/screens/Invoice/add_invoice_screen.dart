@@ -117,13 +117,6 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                       Row(
                                         children: [
                                           // fireld 1 ==========================
-                                          // Expanded(
-                                          //   child: autoCompleteFormInput(
-                                          //       controller.ListName,
-                                          //       "Product Name",
-                                          //       controller.nameController,
-                                          //       padding: 8.0),
-                                          // ),
                                           Expanded(
                                               child: autoCompleteFormInput(
                                                   controller.ListCustomer,
@@ -132,6 +125,14 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                       .Customer_nameController,
                                                   method:
                                                       fnFetchCutomerDetails)),
+                                          Expanded(
+                                            child: formInput(
+                                                context,
+                                                "GST No.",
+                                                controller
+                                                    .Customer_GstNoController,
+                                                padding: 8.0),
+                                          ),
 
                                           Expanded(
                                             child: formInput(
@@ -156,6 +157,22 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                       Row(
                                         children: [
                                           Expanded(
+                                            child: inpuDropdDown(
+                                                context,
+                                                "Invoice For",
+                                                controller.ListType,
+                                                controller.InvoiceType,
+                                                method: updateInvoiceType),
+                                          ),
+                                          Expanded(
+                                            child: inpuDropdDown(
+                                                context,
+                                                "Sale/Estimate",
+                                                controller.ListSaleType,
+                                                controller.SaleType,
+                                                method: updateSaleType),
+                                          ),
+                                          Expanded(
                                             child: formInput(
                                                 context,
                                                 "Address",
@@ -171,7 +188,6 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                     .invoiceDateController,
                                                 padding: 8.0),
                                           ),
-                                          Expanded(child: Text("")),
                                           Expanded(child: Text("")),
                                         ],
                                       ),
@@ -274,6 +290,18 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                           "Quantity",
                                                           controller
                                                               .ProductQuntControllers[i],
+                                                          padding: 8.0,
+                                                          isNumber: true,
+                                                          method: fnTotalPrice,
+                                                          methodArg: i),
+                                                    ),
+                                                    // Unit
+                                                    Expanded(
+                                                      child: formInput(
+                                                          context,
+                                                          "Unit/Size",
+                                                          controller
+                                                              .ProductUnitControllers[i],
                                                           padding: 8.0,
                                                           isNumber: true,
                                                           method: fnTotalPrice,
@@ -521,6 +549,11 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
       controller.Customer_MobileController.text = tempData['mobile'];
       controller.Customer_emailController.text = tempData['email'];
       controller.Customer_AddressController.text = tempData['address'];
+      controller.Customer_GstNoController.text =
+          (tempData['gst_no'] == null) ? '' : tempData['gst_no'];
+      controller.InvoiceType =
+          (tempData['type'] == null) ? 'Customer' : tempData['type'];
+      setState(() {});
     }
   }
 
@@ -528,6 +561,20 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
   fnTotalPrice(controllerId) async {
     await controller.ctrTotalCalculate(controllerId);
     setState(() {});
+  }
+
+  // function invoice update
+  updateInvoiceType(val) {
+    setState(() {
+      controller.InvoiceType = val;
+    });
+  }
+
+  // function Sale type update
+  updateSaleType(val) {
+    setState(() {
+      controller.SaleType = val;
+    });
   }
 }
 

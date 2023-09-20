@@ -27,6 +27,16 @@ class invoiceController {
   final Customer_MobileController = TextEditingController();
   final Customer_emailController = TextEditingController();
   final Customer_AddressController = TextEditingController();
+  final Customer_TypeController = TextEditingController();
+  final Customer_GstNoController = TextEditingController();
+
+  List<String> ListType = ['Customer', 'Supplier'];
+  String InvoiceType = 'Customer';
+
+  List<String> ListSaleType = ['Sale', 'Estimate'];
+  List<String> itemList = ['All', 'Sale', 'Estimate'];
+  String SaleType = 'Sale';
+
   final categoryController = TextEditingController();
   final quantityController = TextEditingController();
   final priceController = TextEditingController();
@@ -45,6 +55,7 @@ class invoiceController {
   // product controllers
   Map<int, TextEditingController> ProductNameControllers = new Map();
   Map<int, TextEditingController> ProductQuntControllers = new Map();
+  Map<int, TextEditingController> ProductUnitControllers = new Map();
   Map<int, TextEditingController> ProductPriceControllers = new Map();
   Map<int, TextEditingController> ProductTotalControllers = new Map();
   Map<int, TextEditingController> ProductGstControllers = new Map();
@@ -92,11 +103,13 @@ class invoiceController {
     // init default controllers
     ProductNameControllers[1] = TextEditingController();
     ProductQuntControllers[1] = TextEditingController();
+    ProductUnitControllers[1] = TextEditingController();
     ProductPriceControllers[1] = TextEditingController();
     ProductTotalControllers[1] = TextEditingController();
     ProductGstControllers[1] = TextEditingController();
     ProductDiscountControllers[1] = TextEditingController();
     ProductQuntControllers[1]!.text = '1';
+    ProductUnitControllers[1]!.text = '0';
     ProductDiscountControllers[1]!.text = '0';
     ProductGstControllers[1]!.text = '0';
 
@@ -110,9 +123,15 @@ class invoiceController {
           (dbData['email'] != null) ? dbData['email'] : '';
       Customer_AddressController.text =
           (dbData['address'] != null) ? dbData['address'] : '';
+      Customer_GstNoController.text =
+          (dbData['gst_no'] != null) ? dbData['gst_no'] : '';
       invoiceDateController.text = (dbData['invoice_date'] != null)
           ? dbData['invoice_date']
           : DateFormat('dd/MM/yyyy').format(dbData['date_at']);
+
+      InvoiceType =
+          (dbData['invoice_for'] != null) ? dbData['invoice_for'] : 'Customer';
+      SaleType = (dbData['is_sale'] != null) ? dbData['is_sale'] : 'Sale';
 
       // for products
       var i = 1;
@@ -129,6 +148,8 @@ class invoiceController {
           ;
           ProductQuntControllers[i]!.text =
               (v != null && v['quantity'] != null) ? v['quantity'] : '';
+          ProductUnitControllers[i]!.text =
+              (v != null && v['unit'] != null) ? v['unit'] : '0';
           ProductGstControllers[i]!.text =
               (v != null && v['gst_per'] != null) ? v['gst_per'] : '';
           ProductDiscountControllers[i]!.text =
@@ -237,11 +258,12 @@ class invoiceController {
     // }
   }
 
-  // quantity update
+  // quantity update ===========================
   upateQunatity(docId, k, v) async {
     int increaseDbQtt = 0;
     int decreaseDbQtt = 0;
     Map<String, dynamic> tempW = new Map();
+    var NewLog = {};
     if (v['quantity'] != null && ProductQuntControllers[k] != null) {
       if (docId != '' &&
           editProductQnt['$k'] != null &&
@@ -251,10 +273,21 @@ class invoiceController {
         int editCurrentQnt =
             int.parse(editProductQnt['$k']['quantity'].toString());
         int ctrQnt = int.parse(ProductQuntControllers[k]!.text.toString());
+
         if (editCurrentQnt > ctrQnt) {
           increaseDbQtt = (editCurrentQnt - ctrQnt);
+          NewLog = {
+            'type': 'return',
+            'quantity': increaseDbQtt,
+            'date_at': DateTime.now()
+          };
         } else {
           decreaseDbQtt = (ctrQnt - editCurrentQnt);
+          NewLog = {
+            'type': 'add_more',
+            'quantity': decreaseDbQtt,
+            'date_at': DateTime.now()
+          };
         }
       }
 
@@ -284,6 +317,12 @@ class invoiceController {
                       increaseDbQtt -
                       decreaseDbQtt)
                   .toString();
+          // return & addition log --------------------------------
+          // var temReturnLog = (tempEditListData['returnLog'] != null)
+          //     ? tempEditListData['returnLog']
+          //     : [];
+          // temReturnLog.add(NewLog);
+          // tempEditListData['returnLog'] = temReturnLog;
 
           quantity = (quantity - tempCurentQnt + increaseDbQtt - decreaseDbQtt);
 
@@ -301,7 +340,7 @@ class invoiceController {
     }
     if (tempW.isNotEmpty) {
       var r = await dbUpdate(db, tempW);
-      return r;
+      return NewLog;
     } else {
       return '';
     }
@@ -320,6 +359,9 @@ class invoiceController {
       alert = "Valid Mobile Number Required !!";
     } else if (totalProduct == 0) {
       alert = "Minimum 1 product required";
+    } else if (Customer_GstNoController.text.length != 0 &&
+        Customer_GstNoController.text.length != 15) {
+      alert = "Please Enter Valid GST Number ";
     }
 
     if (alert != '') {
@@ -336,15 +378,25 @@ class invoiceController {
       "mobile": Customer_MobileController.text,
       "email": Customer_emailController.text,
       "address": Customer_AddressController.text,
+      "gst_no": Customer_GstNoController.text,
+      "invoice_for": InvoiceType,
+      "is_sale": SaleType,
+      "type": (InvoiceType == 'Customer') ? "Sale" : "Buy",
       // "category": categoryController.text,
       // "quantity": quantityController.text,
       "total": totalPrice,
-      "date_at": DateTime.now(),
       "invoice_date": invoiceDateController.text,
       "status": true
     };
+    if (docId == '') {
+      dbArr["date_at"] = DateTime.now();
+    } else {
+      dbArr["update_at"] = DateTime.now();
+    }
 
     // all product
+    int intTotalQuntity = 0;
+    int intTotalUnit = 0;
     var i = 1;
     Map<String, dynamic> products = new Map();
     int totalGst = 0;
@@ -356,9 +408,11 @@ class invoiceController {
           : '$tempTitle, ${ProductNameControllers[i]!.text}';
 
       temp['id'] = (productDBdata[i] != null) ? productDBdata[i]['id'] : '';
+
       temp['name'] = ProductNameControllers[i]!.text;
       temp['price'] = ProductPriceControllers[i]!.text;
       temp['quantity'] = ProductQuntControllers[i]!.text;
+      temp['unit'] = ProductUnitControllers[i]!.text;
       temp['gst_per'] = ProductGstControllers[i]!.text;
       temp['discount'] = ProductDiscountControllers[i]!.text;
       temp['subtotal'] =
@@ -369,6 +423,9 @@ class invoiceController {
       totalGst += (productDBdata[i] != null)
           ? int.parse(productDBdata[i]['gst'].toString())
           : 0;
+
+      intTotalQuntity += int.parse(temp['quantity'].toString());
+      intTotalUnit += int.parse(temp['unit'].toString());
 
       if (temp['name'] == '' ||
           temp['price'] == '' ||
@@ -382,20 +439,65 @@ class invoiceController {
       i++;
     }
 
+    //product quntity calculate with product table ==============
+
+    Future<void> callUpdateFn() async {
+      for (var k in productDBdata.keys) {
+        var Newlog = await upateQunatity(docId, k, productDBdata[k]);
+        if (Newlog.isNotEmpty) {
+          var tempTotalInnerItem =
+              (products['${k - 1}'] != null) ? products['${k - 1}'] : {};
+          var tempLog = (tempTotalInnerItem['returnLog'] != null)
+              ? tempTotalInnerItem['returnLog']
+              : [];
+          tempLog.add(Newlog);
+          tempTotalInnerItem['returnLog'] = tempLog;
+          products['${k - 1}'] = tempTotalInnerItem;
+        }
+      }
+    }
+
+    if (dbArr['type'] == 'Sale') {
+      await callUpdateFn();
+    } else {
+      // this is for Supplier Log manage ====================
+      if (docId != '') {
+        var tempProduct = products;
+
+        tempProduct.forEach((k, v) {
+          int z = int.parse(k.toString()) + 1;
+
+          if (editProductQnt['$z'] != null) {
+            var tempTotalInnerItem =
+                (products['${k}'] != null) ? products['${k}'] : {};
+            var tempLog = (tempTotalInnerItem['returnLog'] != null)
+                ? tempTotalInnerItem['returnLog']
+                : [];
+            var qnt = int.parse(editProductQnt['$z']['quantity'].toString()) -
+                int.parse(v['quantity'].toString());
+
+            var NewLog = {
+              'type': '${(qnt >= 1) ? 'return' : 'add_more'}',
+              'quantity': '${int.parse(qnt.toString())}',
+              'date_at': DateTime.now()
+            };
+            tempLog.add(NewLog);
+            tempTotalInnerItem['returnLog'] = tempLog;
+            if (qnt != 0) {
+              products['${k}'] = tempTotalInnerItem;
+            }
+          }
+        });
+      }
+      // End this is for Supplier Log manage ====================
+    }
+
     dbArr['gst'] = totalGst;
     dbArr['subtotal'] = totalPrice - totalGst;
     dbArr['products'] = products;
     dbArr['title'] = tempTitle;
-
-    //product quntity calculate with product table
-
-    Future<void> callUpdateFn() async {
-      for (var k in productDBdata.keys) {
-        await upateQunatity(docId, k, productDBdata[k]);
-      }
-    }
-
-    await callUpdateFn();
+    dbArr['quantity'] = '$intTotalQuntity';
+    dbArr['unit'] = '$intTotalUnit';
 
     // check customer already exist ====================
     var w = {'table': 'customer'};
@@ -411,16 +513,39 @@ class invoiceController {
       // add customer also =======================
       var customerData = {
         "table": "customer",
+        "type": InvoiceType,
         "name": Customer_nameController.text,
         "mobile": Customer_MobileController.text,
         "email": Customer_emailController.text,
         "address": Customer_AddressController.text,
+        "gst_no": Customer_GstNoController.text,
         "date_at": DateTime.now(),
         "status": true
       };
       var customerId = await dbSave(db, customerData);
       dbArr["customer_id"] = customerId;
     } else {
+      // update
+      var customerData = {
+        "table": "customer",
+        "id": testDbData[0]['id'],
+        "type":
+            (testDbData[0]['type'] == '') ? InvoiceType : testDbData[0]['type'],
+        "name": Customer_nameController.text,
+        "mobile": (Customer_MobileController.text == '')
+            ? testDbData[0]['mobile']
+            : Customer_MobileController.text,
+        "email": (Customer_emailController.text == '')
+            ? testDbData[0]['email']
+            : Customer_emailController.text,
+        "address": Customer_AddressController.text,
+        "gst_no": (Customer_GstNoController.text == '')
+            ? testDbData[0]['gst_no']
+            : Customer_GstNoController.text,
+        "update_at": DateTime.now(),
+        "status": true
+      };
+      await dbUpdate(db, customerData);
       dbArr["customer_id"] = testDbData[0]['id'];
     }
 
@@ -513,11 +638,13 @@ class invoiceController {
     ProductNameControllers[ctrId] = TextEditingController();
     ProductPriceControllers[ctrId] = TextEditingController();
     ProductQuntControllers[ctrId] = TextEditingController();
+    ProductUnitControllers[ctrId] = TextEditingController();
     ProductGstControllers[ctrId] = TextEditingController();
     ProductDiscountControllers[ctrId] = TextEditingController();
     ProductTotalControllers[ctrId] = TextEditingController();
 
     ProductQuntControllers[ctrId]!.text = '1';
+    ProductUnitControllers[ctrId]!.text = '0';
     ProductDiscountControllers[ctrId]!.text = '0';
     ProductGstControllers[ctrId]!.text = '0';
     ProductTotalControllers[ctrId]!.text = '0';
@@ -530,6 +657,7 @@ class invoiceController {
       ProductNameControllers.remove(ctrId);
       ProductPriceControllers.remove(ctrId);
       ProductQuntControllers.remove(ctrId);
+      ProductUnitControllers.remove(ctrId);
       ProductGstControllers.remove(ctrId);
       ProductDiscountControllers.remove(ctrId);
       ProductTotalControllers.remove(ctrId);
@@ -551,19 +679,19 @@ class invoiceController {
           e.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
         Keys.add(key);
       }
-      // ctr + D OR C => addnewproduct
+      // ctr + D OR X => addnewproduct
       if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
           (Keys.contains(LogicalKeyboardKey.keyD) ||
-              Keys.contains(LogicalKeyboardKey.keyC))) {
+              Keys.contains(LogicalKeyboardKey.keyX))) {
         ctrNewRow();
 
         Keys = [];
         return true;
       }
-      // ctr + R OR X => RemoveProduct
+      // ctr + R OR Z => RemoveProduct
       if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
           (Keys.contains(LogicalKeyboardKey.keyR) ||
-              Keys.contains(LogicalKeyboardKey.keyX))) {
+              Keys.contains(LogicalKeyboardKey.keyZ))) {
         ctrRemoveRow(context);
         Keys = [];
         return true;

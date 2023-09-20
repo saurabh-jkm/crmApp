@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/themes/function.dart';
 import 'package:crm_demo/themes/style.dart';
 import 'package:crm_demo/themes/theme_widgets.dart';
@@ -232,6 +233,7 @@ Widget productRow(context, key, data) {
 // single product  list ==========================
 Widget productTableRow(context, key, data, headingList) {
   data = (data[key] == null) ? {} : data[key];
+
   return Container(
     margin: EdgeInsets.only(bottom: 1.0),
     padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
@@ -239,13 +241,22 @@ Widget productTableRow(context, key, data, headingList) {
     child: Row(
       children: [
         for (String k in headingList)
-          Expanded(
-            child: Container(
-              child: Text("${(data[k] == null) ? '-' : capitalize(data[k])}",
-                  style: TextStyle(fontSize: 12.0, color: Colors.black)),
-            ),
-          ),
+          valueWid(k, data[k], qnt: data['quantity'])
       ],
+    ),
+  );
+}
+
+Widget valueWid(k, value, {qnt: 1}) {
+  //value = (value )
+  if (k == 'unit' && qnt != null) {
+    var total = int.parse(qnt.toString()) * int.parse(value.toString());
+    value = '$value x $qnt = ${total}';
+  }
+  return Expanded(
+    child: Container(
+      child: Text("${(value == null) ? '-' : value}",
+          style: TextStyle(fontSize: 12.0, color: Colors.black)),
     ),
   );
 }

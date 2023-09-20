@@ -11,7 +11,8 @@ Widget CustomerTableRow(context, data, srNo, orderList,
   List<dynamic> dataList = [];
 
   dataList.add('1');
-  dataList.add('${data['customer_name']}');
+  dataList.add('${data['name']}');
+  dataList.add('${(data['type'] == null) ? "-" : data['type']}');
   dataList.add('${(data['email'] == null) ? '-' : data['email']}');
   dataList.add('${(data['phone'] == null) ? '-' : data['phone']}');
   var orderTempData;
@@ -68,7 +69,7 @@ Widget CustomerTableRow(context, data, srNo, orderList,
                                             builder: (_) =>
                                                 CustomerAllOrderList(
                                                   data: orderTempData,
-                                                  title: data['customer_name'],
+                                                  title: data['name'],
                                                 )));
                                     // controller.fnViewOrderDetails(
                                     //   context,orderTempData
@@ -109,7 +110,7 @@ Widget orderTableRow(context, data, srNo,
   dataList.add('${(data['gst'] == null) ? '-' : data['gst']}');
   dataList.add('${(data['total'] == null) ? '-' : data['total']}');
   dataList.add(
-      '${(data['date_at'] == null) ? '-' : formatDate(data['date_at'], formate: 'DD/MM/yyyy')}');
+      '${(data['date_at'] == null) ? '-' : formatDate(data['date_at'], formate: 'dd/MM/yyyy')}');
   dataList.add('action');
 
   return Container(

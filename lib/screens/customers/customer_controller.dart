@@ -21,6 +21,7 @@ class customerController {
   List<String> headintList = [
     '#',
     'name',
+    'type',
     'email',
     'phone',
     'T. Order',
@@ -49,12 +50,13 @@ class customerController {
     listCustomer = {};
     var dbData =
         await dbFindDynamic(db, {'table': 'customer', 'orderBy': '-date_at'});
+
     var i = 1;
     dbData.forEach((k, data) {
-      if (data['customer_name'] != null) {
+      if (data['name'] != null) {
         listCustomer['$i'] = data;
         listCustomerAllDataArr['$i'] = data;
-        listCustomerName.add(data['customer_name']);
+        listCustomerName.add(data['name']);
         i++;
       }
     });

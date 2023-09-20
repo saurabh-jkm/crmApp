@@ -37,6 +37,7 @@ class ProductController {
 
   Map<String, TextEditingController> productPriceController = new Map();
   Map<String, TextEditingController> productQntController = new Map();
+  Map<String, TextEditingController> productUnitController = new Map();
   Map<String, TextEditingController> productLocationController = new Map();
 
   Map<String, TextEditingController> locationControllers = new Map();
@@ -88,10 +89,12 @@ class ProductController {
 
         productPriceController['$totalProduct'] = TextEditingController();
         productQntController['$totalProduct'] = TextEditingController();
+        productUnitController['$totalProduct'] = TextEditingController();
         productLocationController['$totalProduct'] = TextEditingController();
 
         productPriceController['$totalProduct']!.text = v['price'];
         productQntController['$totalProduct']!.text = v['quantity'];
+        productUnitController['$totalProduct']!.text = v['unit'];
         productLocationController['$totalProduct']!.text = v['location'];
         // End product ==============================
       });
@@ -101,6 +104,7 @@ class ProductController {
   default_var_set() async {
     productPriceController['1'] = TextEditingController();
     productQntController['1'] = TextEditingController();
+    productUnitController['1'] = TextEditingController();
     productLocationController['1'] = TextEditingController();
 
     locationControllers['1'] = TextEditingController();
@@ -119,6 +123,7 @@ class ProductController {
     // reset product price
     Map<String, TextEditingController> productPriceController = new Map();
     Map<String, TextEditingController> productQntController = new Map();
+    Map<String, TextEditingController> productUnitController = new Map();
     Map<String, TextEditingController> productLocationController = new Map();
     // for new attribute
     newAttributeController = TextEditingController();
@@ -280,6 +285,7 @@ class ProductController {
 
     productPriceController['$totalProduct'] = TextEditingController();
     productQntController['$totalProduct'] = TextEditingController();
+    productUnitController['$totalProduct'] = TextEditingController();
     productLocationController['$totalProduct'] = TextEditingController();
   }
 
@@ -289,6 +295,7 @@ class ProductController {
       dynamicControllers.remove(totalProduct);
       productPriceController.remove('$totalProduct');
       productQntController.remove('$totalProduct');
+      productUnitController.remove('$totalProduct');
       productLocationController.remove('$totalProduct');
 
       totalProduct--;
@@ -371,6 +378,7 @@ class ProductController {
     // for attribute
     var itemList = {};
     alertRow = '';
+
     for (var i = 1; i <= totalProduct; i++) {
       dynamicControllers['$i'].forEach((key, value) async {
         if (value.text != '') {
@@ -380,6 +388,11 @@ class ProductController {
           tempList['price'] = productPriceController['$i']!.text;
           tempList['location'] = productLocationController['$i']!.text;
           tempList['quantity'] = productQntController['$i']!.text;
+          tempList['unit'] = productUnitController['$i']!.text;
+          tempList['totalUnit'] = (productUnitController['$i']!.text != '')
+              ? int.parse(productUnitController['$i']!.text.toString()) *
+                  int.parse(productQntController['$i']!.text.toString())
+              : '0';
           dbArr['price'] =
               (dbArr['price'] == null) ? tempList['price'] : dbArr['price'];
 
@@ -393,7 +406,9 @@ class ProductController {
           }
         }
       });
+
       // check attribute is empty or not
+
       if (itemList['$i'] == null) {
         alertRow = '$i';
         themeAlert(context, 'Item No. $i Minimum One Atribute required',

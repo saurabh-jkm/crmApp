@@ -33,9 +33,8 @@ class _CustomerListState extends State<CustomerList> {
 
   initFunctions() async {
     await controller.init_functions();
-    setState(() {});
-
     orderDetails();
+    setState(() {});
   }
 
   // get order details
@@ -92,6 +91,7 @@ class _CustomerListState extends State<CustomerList> {
           TableHeading(context, controller.headintList,
               rowColor: Color.fromARGB(255, 94, 86, 204),
               textColor: Colors.white),
+
           for (String key in controller.listCustomer.keys)
             CustomerTableRow(context, controller.listCustomer[key], key,
                 controller.listOrder,

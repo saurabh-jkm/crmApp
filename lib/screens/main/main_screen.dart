@@ -125,7 +125,7 @@ class _MainScreenState extends State<MainScreen> {
       child: ListView(
         children: [
           DrawerHeader(
-            child: Image.asset("assets/images/logo.png"),
+            child: Image.asset("assets/images/logo-2.png"),
             decoration: BoxDecoration(
                 //  color: const Color.fromARGB(127, 33, 149, 243)
                 ),
@@ -239,7 +239,7 @@ class _MainScreenState extends State<MainScreen> {
             horizontalTitleGap: 0.0,
             leading: Icon(Icons.bar_chart, color: Colors.white),
             title: Text(
-              "Sales",
+              "Buy/Sales",
               style: TextStyle(color: Colors.white),
             ),
           ),
