@@ -62,7 +62,7 @@ class _ProductAddState extends State<ProductAdd> {
 
     Map<dynamic, dynamic> w = {
       'table': "product",
-      "orderBy": "date_at"
+      "orderBy": "-date_at"
       //'status': "$_StatusValue",
     };
     var temp = await dbFindDynamic(db, w);
@@ -249,9 +249,7 @@ class _ProductAddState extends State<ProductAdd> {
                           },
                           children: [
                             TableRow(
-                                decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).secondaryHeaderColor),
+                                decoration: BoxDecoration(color: themeBG4),
                                 children: [
                                   TableCell(
                                     verticalAlignment:
@@ -418,174 +416,166 @@ class _ProductAddState extends State<ProductAdd> {
   TableRow tableRowWidget(Sno, name, BrandName, cate_name, items_no, location,
       price, status, date, iid, data) {
     var statuss = statusOF(status);
-    final formattedDate = formatDate(date);
-    return TableRow(children: [
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Text("$Sno",
-              style: GoogleFonts.alike(
-                  fontWeight: FontWeight.normal, fontSize: 11)),
-        ),
-      ),
-      TableCell(
-          verticalAlignment: TableCellVerticalAlignment.middle,
-          child: Padding(
+    final formattedDate = formatDate(date, formate: 'dd/MM/yyyy');
+
+    return TableRow(
+        decoration: BoxDecoration(
+            color: themeBG5,
+            border:
+                Border(bottom: BorderSide(width: 3.0, color: Colors.white))),
+        children: [
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Padding(
               padding: const EdgeInsets.all(5.0),
-              child: CheckboxListTile(
-                checkColor: Colors.white,
-                activeColor: Colors.red,
-                side: BorderSide(width: 2, color: Colors.green),
-                value: (selected_pro[iid] == null) ? false : true,
-                onChanged: (value) {
-                  setState(() {
-                    if (value == true) {
-                      selected_pro[iid] = true;
-                    } else {
-                      selected_pro.remove(iid);
-                    }
-                  });
-                },
-              ))),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text("$name",
-              style: GoogleFonts.alike(
-                  fontWeight: FontWeight.normal, fontSize: 11)),
-        ),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$BrandName",
-            style:
-                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$cate_name",
-            style:
-                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$items_no",
-            style: GoogleFonts.alike(
-              fontWeight: FontWeight.bold,
-              fontSize: 11,
-            )),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$location",
-            style: GoogleFonts.alike(
-              fontWeight: FontWeight.bold,
-              fontSize: 11,
-            )),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$price",
-            style: GoogleFonts.alike(
-              fontWeight: FontWeight.bold,
-              fontSize: 11,
-            )),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text(statuss,
-            style: GoogleFonts.alike(
-                fontWeight: FontWeight.bold,
-                fontSize: 11,
-                color: statuss == "Active" ? Colors.green : Colors.red)),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$formattedDate",
-            style:
-                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 9)),
-      ),
-      TableCell(
-          verticalAlignment: TableCellVerticalAlignment.middle,
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              children: [
-                Container(
-                    height: 30,
-                    width: 30,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: IconButton(
-                        onPressed: () async {
-                          final temp = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => editStockScreen(
-                                        data: data,
-                                        header_name: "Edit product details",
-                                      )));
-                          if (temp == 'updated') {
-                            Pro_Data();
-                          }
-                        },
-                        icon: Icon(
-                          Icons.edit,
-                          size: 15,
-                          color: Colors.blue,
-                        )) ////
-                    ),
-                SizedBox(width: 10),
-                Container(
-                    height: 30,
-                    width: 30,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => Details_product(
-                                        header_name: "View details of product",
-                                        MapData: data,
-                                      )));
-                        },
-                        icon: Icon(
-                          Icons.link,
-                          size: 15,
-                          color: Colors.green,
-                        ))),
-                SizedBox(width: 10),
-                Container(
-                    height: 30,
-                    width: 30,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.1),
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: IconButton(
-                        onPressed: () {
-                          showExitPopup(iid);
-                        },
-                        icon: Icon(
-                          Icons.delete_outline_outlined,
-                          size: 15,
-                          color: Colors.red,
-                        ))),
-              ],
+              child: Text("$Sno", style: textStyle3),
             ),
-          )),
-    ]);
+          ),
+          TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: CheckboxListTile(
+                    checkColor: Colors.white,
+                    activeColor: Colors.red,
+                    side: BorderSide(
+                        width: 2, color: Color.fromARGB(255, 74, 83, 75)),
+                    value: (selected_pro[iid] == null) ? false : true,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          selected_pro[iid] = true;
+                        } else {
+                          selected_pro.remove(iid);
+                        }
+                      });
+                    },
+                  ))),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("$name", style: textStyle3),
+            ),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Text("$BrandName", style: textStyle3),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Text("$cate_name", style: textStyle3),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Text("$items_no", style: textStyle3),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Text("$location", style: textStyle3),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Text("$price", style: textStyle3),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Text(statuss,
+                style: GoogleFonts.alike(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                    color: statuss == "Active"
+                        ? Color.fromARGB(255, 10, 103, 139)
+                        : Colors.red)),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Text("$formattedDate", style: textStyle3),
+          ),
+          TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Container(
+                padding: EdgeInsets.only(right: 20.0),
+                margin: EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    Container(
+                        height: 30,
+                        width: 30,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 10, 103, 139),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => Details_product(
+                                            header_name:
+                                                "View details of product",
+                                            MapData: data,
+                                          )));
+                            },
+                            icon: Icon(
+                              Icons.remove_red_eye_outlined,
+                              size: 15,
+                              color: Colors.green,
+                            ))),
+                    SizedBox(width: 10),
+                    Container(
+                        height: 30,
+                        width: 30,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 10, 103, 139),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: IconButton(
+                            onPressed: () async {
+                              final temp = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => editStockScreen(
+                                            data: data,
+                                            header_name: "Edit product details",
+                                          )));
+                              if (temp == 'updated') {
+                                Pro_Data();
+                              }
+                            },
+                            icon: Icon(
+                              Icons.edit,
+                              size: 15,
+                              color: Colors.blue,
+                            )) ////
+                        ),
+                    SizedBox(width: 10),
+                    Container(
+                        height: 30,
+                        width: 30,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 10, 103, 139),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: IconButton(
+                            onPressed: () {
+                              showExitPopup(iid);
+                            },
+                            icon: Icon(
+                              Icons.delete_outline_outlined,
+                              size: 15,
+                              color: const Color.fromARGB(255, 255, 117, 107),
+                            ))),
+                  ],
+                ),
+              )),
+        ]);
   }
 ////
 ///////// search Bar For Product  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++

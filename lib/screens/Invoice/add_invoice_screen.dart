@@ -76,370 +76,414 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            //header ======================
-            themeHeader2(context, "${widget.header_name}",
-                widthBack: 'updated'),
-            // formField =======================
-            (isWait)
-                ? pleaseWait(context)
-                : Form(
-                    key: controller.formKeyInvoice,
-                    child: Column(
-                      children: <Widget>[
-                        // Add TextFormFields and ElevatedButton here.
-                        Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    themeSpaceVertical(10.0),
-                                    themeHeading2("Customer Details"),
-                                    themeSpaceVertical(15.0),
-                                    Row(
-                                      children: [
-                                        // fireld 1 ==========================
-                                        // Expanded(
-                                        //   child: autoCompleteFormInput(
-                                        //       controller.ListName,
-                                        //       "Product Name",
-                                        //       controller.nameController,
-                                        //       padding: 8.0),
-                                        // ),
-                                        Expanded(
-                                            child: autoCompleteFormInput(
-                                                controller.ListCustomer,
-                                                "Customer Name",
-                                                controller
-                                                    .Customer_nameController,
-                                                method: fnFetchCutomerDetails)),
-
-                                        Expanded(
-                                          child: formInput(
-                                            context,
-                                            "Mobile No.",
-                                            controller
-                                                .Customer_MobileController,
-                                            padding: 8.0,
-                                            isNumber: true,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: formInput(
-                                              context,
-                                              "Email Id",
-                                              controller
-                                                  .Customer_emailController,
-                                              padding: 8.0),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: formInput(
-                                              context,
-                                              "Address",
-                                              controller
-                                                  .Customer_AddressController,
-                                              padding: 8.0),
-                                        ),
-                                        Expanded(
-                                          child: formInput(
-                                              context,
-                                              "Invoice Date",
-                                              controller.invoiceDateController,
-                                              padding: 8.0),
-                                        ),
-                                        Expanded(child: Text("")),
-                                        Expanded(child: Text("")),
-                                      ],
-                                    ),
-                                    // 2nd row =============================================
-                                    themeSpaceVertical(18.0),
-                                    Divider(
-                                      thickness: 2.0,
-                                      color: Colors.black12,
-                                    ),
-
-                                    // 3nd row =============================================
-                                    themeSpaceVertical(18.0),
-                                    Row(
-                                      children: [
-                                        themeHeading2("Product Details"),
-                                        SizedBox(width: 10.0),
-                                        IconButton(
-                                            onPressed: () {
-                                              addNewProduct(context);
-                                            },
-                                            tooltip: "Add Product",
-                                            icon: Icon(
-                                              Icons.add,
-                                              color: themeBG,
-                                              size: 20.0,
-                                            )),
-                                        SizedBox(width: 10.0),
-                                        (controller.totalProduct > 1)
-                                            ? IconButton(
-                                                onPressed: () {
-                                                  removeRow(context);
-                                                },
-                                                tooltip: "Remove Product",
-                                                icon: Icon(
-                                                  Icons.remove,
-                                                  color: Colors.red,
-                                                  size: 20.0,
-                                                ))
-                                            : SizedBox(),
-                                      ],
-                                    ),
-                                    // Header End ============================
-                                    themeSpaceVertical(4.0),
-                                    Container(
-                                      height:
-                                          MediaQuery.of(context).size.height -
-                                              420,
-                                      child: ListView(
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKey: (e) {
+        var rData = controller.cntrKeyPressFun(e, context);
+        if (rData != null && rData) {
+          setState(() {});
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              //header ======================
+              themeHeader2(context, "${widget.header_name}",
+                  widthBack: 'updated'),
+              // formField =======================
+              (isWait)
+                  ? pleaseWait(context)
+                  : Form(
+                      key: controller.formKeyInvoice,
+                      child: Column(
+                        children: <Widget>[
+                          // Add TextFormFields and ElevatedButton here.
+                          Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                      child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      themeSpaceVertical(10.0),
+                                      themeHeading2("Customer Details"),
+                                      themeSpaceVertical(15.0),
+                                      Row(
                                         children: [
-                                          for (var i = 1;
-                                              i <= controller.totalProduct;
-                                              i++)
-                                            Container(
-                                              color: Color.fromARGB(
-                                                  106, 211, 234, 255),
-                                              margin: EdgeInsets.only(
-                                                  right: 8.0, bottom: 10.0),
-                                              child: Row(
-                                                children: [
-                                                  // product Name
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                    .size
-                                                                    .width /
-                                                                3 -
-                                                            10,
-                                                    child:
-                                                        autoCompleteFormInput(
-                                                      controller.ListName,
-                                                      "Products Name",
-                                                      controller
-                                                          // .Customer_nameController,
-                                                          .ProductNameControllers[i],
-                                                      padding: 8.0,
-                                                      method: fnCalcualtePrice,
-                                                      methodArg: i,
-                                                    ),
-                                                  ),
-                                                  // Price
-                                                  Expanded(
-                                                    child: formInput(
-                                                        context,
-                                                        "Price",
+                                          // fireld 1 ==========================
+                                          Expanded(
+                                              child: autoCompleteFormInput(
+                                                  controller.ListCustomer,
+                                                  "Customer Name",
+                                                  controller
+                                                      .Customer_nameController,
+                                                  method:
+                                                      fnFetchCutomerDetails)),
+                                          Expanded(
+                                            child: formInput(
+                                                context,
+                                                "GST No.",
+                                                controller
+                                                    .Customer_GstNoController,
+                                                padding: 8.0),
+                                          ),
+
+                                          Expanded(
+                                            child: formInput(
+                                              context,
+                                              "Mobile No.",
+                                              controller
+                                                  .Customer_MobileController,
+                                              padding: 8.0,
+                                              isNumber: true,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: formInput(
+                                                context,
+                                                "Email Id",
+                                                controller
+                                                    .Customer_emailController,
+                                                padding: 8.0),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: inpuDropdDown(
+                                                context,
+                                                "Invoice For",
+                                                controller.ListType,
+                                                controller.InvoiceType,
+                                                method: updateInvoiceType),
+                                          ),
+                                          Expanded(
+                                            child: inpuDropdDown(
+                                                context,
+                                                "Sale/Estimate",
+                                                controller.ListSaleType,
+                                                controller.SaleType,
+                                                method: updateSaleType),
+                                          ),
+                                          Expanded(
+                                            child: formInput(
+                                                context,
+                                                "Address",
+                                                controller
+                                                    .Customer_AddressController,
+                                                padding: 8.0),
+                                          ),
+                                          Expanded(
+                                            child: formInput(
+                                                context,
+                                                "Invoice Date",
+                                                controller
+                                                    .invoiceDateController,
+                                                padding: 8.0),
+                                          ),
+                                          Expanded(child: Text("")),
+                                        ],
+                                      ),
+                                      // 2nd row =============================================
+                                      themeSpaceVertical(18.0),
+                                      Divider(
+                                        thickness: 2.0,
+                                        color: Colors.black12,
+                                      ),
+
+                                      // 3nd row =============================================
+                                      themeSpaceVertical(18.0),
+                                      Row(
+                                        children: [
+                                          themeHeading2("Product Details"),
+                                          SizedBox(width: 10.0),
+                                          IconButton(
+                                              onPressed: () {
+                                                addNewProduct(context);
+                                              },
+                                              tooltip: "Add Product",
+                                              icon: Icon(
+                                                Icons.add,
+                                                color: themeBG,
+                                                size: 20.0,
+                                              )),
+                                          SizedBox(width: 10.0),
+                                          (controller.totalProduct > 1)
+                                              ? IconButton(
+                                                  onPressed: () {
+                                                    removeRow(context);
+                                                  },
+                                                  tooltip: "Remove Product",
+                                                  icon: Icon(
+                                                    Icons.remove,
+                                                    color: Colors.red,
+                                                    size: 20.0,
+                                                  ))
+                                              : SizedBox(),
+                                        ],
+                                      ),
+                                      // Header End ============================
+                                      themeSpaceVertical(4.0),
+                                      Container(
+                                        height:
+                                            MediaQuery.of(context).size.height -
+                                                420,
+                                        child: ListView(
+                                          children: [
+                                            for (var i = 1;
+                                                i <= controller.totalProduct;
+                                                i++)
+                                              Container(
+                                                color: Color.fromARGB(
+                                                    106, 211, 234, 255),
+                                                margin: EdgeInsets.only(
+                                                    right: 8.0, bottom: 10.0),
+                                                child: Row(
+                                                  children: [
+                                                    // product Name
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .width /
+                                                                  3 -
+                                                              10,
+                                                      child:
+                                                          autoCompleteFormInput(
+                                                        controller.ListName,
+                                                        "Products Name",
                                                         controller
                                                             // .Customer_nameController,
-                                                            .ProductPriceControllers[i],
+                                                            .ProductNameControllers[i],
                                                         padding: 8.0,
-                                                        isNumber: true,
-                                                        isFloat: true,
-                                                        method: fnTotalPrice,
-                                                        methodArg: i),
-                                                  ),
+                                                        method:
+                                                            fnCalcualtePrice,
+                                                        methodArg: i,
+                                                      ),
+                                                    ),
+                                                    // Price
+                                                    Expanded(
+                                                      child: formInput(
+                                                          context,
+                                                          "Price",
+                                                          controller
+                                                              // .Customer_nameController,
+                                                              .ProductPriceControllers[i],
+                                                          padding: 8.0,
+                                                          isNumber: true,
+                                                          isFloat: true,
+                                                          method: fnTotalPrice,
+                                                          methodArg: i),
+                                                    ),
 
-                                                  // Quantity
-                                                  Expanded(
-                                                    child: formInput(
-                                                        context,
-                                                        "Quantity",
-                                                        controller
-                                                            .ProductQuntControllers[i],
-                                                        padding: 8.0,
-                                                        isNumber: true,
-                                                        method: fnTotalPrice,
-                                                        methodArg: i),
-                                                  ),
+                                                    // Quantity
+                                                    Expanded(
+                                                      child: formInput(
+                                                          context,
+                                                          "Quantity",
+                                                          controller
+                                                              .ProductQuntControllers[i],
+                                                          padding: 8.0,
+                                                          isNumber: true,
+                                                          method: fnTotalPrice,
+                                                          methodArg: i),
+                                                    ),
+                                                    // Unit
+                                                    Expanded(
+                                                      child: formInput(
+                                                          context,
+                                                          "Unit/Size",
+                                                          controller
+                                                              .ProductUnitControllers[i],
+                                                          padding: 8.0,
+                                                          isNumber: true,
+                                                          method: fnTotalPrice,
+                                                          methodArg: i),
+                                                    ),
 
-                                                  // GST
-                                                  Expanded(
-                                                    child: formInput(
-                                                        context,
-                                                        "GST (%)",
-                                                        controller
-                                                            .ProductGstControllers[i],
-                                                        padding: 8.0,
-                                                        isNumber: true,
-                                                        isFloat: true,
-                                                        method: fnTotalPrice,
-                                                        methodArg: i),
-                                                  ),
+                                                    // GST
+                                                    Expanded(
+                                                      child: formInput(
+                                                          context,
+                                                          "GST (%)",
+                                                          controller
+                                                              .ProductGstControllers[i],
+                                                          padding: 8.0,
+                                                          isNumber: true,
+                                                          isFloat: true,
+                                                          method: fnTotalPrice,
+                                                          methodArg: i),
+                                                    ),
 
-                                                  // Discount
-                                                  Expanded(
-                                                    child: formInput(
-                                                        context,
-                                                        "Discount",
-                                                        controller
-                                                            .ProductDiscountControllers[i],
-                                                        padding: 8.0,
-                                                        isNumber: true,
-                                                        isFloat: true,
-                                                        method: fnTotalPrice,
-                                                        methodArg: i),
-                                                  ),
+                                                    // Discount
+                                                    Expanded(
+                                                      child: formInput(
+                                                          context,
+                                                          "Discount",
+                                                          controller
+                                                              .ProductDiscountControllers[i],
+                                                          padding: 8.0,
+                                                          isNumber: true,
+                                                          isFloat: true,
+                                                          method: fnTotalPrice,
+                                                          methodArg: i),
+                                                    ),
 
-                                                  // Total
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            4,
-                                                    child: Row(
-                                                      children: [
-                                                        // sub total
-                                                        Expanded(
+                                                    // Total
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width /
+                                                              4,
+                                                      child: Row(
+                                                        children: [
+                                                          // sub total
+                                                          Expanded(
                                                             child: totalWidgets(
                                                                 context,
                                                                 'Sub Total',
-                                                                "${(controller.productDBdata[i] != null) ? int.parse(controller.ProductTotalControllers[i]!.text) - int.parse(controller.productDBdata[i]['gst']) : '0'}")),
-                                                        //GST
-                                                        Expanded(
-                                                            child: totalWidgets(
-                                                                context,
-                                                                'GST',
-                                                                "${(controller.productDBdata[i] != null) ? controller.productDBdata[i]['gst'] : '0'}")),
-                                                        // Total
-                                                        Expanded(
-                                                            child: totalWidgets(
-                                                                context,
-                                                                'Total',
-                                                                "${(controller.productDBdata[i] != null) ? controller.ProductTotalControllers[i]!.text : '0'}")),
-                                                        // Expanded(
-                                                        //     child: formInput(
-                                                        //         context,
-                                                        //         "Total",
-                                                        //         controller
-                                                        //             .ProductTotalControllers[i],
-                                                        //         padding: 8.0,
-                                                        //         isNumber: true)),
-                                                      ],
+                                                                "${(controller.productDBdata[i] != null) ? int.parse(controller.ProductTotalControllers[i]!.text) - int.parse(controller.productDBdata[i]['gst']) : '0'}"),
+                                                          ),
+                                                          //GST
+                                                          Expanded(
+                                                              child: totalWidgets(
+                                                                  context,
+                                                                  'GST',
+                                                                  "${(controller.productDBdata[i] != null) ? controller.productDBdata[i]['gst'] : '0'}")),
+                                                          // Total
+                                                          Expanded(
+                                                              child: totalWidgets(
+                                                                  context,
+                                                                  'Total',
+                                                                  "${(controller.productDBdata[i] != null) ? controller.ProductTotalControllers[i]!.text : '0'}")),
+
+                                                          // Expanded(
+                                                          //     child: formInput(
+                                                          //         context,
+                                                          //         "Total",
+                                                          //         controller
+                                                          //             .ProductTotalControllers[i],
+                                                          //         padding: 8.0,
+                                                          //         isNumber: true)),
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    //field
-                                  ],
-                                )),
-                              ),
-                              SizedBox(width: defaultPadding),
-                            ]),
-                        // auto complete =================================
-
-                        // buttom submit
-                        themeSpaceVertical(20.0),
-                        Container(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  child: Center(
-                                    child: ElevatedButton(
-                                        onPressed: () async {
-                                          controller
-                                              .insertInvoiceDetails(context);
-                                          //setState(() {});
-                                        },
-                                        child: Text('Submit')),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.only(right: 30.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                "SubTotal : ",
-                                                style:
-                                                    themeTextStyle(size: 12.0),
-                                              ),
-                                              Text(
-                                                "₹${controller.totalPrice - controller.totalGst}",
-                                                style:
-                                                    themeTextStyle(size: 15.0),
-                                              )
-                                            ],
-                                          ),
-                                          // GST
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                "GST : ",
-                                                style:
-                                                    themeTextStyle(size: 12.0),
-                                              ),
-                                              Text(
-                                                "₹${controller.totalGst}",
-                                                style:
-                                                    themeTextStyle(size: 15.0),
-                                              )
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(width: 30.0),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            "Total:",
-                                            style: themeTextStyle(
-                                                size: 20.0,
-                                                fw: FontWeight.bold),
-                                          ),
-                                          Text(
-                                            "₹${controller.totalPrice}",
-                                            style: themeTextStyle(size: 25.0),
-                                          )
-                                        ],
-                                      ),
+                                      //field
                                     ],
+                                  )),
+                                ),
+                                SizedBox(width: defaultPadding),
+                              ]),
+                          // auto complete =================================
+
+                          // buttom submit
+                          themeSpaceVertical(20.0),
+                          Container(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    child: Center(
+                                      child: ElevatedButton(
+                                          onPressed: () async {
+                                            controller
+                                                .insertInvoiceDetails(context);
+                                            //setState(() {});
+                                          },
+                                          child: Text('Submit')),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                Expanded(
+                                  child: Container(
+                                    padding: EdgeInsets.only(right: 30.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  "SubTotal : ",
+                                                  style: themeTextStyle(
+                                                      size: 12.0),
+                                                ),
+                                                Text(
+                                                  "₹${controller.totalPrice - controller.totalGst}",
+                                                  style: themeTextStyle(
+                                                      size: 15.0),
+                                                )
+                                              ],
+                                            ),
+                                            // GST
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  "GST : ",
+                                                  style: themeTextStyle(
+                                                      size: 12.0),
+                                                ),
+                                                Text(
+                                                  "₹${controller.totalGst}",
+                                                  style: themeTextStyle(
+                                                      size: 15.0),
+                                                )
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(width: 30.0),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              "Total:",
+                                              style: themeTextStyle(
+                                                  size: 20.0,
+                                                  fw: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              "₹${controller.totalPrice}",
+                                              style: themeTextStyle(size: 25.0),
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
+                        ],
+                      ),
+                    )
 
-            // end form ====================================
-          ],
+              // end form ====================================
+            ],
+          ),
         ),
       ),
     );
@@ -451,23 +495,15 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
   // Functions for setstate =================================================
 
   // add new Product
-  addNewProduct(context) {
-    setState(() {
-      if (controller.totalProduct < 4) {
-        controller.totalProduct++;
-        controller.ctrNewRow(controller.totalProduct);
-      }
-    });
+  addNewProduct(context) async {
+    await controller.ctrNewRow();
+    setState(() {});
   }
 
   // remove new location
-  removeRow(context) {
-    setState(() {
-      if (controller.totalProduct > 1) {
-        controller.ctrRemoveRow(controller.totalProduct);
-        controller.totalProduct--;
-      }
-    });
+  removeRow(context) async {
+    var r = await controller.ctrRemoveRow(context);
+    setState(() {});
   }
 
   // get price & calculate
@@ -513,6 +549,11 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
       controller.Customer_MobileController.text = tempData['mobile'];
       controller.Customer_emailController.text = tempData['email'];
       controller.Customer_AddressController.text = tempData['address'];
+      controller.Customer_GstNoController.text =
+          (tempData['gst_no'] == null) ? '' : tempData['gst_no'];
+      controller.InvoiceType =
+          (tempData['type'] == null) ? 'Customer' : tempData['type'];
+      setState(() {});
     }
   }
 
@@ -520,6 +561,20 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
   fnTotalPrice(controllerId) async {
     await controller.ctrTotalCalculate(controllerId);
     setState(() {});
+  }
+
+  // function invoice update
+  updateInvoiceType(val) {
+    setState(() {
+      controller.InvoiceType = val;
+    });
+  }
+
+  // function Sale type update
+  updateSaleType(val) {
+    setState(() {
+      controller.SaleType = val;
+    });
   }
 }
 

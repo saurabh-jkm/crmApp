@@ -65,6 +65,20 @@ String formatDate(dateTime, {formate: "dd-MM-yyyy h:mm a"}) {
       : formatter.format(dateTime.toDate());
 }
 
+todayTimeStamp_for_query() {
+  final date = DateTime.now();
+  var newDate = DateTime(date.year, date.month, date.day - 1, 24);
+
+  return newDate;
+}
+
+yearStamp_for_query() {
+  final date = DateTime.now();
+  var newDate = DateTime(date.year, 01, 00, 24);
+
+  return newDate;
+}
+
 // shcedule time
 sechduleTimmingList() {
   Map<dynamic, dynamic> scheduleList = {};

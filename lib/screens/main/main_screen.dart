@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:crm_demo/screens/customers/customers_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -109,10 +110,10 @@ class _MainScreenState extends State<MainScreen> {
                   ///SignupScreen()
                   )
             else if (sidemenu == 10)
-              Expanded(flex: 5, child: SubAdmin()
-
-                  ///SignupScreen()
-                  )
+              Expanded(flex: 5, child: SubAdmin())
+            // All customer list
+            else if (sidemenu == 11)
+              Expanded(flex: 5, child: CustomerList())
           ],
         ),
       ),
@@ -124,7 +125,7 @@ class _MainScreenState extends State<MainScreen> {
       child: ListView(
         children: [
           DrawerHeader(
-            child: Image.asset("assets/images/logo.png"),
+            child: Image.asset("assets/images/logo-2.png"),
             decoration: BoxDecoration(
                 //  color: const Color.fromARGB(127, 33, 149, 243)
                 ),
@@ -236,10 +237,31 @@ class _MainScreenState extends State<MainScreen> {
               });
             },
             horizontalTitleGap: 0.0,
-            leading:
-                Icon(Icons.collections_bookmark_outlined, color: Colors.white),
+            leading: Icon(Icons.bar_chart, color: Colors.white),
             title: Text(
-              "Invoice",
+              "Buy/Sales",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+
+          // All Customers
+          ListTile(
+            tileColor: (sidemenu == 11)
+                ? const Color.fromARGB(127, 33, 149, 243)
+                : const Color.fromARGB(0, 255, 255, 255),
+            onTap: () {
+              setState(() {
+                sidemenu = 11;
+                if (Responsive.isMobile(context)) {
+                  Navigator.of(context).pop();
+                }
+              });
+            },
+            horizontalTitleGap: 0.0,
+            leading: Icon(Icons.supervised_user_circle_outlined,
+                color: Colors.white),
+            title: Text(
+              "All Customers",
               style: TextStyle(color: Colors.white),
             ),
           ),

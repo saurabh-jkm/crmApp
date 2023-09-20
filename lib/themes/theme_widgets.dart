@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_equal_for_default_values, avoid_unnecessary_containers, deprecated_member_use, no_leading_underscores_for_local_identifiers, prefer_const_literals_to_create_immutables, unnecessary_brace_in_string_interps, sort_child_properties_last, sized_box_for_whitespace, non_constant_identifier_names, deprecated_colon_for_default_value
 
+import 'package:crm_demo/themes/function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -668,6 +669,73 @@ autoCompleteFormInput(suggationList, label, myController,
   );
 }
 
+// dropdown ===============================================
+// form input field ===========================
+Widget inpuDropdDown(BuildContext context, label, itemList, value,
+    {padding: 5.0,
+    suggationList,
+    editComplete: '',
+    focusNode: '',
+    currentController: '',
+    isNumber: false,
+    isFloat: false,
+    method: '',
+    methodArg: '',
+    readOnly: false,
+    style: 1}) {
+  // if (editComplete != '' && currentController.text == '') {
+  //   controller.text = currentController.text;
+  // }
+
+  return Container(
+      padding: EdgeInsets.all(padding),
+      child: DropdownButtonFormField(
+        style: textStyle1,
+        dropdownColor: Colors.white,
+        value: '${value}',
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: Colors.black, // <-- SEE HERE
+        ),
+        decoration: (style == 2) ? inputStyle2(value) : inputStyle(label),
+        onChanged: (String? newValue) {
+          if (method == '') {
+            value = newValue;
+          } else {
+            method(newValue);
+          }
+        },
+        items: itemList.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      ));
+}
+
+// search input
+Widget inputSearch(context, controller, label, {method: ''}) {
+  return TextFormField(
+    controller: controller,
+    style: textStyle1,
+    onChanged: (value) {
+      if (method != '') {
+        method(value);
+      }
+    },
+    decoration: InputDecoration(
+      contentPadding: EdgeInsets.only(left: 6.0),
+      hintText: 'Search',
+      hintStyle: themeTextStyle(
+          color: const Color.fromARGB(255, 156, 156, 156), size: 14.0),
+      enabledBorder: UnderlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          borderSide: BorderSide(color: themeBG4, width: 3.0)),
+    ),
+  );
+}
+
 // theme heading
 Widget themeHeading2(label) {
   return Padding(
@@ -695,18 +763,54 @@ Widget SearchBox(BuildContext context, {searchFn: '', label: 'Search'}) {
         borderSide: BorderSide.none,
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
-      suffixIcon: InkWell(
-        onTap: () {},
-        child: Container(
-          padding: EdgeInsets.all(defaultPadding * 0.75),
-          margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-          decoration: BoxDecoration(
-            color: primaryColor,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-          ),
-          child: Icon(Icons.search),
-        ),
-      ),
+      // suffixIcon: InkWell(
+      //   onTap: () {},
+      //   child: Container(
+      //     padding: EdgeInsets.all(defaultPadding * 0.75),
+      //     margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+      //     decoration: BoxDecoration(
+      //       color: primaryColor,
+      //       borderRadius: const BorderRadius.all(Radius.circular(10)),
+      //     ),
+      //     child: Icon(Icons.search),
+      //   ),
+      // ),
+    ),
+  );
+}
+
+// Table Heading ==========================
+Widget TableHeading(context, data, {rowColor: '', textColor: ''}) {
+  return Container(
+    margin: EdgeInsets.only(bottom: 1.0),
+    padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+    decoration: BoxDecoration(color: (rowColor == '') ? themeBG2 : rowColor),
+    child: Row(
+      children: [
+        for (String k in data)
+          (k == '#')
+              ? Container(
+                  width: 40.0,
+                  child: Container(
+                    child: Text("${capitalize(k)}",
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            color: (textColor == '')
+                                ? Color.fromARGB(255, 201, 201, 201)
+                                : textColor)),
+                  ),
+                )
+              : Expanded(
+                  child: Container(
+                    child: Text("${capitalize(k)}",
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            color: (textColor == '')
+                                ? Color.fromARGB(255, 201, 201, 201)
+                                : textColor)),
+                  ),
+                ),
+      ],
     ),
   );
 }

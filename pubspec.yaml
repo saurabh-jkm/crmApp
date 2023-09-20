@@ -56,6 +56,8 @@ dependencies:
 # Invoice pdf generator ==========================
   pdf: ^3.8.2
   path_provider: ^2.0.5
+  
+  
   # syncfusion_flutter_pdfviewer: ^21.2.8
   # syncfusion_flutter_pdfviewer: ^20.3.47
   syncfusion_flutter_pdfviewer: ^21.2.3

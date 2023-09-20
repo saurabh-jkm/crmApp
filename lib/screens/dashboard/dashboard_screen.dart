@@ -4,7 +4,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/themes/function.dart';
+import 'package:crm_demo/themes/style.dart';
 import 'package:firedart/firestore/firestore.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -34,6 +37,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final GlobalKey exportKey = GlobalKey();
   /////// get user data  +++++++++++++++++++++++++++++++++++++++++++++++++++
   Map<dynamic, dynamic> user = new Map();
+  int no_todaySale = 0;
+
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic userData = (prefs.getString('user'));
@@ -45,7 +50,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       Stock_Data();
       User_Data();
       OutofStock_Data();
+
+      // todaySale
+      await todaySale();
+      await yearSale();
     }
+
+    setState(() {});
   }
 
   @override
@@ -59,8 +70,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ? Firestore.instance
       : FirebaseFirestore.instance;
   bool progressWidget = true;
-  ////////// inoive ==============================================================
+  ////////// inoive ==========================================================
   int invoiceNo = 0;
+  int StockNo = 0;
+  int UserNo = 0;
+  int Out_of_Stock_No = 0;
+  int no_of_year_sale = 0;
+
   invo_Data() async {
     List StoreDocs = [];
     Map<dynamic, dynamic> w = {
@@ -68,17 +84,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       //'status': "$_StatusValue",
     };
     var temp = await dbFindDynamic(db, w);
+
     setState(() {
-      temp.forEach((k, v) {
-        StoreDocs.add(v);
-        invoiceNo = StoreDocs.length;
-        progressWidget = false;
-      });
+      invoiceNo = temp.length;
     });
   }
 
   /////////=====================================================================
-  int StockNo = 0;
+
   Stock_Data() async {
     List StoreDocs = [];
     Map<dynamic, dynamic> w = {
@@ -87,17 +100,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     };
     var temp = await dbFindDynamic(db, w);
     setState(() {
-      temp.forEach((k, v) {
-        StoreDocs.add(v);
-        StockNo = StoreDocs.length;
-      });
+      StockNo = temp.length;
     });
   }
 
 ////////////////
   ///
   /////////=====================================================================
-  int UserNo = 0;
+
   User_Data() async {
     List StoreDocs = [];
     Map<dynamic, dynamic> w = {
@@ -106,17 +116,63 @@ class _DashboardScreenState extends State<DashboardScreen> {
     };
     var temp = await dbFindDynamic(db, w);
     setState(() {
-      temp.forEach((k, v) {
-        StoreDocs.add(v);
-        UserNo = StoreDocs.length;
-      });
+      UserNo = temp.length;
+    });
+  }
+
+  /////////=====================================================================
+
+  todaySale() async {
+    List StoreDocs = [];
+    var newDate = todayTimeStamp_for_query();
+    var rData;
+
+    if (!kIsWeb && Platform.isWindows) {
+      var query = await Firestore.instance
+          .collection('order')
+          .where("date_at", isGreaterThan: newDate);
+      rData = await dbRawQuery(query);
+      //print("-----${rData}");
+    } else {
+      var query = await FirebaseFirestore.instance
+          .collection('order')
+          .where("date_at", isGreaterThan: newDate);
+      rData = await dbRawQuery(query);
+    }
+
+    setState(() {
+      no_todaySale = rData.length;
+    });
+  }
+
+  yearSale() async {
+    List StoreDocs = [];
+    var newDate = todayTimeStamp_for_query();
+    var yearStartDate = yearStamp_for_query();
+    var rData;
+
+    if (!kIsWeb && Platform.isWindows) {
+      var query = await Firestore.instance
+          .collection('order')
+          .where("date_at", isGreaterThan: yearStartDate);
+      rData = await dbRawQuery(query);
+      //print("-----${rData}");
+    } else {
+      var query = await FirebaseFirestore.instance
+          .collection('order')
+          .where("date_at", isGreaterThan: yearStartDate);
+      rData = await dbRawQuery(query);
+    }
+
+    setState(() {
+      no_of_year_sale = rData.length;
     });
   }
 
 ////////////////
   ///
   /////////=====================================================================
-  int Out_of_Stock_No = 0;
+
   OutofStock_Data() async {
     List StoreDocs = [];
 
@@ -186,76 +242,85 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ),
   ];
 
-  late List demoMyFiles = [
-    CloudStorageInfo(
-      title: "Total Invoice",
-      numOfFiles: invoiceNo,
-      svgSrc: Icons.shopping_cart,
-      // svgSrc: "assets/icons/shoping.svg",
-      color: primaryColor,
-      PageNo: 5,
-    ),
-    CloudStorageInfo(
-      title: "Total Stocks",
-      numOfFiles: StockNo,
-      svgSrc: Icons.wallet_giftcard,
-      // svgSrc: "assets/icons/google_drive.svg",
-      color: Color(0xFFFFA113),
-      PageNo: 4,
-    ),
-    CloudStorageInfo(
-      title: "Total User",
-      numOfFiles: UserNo,
-      svgSrc: Icons.person,
-      // svgSrc: "assets/icons/one_drive.svg",
-      color: Color(0xFFA4CDFF),
-
-      PageNo: 10,
-    ),
-    CloudStorageInfo(
-      title: "Inventry Management",
-      numOfFiles: 53,
-      svgSrc: Icons.inventory_rounded,
-      // svgSrc: "assets/icons/drop_box.svg",
-      color: Colors.green,
-
-      PageNo: 7,
-    ),
-    CloudStorageInfo(
-      title: "Out of stock",
-      numOfFiles: Out_of_Stock_No,
-      svgSrc: Icons.production_quantity_limits_outlined,
-      // svgSrc: "assets/icons/drop_box.svg",
-      color: Color.fromARGB(255, 119, 143, 31),
-
-      PageNo: 4,
-    ),
-  ];
-
 ///////=======================================================================
   @override
   Widget build(BuildContext context) {
-    List<charts.Series<BarChartModel, String>> series = [
-      charts.Series(
-        id: "Sale",
-        data: data,
-        domainFn: (BarChartModel series, _) => series.year,
-        measureFn: (BarChartModel series, _) => series.Sale,
-        colorFn: (BarChartModel series, _) => series.color,
+    // List<charts.Series<BarChartModel, String>> series = [
+    //   charts.Series(
+    //     id: "Sale",
+    //     data: data,
+    //     domainFn: (BarChartModel series, _) => series.year,
+    //     measureFn: (BarChartModel series, _) => series.Sale,
+    //     colorFn: (BarChartModel series, _) => series.color,
+    //   ),
+    //   charts.Series(
+    //     id: "Expenses",
+    //     data: data,
+    //     domainFn: (BarChartModel series, _) => series.year,
+    //     measureFn: (BarChartModel series, _) => series.Expenses,
+    //     colorFn: (BarChartModel series, _) => series.color1,
+    //   ),
+    //   charts.Series(
+    //     id: "Profit",
+    //     data: data,
+    //     domainFn: (BarChartModel series, _) => series.year,
+    //     measureFn: (BarChartModel series, _) => series.Profit,
+    //     colorFn: (BarChartModel series, _) => series.color2,
+    //   ),
+    // ];
+    // dashborad list init
+    List demoMyFiles = [
+      CloudStorageInfo(
+        title: "Total Invoice",
+        numOfFiles: invoiceNo,
+        svgSrc: Icons.shopping_cart,
+        // svgSrc: "assets/icons/shoping.svg",
+        color: primaryColor,
+        PageNo: 5,
       ),
-      charts.Series(
-        id: "Expenses",
-        data: data,
-        domainFn: (BarChartModel series, _) => series.year,
-        measureFn: (BarChartModel series, _) => series.Expenses,
-        colorFn: (BarChartModel series, _) => series.color1,
+      CloudStorageInfo(
+        title: "Total Stocks",
+        numOfFiles: StockNo,
+        svgSrc: Icons.wallet_giftcard,
+        // svgSrc: "assets/icons/google_drive.svg",
+        color: Color(0xFFFFA113),
+        PageNo: 4,
       ),
-      charts.Series(
-        id: "Profit",
-        data: data,
-        domainFn: (BarChartModel series, _) => series.year,
-        measureFn: (BarChartModel series, _) => series.Profit,
-        colorFn: (BarChartModel series, _) => series.color2,
+      CloudStorageInfo(
+        title: "Total User",
+        numOfFiles: UserNo,
+        svgSrc: Icons.person,
+        // svgSrc: "assets/icons/one_drive.svg",
+        color: Color(0xFFA4CDFF),
+
+        PageNo: 10,
+      ),
+      CloudStorageInfo(
+        title: "Out of stock",
+        numOfFiles: Out_of_Stock_No,
+        svgSrc: Icons.production_quantity_limits_outlined,
+        // svgSrc: "assets/icons/drop_box.svg",
+        color: Color.fromARGB(255, 119, 143, 31),
+
+        PageNo: 4,
+      ),
+      CloudStorageInfo(
+        title: "Today Sales",
+        numOfFiles: no_todaySale,
+        svgSrc: Icons.auto_graph_rounded,
+        // svgSrc: "assets/icons/drop_box.svg",
+        color: Color.fromARGB(255, 235, 202, 16),
+
+        PageNo: 5,
+      ),
+      CloudStorageInfo(
+        title: "Yearly Sales",
+        numOfFiles: no_of_year_sale,
+        svgSrc: Icons.sync_alt_rounded,
+        // svgSrc: "assets/icons/drop_box.svg",
+        color: Color.fromARGB(255, 235, 202, 16),
+
+        PageNo: 5,
       ),
     ];
     return (user.isEmpty)
@@ -280,7 +345,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                             SizedBox(height: defaultPadding),
 
-                            Container(
+                            /*Container(
                                 width: double.infinity,
                                 padding: EdgeInsets.all(defaultPadding),
                                 decoration: BoxDecoration(
@@ -363,7 +428,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       animate: true,
                                     ),
                                   )
-                                ]))
+                                ]))*/
 
                             // ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Back")),
                             // RecentFiles(),

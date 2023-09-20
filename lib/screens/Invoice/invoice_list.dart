@@ -60,6 +60,8 @@ class _Invoice_ListState extends State<Invoice_List> {
 
 ////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
   bool progressWidget = true;
+  List<String> itemList = ['All', 'Sale', 'Buy'];
+  var selectedFilter = 'All';
 
 ///////////////////////// Order List Data fetch fn ++++++++++++++++++++++++++++
 
@@ -69,6 +71,7 @@ class _Invoice_ListState extends State<Invoice_List> {
     OrderList = [];
     Map<dynamic, dynamic> w = {
       'table': "order",
+      'orderBy': "-date_at",
     };
     var temp = await dbFindDynamic(db, w);
     setState(() {
@@ -123,12 +126,15 @@ class _Invoice_ListState extends State<Invoice_List> {
   }
 
 /////////////////////////  View Invoice Details  +++++++++++++++++++++++++++++
-  viewInvoice(data) {
-    Navigator.push(
+  viewInvoice(data) async {
+    final temp = await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (_) => viewInvoiceScreen(
                 header_name: "View Invoice Details", data: data)));
+    if (temp == 'updated') {
+      OrderList_data();
+    }
   }
 /////////////////////////=======================================================
 
@@ -185,7 +191,7 @@ class _Invoice_ListState extends State<Invoice_List> {
                     ),
                   ),
 
-                  listList(context)
+                  listList(context, itemList)
                 ],
               ),
             ),
@@ -194,7 +200,7 @@ class _Invoice_ListState extends State<Invoice_List> {
 
 //////// ///////////////////////////////// @1  List  of Order       ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  Widget listList(BuildContext context) {
+  Widget listList(BuildContext context, itemList) {
     var _number_select = 10;
     return Container(
       height: MediaQuery.of(context).size.height,
@@ -207,13 +213,13 @@ class _Invoice_ListState extends State<Invoice_List> {
           Container(
             margin: EdgeInsets.symmetric(horizontal: 5.0),
             decoration: BoxDecoration(
-              color: secondaryColor,
+              color: Colors.white,
             ),
             child: Column(
               children: [
                 Container(
                     padding: EdgeInsets.all(10),
-                    color: Theme.of(context).secondaryHeaderColor,
+                    color: themeBG4,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -230,7 +236,7 @@ class _Invoice_ListState extends State<Invoice_List> {
                             SizedBox(
                               height: 20,
                             ),
-                            Row(
+                            /*Row(
                               children: [
                                 Text(
                                   "Show",
@@ -281,15 +287,54 @@ class _Invoice_ListState extends State<Invoice_List> {
                                       size: 15),
                                 ),
                               ],
-                            )
+                            )*/
                           ],
                         ),
-                        Container(
-                            margin: EdgeInsets.symmetric(horizontal: 10),
-                            height: MediaQuery.of(context).size.height * 0.05,
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            child: SearchBox(context,
-                                label: "Search", searchFn: SearchFn))
+                        Row(
+                          children: [
+                            themeButton3(context, changeFilter,
+                                arg: 'Sale',
+                                label: 'Sale',
+                                radius: 2.0,
+                                borderColor: (selectedFilter == 'Sale')
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                buttonColor: Color.fromARGB(255, 4, 141, 134)),
+                            SizedBox(width: 10.0),
+
+                            themeButton3(context, changeFilter,
+                                arg: 'Buy',
+                                label: 'Buy',
+                                radius: 2.0,
+                                borderColor: (selectedFilter == 'Buy')
+                                    ? Colors.white
+                                    : Colors.transparent,
+                                buttonColor: Color.fromARGB(255, 243, 67, 54)),
+
+                            // Container(
+                            //   height: 30,
+                            //   width: 100.0,
+                            //   padding: EdgeInsets.only(top: 6.0),
+                            //   decoration: BoxDecoration(
+                            //       borderRadius: BorderRadius.circular(3.0),
+                            //       color: Colors.white),
+                            //   child: inpuDropdDown(
+                            //       context, 'Filter', itemList, selectedFilter,
+                            //       method: changeFilter, style: 2),
+                            // ),
+                            // search
+                            Container(
+                                margin: EdgeInsets.symmetric(horizontal: 10),
+                                padding: EdgeInsets.only(top: 14),
+                                height: 35,
+                                width: 270.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    color: Colors.white),
+                                child: SearchBox(context,
+                                    label: "Search", searchFn: SearchFn))
+                          ],
+                        ),
                       ],
                     )),
                 SizedBox(
@@ -299,12 +344,15 @@ class _Invoice_ListState extends State<Invoice_List> {
                   columnWidths: {
                     0: FlexColumnWidth(0.2),
                     1: FlexColumnWidth(0.7),
-                    2: FlexColumnWidth(0.7),
-                    3: FlexColumnWidth(0.5),
-                    4: FlexColumnWidth(0.2),
-                    5: FlexColumnWidth(0.3),
-                    6: FlexColumnWidth(0.4),
-                    7: IntrinsicColumnWidth(),
+                    2: FlexColumnWidth(0.3),
+                    3: FlexColumnWidth(0.6),
+                    4: FlexColumnWidth(0.5),
+                    5: FlexColumnWidth(0.2),
+                    6: FlexColumnWidth(0.2),
+                    7: FlexColumnWidth(0.2),
+                    8: FlexColumnWidth(0.3),
+                    9: FlexColumnWidth(0.4),
+                    10: IntrinsicColumnWidth()
                   },
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   border: TableBorder(
@@ -312,8 +360,7 @@ class _Invoice_ListState extends State<Invoice_List> {
                   ),
                   children: [
                     TableRow(
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).secondaryHeaderColor),
+                        decoration: BoxDecoration(color: themeBG4),
                         children: [
                           TableCell(
                               verticalAlignment:
@@ -341,6 +388,20 @@ class _Invoice_ListState extends State<Invoice_List> {
                           TableCell(
                             verticalAlignment:
                                 TableCellVerticalAlignment.middle,
+                            child: SizedBox(
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text('Type',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10.0)),
+                              ),
+                              width: 40,
+                            ),
+                          ),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Text("Buyer Name",
@@ -355,6 +416,28 @@ class _Invoice_ListState extends State<Invoice_List> {
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Text("Mobile no.",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10.0)),
+                            ),
+                          ),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text("Qnt.",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10.0)),
+                            ),
+                          ),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text("Unit",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 10.0)),
@@ -433,88 +516,103 @@ class _Invoice_ListState extends State<Invoice_List> {
       {dbData: ''}) {
     var statuss = statusOF(pro_status);
     final formattedDate = formatDate(pay_date);
+    var type =
+        (edata['invoice_for'] == 'Customer' || edata['invoice_for'] == '')
+            ? (edata['is_sale'] != null && edata['is_sale'] == 'Estimate')
+                ? edata['is_sale']
+                : "Sale"
+            : (edata['is_sale'] != null && edata['is_sale'] == 'Estimate')
+                ? "Buy\nEstimate"
+                : "Buy";
 //////////////////// ++++++++++++++++++++++++++++++++++++++++++++++
-    return TableRow(children: [
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Text(index,
-              style: GoogleFonts.alike(
-                  fontWeight: FontWeight.normal, fontSize: 11)),
-        ),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Text("$odID",
-              style: GoogleFonts.alike(
-                  fontWeight: FontWeight.normal, fontSize: 10)),
-        ),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Text('$user',
-              style: GoogleFonts.alike(
-                  fontWeight: FontWeight.normal, fontSize: 11)),
-        ),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Text('$buyer_mobile',
-              style: GoogleFonts.alike(
-                  fontWeight: FontWeight.normal, fontSize: 11)),
-        ),
-      ),
-      TableCell(
-          verticalAlignment: TableCellVerticalAlignment.middle,
-          child: Text((_price != null) ? "$_price" : "--/--",
-              style: GoogleFonts.alike(
-                  fontWeight: FontWeight.normal, fontSize: 11))),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-              margin: EdgeInsets.only(right: 20),
-              height: 25,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: (statuss == "Active")
-                    ? Colors.green.withOpacity(0.1)
-                    : Colors.red.withOpacity(0.1),
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-              ),
-              child: Text("$statuss",
-                  style: GoogleFonts.alike(
-                      color: (statuss == "Active") ? Colors.green : Colors.red,
-                      fontSize: 12.5))),
-        ),
-      ),
-      TableCell(
-          verticalAlignment: TableCellVerticalAlignment.middle,
-          child: Text("$formattedDate",
-              style: GoogleFonts.alike(color: Colors.white, fontSize: 11))),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: RowFor_Mobile_web(context, () async {
-          final data = await InvoiceService(
-            PriceDetail: edata,
-          ).createInvoice();
-          // final data = await service.createInvoice();
-          await savePdfFile("invoice", data);
-        }, () {
-          setState(() {
-            viewInvoice(edata);
-          });
-        }, dbData: dbData),
-      ),
-    ]);
+    return TableRow(
+        decoration: BoxDecoration(
+            color: (matchString(type, 'Buy')) ? themeBG6 : themeBG5,
+            border:
+                Border(bottom: BorderSide(width: 3.0, color: Colors.white))),
+        children: [
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(index, style: textStyle3),
+            ),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text("$odID", style: textStyle3),
+            ),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Container(child: Text("${type}", style: textStyle3)),
+            ),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text('$user', style: textStyle3),
+            ),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text('$buyer_mobile', style: textStyle3),
+            ),
+          ),
+          TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Text(
+                  (edata['quantity'] != null) ? "${edata['quantity']}" : "-",
+                  style: textStyle3)),
+          TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Text((edata['unit'] != null) ? "${edata['unit']}" : "-",
+                  style: textStyle3)),
+          TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child:
+                  Text((_price != null) ? "$_price" : "-", style: textStyle3)),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                  margin: EdgeInsets.only(right: 20),
+                  height: 25,
+                  alignment: Alignment.center,
+                  child: Text("$statuss",
+                      style: GoogleFonts.alike(
+                          color: (statuss == "Active")
+                              ? Color.fromARGB(255, 10, 103, 139)
+                              : const Color.fromARGB(255, 141, 28, 20),
+                          fontSize: 12.5))),
+            ),
+          ),
+          TableCell(
+              verticalAlignment: TableCellVerticalAlignment.middle,
+              child: Text("$formattedDate", style: textStyle3)),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: RowFor_Mobile_web(context, () async {
+              final data = await InvoiceService(
+                PriceDetail: edata,
+              ).createInvoice();
+              // final data = await service.createInvoice();
+              await savePdfFile("invoice", data);
+            }, () {
+              setState(() {
+                viewInvoice(edata);
+              });
+            }, dbData: dbData),
+          ),
+        ]);
   }
 
 /////////////////////////////////////  Row GOt Action Button  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -523,9 +621,7 @@ class _Invoice_ListState extends State<Invoice_List> {
   Widget RowFor_Mobile_web(BuildContext context, _invoice, _details_view,
       {dbData: ''}) {
     return Padding(
-        padding: EdgeInsets.only(
-          bottom: 1.0,
-        ),
+        padding: EdgeInsets.only(bottom: 1.0, right: 10.0),
         child: Row(
           children: [
             Container(
@@ -533,7 +629,7 @@ class _Invoice_ListState extends State<Invoice_List> {
                 width: 30,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: Color.fromARGB(255, 10, 103, 139),
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
                 child: IconButton(
@@ -549,7 +645,7 @@ class _Invoice_ListState extends State<Invoice_List> {
                 width: 30,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: Color.fromARGB(255, 10, 103, 139),
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
                 child: IconButton(
@@ -565,7 +661,7 @@ class _Invoice_ListState extends State<Invoice_List> {
                 width: 30,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.yellow.withOpacity(0.1),
+                  color: Color.fromARGB(255, 10, 103, 139),
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
                 child: IconButton(
@@ -592,14 +688,20 @@ class _Invoice_ListState extends State<Invoice_List> {
 
   // search ==================================================
 
-  SearchFn(query) {
+  SearchFn(query, {filter: ''}) {
     List<String> searchField = [
       'id',
       'customer_name',
+      'type',
+      'is_sale',
       'customer_mobile',
       'date',
       'statusIs'
     ];
+    if (filter != '') {
+      searchField = ['type'];
+      query = (query == 'All') ? '' : query;
+    }
     OrderList = [];
 
     finalOrderList.forEach((e) {
@@ -614,6 +716,14 @@ class _Invoice_ListState extends State<Invoice_List> {
       });
     });
     setState(() {});
+  }
+
+  // change filter ===================================================
+  changeFilter(val) {
+    setState(() {
+      selectedFilter = val;
+      SearchFn(val, filter: 'filter');
+    });
   }
 
 /////////////////////////////////////////////=====================================================

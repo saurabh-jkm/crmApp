@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:crm_demo/themes/style.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -34,8 +35,8 @@ class FileInfoCard extends StatelessWidget {
         },
         child: Container(
             //margin: EdgeInsets.symmetric(vertical: 30, horizontal: 5),
-            decoration: const BoxDecoration(
-              color: secondaryColor,
+            decoration: BoxDecoration(
+              color: themeBG4,
               borderRadius: BorderRadius.all(Radius.circular(15)),
             ),
             child: GestureDetector(
@@ -64,7 +65,7 @@ class FileInfoCard extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Container(
+                            /*Container(
                               padding: EdgeInsets.all(4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
@@ -80,7 +81,7 @@ class FileInfoCard extends StatelessWidget {
                                   //     .caption!
                                   //     .copyWith(color: Colors.white70),
                                   ),
-                            ),
+                            ),*/
                           ],
                         ),
                         Row(
@@ -119,6 +120,11 @@ class FileInfoCard extends StatelessWidget {
                                 ),
                           ],
                         ),
+                        Text('${info.numOfFiles}',
+                            style: themeTextStyle(
+                                size: 60.0,
+                                color:
+                                    const Color.fromARGB(255, 179, 179, 179)))
                         // ProgressLine(
                         //   color: info.color,
                         //   percentage: info.percentage,

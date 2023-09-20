@@ -23,6 +23,7 @@ class ProductController {
       : FirebaseFirestore.instance;
 
   var formKey = GlobalKey<FormState>();
+  List<LogicalKeyboardKey> Keys = [];
 
   var nameController = TextEditingController();
   var categoryController = TextEditingController();
@@ -38,6 +39,8 @@ class ProductController {
 
   Map<String, TextEditingController> productPriceController = new Map();
   Map<String, TextEditingController> productQntController = new Map();
+  Map<String, TextEditingController> productUnitController = new Map();
+  Map<String, TextEditingController> productTotalUnitController = new Map();
   Map<String, TextEditingController> productLocationController = new Map();
 
   Map<String, TextEditingController> locationControllers = new Map();
@@ -54,17 +57,60 @@ class ProductController {
   int totalProduct = 1;
 
   //init controller ==========================================
-  init_functions() async {
+  init_functions({data: ''}) async {
     await getRackList();
     await getProductNameList();
     await getCategoryList();
     await getAttributeList();
     await default_var_set();
+
+    // this is for edit ===========================================
+    if (data != '') {
+      //      documentId = widget.data['id'];
+      nameController.text = data['name'];
+      categoryController.text = data['category'];
+      quantityController.text = data['quantity'];
+
+      totalProduct = 0;
+      await data['item_list'].forEach((i, v) {
+        totalProduct++;
+        // set product ==============================
+
+        if (ListAttribute.isNotEmpty) {
+          ListAttribute.forEach((key, value) {
+            Map<String, TextEditingController> temp =
+                (dynamicControllers['$totalProduct'] != null)
+                    ? dynamicControllers["$totalProduct"]
+                    : new Map();
+            temp[key] = TextEditingController();
+            if (v[key.toLowerCase()] != null) {
+              temp[key]!.text = v[key.toLowerCase()];
+            }
+            dynamicControllers["$totalProduct"] = temp;
+          });
+        }
+
+        productPriceController['$totalProduct'] = TextEditingController();
+        productQntController['$totalProduct'] = TextEditingController();
+        productUnitController['$totalProduct'] = TextEditingController();
+        productTotalUnitController['$totalProduct'] = TextEditingController();
+        productLocationController['$totalProduct'] = TextEditingController();
+
+        productPriceController['$totalProduct']!.text = v['price'];
+        productQntController['$totalProduct']!.text = v['quantity'];
+        productUnitController['$totalProduct']!.text = v['unit'];
+        productTotalUnitController['$totalProduct']!.text = v['totalUnit'];
+        productLocationController['$totalProduct']!.text = v['location'];
+        // End product ==============================
+      });
+    }
   }
 
   default_var_set() async {
     productPriceController['1'] = TextEditingController();
     productQntController['1'] = TextEditingController();
+    productUnitController['1'] = TextEditingController();
+    productTotalUnitController['1'] = TextEditingController();
     productLocationController['1'] = TextEditingController();
 
     locationControllers['1'] = TextEditingController();
@@ -83,6 +129,8 @@ class ProductController {
     // reset product price
     Map<String, TextEditingController> productPriceController = new Map();
     Map<String, TextEditingController> productQntController = new Map();
+    Map<String, TextEditingController> productUnitController = new Map();
+    Map<String, TextEditingController> productTotalUnitController = new Map();
     Map<String, TextEditingController> productLocationController = new Map();
     // for new attribute
     newAttributeController = TextEditingController();
@@ -244,6 +292,8 @@ class ProductController {
 
     productPriceController['$totalProduct'] = TextEditingController();
     productQntController['$totalProduct'] = TextEditingController();
+    productUnitController['$totalProduct'] = TextEditingController();
+    productTotalUnitController['$totalProduct'] = TextEditingController();
     productLocationController['$totalProduct'] = TextEditingController();
   }
 
@@ -253,6 +303,8 @@ class ProductController {
       dynamicControllers.remove(totalProduct);
       productPriceController.remove('$totalProduct');
       productQntController.remove('$totalProduct');
+      productUnitController.remove('$totalProduct');
+      productTotalUnitController.remove('$totalProduct');
       productLocationController.remove('$totalProduct');
 
       totalProduct--;
@@ -335,6 +387,7 @@ class ProductController {
     // for attribute
     var itemList = {};
     alertRow = '';
+
     for (var i = 1; i <= totalProduct; i++) {
       dynamicControllers['$i'].forEach((key, value) async {
         if (value.text != '') {
@@ -344,6 +397,8 @@ class ProductController {
           tempList['price'] = productPriceController['$i']!.text;
           tempList['location'] = productLocationController['$i']!.text;
           tempList['quantity'] = productQntController['$i']!.text;
+          tempList['unit'] = productUnitController['$i']!.text;
+          tempList['totalUnit'] = productTotalUnitController['$i']!.text;
           dbArr['price'] =
               (dbArr['price'] == null) ? tempList['price'] : dbArr['price'];
 
@@ -357,7 +412,9 @@ class ProductController {
           }
         }
       });
+
       // check attribute is empty or not
+
       if (itemList['$i'] == null) {
         alertRow = '$i';
         themeAlert(context, 'Item No. $i Minimum One Atribute required',
@@ -396,37 +453,9 @@ class ProductController {
     }
 
     // // for address =================================
-    // var tempLocation = {};
-    // locationControllers.forEach((key, value) {
-    //   tempLocation[key] = value.text;
-    // });
-
-    // // location quantity
-    // var location = {};
-    // locationQuntControllers.forEach((key, value) {
-    //   if (tempLocation[key] != '') {
-    //     location[tempLocation[key]] = value.text;
-    //   }
-    // });
 
     dbArr['item_location'] = location;
     dbArr['item_list'] = itemList;
-
-    // print(dbArr);
-
-    // return false;
-
-    // return dbCollection.add(dbArr).then((value) {
-    //   themeAlert(context, "Submitted Successfully ");
-    //   resetController();
-
-    //   Navigator.popAndPushNamed(context, '/add_stock');
-
-    //   //Navigator.pop(context, 'updated');
-    // }).catchError(
-    //     (error) => themeAlert(context, 'Failed to Submit', type: "error"));
-
-    //print(dbArr);
 
     if (docId == '') {
       await dbSave(db, dbArr);
@@ -442,6 +471,40 @@ class ProductController {
         themeAlert(context, "Updated Successfully !!");
         Navigator.pop(context, 'updated');
       }
+    }
+  }
+
+  // key press function
+  cntrKeyPressFun(e, context) {
+    final key = e.logicalKey;
+    if (e is RawKeyDownEvent) {
+      if (e.isKeyPressed(LogicalKeyboardKey.escape)) {
+        Navigator.pop(context, 'updated');
+      }
+
+      if (e.isKeyPressed(LogicalKeyboardKey.keyD) ||
+          e.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
+        Keys.add(key);
+      }
+      // ctr + D OR C => addnewproduct
+      if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
+          (Keys.contains(LogicalKeyboardKey.keyD) ||
+              Keys.contains(LogicalKeyboardKey.keyC))) {
+        fnAddNewProduct(context);
+
+        Keys = [];
+        return true;
+      }
+      // ctr + R OR X => RemoveProduct
+      if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
+          (Keys.contains(LogicalKeyboardKey.keyR) ||
+              Keys.contains(LogicalKeyboardKey.keyX))) {
+        fnRemoveProduct(context);
+        Keys = [];
+        return true;
+      }
+    } else {
+      Keys.remove(key);
     }
   }
 }
