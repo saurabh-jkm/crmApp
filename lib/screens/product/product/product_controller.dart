@@ -38,6 +38,7 @@ class ProductController {
   Map<String, TextEditingController> productPriceController = new Map();
   Map<String, TextEditingController> productQntController = new Map();
   Map<String, TextEditingController> productUnitController = new Map();
+  Map<String, TextEditingController> productTotalUnitController = new Map();
   Map<String, TextEditingController> productLocationController = new Map();
 
   Map<String, TextEditingController> locationControllers = new Map();
@@ -90,11 +91,13 @@ class ProductController {
         productPriceController['$totalProduct'] = TextEditingController();
         productQntController['$totalProduct'] = TextEditingController();
         productUnitController['$totalProduct'] = TextEditingController();
+        productTotalUnitController['$totalProduct'] = TextEditingController();
         productLocationController['$totalProduct'] = TextEditingController();
 
         productPriceController['$totalProduct']!.text = v['price'];
         productQntController['$totalProduct']!.text = v['quantity'];
         productUnitController['$totalProduct']!.text = v['unit'];
+        productTotalUnitController['$totalProduct']!.text = v['totalUnit'];
         productLocationController['$totalProduct']!.text = v['location'];
         // End product ==============================
       });
@@ -105,6 +108,7 @@ class ProductController {
     productPriceController['1'] = TextEditingController();
     productQntController['1'] = TextEditingController();
     productUnitController['1'] = TextEditingController();
+    productTotalUnitController['1'] = TextEditingController();
     productLocationController['1'] = TextEditingController();
 
     locationControllers['1'] = TextEditingController();
@@ -124,6 +128,7 @@ class ProductController {
     Map<String, TextEditingController> productPriceController = new Map();
     Map<String, TextEditingController> productQntController = new Map();
     Map<String, TextEditingController> productUnitController = new Map();
+    Map<String, TextEditingController> productTotalUnitController = new Map();
     Map<String, TextEditingController> productLocationController = new Map();
     // for new attribute
     newAttributeController = TextEditingController();
@@ -286,6 +291,7 @@ class ProductController {
     productPriceController['$totalProduct'] = TextEditingController();
     productQntController['$totalProduct'] = TextEditingController();
     productUnitController['$totalProduct'] = TextEditingController();
+    productTotalUnitController['$totalProduct'] = TextEditingController();
     productLocationController['$totalProduct'] = TextEditingController();
   }
 
@@ -296,6 +302,7 @@ class ProductController {
       productPriceController.remove('$totalProduct');
       productQntController.remove('$totalProduct');
       productUnitController.remove('$totalProduct');
+      productTotalUnitController.remove('$totalProduct');
       productLocationController.remove('$totalProduct');
 
       totalProduct--;
@@ -389,10 +396,7 @@ class ProductController {
           tempList['location'] = productLocationController['$i']!.text;
           tempList['quantity'] = productQntController['$i']!.text;
           tempList['unit'] = productUnitController['$i']!.text;
-          tempList['totalUnit'] = (productUnitController['$i']!.text != '')
-              ? int.parse(productUnitController['$i']!.text.toString()) *
-                  int.parse(productQntController['$i']!.text.toString())
-              : '0';
+          tempList['totalUnit'] = productTotalUnitController['$i']!.text;
           dbArr['price'] =
               (dbArr['price'] == null) ? tempList['price'] : dbArr['price'];
 

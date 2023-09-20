@@ -282,6 +282,19 @@ class _addStockScreenState extends State<addStockScreen> {
                                                           '$i'],
                                                       padding: 8.0,
                                                       isNumber: true,
+                                                      method: fnTotalQnt,
+                                                    ),
+                                                  ),
+                                                  // total Unit
+                                                  Expanded(
+                                                    child: formInput(
+                                                      context,
+                                                      "Total Unit/Length ",
+                                                      controller
+                                                              .productTotalUnitController[
+                                                          '$i'],
+                                                      padding: 8.0,
+                                                      isNumber: true,
                                                     ),
                                                   ),
                                                   Expanded(
@@ -454,14 +467,25 @@ class _addStockScreenState extends State<addStockScreen> {
   // calculate total quantity
   fnTotalQnt() {
     int total = 0;
+
     for (var i = 1; i <= controller.totalProduct; i++) {
       if (controller.productQntController['$i'] != null) {
         var tempQ = controller.productQntController['$i']!.text.toString();
         tempQ = (tempQ == '') ? '0' : tempQ;
         total = total + int.parse(tempQ);
+
+        // unit calculate
+        var tempUnit = controller.productUnitController['$i']!.text.toString();
+        if (tempUnit != '' && tempQ != '') {
+          var totalUnit = int.parse(tempUnit) * int.parse(tempQ);
+          controller.productTotalUnitController['$i']!.text =
+              totalUnit.toString();
+        }
       }
     }
     controller.quantityController.text = total.toString();
+    setState(() {});
+    // unit calcualte
   }
 }
 

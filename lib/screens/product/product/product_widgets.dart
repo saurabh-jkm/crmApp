@@ -249,13 +249,14 @@ Widget productTableRow(context, key, data, headingList) {
 
 Widget valueWid(k, value, {qnt: 1}) {
   //value = (value )
-  if (k == 'unit' && qnt != null) {
+  if (k == 'unit' && qnt != null && value != '') {
     var total = int.parse(qnt.toString()) * int.parse(value.toString());
     value = '$value x $qnt = ${total}';
   }
   return Expanded(
     child: Container(
-      child: Text("${(value == null) ? '-' : value}",
+      child: Text(
+          "${(value == null || value == '' || value == '0') ? '-' : value}",
           style: TextStyle(fontSize: 12.0, color: Colors.black)),
     ),
   );
