@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/customers/customer_controller.dart';
 import 'package:crm_demo/screens/customers/customer_widgets.dart';
+import 'package:crm_demo/themes/base_controller.dart';
 
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -30,6 +31,7 @@ class CustomerList extends StatefulWidget {
 
 class _CustomerListState extends State<CustomerList> {
   var controller = new customerController();
+  var baseController = new base_controller();
 
   initFunctions() async {
     await controller.init_functions();
@@ -52,14 +54,25 @@ class _CustomerListState extends State<CustomerList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: themeBG2,
-        child: Column(
-          children: [
-            Container(height: 70.0, child: Header(title: "Customer List")),
-            CustomerList(context)
-          ],
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKey: (e) {
+        var rData =
+            baseController.KeyPressFun(e, context, backtype: 'dashboard');
+        if (rData != null && rData) {
+          setState(() {});
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          color: themeBG2,
+          child: Column(
+            children: [
+              Container(height: 70.0, child: Header(title: "Customer List")),
+              CustomerList(context)
+            ],
+          ),
         ),
       ),
     );

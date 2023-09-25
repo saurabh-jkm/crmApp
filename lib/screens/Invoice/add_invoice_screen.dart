@@ -301,11 +301,20 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                           context,
                                                           "Unit/Size",
                                                           controller
-                                                              .ProductUnitControllers[i],
+                                                                  .ProductUnitControllers[
+                                                              i],
                                                           padding: 8.0,
                                                           isNumber: true,
                                                           method: fnTotalPrice,
-                                                          methodArg: i),
+                                                          methodArg: i,
+                                                          readOnly: (controller
+                                                                              .readOnlyField[
+                                                                          i] !=
+                                                                      null &&
+                                                                  controller
+                                                                      .readOnlyField[i])
+                                                              ? true
+                                                              : false),
                                                     ),
 
                                                     // GST
@@ -508,10 +517,19 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
 
   // get price & calculate
   fnCalcualtePrice(controllerId) async {
+    controller.readOnlyField.remove(controllerId);
     var productName = controller.ProductNameControllers[controllerId]!.text;
     if (productName != '') {
       var rData = await controller.getProductDetails(productName);
       controller.productDBdata[controllerId] = rData;
+
+      // read only unit field conditon
+      if (controller.allProductList[productName] != null) {
+        var tProductData = controller.allProductList[productName];
+        if (tProductData['unit'] == '') {
+          controller.readOnlyField[controllerId] = true;
+        } else {}
+      }
 
       if (rData.isNotEmpty) {
         setState(() {

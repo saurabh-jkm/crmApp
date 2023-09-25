@@ -13,6 +13,7 @@ import '../../themes/firebase_Storage.dart';
 import '../../themes/firebase_functions.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
+import '../../themes/base_controller.dart';
 import '../dashboard/components/header.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
@@ -322,6 +323,8 @@ class _CategoryAddState extends State<CategoryAdd> {
 /////
 
   bool Add_Category = false;
+  //var baseController = new baseController();
+  var baseController = new base_controller();
 
   @override
   void initState() {
@@ -401,21 +404,32 @@ class _CategoryAddState extends State<CategoryAdd> {
   Widget build(BuildContext context) {
     return (progressWidget == true)
         ? Center(child: pleaseWait(context))
-        : Scaffold(
-            body: Container(
-            child: ListView(
-              children: [
-                Header(
-                  title: "Category",
-                ),
-                (Add_Category != true)
-                    ? (updateWidget != true)
-                        ? listList(context, "Add / Edit")
-                        : Update_Category(context, update_id, "Edit")
-                    : listCon(context, "Add New Category")
-              ],
-            ),
-          ));
+        : RawKeyboardListener(
+            autofocus: true,
+            focusNode: FocusNode(),
+            onKey: (e) {
+              var rData =
+                  baseController.KeyPressFun(e, context, backtype: 'dashboard');
+              if (rData != null && rData) {
+                setState(() {});
+              }
+            },
+            child: Scaffold(
+                body: Container(
+              child: ListView(
+                children: [
+                  Header(
+                    title: "Category",
+                  ),
+                  (Add_Category != true)
+                      ? (updateWidget != true)
+                          ? listList(context, "Add / Edit")
+                          : Update_Category(context, update_id, "Edit")
+                      : listCon(context, "Add New Category")
+                ],
+              ),
+            )),
+          );
     // });
   }
 

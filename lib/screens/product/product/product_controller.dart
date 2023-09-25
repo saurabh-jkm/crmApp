@@ -1,4 +1,5 @@
-import 'package:crm_demo/screens/product/product/add_product_screen.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crm_demo/screens/product/product/product_widgets.dart';
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'package:crm_demo/themes/style.dart';
@@ -6,19 +7,22 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import '../product/add_product_screen.dart';
 
 class ProductController {
   //var db = FirebaseFirestore.instance;
   //var db = Firestore.instance;
 
+  Map<dynamic, dynamic> user = new Map();
+
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
       : FirebaseFirestore.instance;
+
+  var productId = '';
 
   var formKey = GlobalKey<FormState>();
   List<LogicalKeyboardKey> Keys = [];
@@ -46,6 +50,7 @@ class ProductController {
 
   // Suggation List =====================================
   List<String> ListName = [];
+  Map<dynamic, dynamic> productDbData = {};
   List<String> RackList = [];
   List<String> ListCategory = [];
   Map<String, dynamic> ListAttribute = {};
@@ -56,6 +61,8 @@ class ProductController {
 
   //init controller ==========================================
   init_functions({data: ''}) async {
+    productId = '';
+    await _getUser();
     await getRackList();
     await getProductNameList();
     await getCategoryList();
@@ -97,7 +104,8 @@ class ProductController {
         productPriceController['$totalProduct']!.text = v['price'];
         productQntController['$totalProduct']!.text = v['quantity'];
         productUnitController['$totalProduct']!.text = v['unit'];
-        productTotalUnitController['$totalProduct']!.text = v['totalUnit'];
+        productTotalUnitController['$totalProduct']!.text =
+            v['totalUnit'].toString();
         productLocationController['$totalProduct']!.text = v['location'];
         // End product ==============================
       });
@@ -117,6 +125,7 @@ class ProductController {
 
   // reset controller =====================================
   resetController() {
+    productId = '';
     formKey = GlobalKey<FormState>();
     nameController = TextEditingController();
     categoryController = TextEditingController();
@@ -139,6 +148,8 @@ class ProductController {
     locationQuntControllers = new Map();
 
     // Suggation List =====================================
+
+    productDbData = {};
     ListName = [];
     ListCategory = [];
     ListAttribute = {};
@@ -149,13 +160,24 @@ class ProductController {
     default_var_set();
   }
 
+  // session data================================================
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic userData = (prefs.getString('user'));
+    if (userData != null) {
+      user = jsonDecode(userData) as Map<dynamic, dynamic>;
+    }
+  }
+
   // get all product name List =============================
   getProductNameList() async {
     ListName = [];
+    productDbData = {};
     //var dbData = await db.collection('product').get();
     var dbData = await dbFindDynamic(db, {'table': 'product'});
     dbData.forEach((k, data) {
       ListName.add(data['name']);
+      productDbData[data['name']] = data;
     });
   }
 
@@ -464,8 +486,40 @@ class ProductController {
     } else {
       dbArr['id'] = docId;
       var rData = await dbUpdate(db, dbArr);
+      // save log
 
       if (rData != null) {
+        if (productId != '') {
+          var logDb = await dbFindDynamic(
+              db, {'table': 'product_log', 'product_id': '$docId'});
+
+          var newLog = (logDb.isNotEmpty && logDb[0]['log'] != null)
+              ? logDb[0]['log'].toList()
+              : [];
+
+          dbArr.remove('id');
+          dbArr.remove('table');
+          dbArr['log_date'] = DateTime.now();
+          dbArr['updatedBy'] = (user['id'] != null) ? user['id'] : '';
+          dbArr['updatedByName'] = (user['name'] != null) ? user['name'] : '';
+          newLog.add(dbArr);
+          var updateArr = {
+            'table': 'product_log',
+            'product_id': '$docId',
+            'log': newLog,
+            'last_update': DateTime.now()
+          };
+
+          if (logDb.isNotEmpty && logDb[0]['id'] != null) {
+            // update
+            updateArr['id'] = logDb[0]['id'];
+            await dbUpdate(db, updateArr);
+          } else {
+            // insert
+            await dbSave(db, updateArr);
+          }
+        }
+
         themeAlert(context, "Updated Successfully !!");
         Navigator.pop(context, 'updated');
       }

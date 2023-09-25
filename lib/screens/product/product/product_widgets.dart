@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/themes/function.dart';
 import 'package:crm_demo/themes/style.dart';
@@ -7,7 +6,7 @@ import 'package:crm_demo/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
 
 Widget themeHeader2(context, headerLable,
-    {secondButton: '', buttonFn: '', widthBack: ''}) {
+    {secondButton: '', refreshBUtton: '', buttonFn: '', widthBack: ''}) {
   return Container(
     padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
     decoration: BoxDecoration(color: themeBG2),
@@ -35,6 +34,18 @@ Widget themeHeader2(context, headerLable,
             ? Container(
                 child: themeButton3(context, buttonFn,
                     label: 'Add New', radius: 5.0),
+              )
+            : SizedBox(),
+        (refreshBUtton != '')
+            ? Container(
+                child: GestureDetector(
+                  onTap: () {
+                    if (buttonFn != '') {
+                      buttonFn();
+                    }
+                  },
+                  child: Icon(Icons.refresh, color: Colors.white),
+                ),
               )
             : SizedBox()
       ],
@@ -231,13 +242,13 @@ Widget productRow(context, key, data) {
 }
 
 // single product  list ==========================
-Widget productTableRow(context, key, data, headingList) {
+Widget productTableRow(context, key, data, headingList, {rowColor: ''}) {
   data = (data[key] == null) ? {} : data[key];
 
   return Container(
     margin: EdgeInsets.only(bottom: 1.0),
     padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-    decoration: BoxDecoration(color: themeBG),
+    decoration: BoxDecoration(color: (rowColor == '') ? themeBG : rowColor),
     child: Row(
       children: [
         for (String k in headingList)
@@ -249,10 +260,10 @@ Widget productTableRow(context, key, data, headingList) {
 
 Widget valueWid(k, value, {qnt: 1}) {
   //value = (value )
-  if (k == 'unit' && qnt != null && value != '') {
-    var total = int.parse(qnt.toString()) * int.parse(value.toString());
-    value = '$value x $qnt = ${total}';
-  }
+  // if (k == 'unit' && qnt != null && value != '') {
+  //   var total = int.parse(qnt.toString()) * int.parse(value.toString());
+  //   value = '$value x $qnt = ${total}';
+  // }
   return Expanded(
     child: Container(
       child: Text(
@@ -282,4 +293,53 @@ Widget productTableHeading(context, data) {
       ],
     ),
   );
+}
+
+// log row widgets ===================================
+Widget logTableRow(context, i, data, headingList) {
+  return (data['log'] == 'null')
+      ? SizedBox()
+      : Container(
+          //padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+
+          child: Column(
+            children: [
+              for (var k in data['log'])
+                SecondrRowForLog(context, k, headingList)
+            ],
+          ),
+        );
+}
+
+Widget SecondrRowForLog(context, data, headingList) {
+  var newData = data['item_list'];
+  //newData = (newData[key] == null) ? {} : data[key];
+
+  //var tData = data['$k'];
+
+  return (newData == null)
+      ? SizedBox()
+      : Container(
+          margin: EdgeInsets.only(bottom: 30.0),
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                decoration: BoxDecoration(color: themeBG3),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child:
+                            Text("Update At: ${formatDate(data['log_date'])}")),
+                    Expanded(
+                        child: Text("Updated By: ${data['updatedByName']}"))
+                  ],
+                ),
+              ),
+              for (String key in newData.keys)
+                productTableRow(context, key, newData, headingList,
+                    rowColor: Color.fromARGB(255, 101, 178, 209))
+            ],
+          ),
+        );
 }

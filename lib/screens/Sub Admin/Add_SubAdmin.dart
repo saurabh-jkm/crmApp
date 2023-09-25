@@ -15,6 +15,7 @@ import '../../responsive.dart';
 
 import '../../themes/firebase_functions.dart';
 import '../../themes/style.dart';
+import '../../themes/base_controller.dart';
 import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
 import 'package:intl/intl.dart';
@@ -27,6 +28,7 @@ class SubAdmin extends StatefulWidget {
 
 class _SubAdminState extends State<SubAdmin> {
 ////////// variable of Sub Admin ++++++++++++++++++++++++++++++++++++++++++++++++++
+  var baseController = new base_controller();
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
   String email = "";
@@ -350,23 +352,34 @@ class _SubAdminState extends State<SubAdmin> {
   Widget build(BuildContext context) {
     return (progressWidget == true)
         ? Center(child: pleaseWait(context))
-        : Scaffold(
-            body: Container(
-            child: ListView(
-              children: [
-                Header(
-                  title: "Sub Admin",
-                ),
-                (view_SubAdmin_info != true)
-                    ? (Add_Category != true)
-                        ? (updateWidget != true)
-                            ? listList(context, "Add / Edit")
-                            : Update_SubAdmin_Data(context, update_id, "Edit")
-                        : listCon(context, "Add New Sub Admin")
-                    : View_SubAdmin_Data(context, "View Details")
-              ],
-            ),
-          ));
+        : RawKeyboardListener(
+            autofocus: true,
+            focusNode: FocusNode(),
+            onKey: (e) {
+              var rData =
+                  baseController.KeyPressFun(e, context, backtype: 'dashboard');
+              if (rData != null && rData) {
+                setState(() {});
+              }
+            },
+            child: Scaffold(
+                body: Container(
+              child: ListView(
+                children: [
+                  Header(
+                    title: "Sub Admin",
+                  ),
+                  (view_SubAdmin_info != true)
+                      ? (Add_Category != true)
+                          ? (updateWidget != true)
+                              ? listList(context, "Add / Edit")
+                              : Update_SubAdmin_Data(context, update_id, "Edit")
+                          : listCon(context, "Add New Sub Admin")
+                      : View_SubAdmin_Data(context, "View Details")
+                ],
+              ),
+            )),
+          );
   }
 
 //// Widget for Start_up

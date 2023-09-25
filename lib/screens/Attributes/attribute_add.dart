@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/themes/base_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +47,7 @@ class _AttributeAddState extends State<AttributeAdd> {
 ///////////  firebase property Database access  +++++++++++++++++++++++++++
 
   List StoreDocs = [];
+  var baseController = new base_controller();
 
   _AttributeData() async {
     StoreDocs = [];
@@ -317,24 +319,36 @@ class _AttributeAddState extends State<AttributeAdd> {
   Widget build(BuildContext context) {
     return (progressWidget == true)
         ? Center(child: pleaseWait(context))
-        : Scaffold(
-            body: Container(
-            child: ListView(
-              children: [
-                Header(
-                  title: "Attribute",
-                ),
-                (Add_Attribute != true)
-                    ? (updateWidget != true)
-                        ? (update_subAttribute == true && updateWidget == false)
-                            ? Update_Sub_Attribute(
-                                context, update_id, "View/Add")
-                            : listList(context, "Add / Edit")
-                        : Update_Attribute(context, update_id, "Edit")
-                    : listCon(context, "Add New Attribute")
-              ],
-            ),
-          ));
+        : RawKeyboardListener(
+            autofocus: true,
+            focusNode: FocusNode(),
+            onKey: (e) {
+              var rData =
+                  baseController.KeyPressFun(e, context, backtype: 'dashboard');
+              if (rData != null && rData) {
+                setState(() {});
+              }
+            },
+            child: Scaffold(
+                body: Container(
+              child: ListView(
+                children: [
+                  Header(
+                    title: "Attribute",
+                  ),
+                  (Add_Attribute != true)
+                      ? (updateWidget != true)
+                          ? (update_subAttribute == true &&
+                                  updateWidget == false)
+                              ? Update_Sub_Attribute(
+                                  context, update_id, "View/Add")
+                              : listList(context, "Add / Edit")
+                          : Update_Attribute(context, update_id, "Edit")
+                      : listCon(context, "Add New Attribute")
+                ],
+              ),
+            )),
+          );
   }
 
 //// Widget for Start_up

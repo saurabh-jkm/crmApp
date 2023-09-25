@@ -76,18 +76,18 @@ class _addStockScreenState extends State<addStockScreen> {
         }
       },
       child: Scaffold(
-        body: (isWait)
-            ? pleaseWait(context)
-            : Container(
-                color: Colors.white,
-                padding: EdgeInsets.only(bottom: 30.0),
-                child: ListView(
-                  children: [
-                    //header ======================
-                    themeHeader2(context, "${widget.header_name}",
-                        widthBack: 'updated'),
-                    // formField =======================
-                    Form(
+        body: Container(
+          color: Colors.white,
+          padding: EdgeInsets.only(bottom: 30.0),
+          child: ListView(
+            children: [
+              //header ======================
+              themeHeader2(context, "${widget.header_name}",
+                  widthBack: 'updated'),
+              // formField =======================
+              (isWait)
+                  ? pleaseWait(context)
+                  : Form(
                       key: controller.formKey,
                       child: Column(
                         children: <Widget>[
@@ -113,7 +113,8 @@ class _addStockScreenState extends State<addStockScreen> {
                                                 controller.ListName,
                                                 "Product Name",
                                                 controller.nameController,
-                                                padding: 8.0),
+                                                padding: 8.0,
+                                                method: fnCheckProductExist),
                                           ),
 
                                           // fireld 2 ==========================
@@ -392,10 +393,13 @@ class _addStockScreenState extends State<addStockScreen> {
                             child: Center(
                                 child: ElevatedButton(
                                     onPressed: () async {
+                                      await fnCheckProductExist(
+                                          checkExist: 'check');
                                       setState(() {
                                         isWait = true;
                                       });
-                                      await controller.insertProduct(context);
+                                      await controller.insertProduct(context,
+                                          docId: controller.productId);
                                       setState(() {
                                         isWait = false;
                                       });
@@ -406,10 +410,10 @@ class _addStockScreenState extends State<addStockScreen> {
                       ),
                     )
 
-                    // end form ====================================
-                  ],
-                ),
-              ),
+              // end form ====================================
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -486,6 +490,32 @@ class _addStockScreenState extends State<addStockScreen> {
     controller.quantityController.text = total.toString();
     setState(() {});
     // unit calcualte
+  }
+
+  // fun check product already exists ==================================
+  fnCheckProductExist({checkExist: ''}) async {
+    controller.productId = '';
+    setState(() {
+      isWait = true;
+    });
+    var productName = controller.nameController.text;
+    var productData = controller.productDbData[productName];
+    if (checkExist != '') {
+      if (productData != null) {
+        controller.productId = productData['id'];
+        return true;
+      }
+      return false;
+    }
+
+    if (productData != null) {
+      await controller.init_functions(data: productData);
+      controller.productId = productData['id'];
+    }
+
+    setState(() {
+      isWait = false;
+    });
   }
 }
 

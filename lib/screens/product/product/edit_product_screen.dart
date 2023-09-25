@@ -44,7 +44,6 @@ class _editStockScreenState extends State<editStockScreen> {
   // function get all list & name
   initList() async {
     await controller.init_functions(data: widget.data);
-
     // update all controllers
     documentId = widget.data['id'];
 
@@ -263,14 +262,14 @@ class _editStockScreenState extends State<editStockScreen> {
                                                   ),
                                                   Expanded(
                                                     child: formInput(
-                                                      context,
-                                                      "Unit/Length ",
-                                                      controller
-                                                              .productUnitController[
-                                                          '$i'],
-                                                      padding: 8.0,
-                                                      isNumber: true,
-                                                    ),
+                                                        context,
+                                                        "Unit/Length ",
+                                                        controller
+                                                                .productUnitController[
+                                                            '$i'],
+                                                        padding: 8.0,
+                                                        isNumber: true,
+                                                        method: fnTotalQnt),
                                                   ),
                                                   // total Unit
                                                   Expanded(

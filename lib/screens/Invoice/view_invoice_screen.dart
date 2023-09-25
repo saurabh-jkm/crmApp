@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Invoice/edit_invoice.dart';
 import 'package:crm_demo/screens/Invoice/invoice_serv.dart';
+import 'package:crm_demo/screens/Invoice/invoice_widgets.dart';
 import 'package:crm_demo/screens/Invoice/pdf.dart';
 import 'package:crm_demo/screens/product/product/product_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:html/parser.dart';
 
 import '../../../themes/function.dart';
 import '../../../../constants.dart';
@@ -45,8 +47,25 @@ class viewInvoiceScreen extends StatefulWidget {
 }
 
 class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
+  var OrderData;
+  bool isWait = true;
+  bool isGstColum = false;
+
+  _fnGetOrder() {
+    OrderData = widget.data;
+
+    OrderData['products'].forEach((i, val) {
+      if (val['gst'] != '0') {
+        isGstColum = true;
+      }
+    });
+    isWait = false;
+    setState(() {});
+  }
+
   @override
   void initState() {
+    _fnGetOrder();
     super.initState();
   }
 
@@ -72,7 +91,7 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var OrderData = widget.data;
+    //var OrderData = widget.data;
     double pageWidth = MediaQuery.of(context).size.width / 1.8;
 
     return Scaffold(
@@ -84,7 +103,9 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
             themeHeader2(context, "${widget.header_name}"),
             // formField =======================
 
-            Details_view(context, OrderData, pageWidth),
+            (isWait)
+                ? pleaseWait(context)
+                : Details_view(context, OrderData, pageWidth),
             // end form ====================================
           ],
         ),
@@ -197,15 +218,15 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                   children: [
                     // water mark
                     (OrderData["is_sale"] != null &&
-                            OrderData["is_sale"] == 'estimate')
+                            OrderData["is_sale"].toLowerCase() == 'estimate')
                         ? Positioned(
                             top: 200.0,
                             child: RotationTransition(
-                              turns: new AlwaysStoppedAnimation(15 / 180),
+                              turns: new AlwaysStoppedAnimation(11 / 180),
                               child: Text("${OrderData["is_sale"]}",
                                   style: TextStyle(
                                       color: Color.fromARGB(255, 243, 243, 243),
-                                      fontSize: 150.0)),
+                                      fontSize: 130.0)),
                             ),
                           )
                         : SizedBox(),
@@ -216,7 +237,8 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                         Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text("Invoice",
+                              Text(
+                                  "${(OrderData["is_sale"] != null && OrderData["is_sale"].toLowerCase() == 'estimate') ? "Estimate" : 'Invoice'}",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 25,
@@ -386,58 +408,44 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                               Container(
                                   padding: EdgeInsets.all(5),
                                   width: 40,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
                                   alignment: Alignment.center,
                                   child:
                                       Text("S.no.", style: textStyleHeading1)),
                               Container(
                                   padding: EdgeInsets.all(2),
                                   width: 180,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.center,
-                                  child: Text("Item Description",
-                                      style: textStyleHeading1)),
+                                  alignment: Alignment.centerLeft,
+                                  child:
+                                      Text("Item", style: textStyleHeading1)),
                               Expanded(
                                   child: Container(
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
                                       alignment: Alignment.center,
                                       child: Text("Price (₹)",
                                           style: textStyleHeading1))),
                               Expanded(
                                   child: Container(
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
                                       alignment: Alignment.center,
                                       child: Text("Qty.",
                                           style: textStyleHeading1))),
                               Expanded(
                                   child: Container(
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
                                       alignment: Alignment.center,
                                       child: Text("Disc (₹) ",
                                           style: textStyleHeading1))),
                               Expanded(
                                   child: Container(
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
                                       alignment: Alignment.center,
                                       child: Text("SubTotal(₹)",
                                           style: textStyleHeading1))),
+                              (isGstColum)
+                                  ? Expanded(
+                                      child: Container(
+                                          alignment: Alignment.center,
+                                          child: Text("GST (%) ",
+                                              style: textStyleHeading1)))
+                                  : SizedBox(),
                               Expanded(
                                   child: Container(
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
-                                      alignment: Alignment.center,
-                                      child: Text("GST (%) ",
-                                          style: textStyleHeading1))),
-                              Expanded(
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
                                       alignment: Alignment.center,
                                       child: Text("Amount",
                                           style: textStyleHeading1))),
@@ -447,149 +455,12 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                         Container(
                           decoration: BoxDecoration(
                               border: Border.all(color: themeBG2, width: 1.0)),
-                          height: 100,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Column(
                             children: [
-                              Container(
-                                  width: 40,
-                                  padding: EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: themeBG2, width: 1.0)),
-                                  alignment: Alignment.topCenter,
-                                  child: Column(children: [
-                                    for (var i = 0;
-                                        i < OrderData['products'].length;
-                                        i++)
-                                      Text("${"${i + 1}"}",
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.normal,
-                                              color: themeBG2))
-                                  ])),
-                              Container(
-                                  padding: EdgeInsets.all(2),
-                                  width: 180,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: themeBG2)),
-                                  alignment: Alignment.topCenter,
-                                  child: Column(children: [
-                                    for (var i = 0;
-                                        i < OrderData['products'].length;
-                                        i++)
-                                      Text(
-                                          "${OrderData['products']["$i"]["name"]} ",
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.normal,
-                                              color: themeBG2))
-                                  ])),
-                              Expanded(
-                                  child: Container(
-                                      padding: EdgeInsets.all(2),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
-                                      alignment: Alignment.topCenter,
-                                      child: Column(children: [
-                                        for (var i = 0;
-                                            i < OrderData['products'].length;
-                                            i++)
-                                          Text(
-                                              "${OrderData['products']["$i"]["price"]} ",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: themeBG2))
-                                      ]))),
-                              Expanded(
-                                  child: Container(
-                                      padding: EdgeInsets.all(2),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
-                                      alignment: Alignment.topCenter,
-                                      child: Column(children: [
-                                        for (var i = 0;
-                                            i < OrderData['products'].length;
-                                            i++)
-                                          Text(
-                                              "${OrderData['products']["$i"]["quantity"]} ",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: themeBG2))
-                                      ])
-                                      // for (var i = 1; i <= eedata.length; i++)
-                                      )),
-                              Expanded(
-                                  child: Container(
-                                      padding: EdgeInsets.all(2),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
-                                      alignment: Alignment.topCenter,
-                                      child: Column(children: [
-                                        for (var i = 0;
-                                            i < OrderData['products'].length;
-                                            i++)
-                                          Text(
-                                              "${OrderData['products']["$i"]["discount"]}",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: themeBG2))
-                                      ]))),
-                              Expanded(
-                                  child: Container(
-                                      padding: EdgeInsets.all(2),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
-                                      alignment: Alignment.topCenter,
-                                      child: Column(children: [
-                                        for (var i = 0;
-                                            i < OrderData['products'].length;
-                                            i++)
-                                          Text(
-                                              "${OrderData['products']["$i"]["subtotal"]}",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: themeBG2))
-                                      ]))),
-                              Expanded(
-                                  child: Container(
-                                      padding: EdgeInsets.all(2),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
-                                      alignment: Alignment.topCenter,
-                                      child: Column(children: [
-                                        for (var i = 0;
-                                            i < OrderData['products'].length;
-                                            i++)
-                                          Text(
-                                              "${OrderData['products']["$i"]["gst"]} (${OrderData['products']["$i"]["gst_per"]}%)",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: themeBG2))
-                                      ]))),
-                              Expanded(
-                                  child: Container(
-                                      padding: EdgeInsets.all(2),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: themeBG2)),
-                                      alignment: Alignment.topCenter,
-                                      child: Column(children: [
-                                        for (var i = 0;
-                                            i < OrderData['products'].length;
-                                            i++)
-                                          Text(
-                                              "${OrderData['products']["$i"]["total"]} /-",
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.normal,
-                                                  color: themeBG2))
-                                      ])))
+                              for (var key in OrderData['products'].keys)
+                                invoiceItemRow(
+                                    context, key, OrderData['products'],
+                                    isGstColum: isGstColum)
                             ],
                           ),
                         ),
@@ -604,9 +475,6 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                               Container(
                                   padding: EdgeInsets.all(2),
                                   width: 180,
-                                  // decoration: BoxDecoration(
-                                  //     //   border: Border.all(color: themeBG2)
-                                  //     ),
                                   alignment: Alignment.center,
                                   child: Text("Total",
                                       style: TextStyle(

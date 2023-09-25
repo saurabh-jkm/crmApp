@@ -70,6 +70,8 @@ class invoiceController {
   // all product
   Map<String, dynamic> allProductList = {};
 
+  Map<dynamic, dynamic> readOnlyField = new Map();
+
   // List<String> ListCategory = [];
   // Map<String, dynamic> ListAttribute = {};
   // Map<String, dynamic> ListAttributeWithId = {};
@@ -162,6 +164,7 @@ class invoiceController {
           productDBdata[i] = (allProductList[v['name']] != null)
               ? allProductList[v['name']]
               : {};
+
           if (allProductList[v['name']] != null) {
             editProductQnt['$i'] = v;
           }
@@ -212,6 +215,8 @@ class invoiceController {
                     v == null ||
                     k == 'price' ||
                     k == 'quantity' ||
+                    k == 'unit' ||
+                    k == 'totalUnit' ||
                     k == 'location') {
                 } else {
                   tempName = '$tempName ${v}';
@@ -346,6 +351,115 @@ class invoiceController {
     }
   }
 
+  // update product quantity
+  fn_update_product_qnt(docId, i, liveData, instData) async {
+    var k = i - 1;
+    i = (liveData['list_item_id'] != null) ? liveData['list_item_id'] : i;
+    var NewLog = {};
+
+    var productData = (liveData['id'] == null)
+        ? {}
+        : await dbFind({'table': 'product', 'id': liveData['id']});
+    var subProducts =
+        (productData['item_list'] != null) ? productData['item_list'] : {};
+
+    // if isset current product
+
+    if (subProducts['$i'] != null && instData['$k'] != null) {
+      // set all variables
+      var t_ins_qnt = (instData['$k']['quantity'] == '')
+          ? 0
+          : int.parse(instData['$k']['quantity'].toString());
+      var t_ins_unit = (instData['$k']['unit'] == '')
+          ? 0
+          : int.parse(instData['$k']['unit'].toString());
+      var t_productdb_totalUnit = (subProducts['$i']['totalUnit'] == '')
+          ? 0
+          : int.parse(subProducts['$i']['totalUnit'].toString());
+
+      var t_productdb_unit = (subProducts['$i']['unit'] == '')
+          ? 0
+          : int.parse(subProducts['$i']['unit'].toString());
+      var t_productdb_qnt = (subProducts['$i']['quantity'] == '')
+          ? 0
+          : int.parse(subProducts['$i']['quantity'].toString());
+
+      var t_product_qnt = (subProducts['quantity'] == '')
+          ? 0
+          : int.parse(productData['quantity'].toString());
+
+      // update all quantity & unit
+      if (t_productdb_unit == 0) {
+        t_productdb_qnt = t_productdb_qnt - t_ins_qnt;
+        t_product_qnt = t_product_qnt - t_ins_qnt;
+      } else {
+        t_ins_unit =
+            (t_ins_unit == 0) ? t_ins_qnt * t_productdb_unit : t_ins_unit;
+        t_productdb_totalUnit = t_productdb_totalUnit - t_ins_unit;
+        int tQnt2 = (t_productdb_totalUnit / t_productdb_unit).toInt();
+        t_product_qnt = t_product_qnt - (t_productdb_qnt - tQnt2);
+      }
+      // check add or remove when update
+      int diffRance = 0;
+      if (docId != '' && editProductQnt['$i'] != null) {
+        var logUnit = 0;
+        var logQnt = 0;
+        var logType = 'add_more';
+        var oldData = editProductQnt['$i'];
+
+        int old_totalUnit = (oldData['unit'] != null && oldData['unit'] == '')
+            ? 0
+            : int.parse(oldData['unit']);
+        int old_qnt = (oldData['quantity'] != null && oldData['quantity'] == '')
+            ? 0
+            : int.parse(oldData['quantity']);
+
+        subProducts['$i']['totalUnit'] =
+            '${t_productdb_totalUnit + t_ins_unit + (old_totalUnit - t_ins_unit)}';
+
+        logUnit = t_ins_unit - old_totalUnit;
+        logType = (logUnit < 0) ? 'return' : 'add_more';
+
+        if (t_productdb_unit == 0) {
+          subProducts['$i']['totalUnit'] =
+              '${t_productdb_qnt + t_ins_qnt + (old_qnt - t_ins_qnt)}';
+          logQnt = old_qnt - t_ins_qnt;
+          logType = (logQnt > 1) ? 'return' : 'add_more';
+        } else {
+          subProducts['$i']['quantity'] =
+              '${((int.parse(subProducts['$i']['totalUnit'].toString()) / t_productdb_unit).toInt())}';
+        }
+
+        NewLog = {
+          'type': '${logType}',
+          'quantity': '$logQnt',
+          'unit': '$logUnit',
+          'date_at': DateTime.now()
+        };
+      } else {
+        // update product table
+        subProducts['$i']['totalUnit'] = '$t_productdb_totalUnit';
+        subProducts['$i']['quantity'] = '$t_productdb_qnt';
+      }
+
+      // total quantity count
+      int totalQ = 0;
+      subProducts.forEach((k, v) {
+        totalQ += int.parse(v['quantity'].toString());
+      });
+
+      var tempW = {
+        'table': 'product',
+        'id': liveData['id'],
+        'quantity': '$totalQ',
+        'item_list': subProducts,
+      };
+      var r = await dbUpdate(db, tempW);
+    }
+
+    return NewLog;
+  }
+
 // ***************************************************************
 // insert product
 // ***************************************************************
@@ -443,7 +557,9 @@ class invoiceController {
 
     Future<void> callUpdateFn() async {
       for (var k in productDBdata.keys) {
-        var Newlog = await upateQunatity(docId, k, productDBdata[k]);
+        var Newlog =
+            await fn_update_product_qnt(docId, k, productDBdata[k], products);
+
         if (Newlog.isNotEmpty) {
           var tempTotalInnerItem =
               (products['${k - 1}'] != null) ? products['${k - 1}'] : {};
@@ -582,7 +698,8 @@ class invoiceController {
     double discount = double.parse(tempDiscount);
     // qunatity
     var tempQnt = '1';
-    if (ProductQuntControllers[controllerId]!.text != '') {
+    if (ProductQuntControllers[controllerId]!.text != '' &&
+        ProductQuntControllers[controllerId]!.text != '0') {
       tempQnt = ProductQuntControllers[controllerId]!.text;
     }
 
@@ -616,7 +733,6 @@ class invoiceController {
       if (ProductTotalControllers[i] != null &&
           ProductTotalControllers[i]!.text != '') {
         totalPrice += int.parse(ProductTotalControllers[i]!.text);
-
         totalGst += (productDBdata[i] != null)
             ? int.parse(productDBdata[i]['gst'].toString())
             : 0;
@@ -661,6 +777,7 @@ class invoiceController {
       ProductGstControllers.remove(ctrId);
       ProductDiscountControllers.remove(ctrId);
       ProductTotalControllers.remove(ctrId);
+      productDBdata.remove(ctrId);
       await ctrGrandTotal();
       totalProduct--;
     }

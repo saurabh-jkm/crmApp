@@ -38,6 +38,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   /////// get user data  +++++++++++++++++++++++++++++++++++++++++++++++++++
   Map<dynamic, dynamic> user = new Map();
   int no_todaySale = 0;
+  bool isNewUpdate = false;
 
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -54,6 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       // todaySale
       await todaySale();
       await yearSale();
+      await appSetting();
     }
 
     setState(() {});
@@ -92,6 +94,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   /////////=====================================================================
 
+  appSetting() async {
+    List StoreDocs = [];
+    Map<dynamic, dynamic> w = {
+      'table': "app_setting",
+      //'status': "$_StatusValue",
+    };
+    var temp = await dbFindDynamic(db, w);
+    if (temp.isNotEmpty && temp[0]['version'] > 2) {
+      setState(() {
+        isNewUpdate = true;
+      });
+    }
+  }
+
+  // ============================
   Stock_Data() async {
     List StoreDocs = [];
     Map<dynamic, dynamic> w = {
@@ -328,24 +345,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
         : Scaffold(
             body: Container(
               padding: EdgeInsets.all(defaultPadding),
-              child: ListView(
-                children: [
-                  Header(
-                    title: "Dashboard",
-                  ),
-                  SizedBox(height: defaultPadding),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 5,
+              child: (isNewUpdate)
+                  ? Container(
+                      child: Center(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            MyFiles(demoMyFiles: demoMyFiles, quantity_no: 10),
+                            Text(
+                              "New Update Available !!",
+                              style: themeTextStyle(
+                                  size: 40.0, color: Colors.green),
+                            ),
+                            Text(
+                              "Please do Hard Refresh Browser",
+                              style: themeTextStyle(
+                                  size: 24.0,
+                                  color: Color.fromARGB(255, 114, 173, 250)),
+                            ),
+                            SizedBox(height: 40.0),
+                            Text(
+                              "Press Ctr + Shift + R",
+                              style:
+                                  themeTextStyle(size: 40.0, color: Colors.red),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  : ListView(
+                      children: [
+                        Header(
+                          title: "Dashboard",
+                        ),
+                        SizedBox(height: defaultPadding),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 5,
+                              child: Column(
+                                children: [
+                                  MyFiles(
+                                      demoMyFiles: demoMyFiles,
+                                      quantity_no: 10),
 
-                            SizedBox(height: defaultPadding),
+                                  SizedBox(height: defaultPadding),
 
-                            /*Container(
+                                  /*Container(
                                 width: double.infinity,
                                 padding: EdgeInsets.all(defaultPadding),
                                 decoration: BoxDecoration(
@@ -430,29 +477,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   )
                                 ]))*/
 
-                            // ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Back")),
-                            // RecentFiles(),
+                                  // ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Back")),
+                                  // RecentFiles(),
 
-                            // if (Responsive.isMobile(context))
-                            //   SizedBox(height: defaultPadding),
-                            // if (Responsive.isMobile(context))
-                            // StarageDetails(),
+                                  // if (Responsive.isMobile(context))
+                                  //   SizedBox(height: defaultPadding),
+                                  // if (Responsive.isMobile(context))
+                                  // StarageDetails(),
+                                ],
+                              ),
+                            ),
+                            // if (!Responsive.isMobile(context))
+                            //   SizedBox(width: defaultPadding),
+                            // // On Mobile means if the screen is less than 850 we dont want to show it
+                            // if (!Responsive.isMobile(context))
+                            //   Expanded(
+                            //     flex: 2,
+                            //     child:
+                            //     StarageDetails(),
+                            //   ),
                           ],
                         ),
-                      ),
-                      // if (!Responsive.isMobile(context))
-                      //   SizedBox(width: defaultPadding),
-                      // // On Mobile means if the screen is less than 850 we dont want to show it
-                      // if (!Responsive.isMobile(context))
-                      //   Expanded(
-                      //     flex: 2,
-                      //     child:
-                      //     StarageDetails(),
-                      //   ),
-                    ],
-                  ),
-                ],
-              ),
+                      ],
+                    ),
             ),
           );
   }
