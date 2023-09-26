@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:crm_demo/themes/function.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crm_demo/screens/product/product/product_widgets.dart';
 import 'package:crm_demo/themes/firebase_functions.dart';
@@ -32,6 +33,17 @@ class ProductController {
   var quantityController = TextEditingController();
   var priceController = TextEditingController();
   var brandController = TextEditingController();
+
+  // supplire detials ===========================
+  var c_name_controller = TextEditingController();
+  var c_phone_controller = TextEditingController();
+  var c_email_controller = TextEditingController();
+  var c_address_controller = TextEditingController();
+  var c_gst_controller = TextEditingController();
+  var invoiceDateController = TextEditingController();
+  List<String> ListCustomer = [];
+  Map<String, dynamic> CustomerArr = {};
+
   // for new attribute
   var newAttributeController = TextEditingController();
 
@@ -41,9 +53,13 @@ class ProductController {
 
   Map<String, TextEditingController> productPriceController = new Map();
   Map<String, TextEditingController> productQntController = new Map();
+  Map<String, TextEditingController> productQntNewController = new Map();
   Map<String, TextEditingController> productUnitController = new Map();
   Map<String, TextEditingController> productTotalUnitController = new Map();
   Map<String, TextEditingController> productLocationController = new Map();
+
+  Map<String, TextEditingController> s_price_controller = new Map();
+  Map<String, TextEditingController> s_subTotal_controller = new Map();
 
   Map<String, TextEditingController> locationControllers = new Map();
   Map<String, TextEditingController> locationQuntControllers = new Map();
@@ -55,6 +71,7 @@ class ProductController {
   List<String> ListCategory = [];
   Map<String, dynamic> ListAttribute = {};
   Map<String, dynamic> ListAttributeWithId = {};
+  Map<String, dynamic> editData = {};
 
   int totalLocation = 1;
   int totalProduct = 1;
@@ -68,9 +85,11 @@ class ProductController {
     await getCategoryList();
     await getAttributeList();
     await default_var_set();
+    await getCustomerNameList();
 
     // this is for edit ===========================================
     if (data != '') {
+      editData = data;
       //      documentId = widget.data['id'];
       nameController.text = data['name'];
       categoryController.text = data['category'];
@@ -97,6 +116,9 @@ class ProductController {
 
         productPriceController['$totalProduct'] = TextEditingController();
         productQntController['$totalProduct'] = TextEditingController();
+        productQntNewController['$totalProduct'] = TextEditingController();
+        s_price_controller['$totalProduct'] = TextEditingController();
+        s_subTotal_controller['$totalProduct'] = TextEditingController();
         productUnitController['$totalProduct'] = TextEditingController();
         productTotalUnitController['$totalProduct'] = TextEditingController();
         productLocationController['$totalProduct'] = TextEditingController();
@@ -107,6 +129,10 @@ class ProductController {
         productTotalUnitController['$totalProduct']!.text =
             v['totalUnit'].toString();
         productLocationController['$totalProduct']!.text = v['location'];
+
+        productQntNewController['$totalProduct']!.text = '0';
+        s_subTotal_controller['$totalProduct']!.text = '0';
+        s_price_controller['$totalProduct']!.text = v['price'];
         // End product ==============================
       });
     }
@@ -115,9 +141,13 @@ class ProductController {
   default_var_set() async {
     productPriceController['1'] = TextEditingController();
     productQntController['1'] = TextEditingController();
+    productQntNewController['1'] = TextEditingController();
     productUnitController['1'] = TextEditingController();
     productTotalUnitController['1'] = TextEditingController();
     productLocationController['1'] = TextEditingController();
+
+    s_price_controller['1'] = TextEditingController();
+    s_subTotal_controller['1'] = TextEditingController();
 
     locationControllers['1'] = TextEditingController();
     locationQuntControllers['1'] = TextEditingController();
@@ -136,9 +166,13 @@ class ProductController {
     // reset product price
     Map<String, TextEditingController> productPriceController = new Map();
     Map<String, TextEditingController> productQntController = new Map();
+    Map<String, TextEditingController> productQntNewController = new Map();
     Map<String, TextEditingController> productUnitController = new Map();
     Map<String, TextEditingController> productTotalUnitController = new Map();
     Map<String, TextEditingController> productLocationController = new Map();
+
+    Map<String, TextEditingController> s_price_controller = new Map();
+    Map<String, TextEditingController> s_subTotal_controller = new Map();
     // for new attribute
     newAttributeController = TextEditingController();
     // temporary
@@ -167,6 +201,19 @@ class ProductController {
     if (userData != null) {
       user = jsonDecode(userData) as Map<dynamic, dynamic>;
     }
+  }
+
+  // get all Customer name List =============================
+  getCustomerNameList() async {
+    ListCustomer = [];
+    var dbData = await dbFindDynamic(db, {'table': 'customer'});
+
+    dbData.forEach((k, data) {
+      if (data['name'] != null) {
+        ListCustomer.add(data['name']);
+        CustomerArr[data['name']] = data;
+      }
+    });
   }
 
   // get all product name List =============================
@@ -312,9 +359,13 @@ class ProductController {
 
     productPriceController['$totalProduct'] = TextEditingController();
     productQntController['$totalProduct'] = TextEditingController();
+    productQntNewController['$totalProduct'] = TextEditingController();
     productUnitController['$totalProduct'] = TextEditingController();
     productTotalUnitController['$totalProduct'] = TextEditingController();
     productLocationController['$totalProduct'] = TextEditingController();
+
+    s_price_controller['$totalProduct'] = TextEditingController();
+    s_subTotal_controller['$totalProduct'] = TextEditingController();
   }
 
   // Remove Product
@@ -323,9 +374,13 @@ class ProductController {
       dynamicControllers.remove(totalProduct);
       productPriceController.remove('$totalProduct');
       productQntController.remove('$totalProduct');
+      productQntNewController.remove('$totalProduct');
       productUnitController.remove('$totalProduct');
       productTotalUnitController.remove('$totalProduct');
       productLocationController.remove('$totalProduct');
+
+      s_price_controller.remove('$totalProduct');
+      s_subTotal_controller.remove('$totalProduct');
 
       totalProduct--;
     }
@@ -408,7 +463,19 @@ class ProductController {
     var itemList = {};
     alertRow = '';
 
+    String tempTitle = '';
+    int totalGst = 0;
+    int intTotalQuntity = 0;
+    int intTotalUnit = 0;
+    int totalPrice = 0;
+    Map<String, dynamic> products = new Map();
+
     for (var i = 1; i <= totalProduct; i++) {
+      tempTitle = (tempTitle == '')
+          ? nameController!.text
+          : '${tempTitle}, ${nameController!.text}';
+      var inv_name = nameController!.text;
+
       dynamicControllers['$i'].forEach((key, value) async {
         if (value.text != '') {
           // sub product add ==============================
@@ -417,6 +484,7 @@ class ProductController {
           tempList['price'] = productPriceController['$i']!.text;
           tempList['location'] = productLocationController['$i']!.text;
           tempList['quantity'] = productQntController['$i']!.text;
+          //tempList['quantity'] = productQntNewController['$i']!.text;
           tempList['unit'] = productUnitController['$i']!.text;
           tempList['totalUnit'] = productTotalUnitController['$i']!.text;
           dbArr['price'] =
@@ -430,6 +498,9 @@ class ProductController {
           if (!ListAttribute[key.toLowerCase()].contains(value.text)) {
             await fnUpdateAttrVal(key, value.text);
           }
+
+          tempTitle = '$tempTitle - ${value!.text}';
+          inv_name = '$inv_name - ${value!.text}';
         }
       });
 
@@ -470,7 +541,29 @@ class ProductController {
         location[productLocationController['$i']!.text] =
             productQntController['$i']!.text;
       }
-    }
+
+      // invoice product list =======================
+      if (productId != '') {
+        var temp = new Map();
+        temp['id'] = docId;
+        temp['name'] = inv_name;
+        temp['price'] = productPriceController['$i']!.text;
+        temp['quantity'] = productQntNewController['$i']!.text;
+        temp['unit'] = '0';
+        temp['gst_per'] = '0';
+        temp['discount'] = '0';
+        temp['subtotal'] = s_subTotal_controller['$i']!.text;
+        temp['gst'] = '0';
+        temp['total'] = temp['subtotal'];
+
+        totalGst += int.parse(temp['gst'].toString());
+        intTotalQuntity += int.parse(temp['quantity'].toString());
+        intTotalUnit += int.parse(temp['unit'].toString());
+        totalPrice += int.parse(temp['total'].toString());
+
+        products['${i - 1}'] = temp;
+      }
+    } // end foreach
 
     // // for address =================================
 
@@ -518,6 +611,37 @@ class ProductController {
             // insert
             await dbSave(db, updateArr);
           }
+
+          // also save in order table ============================
+          var invArr = {
+            "table": "order",
+            "customer_name": (c_name_controller.text == '')
+                ? 'Self'
+                : c_name_controller.text,
+            "mobile": c_phone_controller.text,
+            "email": c_email_controller.text,
+            "address": c_address_controller.text,
+            "gst_no": c_gst_controller.text,
+            "invoice_for": 'Supplier',
+            "is_sale": 'Sale',
+            "type": "Buy",
+            "total": totalPrice,
+            "invoice_date": (invoiceDateController.text == '')
+                ? formatDate(DateTime.now(), formate: 'dd/MM/yyyy')
+                : invoiceDateController.text,
+            "date_at": DateTime.now(),
+            "status": true
+          };
+          invArr['gst'] = totalGst;
+          invArr['subtotal'] = totalPrice - totalGst;
+          invArr['products'] = products;
+          invArr['title'] = tempTitle;
+          invArr['quantity'] = '$intTotalQuntity';
+          invArr['unit'] = '$intTotalUnit';
+
+          var rDbData = await dbSave(db, invArr);
+          print(rDbData);
+          return false;
         }
 
         themeAlert(context, "Updated Successfully !!");

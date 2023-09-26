@@ -63,6 +63,7 @@ class _addStockScreenState extends State<addStockScreen> {
   }
 
   var controller = new ProductController();
+  bool isSupplierForm = false;
 
   @override
   Widget build(BuildContext context) {
@@ -102,9 +103,75 @@ class _addStockScreenState extends State<addStockScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      themeSpaceVertical(10.0),
+                                      // customer Form =====================
+                                      (!isSupplierForm)
+                                          ? SizedBox()
+                                          : Container(
+                                              color: Color.fromARGB(
+                                                  255, 255, 232, 197),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  themeHeading2(
+                                                      "Supplier Details"),
+                                                  Row(
+                                                    children: [
+                                                      // fireld 1 ==========================
+                                                      Expanded(
+                                                          child: autoCompleteFormInput(
+                                                              controller
+                                                                  .ListCustomer,
+                                                              "Customer Name",
+                                                              controller
+                                                                  .c_name_controller,
+                                                              method:
+                                                                  fnFetchCutomerDetails)),
+                                                      Expanded(
+                                                        child: formInput(
+                                                            context,
+                                                            "GST No.",
+                                                            controller
+                                                                .c_gst_controller,
+                                                            padding: 8.0),
+                                                      ),
+
+                                                      Expanded(
+                                                        child: formInput(
+                                                          context,
+                                                          "Mobile No.",
+                                                          controller
+                                                              .c_phone_controller,
+                                                          padding: 8.0,
+                                                          isNumber: true,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: formInput(
+                                                            context,
+                                                            "Email Id",
+                                                            controller
+                                                                .c_email_controller,
+                                                            padding: 8.0),
+                                                      ),
+                                                      Expanded(
+                                                        child: formInput(
+                                                            context,
+                                                            "Invoice Date",
+                                                            controller
+                                                                .invoiceDateController,
+                                                            padding: 8.0),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+
+                                      // End customer Form =====================
+                                      themeSpaceVertical(20.0),
                                       themeHeading2("Basic Details"),
-                                      themeSpaceVertical(15.0),
+
                                       Row(
                                         children: [
                                           // fireld 1 ==========================
@@ -167,7 +234,8 @@ class _addStockScreenState extends State<addStockScreen> {
                                                   size: 20.0,
                                                 )),
                                             SizedBox(width: 10.0),
-                                            (controller.totalProduct > 1)
+                                            (!isSupplierForm &&
+                                                    controller.totalProduct > 1)
                                                 ? IconButton(
                                                     onPressed: () {
                                                       removeProduct(context);
@@ -266,14 +334,21 @@ class _addStockScreenState extends State<addStockScreen> {
                                                   Expanded(
                                                     child: formInput(
                                                         context,
-                                                        "Quantity *",
+                                                        (isSupplierForm)
+                                                            ? "Rest Quantity *"
+                                                            : "Quantity *",
                                                         controller
                                                                 .productQntController[
                                                             '$i'],
                                                         padding: 8.0,
+                                                        readOnly:
+                                                            (isSupplierForm)
+                                                                ? true
+                                                                : false,
                                                         isNumber: true,
                                                         method: fnTotalQnt),
                                                   ),
+
                                                   Expanded(
                                                     child: formInput(
                                                       context,
@@ -283,6 +358,9 @@ class _addStockScreenState extends State<addStockScreen> {
                                                           '$i'],
                                                       padding: 8.0,
                                                       isNumber: true,
+                                                      readOnly: (isSupplierForm)
+                                                          ? true
+                                                          : false,
                                                       method: fnTotalQnt,
                                                     ),
                                                   ),
@@ -309,6 +387,61 @@ class _addStockScreenState extends State<addStockScreen> {
                                                   ),
                                                 ],
                                               ),
+
+                                              // Supplier Product Row
+                                              (!isSupplierForm)
+                                                  ? SizedBox()
+                                                  : Container(
+                                                      color: Color.fromARGB(
+                                                          255, 224, 224, 224),
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                            width: 150.0,
+                                                            child: formInput(
+                                                                context,
+                                                                "Supplier Quantity",
+                                                                controller
+                                                                        .productQntNewController[
+                                                                    '$i'],
+                                                                padding: 8.0,
+                                                                isNumber: true,
+                                                                method:
+                                                                    fnTotalNewQnt,
+                                                                methodArg: i),
+                                                          ),
+                                                          Container(
+                                                            width: 150.0,
+                                                            child: formInput(
+                                                                context,
+                                                                "Supplier Price",
+                                                                controller
+                                                                        .s_price_controller[
+                                                                    '$i'],
+                                                                padding: 8.0,
+                                                                isNumber: true,
+                                                                method:
+                                                                    fnTotalNewQnt,
+                                                                methodArg: i),
+                                                          ),
+                                                          Container(
+                                                            width: 150.0,
+                                                            child: formInput(
+                                                                context,
+                                                                "SubTotal",
+                                                                controller
+                                                                        .s_subTotal_controller[
+                                                                    '$i'],
+                                                                padding: 8.0,
+                                                                isNumber: true,
+                                                                readOnly: true,
+                                                                method:
+                                                                    fnTotalNewQnt,
+                                                                methodArg: i),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
                                               themeSpaceVertical(5.0),
                                             ])),
 
@@ -468,6 +601,33 @@ class _addStockScreenState extends State<addStockScreen> {
     });
   }
 
+  // funciton total new quantity
+  fnTotalNewQnt(i) {
+    int total = 0;
+    var tempQ = controller.productQntNewController['$i']!.text;
+    var price = controller.s_price_controller['$i']!.text;
+    price = (price == '') ? '0' : price;
+    tempQ = (tempQ == '') ? '0' : tempQ;
+    if (tempQ != '') {
+      var productList = controller.editData['item_list'];
+      if (productList['$i'] != null) {
+        int tempQuntity = (productList['$i']['quantity'] != null)
+            ? int.parse(productList['$i']['quantity'].toString())
+            : 0;
+        tempQuntity = tempQuntity + int.parse(tempQ.toString());
+        controller.productQntController['$i']!.text = '$tempQuntity';
+      } else {
+        controller.productQntController['$i']!.text = '$tempQ';
+      }
+
+      controller.s_subTotal_controller['$i']!.text =
+          '${int.parse(tempQ.toString()) * int.parse(price.toString())}';
+      fnTotalQnt();
+    }
+
+    //controller.productQntController['$i']!.text = '23';
+  }
+
   // calculate total quantity
   fnTotalQnt() {
     int total = 0;
@@ -495,6 +655,7 @@ class _addStockScreenState extends State<addStockScreen> {
   // fun check product already exists ==================================
   fnCheckProductExist({checkExist: ''}) async {
     controller.productId = '';
+    isSupplierForm = false;
     setState(() {
       isWait = true;
     });
@@ -511,11 +672,27 @@ class _addStockScreenState extends State<addStockScreen> {
     if (productData != null) {
       await controller.init_functions(data: productData);
       controller.productId = productData['id'];
+      isSupplierForm = true;
     }
 
     setState(() {
       isWait = false;
     });
+  }
+
+  // Fetch all detials
+  fnFetchCutomerDetails() {
+    var tName = controller.c_name_controller.text;
+    var tempData = (tName != '' && controller.CustomerArr[tName] != null)
+        ? controller.CustomerArr[tName]
+        : {};
+    if (tempData.isNotEmpty) {
+      controller.c_phone_controller.text = tempData['mobile'];
+      controller.c_email_controller.text = tempData['email'];
+      controller.c_gst_controller.text =
+          (tempData['gst_no'] == null) ? '' : tempData['gst_no'];
+      setState(() {});
+    }
   }
 }
 

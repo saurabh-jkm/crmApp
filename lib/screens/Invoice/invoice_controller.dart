@@ -1,6 +1,5 @@
 // ignore_for_file: unnecessary_string_interpolations, unused_shown_name
 
-import 'package:crm_demo/screens/product/product/product_widgets.dart';
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'package:crm_demo/themes/style.dart';
 import 'package:flutter/material.dart';
