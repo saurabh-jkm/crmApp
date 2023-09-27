@@ -29,6 +29,9 @@ class invoiceController {
   final Customer_TypeController = TextEditingController();
   final Customer_GstNoController = TextEditingController();
 
+  final c_payment_controller = TextEditingController();
+  final c_balance_controller = TextEditingController();
+
   List<String> ListType = ['Customer', 'Supplier'];
   String InvoiceType = 'Customer';
 
@@ -129,6 +132,11 @@ class invoiceController {
       invoiceDateController.text = (dbData['invoice_date'] != null)
           ? dbData['invoice_date']
           : DateFormat('dd/MM/yyyy').format(dbData['date_at']);
+
+      c_payment_controller.text =
+          (dbData['payment'] != null) ? dbData['payment'] : '';
+      c_balance_controller.text =
+          (dbData['balance'] != null) ? dbData['balance'] : '';
 
       InvoiceType =
           (dbData['invoice_for'] != null) ? dbData['invoice_for'] : 'Customer';
@@ -499,6 +507,8 @@ class invoiceController {
       // "quantity": quantityController.text,
       "total": totalPrice,
       "invoice_date": invoiceDateController.text,
+      "payment": c_payment_controller.text,
+      "balance": c_balance_controller.text,
       "status": true
     };
     if (docId == '') {
@@ -737,6 +747,13 @@ class invoiceController {
             : 0;
       }
       i++;
+    }
+
+    if (c_payment_controller.text != '') {
+      var tempAmount = int.parse(c_payment_controller.text.toString());
+      c_balance_controller.text = '${totalPrice - tempAmount}';
+    } else {
+      c_balance_controller.text = '$totalPrice';
     }
   }
 

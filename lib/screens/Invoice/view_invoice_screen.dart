@@ -50,6 +50,8 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
   var OrderData;
   bool isWait = true;
   bool isGstColum = false;
+  bool isDiscountColum = false;
+  bool isUnitColum = false;
 
   _fnGetOrder() {
     OrderData = widget.data;
@@ -57,6 +59,12 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
     OrderData['products'].forEach((i, val) {
       if (val['gst'] != '0') {
         isGstColum = true;
+      }
+      if (val['discount'] != '0') {
+        isDiscountColum = true;
+      }
+      if (val['unit'] != '0') {
+        isUnitColum = true;
       }
     });
     isWait = false;
@@ -427,11 +435,13 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                                       alignment: Alignment.center,
                                       child: Text("Qty.",
                                           style: textStyleHeading1))),
-                              Expanded(
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      child: Text("Disc (₹) ",
-                                          style: textStyleHeading1))),
+                              (isDiscountColum)
+                                  ? Expanded(
+                                      child: Container(
+                                          alignment: Alignment.center,
+                                          child: Text("Disc(₹) ",
+                                              style: textStyleHeading1)))
+                                  : SizedBox(),
                               Expanded(
                                   child: Container(
                                       alignment: Alignment.center,
@@ -447,7 +457,7 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                               Expanded(
                                   child: Container(
                                       alignment: Alignment.center,
-                                      child: Text("Amount",
+                                      child: Text("Amount(₹)",
                                           style: textStyleHeading1))),
                             ],
                           ),
@@ -460,7 +470,8 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                               for (var key in OrderData['products'].keys)
                                 invoiceItemRow(
                                     context, key, OrderData['products'],
-                                    isGstColum: isGstColum)
+                                    isGstColum: isGstColum,
+                                    isDiscountColum: isDiscountColum)
                             ],
                           ),
                         ),
@@ -495,6 +506,81 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                             ],
                           ),
                         ),
+
+                        // paid -------------------------------------------
+                        (OrderData["payment"] == null ||
+                                OrderData["payment"] == '')
+                            ? SizedBox()
+                            : Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: themeBG2, width: 1.0)),
+                                height: 35,
+                                child: Row(
+                                  children: [
+                                    SizedBox(width: 40),
+                                    Container(
+                                        padding: EdgeInsets.all(2),
+                                        width: 180,
+                                        alignment: Alignment.center,
+                                        child: Text("Paid",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: themeBG2))),
+                                    Expanded(
+                                        child: Container(
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: themeBG2)),
+                                            padding: EdgeInsets.only(right: 10),
+                                            alignment: Alignment.centerRight,
+                                            child: Text(
+                                                "${OrderData["payment"]} Rs /-",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: themeBG2)))),
+                                  ],
+                                ),
+                              ),
+
+                        // Balance -------------------------------------------
+                        (OrderData["balance"] == null)
+                            ? SizedBox()
+                            : Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: themeBG2, width: 1.0)),
+                                height: 35,
+                                child: Row(
+                                  children: [
+                                    SizedBox(width: 40),
+                                    Container(
+                                        padding: EdgeInsets.all(2),
+                                        width: 180,
+                                        alignment: Alignment.center,
+                                        child: Text("Blance",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: themeBG2))),
+                                    Expanded(
+                                        child: Container(
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: themeBG2)),
+                                            padding: EdgeInsets.only(right: 10),
+                                            alignment: Alignment.centerRight,
+                                            child: Text(
+                                                "${OrderData["balance"]} Rs /-",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: themeBG2)))),
+                                  ],
+                                ),
+                              ),
 
                         ///////////  =============================================================================================
                       ],

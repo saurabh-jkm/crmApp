@@ -625,6 +625,8 @@ class ProductController {
             "invoice_for": 'Supplier',
             "is_sale": 'Sale',
             "type": "Buy",
+            "payment": '',
+            "balance": '',
             "total": totalPrice,
             "invoice_date": (invoiceDateController.text == '')
                 ? formatDate(DateTime.now(), formate: 'dd/MM/yyyy')
@@ -640,8 +642,6 @@ class ProductController {
           invArr['unit'] = '$intTotalUnit';
 
           var rDbData = await dbSave(db, invArr);
-          print(rDbData);
-          return false;
         }
 
         themeAlert(context, "Updated Successfully !!");

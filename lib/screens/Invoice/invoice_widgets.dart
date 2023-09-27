@@ -28,7 +28,8 @@ Widget totalWidgets(context, label, value) {
 }
 
 // invoice item list ===========================================
-Widget invoiceItemRow(context, key, productList, {isGstColum: false}) {
+Widget invoiceItemRow(context, key, productList,
+    {isGstColum: false, isDiscountColum: false}) {
   var data = productList[key];
   int i = int.parse(key.toString()) + 1;
   return Container(
@@ -78,15 +79,17 @@ Widget invoiceItemRow(context, key, productList, {isGstColum: false}) {
 
                 // for (var i = 1; i <= eedata.length; i++)
                 )),
-        Expanded(
-            child: Container(
-                padding: EdgeInsets.all(2),
-                alignment: Alignment.topCenter,
-                child: Text("${data["discount"]} ",
-                    style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.normal,
-                        color: themeBG2)))),
+        (isDiscountColum)
+            ? Expanded(
+                child: Container(
+                    padding: EdgeInsets.all(2),
+                    alignment: Alignment.topCenter,
+                    child: Text("${data["discount"]} ",
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.normal,
+                            color: themeBG2))))
+            : SizedBox(),
         Expanded(
             child: Container(
                 padding: EdgeInsets.all(2),

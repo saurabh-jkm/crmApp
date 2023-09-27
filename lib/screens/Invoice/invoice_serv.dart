@@ -458,6 +458,87 @@ class InvoiceService {
                   ),
                 ),
 
+                // paid ====================================================
+                (PriceDetail["payment"] == null || PriceDetail["payment"] == '')
+                    ? SizedBox()
+                    : pw.Container(
+                        decoration: pw.BoxDecoration(
+                            border:
+                                Border.all(color: PdfColors.black, width: 1.0)),
+                        height: 35,
+                        child: pw.Row(
+                          children: [
+                            SizedBox(width: 40),
+                            Container(
+                                padding: EdgeInsets.all(2),
+                                width: 180,
+                                // decoration: BoxDecoration(
+                                //     //   border: Border.all(color: PdfColors.black)
+                                //     ),
+                                alignment: Alignment.center,
+                                child: Text("Paid",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: PdfColors.black))),
+                            Expanded(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: PdfColors.black)),
+                                    padding: EdgeInsets.only(right: 10),
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                        "${PriceDetail["payment"]} Rs /-",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: PdfColors.black)))),
+                          ],
+                        ),
+                      ),
+
+                // Balance ====================================================
+                (PriceDetail["balance"] == null ||
+                        PriceDetail["balance"] == '0')
+                    ? SizedBox()
+                    : pw.Container(
+                        decoration: pw.BoxDecoration(
+                            border:
+                                Border.all(color: PdfColors.black, width: 1.0)),
+                        height: 35,
+                        child: pw.Row(
+                          children: [
+                            SizedBox(width: 40),
+                            Container(
+                                padding: EdgeInsets.all(2),
+                                width: 180,
+                                // decoration: BoxDecoration(
+                                //     //   border: Border.all(color: PdfColors.black)
+                                //     ),
+                                alignment: Alignment.center,
+                                child: Text("Balance",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: PdfColors.black))),
+                            Expanded(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: PdfColors.black)),
+                                    padding: EdgeInsets.only(right: 10),
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                        "${PriceDetail["balance"]} Rs /-",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: PdfColors.black)))),
+                          ],
+                        ),
+                      ),
+
                 ///////////  =============================================================================================
               ],
             )
