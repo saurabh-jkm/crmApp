@@ -79,6 +79,20 @@ yearStamp_for_query() {
   return newDate;
 }
 
+themeCustomeDate(str) {
+  final date = DateTime.now();
+  if (str == '') {
+    return date;
+  }
+
+  var temp = str.split("-");
+  var y = (temp[2] != null) ? int.parse(temp[2].toString()) : date.year;
+  var m = (temp[1] != null) ? int.parse(temp[1].toString()) : date.month;
+  var d = (temp[0] != null) ? int.parse(temp[0].toString()) : date.day;
+  var newDate = DateTime(y, m, d);
+  return newDate;
+}
+
 // shcedule time
 sechduleTimmingList() {
   Map<dynamic, dynamic> scheduleList = {};

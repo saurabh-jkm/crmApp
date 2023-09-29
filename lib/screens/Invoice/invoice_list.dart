@@ -63,18 +63,43 @@ class _Invoice_ListState extends State<Invoice_List> {
   bool progressWidget = true;
   List<String> itemList = ['All', 'Sale', 'Buy'];
   var selectedFilter = 'All';
+  TextEditingController startDate_controller = new TextEditingController();
+  TextEditingController toDate_controller = new TextEditingController();
 
 ///////////////////////// Order List Data fetch fn ++++++++++++++++++++++++++++
 
   List OrderList = [];
   List finalOrderList = [];
-  OrderList_data() async {
+  OrderList_data({filter: ''}) async {
     OrderList = [];
     Map<dynamic, dynamic> w = {
       'table': "order",
       'orderBy': "-date_at",
     };
-    var temp = await dbFindDynamic(db, w);
+    var temp;
+    if (filter == 'date_filter') {
+      //var newDate = todayTimeStamp_for_query();
+      var dateFrom = themeCustomeDate(startDate_controller.text);
+      var dateTo = themeCustomeDate(toDate_controller.text);
+
+      // TODO Query
+      var query;
+      if (!kIsWeb && Platform.isWindows) {
+        query = await Firestore.instance
+            .collection('order')
+            .where("date_at", isGreaterThan: dateFrom)
+            .where("date_at", isLessThan: dateTo);
+      } else {
+        query = await Firestore.instance
+            .collection('order')
+            .where("date_at", isGreaterThan: dateFrom)
+            .where("date_at", isLessThan: dateTo);
+      }
+
+      temp = await dbRawQuery(query);
+    } else {
+      temp = await dbFindDynamic(db, w);
+    }
     setState(() {
       temp.forEach((k, v) {
         v['date'] = formatDate(v['date_at'], formate: "dd/MM/yyyy");
@@ -236,75 +261,84 @@ class _Invoice_ListState extends State<Invoice_List> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Orders List",
-                              style: themeTextStyle(
-                                  fw: FontWeight.bold,
-                                  color: Colors.white,
-                                  size: 15),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            /*Row(
-                              children: [
-                                Text(
-                                  "Show",
-                                  style: themeTextStyle(
-                                      fw: FontWeight.normal,
-                                      color: Colors.white,
-                                      size: 15),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 5),
-                                  padding: EdgeInsets.all(2),
-                                  height: 20,
-                                  color: Colors.white,
-                                  child: DropdownButton<int>(
-                                    dropdownColor: Colors.white,
-                                    iconEnabledColor: Colors.black,
-                                    hint: Text(
-                                      "$_number_select",
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 12),
-                                    ),
-                                    value: _number_select,
-                                    items:
-                                        <int>[10, 25, 50, 100].map((int value) {
-                                      return new DropdownMenuItem<int>(
-                                        value: value,
-                                        child: new Text(
-                                          value.toString(),
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newVal) {
-                                      setState(() {
-                                        _number_select = newVal!;
-                                      });
-                                    },
-                                    underline: SizedBox(),
-                                  ),
-                                ),
-                                Text(
-                                  "entries",
-                                  style: themeTextStyle(
-                                      fw: FontWeight.normal,
-                                      color: Colors.white,
-                                      size: 15),
-                                ),
-                              ],
-                            )*/
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         Text(
+                        //           "Orders List",
+                        //           style: themeTextStyle(
+                        //               fw: FontWeight.bold,
+                        //               color: Colors.white,
+                        //               size: 15),
+                        //         ),
+                        //         SizedBox(
+                        //           height: 20,
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ],
+                        // ),
+
                         Row(
                           children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 4.0),
+                              color: Color.fromARGB(255, 200, 247, 242),
+                              child: Row(
+                                children: [
+                                  Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                      padding: EdgeInsets.only(top: 14),
+                                      height: 35,
+                                      width: 140.0,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          color: Colors.white),
+                                      child: formTimeInput(
+                                          context, startDate_controller,
+                                          label: 'Date From',
+                                          method: datePick,
+                                          arg: 'fromDate')),
+                                  Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                      padding: EdgeInsets.only(top: 14),
+                                      height: 35,
+                                      width: 140.0,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          color: Colors.white),
+                                      child: formTimeInput(
+                                          context, toDate_controller,
+                                          label: 'Date To',
+                                          method: datePick,
+                                          arg: 'toDate')),
+                                  themeButton3(context, fnFilterController,
+                                      arg: 'date_filter',
+                                      label: 'Filter',
+                                      radius: 2.0,
+                                      borderColor: Colors.transparent,
+                                      buttonColor:
+                                          Color.fromARGB(255, 12, 121, 194)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ), // end date filter container
+
+                        // Right side buttons
+                        Row(
+                          children: [
+                            // date picker filter  ================================
+
+                            //SizedBox(width: 10.0),
+
                             themeButton3(context, changeFilter,
                                 arg: 'Sale',
                                 label: 'Sale',
@@ -756,12 +790,42 @@ class _Invoice_ListState extends State<Invoice_List> {
     setState(() {});
   }
 
+  // date filter ===================================================
+  fnFilterController(filter) {
+    OrderList_data(filter: filter);
+  }
+
   // change filter ===================================================
   changeFilter(val) {
     setState(() {
       selectedFilter = val;
       SearchFn(val, filter: 'filter');
     });
+  }
+
+  // date picker function =================================
+  datePick(type) async {
+    FocusScope.of(context).requestFocus(FocusNode());
+    final pickedDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2101));
+
+    if (pickedDate != null) {
+      //print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+      setState(() {
+        if (type == 'fromDate') {
+          startDate_controller.text = formattedDate;
+        } else if (type == 'toDate') {
+          toDate_controller.text = formattedDate;
+        }
+      });
+      FocusScope.of(context).requestFocus(FocusNode());
+    } else {
+      print("Date is not selected");
+    }
   }
 
 /////////////////////////////////////////////=====================================================

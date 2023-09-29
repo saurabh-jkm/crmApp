@@ -779,6 +779,34 @@ Widget SearchBox(BuildContext context, {searchFn: '', label: 'Search'}) {
   );
 }
 
+// Time Input
+Widget formTimeInput(BuildContext context, controller,
+    {method: '', arg: '', label: 'Name'}) {
+  return TextField(
+    style: TextStyle(color: Color.fromARGB(255, 27, 27, 27)),
+    onTap: () {
+      if (method != '') {
+        if (arg == '') {
+          method();
+        } else if (arg != '') {
+          method(arg);
+        }
+      }
+    },
+    controller: controller,
+    decoration: InputDecoration(
+      hintText: "$label",
+      hintStyle: TextStyle(color: Colors.black),
+      fillColor: Colors.white,
+      filled: true,
+      border: OutlineInputBorder(
+        borderSide: BorderSide.none,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+      ),
+    ),
+  );
+}
+
 // Table Heading ==========================
 Widget TableHeading(context, data, {rowColor: '', textColor: ''}) {
   return Container(

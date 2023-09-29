@@ -101,7 +101,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       //'status': "$_StatusValue",
     };
     var temp = await dbFindDynamic(db, w);
-    if (temp.isNotEmpty && temp[0]['version'] > 3) {
+    if (temp.isNotEmpty && temp[0]['version'] > 4) {
       setState(() {
         isNewUpdate = true;
       });
