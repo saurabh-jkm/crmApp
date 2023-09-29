@@ -198,7 +198,7 @@ dbFind(where) async {
           .then((DocumentSnapshot documentSnapshot) {
           if (documentSnapshot.exists) {
             Map<int, dynamic> returnData2 = new Map();
-            //print("${documentSnapshot.data()}  jjjj==");
+            print("${documentSnapshot.data()}  jjjj==");
             return documentSnapshot.data();
           } else {
             return 'Document does not exist on the database';

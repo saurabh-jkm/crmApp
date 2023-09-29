@@ -13,6 +13,7 @@ import '../Attributes/attribute_add.dart';
 import '../Invoice/invoice_list.dart';
 import '../Profile/profile_details.dart';
 import '../Sub Admin/Add_SubAdmin.dart';
+import '../Track_History/track_list.dart';
 import '../category/category_add.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../inventry/inventry_list.dart';
@@ -102,13 +103,15 @@ class _MainScreenState extends State<MainScreen> {
             else if (sidemenu == 7)
               Expanded(flex: 5, child: InventryList())
             else if (sidemenu == 8)
-              Expanded(flex: 5, child: ProfileDetails())
+              Expanded(flex: 5, child: TrackHistory())
             else if (sidemenu == 9)
-              Expanded(flex: 5, child: AboutUs()
-                  //LoginPage()
+              Expanded(flex: 5, child: ProfileDetails())
+            // else if (sidemenu == 9)
+            //   Expanded(flex: 5, child: AboutUs()
+            //       //LoginPage()
 
-                  ///SignupScreen()
-                  )
+            //       ///SignupScreen()
+            //       )
             else if (sidemenu == 10)
               Expanded(flex: 5, child: SubAdmin())
             // All customer list
@@ -187,23 +190,7 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(color: Colors.white),
             ),
           ),
-          //  ListTile(
-          //   onTap: () {
-          //     setState(() {
-          //       sidemenu = 4;
-          //     });
-          //   },
-          //   horizontalTitleGap: 0.0,
-          //   leading: SvgPicture.asset(
-          //     "assets/icons/menu_task.svg",
-          //     color: Colors.white54,
-          //     height: 16,
-          //   ),
-          //   title: Text(
-          //     "Brand",
-          //     style: TextStyle(color: Colors.white54),
-          //   ),
-          // ),
+
           ListTile(
             tileColor: (sidemenu == 4)
                 ? const Color.fromARGB(127, 33, 149, 243)
@@ -265,45 +252,6 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(color: Colors.white),
             ),
           ),
-          /*ListTile(
-            tileColor: (sidemenu == 6)
-                ? const Color.fromARGB(127, 33, 149, 243)
-                : const Color.fromARGB(0, 255, 255, 255),
-            onTap: () {
-              setState(() {
-                sidemenu = 6;
-                if (Responsive.isMobile(context)) {
-                  Navigator.of(context).pop();
-                }
-              });
-            },
-            horizontalTitleGap: 0.0,
-            leading: Icon(Icons.view_list_outlined, color: Colors.white),
-            title: Text(
-              "Order",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-
-          ListTile(
-            tileColor: (sidemenu == 7)
-                ? const Color.fromARGB(127, 33, 149, 243)
-                : const Color.fromARGB(0, 255, 255, 255),
-            onTap: () {
-              setState(() {
-                sidemenu = 7;
-                if (Responsive.isMobile(context)) {
-                  Navigator.of(context).pop();
-                }
-              });
-            },
-            horizontalTitleGap: 0.0,
-            leading: Icon(Icons.inventory_outlined, color: Colors.white),
-            title: Text(
-              "Inventry Manage",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),*/
 
           ListTile(
             tileColor: (sidemenu == 8)
@@ -318,7 +266,26 @@ class _MainScreenState extends State<MainScreen> {
               });
             },
             horizontalTitleGap: 0.0,
-            leading: Icon(Icons.person_pin_sharp, color: Colors.white),
+            leading: Icon(Icons.location_history, color: Colors.white),
+            title: Text(
+              "Track History",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          ListTile(
+            tileColor: (sidemenu == 9)
+                ? const Color.fromARGB(127, 33, 149, 243)
+                : const Color.fromARGB(0, 255, 255, 255),
+            onTap: () {
+              setState(() {
+                sidemenu = 9;
+                if (Responsive.isMobile(context)) {
+                  Navigator.of(context).pop();
+                }
+              });
+            },
+            horizontalTitleGap: 0.0,
+            leading: Icon(Icons.person, color: Colors.white),
             title: Text(
               "Profile",
               style: TextStyle(color: Colors.white),

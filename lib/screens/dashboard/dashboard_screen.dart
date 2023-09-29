@@ -21,7 +21,7 @@ import 'components/header.dart';
 import 'components/my_fields.dart';
 import 'components/recent_files.dart';
 import 'components/storage_details.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:charts_flutter/flutter.dart' as charts;
 
 import '../../../models/RecentFile.dart';

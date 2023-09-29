@@ -8,7 +8,7 @@ import 'package:crm_demo/screens/inventry/qr_code.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../constants.dart';

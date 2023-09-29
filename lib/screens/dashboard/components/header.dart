@@ -4,7 +4,7 @@ import 'dart:convert';
 
 import 'package:crm_demo/screens/Login_Reg/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -204,14 +204,15 @@ class SearchField extends StatelessWidget {
         suffixIcon: InkWell(
           onTap: () {},
           child: Container(
-            padding: EdgeInsets.all(defaultPadding * 0.75),
-            margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-            decoration: BoxDecoration(
-              color: primaryColor,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-            ),
-            child: SvgPicture.asset("assets/icons/Search.svg"),
-          ),
+              padding: EdgeInsets.all(defaultPadding * 0.75),
+              margin: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Icon(Icons.search_sharp)
+              //SvgPicture.asset("assets/icons/Search.svg"),
+              ),
         ),
       ),
     );

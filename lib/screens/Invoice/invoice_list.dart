@@ -16,7 +16,7 @@ import 'package:firedart/generated/google/firestore/v1/document.pb.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../themes/function.dart';
@@ -91,12 +91,14 @@ class _Invoice_ListState extends State<Invoice_List> {
 
   ///////// PDF  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  Future<void> savePdfFile(String fileName, Uint8List byteList) async {
+  Future<void> savePdfFile(
+      String fileName, Uint8List byteList, PriceDetail) async {
     if (kIsWeb) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Invoice_pdf(BytesCode: byteList),
+          builder: (context) =>
+              Invoice_pdf(BytesCode: byteList, PriceDetail: PriceDetail),
         ),
       );
     } else {
@@ -107,7 +109,8 @@ class _Invoice_ListState extends State<Invoice_List> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Invoice_pdf(BytesCode: byteList),
+          builder: (context) =>
+              Invoice_pdf(BytesCode: byteList, PriceDetail: PriceDetail),
         ),
       );
     }
@@ -640,7 +643,7 @@ class _Invoice_ListState extends State<Invoice_List> {
                 PriceDetail: edata,
               ).createInvoice();
               // final data = await service.createInvoice();
-              await savePdfFile("invoice", data);
+              await savePdfFile("invoice", data, edata);
             }, () {
               setState(() {
                 viewInvoice(edata);

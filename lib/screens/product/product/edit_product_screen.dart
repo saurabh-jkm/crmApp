@@ -10,7 +10,7 @@ import 'package:firedart/firestore/firestore.dart';
 import 'package:firedart/generated/google/firestore/v1/document.pb.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../themes/function.dart';
