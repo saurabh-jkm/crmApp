@@ -64,25 +64,7 @@ class FileInfoCard extends StatelessWidget {
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            /*Container(
-                              padding: EdgeInsets.all(4),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: info.color),
-                              child: Text("${info.numOfFiles}",
-                                  style: GoogleFonts.abel(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white)
-
-                                  // Theme.of(context)
-                                  //     .textTheme
-                                  //     .caption!
-                                  //     .copyWith(color: Colors.white70),
-                                  ),
-                            ),*/
-                          ],
+                          children: [],
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -111,13 +93,7 @@ class FileInfoCard extends StatelessWidget {
                                   color: info.color,
                                   size:
                                       MediaQuery.of(context).size.height * 0.06,
-                                )
-                                //Icon(info.svgSrc,color: info.color)
-                                //  SvgPicture.asset(
-                                //   info.svgSrc!,
-                                //   color: info.color,
-                                // ),
-                                ),
+                                )),
                           ],
                         ),
                         Text('${info.numOfFiles}',
@@ -125,10 +101,6 @@ class FileInfoCard extends StatelessWidget {
                                 size: 60.0,
                                 color:
                                     const Color.fromARGB(255, 179, 179, 179)))
-                        // ProgressLine(
-                        //   color: info.color,
-                        //   percentage: info.percentage,
-                        // ),
                       ],
                     ),
                   ),

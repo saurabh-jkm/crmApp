@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Invoice/edit_invoice.dart';
 import 'package:crm_demo/screens/Invoice/pdf.dart';
 import 'package:crm_demo/screens/Invoice/view_invoice_screen.dart';
+import 'package:crm_demo/themes/base_controller.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
@@ -136,63 +137,75 @@ class _Invoice_ListState extends State<Invoice_List> {
       OrderList_data();
     }
   }
-/////////////////////////=======================================================
 
+/////////////////////////=======================================================
+  var baseController = new base_controller();
   @override
   Widget build(BuildContext context) {
     return (progressWidget == true)
         ? Center(child: pleaseWait(context))
-        : Scaffold(
-            body: Container(
-              color: Colors.white,
-              child: ListView(
-                children: [
-                  //header ======================
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
-                    decoration: BoxDecoration(color: themeBG2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () async {},
-                                child: Icon(
-                                  Icons.view_list_sharp,
-                                  size: 35,
-                                  color: Colors.blue,
+        : RawKeyboardListener(
+            autofocus: true,
+            focusNode: FocusNode(),
+            onKey: (e) {
+              var rData =
+                  baseController.KeyPressFun(e, context, backtype: 'dashboard');
+              if (rData != null && rData) {
+                setState(() {});
+              }
+            },
+            child: Scaffold(
+              body: Container(
+                color: Colors.white,
+                child: ListView(
+                  children: [
+                    //header ======================
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 10.0),
+                      decoration: BoxDecoration(color: themeBG2),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {},
+                                  child: Icon(
+                                    Icons.view_list_sharp,
+                                    size: 35,
+                                    color: Colors.blue,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 20.0),
-                              Text("Invoice List", style: GoogleFonts.alike())
-                            ],
+                                SizedBox(width: 20.0),
+                                Text("Invoice List", style: GoogleFonts.alike())
+                              ],
+                            ),
                           ),
-                        ),
-                        Container(
-                          child: Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  OrderList_data();
-                                },
-                                icon: Icon(Icons.refresh),
-                                tooltip: 'Refresh',
-                              ),
-                              SizedBox(width: 20.0),
-                              themeButton3(context, addNewInvoice,
-                                  label: 'Add New', radius: 5.0),
-                            ],
-                          ),
-                        )
-                      ],
+                          Container(
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    OrderList_data();
+                                  },
+                                  icon: Icon(Icons.refresh),
+                                  tooltip: 'Refresh',
+                                ),
+                                SizedBox(width: 20.0),
+                                themeButton3(context, addNewInvoice,
+                                    label: 'Add New', radius: 5.0),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
 
-                  listList(context, itemList)
-                ],
+                    listList(context, itemList)
+                  ],
+                ),
               ),
             ),
           );
@@ -343,16 +356,17 @@ class _Invoice_ListState extends State<Invoice_List> {
                 Table(
                   columnWidths: {
                     0: FlexColumnWidth(0.2),
-                    1: FlexColumnWidth(0.7),
+                    1: FlexColumnWidth(0.2),
                     2: FlexColumnWidth(0.3),
-                    3: FlexColumnWidth(0.6),
-                    4: FlexColumnWidth(0.5),
-                    5: FlexColumnWidth(0.2),
+                    3: FlexColumnWidth(0.5),
+                    4: FlexColumnWidth(0.6),
+                    5: FlexColumnWidth(0.5),
                     6: FlexColumnWidth(0.2),
                     7: FlexColumnWidth(0.2),
-                    8: FlexColumnWidth(0.3),
-                    9: FlexColumnWidth(0.4),
-                    10: IntrinsicColumnWidth()
+                    8: FlexColumnWidth(0.2),
+                    9: FlexColumnWidth(0.3),
+                    10: FlexColumnWidth(0.4),
+                    11: IntrinsicColumnWidth()
                   },
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   border: TableBorder(
@@ -397,6 +411,17 @@ class _Invoice_ListState extends State<Invoice_List> {
                                         fontSize: 10.0)),
                               ),
                               width: 40,
+                            ),
+                          ),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text("Product",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10.0)),
                             ),
                           ),
                           TableCell(
@@ -515,6 +540,7 @@ class _Invoice_ListState extends State<Invoice_List> {
       pro_status, pay_date, edata,
       {dbData: ''}) {
     var statuss = statusOF(pro_status);
+    var productTitle = edata['title'];
     final formattedDate = formatDate(pay_date);
     var type =
         (edata['invoice_for'] == 'Customer' || edata['invoice_for'] == '')
@@ -542,7 +568,8 @@ class _Invoice_ListState extends State<Invoice_List> {
             verticalAlignment: TableCellVerticalAlignment.middle,
             child: Padding(
               padding: const EdgeInsets.all(5.0),
-              child: Text("$odID", style: textStyle3),
+              child: Text("${edata['sr_no'] == null ? odID : edata['sr_no']}",
+                  style: textStyle3),
             ),
           ),
           TableCell(
@@ -550,6 +577,14 @@ class _Invoice_ListState extends State<Invoice_List> {
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: Container(child: Text("${type}", style: textStyle3)),
+            ),
+          ),
+          TableCell(
+            verticalAlignment: TableCellVerticalAlignment.middle,
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child:
+                  Container(child: Text("${productTitle}", style: textStyle3)),
             ),
           ),
           TableCell(
@@ -693,6 +728,8 @@ class _Invoice_ListState extends State<Invoice_List> {
       'id',
       'customer_name',
       'type',
+      'title',
+      'sr_no',
       'is_sale',
       'customer_mobile',
       'date',
@@ -707,9 +744,10 @@ class _Invoice_ListState extends State<Invoice_List> {
     finalOrderList.forEach((e) {
       bool isFind = false;
       searchField.forEach((key) {
+        var val = '${e['$key']}';
         if (!isFind &&
             e['$key'] != null &&
-            e['$key'].toLowerCase().contains(query.toLowerCase())) {
+            val.toLowerCase().contains(query.toLowerCase())) {
           OrderList.add(e);
           isFind = true;
         }

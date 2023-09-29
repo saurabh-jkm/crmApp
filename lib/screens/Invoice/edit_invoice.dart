@@ -382,90 +382,206 @@ class _editInvoiceState extends State<editInvoice> {
                           themeSpaceVertical(20.0),
                           Container(
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Expanded(
-                                  child: Container(
-                                    child: Center(
-                                      child: ElevatedButton(
-                                          onPressed: () async {
-                                            controller.insertInvoiceDetails(
-                                                context,
-                                                docId: widget.data['id']);
-                                            //setState(() {});
-                                          },
-                                          child: Text('Update')),
-                                    ),
+                                Container(
+                                  width: 300.0,
+                                  child: Center(
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: themeBG,
+                                          onPrimary: Colors.white,
+                                          elevation: 3,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0)),
+                                          minimumSize:
+                                              Size(150, 48), //////// HERE
+                                        ),
+                                        onPressed: () async {
+                                          controller.insertInvoiceDetails(
+                                              context,
+                                              docId: widget.data['id']);
+                                          //setState(() {});
+                                        },
+                                        child: Text('Update')),
                                   ),
                                 ),
-                                Expanded(
-                                  child: Container(
-                                    padding: EdgeInsets.only(right: 30.0),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  "SubTotal : ",
-                                                  style: themeTextStyle(
-                                                      size: 12.0),
-                                                ),
-                                                Text(
-                                                  "₹${controller.totalPrice - controller.totalGst}",
-                                                  style: themeTextStyle(
-                                                      size: 15.0),
-                                                )
-                                              ],
-                                            ),
-                                            // GST
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  "GST : ",
-                                                  style: themeTextStyle(
-                                                      size: 12.0),
-                                                ),
-                                                Text(
-                                                  "₹${controller.totalGst}",
-                                                  style: themeTextStyle(
-                                                      size: 15.0),
-                                                )
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(width: 30.0),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              "Total:",
-                                              style: themeTextStyle(
-                                                  size: 20.0,
-                                                  fw: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              "₹${controller.totalPrice}",
-                                              style: themeTextStyle(size: 25.0),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                Container(
+                                  padding: EdgeInsets.only(right: 30.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      // paid ammount
+                                      Container(
+                                        width: 180.0,
+                                        height: 60.0,
+                                        child: formInput(
+                                            context,
+                                            "Paid Ammount",
+                                            controller.c_payment_controller,
+                                            isNumber: true,
+                                            padding: 8.0,
+                                            method: fnBalanceCalculate),
+                                      ),
+
+                                      Container(
+                                        width: 180.0,
+                                        height: 60.0,
+                                        child: formInput(context, "Balance",
+                                            controller.c_balance_controller,
+                                            readOnly: true, padding: 8.0),
+                                      ),
+
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                "SubTotal : ",
+                                                style:
+                                                    themeTextStyle(size: 12.0),
+                                              ),
+                                              Text(
+                                                "₹${controller.totalPrice - controller.totalGst}",
+                                                style:
+                                                    themeTextStyle(size: 15.0),
+                                              )
+                                            ],
+                                          ),
+                                          // GST
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                "GST : ",
+                                                style:
+                                                    themeTextStyle(size: 12.0),
+                                              ),
+                                              Text(
+                                                "₹${controller.totalGst}",
+                                                style:
+                                                    themeTextStyle(size: 15.0),
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(width: 30.0),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            "Total:",
+                                            style: themeTextStyle(
+                                                size: 20.0,
+                                                fw: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            "₹${controller.totalPrice}",
+                                            style: themeTextStyle(size: 25.0),
+                                          )
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
+
+                          // Container(
+                          //   child: Row(
+                          //     children: [
+                          //       Expanded(
+                          //         child: Container(
+                          //           child: Center(
+                          //             child: ElevatedButton(
+                          //                 onPressed: () async {
+                          //                   controller.insertInvoiceDetails(
+                          //                       context,
+                          //                       docId: widget.data['id']);
+                          //                   //setState(() {});
+                          //                 },
+                          //                 child: Text('Update')),
+                          //           ),
+                          //         ),
+                          //       ),
+                          //       Expanded(
+                          //         child: Container(
+                          //           padding: EdgeInsets.only(right: 30.0),
+                          //           child: Row(
+                          //             mainAxisAlignment: MainAxisAlignment.end,
+                          //             children: [
+                          //               Column(
+                          //                 crossAxisAlignment:
+                          //                     CrossAxisAlignment.end,
+                          //                 children: [
+                          //                   Row(
+                          //                     mainAxisAlignment:
+                          //                         MainAxisAlignment.end,
+                          //                     children: [
+                          //                       Text(
+                          //                         "SubTotal : ",
+                          //                         style: themeTextStyle(
+                          //                             size: 12.0),
+                          //                       ),
+                          //                       Text(
+                          //                         "₹${controller.totalPrice - controller.totalGst}",
+                          //                         style: themeTextStyle(
+                          //                             size: 15.0),
+                          //                       )
+                          //                     ],
+                          //                   ),
+                          //                   // GST
+                          //                   Row(
+                          //                     mainAxisAlignment:
+                          //                         MainAxisAlignment.end,
+                          //                     children: [
+                          //                       Text(
+                          //                         "GST : ",
+                          //                         style: themeTextStyle(
+                          //                             size: 12.0),
+                          //                       ),
+                          //                       Text(
+                          //                         "₹${controller.totalGst}",
+                          //                         style: themeTextStyle(
+                          //                             size: 15.0),
+                          //                       )
+                          //                     ],
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //               SizedBox(width: 30.0),
+                          //               Row(
+                          //                 mainAxisAlignment:
+                          //                     MainAxisAlignment.end,
+                          //                 children: [
+                          //                   Text(
+                          //                     "Total:",
+                          //                     style: themeTextStyle(
+                          //                         size: 20.0,
+                          //                         fw: FontWeight.bold),
+                          //                   ),
+                          //                   Text(
+                          //                     "₹${controller.totalPrice}",
+                          //                     style: themeTextStyle(size: 25.0),
+                          //                   )
+                          //                 ],
+                          //               ),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                         ],
                       ),
                     )
@@ -564,6 +680,12 @@ class _editInvoiceState extends State<editInvoice> {
     setState(() {
       controller.SaleType = val;
     });
+  }
+
+  // grandTotal Calculate
+  fnBalanceCalculate() async {
+    await controller.ctrGrandTotal();
+    setState(() {});
   }
 }
 

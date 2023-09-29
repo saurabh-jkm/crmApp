@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Profile/edit_profile.dart';
+import 'package:crm_demo/themes/base_controller.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   final passController = TextEditingController();
   /////// get user data  +++++++++++++++++++++++++++++++++++++++++++++++++++
   Map<dynamic, dynamic> user = new Map();
+  var baseController = new base_controller();
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic userData = (prefs.getString('user'));
@@ -73,14 +75,25 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   @override
   Widget build(BuildContext context) {
     // print("$user ++++++");
-    return Scaffold(
-      body: ListView(
-        children: [
-          Header(
-            title: "My Profile",
-          ),
-          Show_info(context)
-        ],
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKey: (e) {
+        var rData =
+            baseController.KeyPressFun(e, context, backtype: 'dashboard');
+        if (rData != null && rData) {
+          setState(() {});
+        }
+      },
+      child: Scaffold(
+        body: ListView(
+          children: [
+            Header(
+              title: "My Profile",
+            ),
+            Show_info(context)
+          ],
+        ),
       ),
     );
   }

@@ -13,6 +13,7 @@ import '../../themes/firebase_Storage.dart';
 import '../../themes/firebase_functions.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
+import '../../themes/base_controller.dart';
 import '../dashboard/components/header.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
@@ -322,6 +323,8 @@ class _CategoryAddState extends State<CategoryAdd> {
 /////
 
   bool Add_Category = false;
+  //var baseController = new baseController();
+  var baseController = new base_controller();
 
   @override
   void initState() {
@@ -400,7 +403,7 @@ class _CategoryAddState extends State<CategoryAdd> {
   @override
   Widget build(BuildContext context) {
     return (progressWidget == true)
-        ? Scaffold(body: Center(child: pleaseWait(context)))
+        ? Center(child: pleaseWait(context))
         : Scaffold(
             body: Container(
             child: ListView(
@@ -416,6 +419,7 @@ class _CategoryAddState extends State<CategoryAdd> {
               ],
             ),
           ));
+    // });
   }
 
 //// Widget for Start_up

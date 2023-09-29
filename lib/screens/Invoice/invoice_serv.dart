@@ -18,6 +18,22 @@ class InvoiceService {
 
   Future<Uint8List> createInvoice() async {
     Map tt = PriceDetail["products"];
+    bool isGstColum = false;
+    bool isDiscountColum = false;
+    bool isUnitColum = false;
+
+    tt.forEach((i, val) {
+      if (val['gst'] != '0') {
+        isGstColum = true;
+      }
+      if (val['discount'] != '0') {
+        isDiscountColum = true;
+      }
+      if (val['unit'] != '0') {
+        isUnitColum = true;
+      }
+    });
+
     var myTheme = ThemeData.withFont(
       base: Font.ttf(await rootBundle.load("assets/OpenSans-Regular.ttf")),
     );
@@ -29,7 +45,7 @@ class InvoiceService {
         build: (pw.Context context) {
           return pw.Stack(children: [
             (PriceDetail["is_sale"] != null &&
-                    PriceDetail["is_sale"] == 'estimate')
+                    PriceDetail["is_sale"].toLowerCase() == 'estimate')
                 ? pw.Positioned(
                     top: 200.0,
                     child: pw.Text("${PriceDetail["is_sale"]}",
@@ -42,7 +58,8 @@ class InvoiceService {
             pw.Column(
               children: [
                 pw.Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  pw.Text("Invoice",
+                  pw.Text(
+                      "${(PriceDetail["is_sale"] != null && PriceDetail["is_sale"].toLowerCase() == 'estimate') ? "Estimate" : 'Invoice'}",
                       style: pw.TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 25)),
                 ]),
@@ -81,7 +98,7 @@ class InvoiceService {
                           ]),
                       /////// Invoice Data fetch  ++++++++
                       pw.BarcodeWidget(
-                          data: "https://insaaf99.com/",
+                          data: "https://crm.jkmsoftsolutions.com/invoice",
                           barcode: pw.Barcode.qrCode(),
                           width: 80,
                           height: 80),
@@ -251,24 +268,30 @@ class InvoiceService {
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: PdfColors.black)))),
-                      Expanded(
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: PdfColors.black)),
-                              alignment: Alignment.center,
-                              child: Text("Disc ",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: PdfColors.black)))),
-                      Expanded(
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: PdfColors.black)),
-                              alignment: Alignment.center,
-                              child: Text("GST %",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: PdfColors.black)))),
+                      (isDiscountColum)
+                          ? Expanded(
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: PdfColors.black)),
+                                  alignment: Alignment.center,
+                                  child: Text("Disc.",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: PdfColors.black))))
+                          : SizedBox(),
+                      (isGstColum)
+                          ? Expanded(
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: PdfColors.black)),
+                                  alignment: Alignment.center,
+                                  child: Text("GST %",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: PdfColors.black))))
+                          : SizedBox(),
                       Expanded(
                           child: Container(
                               decoration: BoxDecoration(
@@ -340,7 +363,8 @@ class InvoiceService {
                               alignment: Alignment.topCenter,
                               child: Column(children: [
                                 for (var i = 0; i < tt.length; i++)
-                                  Text("${tt["$i"]["quantity"]} ",
+                                  Text(
+                                      "${(tt["$i"]["unit"] != '0') ? '${tt["$i"]["unit"]} - unit' : tt["$i"]["quantity"]} ",
                                       style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.normal,
@@ -348,34 +372,40 @@ class InvoiceService {
                               ])
                               // for (var i = 1; i <= eedata.length; i++)
                               )),
-                      Expanded(
-                          child: Container(
-                              padding: EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: PdfColors.black)),
-                              alignment: Alignment.topCenter,
-                              child: Column(children: [
-                                for (var i = 0; i < tt.length; i++)
-                                  Text("${tt["$i"]["discount"]}",
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.normal,
-                                          color: PdfColors.black))
-                              ]))),
-                      Expanded(
-                          child: Container(
-                              padding: EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: PdfColors.black)),
-                              alignment: Alignment.topCenter,
-                              child: Column(children: [
-                                for (var i = 0; i < tt.length; i++)
-                                  Text("${tt["$i"]["gst_per"]} %",
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.normal,
-                                          color: PdfColors.black))
-                              ]))),
+                      (isDiscountColum)
+                          ? Expanded(
+                              child: Container(
+                                  padding: EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: PdfColors.black)),
+                                  alignment: Alignment.topCenter,
+                                  child: Column(children: [
+                                    for (var i = 0; i < tt.length; i++)
+                                      Text("${tt["$i"]["discount"]}",
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.normal,
+                                              color: PdfColors.black))
+                                  ])))
+                          : SizedBox(),
+                      (isGstColum)
+                          ? Expanded(
+                              child: Container(
+                                  padding: EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: PdfColors.black)),
+                                  alignment: Alignment.topCenter,
+                                  child: Column(children: [
+                                    for (var i = 0; i < tt.length; i++)
+                                      Text("${tt["$i"]["gst_per"]} %",
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.normal,
+                                              color: PdfColors.black))
+                                  ])))
+                          : SizedBox(),
                       Expanded(
                           child: Container(
                               padding: EdgeInsets.all(2),
@@ -427,6 +457,87 @@ class InvoiceService {
                     ],
                   ),
                 ),
+
+                // paid ====================================================
+                (PriceDetail["payment"] == null || PriceDetail["payment"] == '')
+                    ? SizedBox()
+                    : pw.Container(
+                        decoration: pw.BoxDecoration(
+                            border:
+                                Border.all(color: PdfColors.black, width: 1.0)),
+                        height: 35,
+                        child: pw.Row(
+                          children: [
+                            SizedBox(width: 40),
+                            Container(
+                                padding: EdgeInsets.all(2),
+                                width: 180,
+                                // decoration: BoxDecoration(
+                                //     //   border: Border.all(color: PdfColors.black)
+                                //     ),
+                                alignment: Alignment.center,
+                                child: Text("Paid",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: PdfColors.black))),
+                            Expanded(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: PdfColors.black)),
+                                    padding: EdgeInsets.only(right: 10),
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                        "${PriceDetail["payment"]} Rs /-",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: PdfColors.black)))),
+                          ],
+                        ),
+                      ),
+
+                // Balance ====================================================
+                (PriceDetail["balance"] == null ||
+                        PriceDetail["balance"] == '0')
+                    ? SizedBox()
+                    : pw.Container(
+                        decoration: pw.BoxDecoration(
+                            border:
+                                Border.all(color: PdfColors.black, width: 1.0)),
+                        height: 35,
+                        child: pw.Row(
+                          children: [
+                            SizedBox(width: 40),
+                            Container(
+                                padding: EdgeInsets.all(2),
+                                width: 180,
+                                // decoration: BoxDecoration(
+                                //     //   border: Border.all(color: PdfColors.black)
+                                //     ),
+                                alignment: Alignment.center,
+                                child: Text("Balance",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: PdfColors.black))),
+                            Expanded(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: PdfColors.black)),
+                                    padding: EdgeInsets.only(right: 10),
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                        "${PriceDetail["balance"]} Rs /-",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: PdfColors.black)))),
+                          ],
+                        ),
+                      ),
 
                 ///////////  =============================================================================================
               ],

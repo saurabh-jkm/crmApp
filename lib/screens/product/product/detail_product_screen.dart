@@ -42,10 +42,12 @@ class Details_product extends StatefulWidget {
 
 class _Details_productState extends State<Details_product> {
   List<String> tableHeading = ['price', 'location', 'quantity'];
+  var data = {};
 
-  headListCreate(data) {
-    if (data['item_list'] != null && data['item_list'] != '') {
-      data['item_list'].forEach((k, vData) {
+  headListCreate(w_data) {
+    data = w_data;
+    if (w_data['item_list'] != null && w_data['item_list'] != '') {
+      w_data['item_list'].forEach((k, vData) {
         if (vData.isNotEmpty) {
           vData.forEach((label, val) {
             if (!tableHeading.contains(label)) {
@@ -56,12 +58,29 @@ class _Details_productState extends State<Details_product> {
       });
     }
     setState(() {});
+    fnGetProductLog();
+  }
+
+  // get product log =======================
+  var logDb = new Map();
+  fnGetProductLog() async {
+    logDb = await dbFindDynamic(
+        db, {'table': 'product_log', 'product_id': '${data['id']}'});
+    setState(() {});
   }
 
   @override
   void initState() {
     headListCreate(widget.MapData);
     super.initState();
+  }
+
+  fn_refresh() async {
+    var w = {'table': 'product', 'id': widget.MapData['id']};
+    var rData = await dbFind(w);
+    print(widget.MapData);
+    print(rData);
+    data = rData;
   }
 
   var controller = new ProductController();
@@ -74,9 +93,10 @@ class _Details_productState extends State<Details_product> {
         child: ListView(
           children: [
             //header ======================
-            themeHeader2(context, "${widget.header_name}"),
+            themeHeader2(context, "${widget.header_name}",
+                refreshBUtton: 'Refresh', buttonFn: fn_refresh),
             // formField =======================
-            Details_view(context, widget.MapData, tableHeading)
+            Details_view(context, data, tableHeading)
             // end form ====================================
           ],
         ),
@@ -88,99 +108,129 @@ class _Details_productState extends State<Details_product> {
     return Container(
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
-        color: Colors.white,
-      ),
+          //color: Colors.white,
+          ),
       child: ListView(
         children: [
           Container(
               margin: EdgeInsets.symmetric(horizontal: 10),
               child: Divider(thickness: 4, color: Colors.blue)),
           Container(
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              margin: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 color: Colors.black12,
               ),
               child: (priceData == {})
                   ? Center(child: CircularProgressIndicator())
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.production_quantity_limits_sharp,
-                                    size: 30,
-                                    color: Colors.blue,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    "Product Details",
-                                    style: GoogleFonts.alike(
-                                        fontSize: 20,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                              Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Divider(
-                                      thickness: 4, color: Colors.blue)),
-                              SizedBox(height: 20),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        right: BorderSide(
-                                            width: 3.0,
-                                            color:
-                                                Color.fromARGB(31, 72, 86, 92)),
+                  : Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      color: Colors.white,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.production_quantity_limits_sharp,
+                                      size: 30,
+                                      color: Colors.blue,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "Product Details",
+                                      style: GoogleFonts.alike(
+                                          fontSize: 20,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                ),
+                                Container(
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    child: Divider(
+                                        thickness: 4, color: Colors.blue)),
+                                SizedBox(height: 20),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width:
+                                          MediaQuery.of(context).size.width / 3,
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          right: BorderSide(
+                                              width: 3.0,
+                                              color: Color.fromARGB(
+                                                  31, 72, 86, 92)),
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          for (String key in priceData.keys)
+                                            productRow(
+                                                context, key, priceData[key])
+                                        ],
                                       ),
                                     ),
-                                    child: Column(
-                                      children: [
-                                        for (String key in priceData.keys)
-                                          productRow(
-                                              context, key, priceData[key])
-                                      ],
-                                    ),
-                                  ),
-                                  // item list =========================
-                                  Container(
-                                    margin: EdgeInsets.only(left: 30.0),
-                                    width: (MediaQuery.of(context).size.width -
-                                        (MediaQuery.of(context).size.width / 3 +
-                                            120)),
-                                    child: Column(
-                                      children: [
-                                        // heading
+                                    // item list =========================
+                                    Container(
+                                      margin: EdgeInsets.only(left: 30.0),
+                                      width: (MediaQuery.of(context)
+                                              .size
+                                              .width -
+                                          (MediaQuery.of(context).size.width /
+                                                  3 +
+                                              120)),
+                                      child: Column(
+                                        children: [
+                                          // heading
 
-                                        productTableHeading(
-                                            context, tableHeading),
-                                        // details
-                                        for (String key
-                                            in priceData['item_list'].keys)
-                                          productTableRow(
-                                              context,
-                                              key,
-                                              priceData['item_list'],
-                                              tableHeading)
-                                      ],
+                                          productTableHeading(
+                                              context, tableHeading),
+                                          // details
+                                          for (String key
+                                              in priceData['item_list'].keys)
+                                            productTableRow(
+                                                context,
+                                                key,
+                                                priceData['item_list'],
+                                                tableHeading)
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ]),
-                      ],
+                                  ],
+                                ),
+
+                                // Log Sections =======================
+                                (logDb.isEmpty)
+                                    ? SizedBox()
+                                    : Container(
+                                        margin: EdgeInsets.only(top: 50.0),
+                                        width:
+                                            (MediaQuery.of(context).size.width -
+                                                100),
+                                        child: Column(
+                                          children: [
+                                            // heading
+
+                                            productTableHeading(
+                                                context, tableHeading),
+                                            // details
+                                            for (var key in logDb.keys)
+                                              logTableRow(context, key,
+                                                  logDb[key], tableHeading)
+                                          ],
+                                        ),
+                                      ),
+                              ]),
+                        ],
+                      ),
                     ))
         ],
       ),

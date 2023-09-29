@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/product/product/add_product_screen.dart';
 import 'package:crm_demo/screens/product/product/edit_product_screen.dart';
+import 'package:crm_demo/themes/base_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:firedart/firedart.dart' as fd;
@@ -164,250 +165,266 @@ class _ProductAddState extends State<ProductAdd> {
 
   ///
   bool ascen = true;
+  var baseController = new base_controller();
 
   ///
   @override
   Widget build(BuildContext context) {
     return (progressWidget == true)
         ? Center(child: pleaseWait(context))
-        : Scaffold(
-            body: Container(
-              color: Colors.white,
-              child: ListView(
-                children: [
-                  //header ======================
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
-                    decoration: BoxDecoration(color: themeBG2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () async {},
-                                child: Icon(
-                                  Icons.view_list_sharp,
-                                  size: 35,
-                                  color: Colors.blue,
-                                ),
-                              ),
-                              SizedBox(width: 20.0),
-                              Text("Stocks", style: GoogleFonts.alike())
-                            ],
-                          ),
-                        ),
-                        Container(
-                          child: Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  Pro_Data();
-                                },
-                                icon: Icon(Icons.refresh),
-                                tooltip: 'Refresh',
-                              ),
-                              SizedBox(width: 20.0),
-                              themeButton3(context, addNewStock,
-                                  label: 'Add New', radius: 5.0),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-
-                  Container(
-                    margin: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: secondaryColor,
-                    ),
-                    child: Column(
-                      children: [
-                        searchBar(context),
-                        Table(
-                          defaultVerticalAlignment:
-                              TableCellVerticalAlignment.middle,
-                          border: TableBorder(
-                            horizontalInside:
-                                BorderSide(width: .5, color: Colors.grey),
-                          ),
-                          columnWidths: {
-                            0: FlexColumnWidth(0.01),
-                            1: FlexColumnWidth(0.3),
-                            2: FlexColumnWidth(0.6),
-                            3: FlexColumnWidth(0.3),
-                            4: FlexColumnWidth(0.4),
-                            5: FlexColumnWidth(0.2),
-                            6: FlexColumnWidth(0.3),
-                            7: FlexColumnWidth(0.3),
-                            8: FlexColumnWidth(0.2),
-                            9: FlexColumnWidth(0.3),
-                            10: IntrinsicColumnWidth(),
-                          },
-                          children: [
-                            TableRow(
-                                decoration: BoxDecoration(color: themeBG4),
-                                children: [
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('#',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                    ),
+        : RawKeyboardListener(
+            autofocus: true,
+            focusNode: FocusNode(),
+            onKey: (e) {
+              var rData =
+                  baseController.KeyPressFun(e, context, backtype: 'dashboard');
+              if (rData != null && rData) {
+                setState(() {});
+              }
+            },
+            child: Scaffold(
+              body: Container(
+                color: Colors.white,
+                child: ListView(
+                  children: [
+                    //header ======================
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 10.0),
+                      decoration: BoxDecoration(color: themeBG2),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {},
+                                  child: Icon(
+                                    Icons.view_list_sharp,
+                                    size: 35,
+                                    color: Colors.blue,
                                   ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('',
+                                ),
+                                SizedBox(width: 20.0),
+                                Text("Stocks", style: GoogleFonts.alike())
+                              ],
+                            ),
+                          ),
+                          Container(
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    Pro_Data();
+                                  },
+                                  icon: Icon(Icons.refresh),
+                                  tooltip: 'Refresh',
+                                ),
+                                SizedBox(width: 20.0),
+                                themeButton3(context, addNewStock,
+                                    label: 'Add New', radius: 5.0),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+
+                    Container(
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: secondaryColor,
+                      ),
+                      child: Column(
+                        children: [
+                          searchBar(context),
+                          Table(
+                            defaultVerticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            border: TableBorder(
+                              horizontalInside:
+                                  BorderSide(width: .5, color: Colors.grey),
+                            ),
+                            columnWidths: {
+                              0: FlexColumnWidth(0.2),
+                              1: FlexColumnWidth(0.1),
+                              2: FlexColumnWidth(0.6),
+                              3: FlexColumnWidth(0.3),
+                              4: FlexColumnWidth(0.4),
+                              5: FlexColumnWidth(0.2),
+                              6: FlexColumnWidth(0.3),
+                              7: FlexColumnWidth(0.3),
+                              8: FlexColumnWidth(0.2),
+                              9: FlexColumnWidth(0.3),
+                              10: IntrinsicColumnWidth(),
+                            },
+                            children: [
+                              TableRow(
+                                  decoration: BoxDecoration(color: themeBG4),
+                                  children: [
+                                    TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('#',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 10.0)),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            if (ascen == true) {
+                                              await _fetchDataAsc(
+                                                  ascen, "name");
+                                            } else if (ascen == false) {
+                                              await _fetchDataAsc(
+                                                  ascen, "name");
+                                            }
+                                          },
+                                          child: Text("Name",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 10.0)),
+                                        ),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            if (ascen == true) {
+                                              await _fetchDataAsc(
+                                                  ascen, "brand");
+                                            } else if (ascen == false) {
+                                              await _fetchDataAsc(
+                                                  ascen, "brand");
+                                            }
+                                          },
+                                          child: Text('Brand',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 10.0)),
+                                        ),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            if (ascen == true) {
+                                              await _fetchDataAsc(
+                                                  ascen, "category");
+                                            } else if (ascen == false) {
+                                              await _fetchDataAsc(
+                                                  ascen, "category");
+                                            }
+                                          },
+                                          child: Text('Category',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 10.0)),
+                                        ),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Text("Qnt.",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 10.0)),
                                     ),
-                                  ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: GestureDetector(
-                                        onTap: () async {
-                                          if (ascen == true) {
-                                            await _fetchDataAsc(ascen, "name");
-                                          } else if (ascen == false) {
-                                            await _fetchDataAsc(ascen, "name");
-                                          }
-                                        },
-                                        child: Text("Name",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 10.0)),
-                                      ),
+                                    TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Text("Location",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10.0)),
                                     ),
-                                  ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: GestureDetector(
-                                        onTap: () async {
-                                          if (ascen == true) {
-                                            await _fetchDataAsc(ascen, "brand");
-                                          } else if (ascen == false) {
-                                            await _fetchDataAsc(ascen, "brand");
-                                          }
-                                        },
-                                        child: Text('Brand',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 10.0)),
-                                      ),
+                                    TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Text("Price (₹)",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10.0)),
                                     ),
-                                  ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: GestureDetector(
-                                        onTap: () async {
-                                          if (ascen == true) {
-                                            await _fetchDataAsc(
-                                                ascen, "category");
-                                          } else if (ascen == false) {
-                                            await _fetchDataAsc(
-                                                ascen, "category");
-                                          }
-                                        },
-                                        child: Text('Category',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 10.0)),
-                                      ),
+                                    TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Text("Status",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10.0)),
                                     ),
-                                  ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Text("Qnt.",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 10.0)),
-                                  ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Text("Location",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 10.0)),
-                                  ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Text("Price (₹)",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 10.0)),
-                                  ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Text("Status",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 10.0)),
-                                  ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Text("Date",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 10.0)),
-                                  ),
-                                  TableCell(
-                                    verticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    child: Text("Actions",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 10.0)),
-                                  ),
-                                ]),
-                            for (var index = 0;
-                                index < productList.length;
-                                index++)
-                              tableRowWidget(
-                                  index + 1,
-                                  productList[index]['name'],
-                                  (productList[index]['brand'] == null)
-                                      ? ""
-                                      : productList[index]['brand'],
-                                  productList[index]['category'],
-                                  productList[index]['quantity'],
-                                  productList[index]['location'],
-                                  (productList[index]['price'] != "")
-                                      ? productList[index]['price']
-                                      : 00.00,
-                                  productList[index]['status'],
-                                  productList[index]['date_at'],
-                                  productList[index]['id'],
-                                  productList[index]),
-                          ],
-                        ),
-                      ],
+                                    TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Text("Date",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10.0)),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment:
+                                          TableCellVerticalAlignment.middle,
+                                      child: Text("Actions",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10.0)),
+                                    ),
+                                  ]),
+                              for (var index = 0;
+                                  index < productList.length;
+                                  index++)
+                                tableRowWidget(
+                                    index + 1,
+                                    productList[index]['name'],
+                                    (productList[index]['brand'] == null)
+                                        ? ""
+                                        : productList[index]['brand'],
+                                    productList[index]['category'],
+                                    productList[index]['quantity'],
+                                    productList[index]['location'],
+                                    (productList[index]['price'] != "")
+                                        ? productList[index]['price']
+                                        : 00.00,
+                                    productList[index]['status'],
+                                    productList[index]['date_at'],
+                                    productList[index]['id'],
+                                    productList[index]),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
@@ -428,29 +445,34 @@ class _ProductAddState extends State<ProductAdd> {
             verticalAlignment: TableCellVerticalAlignment.middle,
             child: Padding(
               padding: const EdgeInsets.all(5.0),
-              child: Text("$Sno", style: textStyle3),
+              child: Row(
+                children: [
+                  Text("$Sno", style: textStyle3),
+                ],
+              ),
             ),
           ),
           TableCell(
               verticalAlignment: TableCellVerticalAlignment.middle,
-              child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: CheckboxListTile(
-                    checkColor: Colors.white,
-                    activeColor: Colors.red,
-                    side: BorderSide(
-                        width: 2, color: Color.fromARGB(255, 74, 83, 75)),
-                    value: (selected_pro[iid] == null) ? false : true,
-                    onChanged: (value) {
-                      setState(() {
-                        if (value == true) {
-                          selected_pro[iid] = true;
-                        } else {
-                          selected_pro.remove(iid);
-                        }
-                      });
-                    },
-                  ))),
+              child: Container(
+                width: 30.0,
+                child: CheckboxListTile(
+                  checkColor: Colors.white,
+                  activeColor: Colors.red,
+                  side: BorderSide(
+                      width: 2, color: Color.fromARGB(255, 74, 83, 75)),
+                  value: (selected_pro[iid] == null) ? false : true,
+                  onChanged: (value) {
+                    setState(() {
+                      if (value == true) {
+                        selected_pro[iid] = true;
+                      } else {
+                        selected_pro.remove(iid);
+                      }
+                    });
+                  },
+                ),
+              )),
           TableCell(
             verticalAlignment: TableCellVerticalAlignment.middle,
             child: Padding(
