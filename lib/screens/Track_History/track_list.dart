@@ -91,7 +91,8 @@ class _TrackHistoryState extends State<TrackHistory> {
           color: themeBG2,
           child: Column(
             children: [
-              Container(height: 70.0, child: Header(title: "Customer List")),
+              Container(
+                  height: 70.0, child: Header(title: "Track History List")),
               CustomerList(context)
             ],
           ),

@@ -3,7 +3,9 @@
 import 'dart:convert';
 
 import 'package:crm_demo/screens/Login_Reg/login_screen.dart';
+import 'package:crm_demo/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +14,8 @@ import '../../../constants.dart';
 import '../../../controllers/MenuAppController.dart';
 import '../../../responsive.dart';
 import '../../../themes/style.dart';
+import '../../Profile/profile_details.dart';
+import '../../main/main_screen.dart';
 
 class Header extends StatefulWidget {
   const Header({super.key, @required this.title});
@@ -24,7 +28,7 @@ class Header extends StatefulWidget {
 logout(context) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   await preferences.clear();
-  await themeAlert(context, "Logout !!");
+  await themeAlert(context, "Successfully Logout !!");
   await Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => Login_Copy() //Home()
@@ -82,13 +86,22 @@ void _LogoutAlert(BuildContext context, setstate) {
       builder: (BuildContext ctx) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: const Text(
-            'Logging Out',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          title: Row(
+            children: [
+              Image.asset("assets/images/logo.png", height: 30),
+              SizedBox(width: 10.0),
+              Text(
+                'Logging Out',
+                style: GoogleFonts.alike(
+                    color: Colors.blue, fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
-          content: const Text('Are you sure to Logout?',
-              style: TextStyle(
-                  color: Colors.black45, fontWeight: FontWeight.normal)),
+          content: Text('Are you sure to Logout?',
+              style: GoogleFonts.alike(
+                  color: Colors.black54,
+                  fontWeight: FontWeight.normal,
+                  fontStyle: FontStyle.italic)),
           actions: [
             // The "Yes" button
             TextButton(
@@ -100,7 +113,8 @@ void _LogoutAlert(BuildContext context, setstate) {
                 },
                 child: Text(
                   'Yes',
-                  style: themeTextStyle(ftFamily: 'ms', color: themeBG4),
+                  style: themeTextStyle(
+                      ftFamily: 'ms', fw: FontWeight.bold, color: Colors.green),
                 )),
             TextButton(
                 onPressed: () {
@@ -109,7 +123,8 @@ void _LogoutAlert(BuildContext context, setstate) {
                 },
                 child: Text(
                   'No',
-                  style: themeTextStyle(ftFamily: 'ms', color: Colors.red),
+                  style: themeTextStyle(
+                      ftFamily: 'ms', fw: FontWeight.bold, color: Colors.red),
                 ))
           ],
         );
@@ -171,13 +186,62 @@ class _ProfileCardState extends State<ProfileCard> {
                   ? Text("${user["name"]}")
                   : Text("User Name"),
             ),
-          IconButton(
-            onPressed: () {
-              _LogoutAlert(context, gggg());
-            },
-            icon: Icon(Icons.keyboard_arrow_down),
-          )
-          //Icon(Icons.keyboard_arrow_down),
+          PopupMenuButton(
+              color: Colors.white,
+              itemBuilder: (context) => [
+                    PopupMenuItem(
+                        onTap: () {
+                          nextScreen(
+                            context,
+                            MultiProvider(providers: [
+                              ChangeNotifierProvider(
+                                create: (context) => MenuAppController(),
+                              ),
+                            ], child: MainScreen(pageNo: 9) // MainScreen(),
+                                ),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.person,
+                              color: Colors.blue,
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              "Profile",
+                              style: GoogleFonts.alike(
+                                  fontSize: 13.0,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        )),
+                    PopupMenuItem(
+                        onTap: () {
+                          _LogoutAlert(context, gggg());
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.logout_outlined,
+                              color: Colors.blue,
+                            ),
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              "Log Out",
+                              style: GoogleFonts.alike(
+                                  fontSize: 13.0,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        )),
+                  ])
         ],
       ),
     );

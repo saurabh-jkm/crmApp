@@ -252,26 +252,27 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(color: Colors.white),
             ),
           ),
-
-          ListTile(
-            tileColor: (sidemenu == 8)
-                ? const Color.fromARGB(127, 33, 149, 243)
-                : const Color.fromARGB(0, 255, 255, 255),
-            onTap: () {
-              setState(() {
-                sidemenu = 8;
-                if (Responsive.isMobile(context)) {
-                  Navigator.of(context).pop();
-                }
-              });
-            },
-            horizontalTitleGap: 0.0,
-            leading: Icon(Icons.location_history, color: Colors.white),
-            title: Text(
-              "Track History",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
+          (user["user_type"] == "admin")
+              ? ListTile(
+                  tileColor: (sidemenu == 8)
+                      ? const Color.fromARGB(127, 33, 149, 243)
+                      : const Color.fromARGB(0, 255, 255, 255),
+                  onTap: () {
+                    setState(() {
+                      sidemenu = 8;
+                      if (Responsive.isMobile(context)) {
+                        Navigator.of(context).pop();
+                      }
+                    });
+                  },
+                  horizontalTitleGap: 0.0,
+                  leading: Icon(Icons.location_history, color: Colors.white),
+                  title: Text(
+                    "Track History",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              : SizedBox(),
           ListTile(
             tileColor: (sidemenu == 9)
                 ? const Color.fromARGB(127, 33, 149, 243)
