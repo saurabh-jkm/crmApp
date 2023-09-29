@@ -95,7 +95,7 @@ class _Invoice_ListState extends State<Invoice_List> {
             .where("date_at", isGreaterThan: dateFrom)
             .where("date_at", isLessThan: dateTo);
       } else {
-        query = await Firestore.instance
+        query = await FirebaseFirestore.instance
             .collection('order')
             .where("date_at", isGreaterThan: dateFrom)
             .where("date_at", isLessThan: dateTo);
