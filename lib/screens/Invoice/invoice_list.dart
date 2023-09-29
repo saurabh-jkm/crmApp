@@ -70,8 +70,13 @@ class _Invoice_ListState extends State<Invoice_List> {
 
   List OrderList = [];
   List finalOrderList = [];
+
   OrderList_data({filter: ''}) async {
     OrderList = [];
+    setState(() {
+      progressWidget = true;
+    });
+
     Map<dynamic, dynamic> w = {
       'table': "order",
       'orderBy': "-date_at",
@@ -167,73 +172,72 @@ class _Invoice_ListState extends State<Invoice_List> {
   var baseController = new base_controller();
   @override
   Widget build(BuildContext context) {
-    return (progressWidget == true)
-        ? Center(child: pleaseWait(context))
-        : RawKeyboardListener(
-            autofocus: true,
-            focusNode: FocusNode(),
-            onKey: (e) {
-              var rData =
-                  baseController.KeyPressFun(e, context, backtype: 'dashboard');
-              if (rData != null && rData) {
-                setState(() {});
-              }
-            },
-            child: Scaffold(
-              body: Container(
-                color: Colors.white,
-                child: ListView(
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKey: (e) {
+        var rData =
+            baseController.KeyPressFun(e, context, backtype: 'dashboard');
+        if (rData != null && rData) {
+          setState(() {});
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          color: Colors.white,
+          child: ListView(
+            children: [
+              //header ======================
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
+                decoration: BoxDecoration(color: themeBG2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    //header ======================
                     Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 16.0, horizontal: 10.0),
-                      decoration: BoxDecoration(color: themeBG2),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {},
-                                  child: Icon(
-                                    Icons.view_list_sharp,
-                                    size: 35,
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                                SizedBox(width: 20.0),
-                                Text("Invoice List", style: GoogleFonts.alike())
-                              ],
+                          GestureDetector(
+                            onTap: () async {},
+                            child: Icon(
+                              Icons.view_list_sharp,
+                              size: 35,
+                              color: Colors.blue,
                             ),
                           ),
-                          Container(
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    OrderList_data();
-                                  },
-                                  icon: Icon(Icons.refresh),
-                                  tooltip: 'Refresh',
-                                ),
-                                SizedBox(width: 20.0),
-                                themeButton3(context, addNewInvoice,
-                                    label: 'Add New', radius: 5.0),
-                              ],
-                            ),
-                          )
+                          SizedBox(width: 20.0),
+                          Text("Invoice List", style: GoogleFonts.alike())
                         ],
                       ),
                     ),
-
-                    listList(context, itemList)
+                    Container(
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              OrderList_data();
+                            },
+                            icon: Icon(Icons.refresh),
+                            tooltip: 'Refresh',
+                          ),
+                          SizedBox(width: 20.0),
+                          themeButton3(context, addNewInvoice,
+                              label: 'Add New', radius: 5.0),
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
-            ),
-          );
+
+              (progressWidget == true)
+                  ? Center(child: pleaseWait(context))
+                  : listList(context, itemList)
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
 //////// ///////////////////////////////// @1  List  of Order       ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
