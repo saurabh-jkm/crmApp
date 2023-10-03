@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures
 
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'dart:io';
@@ -6,6 +6,7 @@ import 'package:firedart/firestore/firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 class trackController {
   var db = (!kIsWeb && Platform.isWindows)
@@ -18,7 +19,7 @@ class trackController {
   Map<dynamic, dynamic> listOrder = new Map();
   TextEditingController searchTextController = new TextEditingController();
 
-  List<String> headintList = ['#', 'Seller Name', 'date', 'Action'];
+  List<String> headintList = ['#', 'Seller Name', 'Distance', 'date', 'Action'];
   var selected_pro = {};
   // init Function for all =========================================
   //================================================================
@@ -41,8 +42,10 @@ class trackController {
       if (data['client_id'] != null) {
         var datar = await dbFind({'table': 'users', 'id': data['client_id']});
         String name = "${datar["first_name"]} ${datar["last_name"]}";
-        data["name"] = name;
+        var Loc_point = data["location_points"];
 
+        data["location_points"] = Loc_point;
+        data["name"] = name;
         listCustomer['$i'] = data;
         listCustomerAllDataArr['$i'] = data;
         listCustomerName.add(name);
@@ -140,4 +143,16 @@ class orderController {
     });
     return 1;
   }
+
+///////  distance in Kilo Meter ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  Future<double> calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) async {
+    double distanceInMeters =
+        await Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
+    double distanceInKm =
+        distanceInMeters / 1000; // Convert meters to kilometers
+    return distanceInKm;
+  }
+
+  ///
 }

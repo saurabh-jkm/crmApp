@@ -80,6 +80,7 @@ class ProfileCard extends StatefulWidget {
   State<ProfileCard> createState() => _ProfileCardState();
 }
 
+//
 void _LogoutAlert(BuildContext context, setstate) {
   showDialog(
       context: context,
@@ -103,11 +104,10 @@ void _LogoutAlert(BuildContext context, setstate) {
                   fontWeight: FontWeight.normal,
                   fontStyle: FontStyle.italic)),
           actions: [
-            // The "Yes" button
+            // The "Yes" button///
             TextButton(
                 onPressed: () {
                   // Remove the box
-
                   logout(context);
                   setstate;
                 },

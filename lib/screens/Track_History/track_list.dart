@@ -73,7 +73,12 @@ class _TrackHistoryState extends State<TrackHistory> {
   }
 
 /////////////=====================================================================
-
+  // Replace these coordinates with your actual coordinates
+  double lat1 = 28.586764; // Latitude of point 1
+  double lon1 = 77.311018; // Longitude of point 1
+  double lat2 = 28.593416; // Latitude of point 2
+  double lon2 = 77.322782; // Longitude of point 2
+  double distance = 0.0;
   @override
   Widget build(BuildContext context) {
     return RawKeyboardListener(
@@ -100,6 +105,7 @@ class _TrackHistoryState extends State<TrackHistory> {
       ),
     );
   }
+
 //
   // Body Part =================================================
   Widget CustomerList(context) {
@@ -166,10 +172,15 @@ class _TrackHistoryState extends State<TrackHistory> {
 // Table Heading ==========================
   Widget CTableRow(context, data, srNo,
       {rowColor: '', textColor: '', controller: ''}) {
-    List<dynamic> dataList = [];
+    // var abc = controller.calculateDistance(lat1, lon1, lat2, lon2);
+    // setState(() {
+    //   distance = abc;
+    // });
 
+    List<dynamic> dataList = [];
     dataList.add('1');
     dataList.add('${data['name']}');
+    dataList.add("2.5 Km");
     dataList.add(
         '${(data['date'] == null) ? '-' : formatDate(data['date'], formate: 'dd/MM/yyyy')}');
     dataList.add('action');
