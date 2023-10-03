@@ -107,9 +107,10 @@ void _LogoutAlert(BuildContext context, setstate) {
             TextButton(
                 onPressed: () {
                   // Remove the box
-
                   logout(context);
-                  setstate;
+
+                  // logout(context);
+                  // setstate;
                 },
                 child: Text(
                   'Yes',
@@ -191,15 +192,9 @@ class _ProfileCardState extends State<ProfileCard> {
               itemBuilder: (context) => [
                     PopupMenuItem(
                         onTap: () {
-                          nextScreen(
-                            context,
-                            MultiProvider(providers: [
-                              ChangeNotifierProvider(
-                                create: (context) => MenuAppController(),
-                              ),
-                            ], child: MainScreen(pageNo: 9) // MainScreen(),
-                                ),
-                          );
+                          //ProfileDetails();
+                          MainScreen(pageNo: 9);
+                          print("yess");
                         },
                         child: Row(
                           children: [
@@ -221,7 +216,8 @@ class _ProfileCardState extends State<ProfileCard> {
                         )),
                     PopupMenuItem(
                         onTap: () {
-                          _LogoutAlert(context, gggg());
+                          //_LogoutAlert(context, gggg());
+                          logout(context);
                         },
                         child: Row(
                           children: [

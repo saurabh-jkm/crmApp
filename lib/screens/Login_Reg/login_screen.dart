@@ -32,6 +32,7 @@ class _Login_CopyState extends State<Login_Copy> {
 
   // ignore: unused_field
   bool _isLoading = false;
+  bool isWait = true;
 
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
@@ -90,7 +91,9 @@ class _Login_CopyState extends State<Login_Copy> {
       await prefs.setString('user', jsonEncode(userDataArr));
       // print("${userData}  ++++++tt+++++");
       themeAlert(context, "Successfully Sign In !!");
-      await Future.delayed(const Duration(seconds: 3), () {
+      // Navigator.of(context).pushReplacement(new MaterialPageRoute(
+      //     builder: (context) => new MainScreen(pageNo: 1)));
+      await Future.delayed(const Duration(seconds: 1), () {
         nextScreenReplace(
           context,
           MultiProvider(providers: [
@@ -102,6 +105,9 @@ class _Login_CopyState extends State<Login_Copy> {
         );
       });
     } else {
+      setState(() {
+        _isLoading = false;
+      });
       themeAlert(context, "Email Or Password MistMatch!!", type: 'error');
     }
   }
@@ -143,134 +149,146 @@ class _Login_CopyState extends State<Login_Copy> {
     return Scaffold(
         body: Container(
             color: Colors.white,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Image(image: AssetImage("assets/images/loginn.png")),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 60.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 1.0,
-                            color: Color.fromARGB(255, 212, 212, 212))),
-                    child: Form(
-                        key: formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Sign In",
-                                  style: GoogleFonts.akayaKanadaka(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30,
-                                      color: Colors.black),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 30,
-                            ),
-
-                            SizedBox(
-                              height: 45,
-                              child: TextFormField(
-                                style: TextStyle(color: Colors.black),
-                                decoration: textInputDecoration.copyWith(
-                                    labelText: "Email",
-                                    hoverColor: Colors.black,
-                                    prefixIcon: Icon(
-                                      Icons.email,
-                                      color: Theme.of(context).primaryColor,
-                                    )),
-                                onChanged: (val) {
-                                  setState(() {
-                                    email = val;
-                                  });
-                                },
-
-                                // check tha validation
-                                validator: (val) {
-                                  return RegExp(
-                                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                          .hasMatch(val!)
-                                      ? null
-                                      : "Please enter a valid email";
-                                },
-                              ),
-                            ),
-
-                            const SizedBox(height: 20),
-                            SizedBox(
-                              height: 45,
-                              child: TextFormField(
-                                style: TextStyle(color: Colors.black),
-                                obscureText: passwordVisible,
-                                decoration: textInputDecoration.copyWith(
-                                    labelText: "Password",
-                                    prefixIcon: Icon(
-                                      Icons.lock,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        passwordVisible
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                        color: Colors.blue,
-                                        size: 20,
+            child: (_isLoading)
+                ? Container(
+                    child: Center(
+                      child: pleaseWait(context),
+                    ),
+                  )
+                : Row(
+                    children: [
+                      Expanded(
+                        child: Image(
+                            image: AssetImage("assets/images/loginn.png")),
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 60.0),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  width: 1.0,
+                                  color: Color.fromARGB(255, 212, 212, 212))),
+                          child: Form(
+                              key: formKey,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Sign In",
+                                        style: GoogleFonts.akayaKanadaka(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 30,
+                                            color: Colors.black),
                                       ),
-                                      onPressed: () {
-                                        setState(
-                                          () {
-                                            passwordVisible = !passwordVisible;
-                                          },
-                                        );
-                                      },
-                                    )),
-                                validator: (val) {
-                                  if (val!.length < 6) {
-                                    return "Password must be at least 6 characters";
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                                onChanged: (val) {
-                                  setState(() {
-                                    password = val;
-                                  });
-                                },
-                              ),
-                            ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                  ),
 
-                            // Text_field(context, EmailController,"Enter Your Email","Email",Icons.email_rounded,"1"),
-                            // Text_field(context, PassController,"Enter Password","Password",Icons.lock_person_rounded,"2"),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                themeButton3(context, () {
-                                  login();
-                                  //                 nextScreenReplace(context,
-                                  //         MultiProvider(
-                                  //        providers: [
-                                  //        ChangeNotifierProvider(
-                                  //       create: (context) => MenuAppController(),
-                                  //     ),
-                                  //   ],
-                                  //   child: MainScreen() // MainScreen(),
-                                  // ),);
-                                }, buttonColor: Colors.green, label: "Log In"),
-                              ],
-                            ),
-                            /*SizedBox(
+                                  SizedBox(
+                                    height: 45,
+                                    child: TextFormField(
+                                      style: TextStyle(color: Colors.black),
+                                      decoration: textInputDecoration.copyWith(
+                                          labelText: "Email",
+                                          hoverColor: Colors.black,
+                                          prefixIcon: Icon(
+                                            Icons.email,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          )),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          email = val;
+                                        });
+                                      },
+
+                                      // check tha validation
+                                      validator: (val) {
+                                        return RegExp(
+                                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                .hasMatch(val!)
+                                            ? null
+                                            : "Please enter a valid email";
+                                      },
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 20),
+                                  SizedBox(
+                                    height: 45,
+                                    child: TextFormField(
+                                      style: TextStyle(color: Colors.black),
+                                      obscureText: passwordVisible,
+                                      decoration: textInputDecoration.copyWith(
+                                          labelText: "Password",
+                                          prefixIcon: Icon(
+                                            Icons.lock,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              passwordVisible
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
+                                              color: Colors.blue,
+                                              size: 20,
+                                            ),
+                                            onPressed: () {
+                                              setState(
+                                                () {
+                                                  passwordVisible =
+                                                      !passwordVisible;
+                                                },
+                                              );
+                                            },
+                                          )),
+                                      validator: (val) {
+                                        if (val!.length < 6) {
+                                          return "Password must be at least 6 characters";
+                                        } else {
+                                          return null;
+                                        }
+                                      },
+                                      onChanged: (val) {
+                                        setState(() {
+                                          password = val;
+                                        });
+                                      },
+                                    ),
+                                  ),
+
+                                  // Text_field(context, EmailController,"Enter Your Email","Email",Icons.email_rounded,"1"),
+                                  // Text_field(context, PassController,"Enter Password","Password",Icons.lock_person_rounded,"2"),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      themeButton3(context, () {
+                                        login();
+                                        //                 nextScreenReplace(context,
+                                        //         MultiProvider(
+                                        //        providers: [
+                                        //        ChangeNotifierProvider(
+                                        //       create: (context) => MenuAppController(),
+                                        //     ),
+                                        //   ],
+                                        //   child: MainScreen() // MainScreen(),
+                                        // ),);
+                                      },
+                                          buttonColor: Colors.green,
+                                          label: "Log In"),
+                                    ],
+                                  ),
+                                  /*SizedBox(
                               height: 10,
                             ),
                             Row(
@@ -299,12 +317,12 @@ class _Login_CopyState extends State<Login_Copy> {
                                 )
                               ],
                             ),*/
-                          ],
-                        )),
-                  ),
-                ),
-              ],
-            )));
+                                ],
+                              )),
+                        ),
+                      ),
+                    ],
+                  )));
   }
 
 // ///////  Text_field 22 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
