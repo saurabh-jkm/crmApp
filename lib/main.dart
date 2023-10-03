@@ -23,6 +23,7 @@ import 'controllers/MenuAppController.dart';
 import 'screens/Login_Reg/login_screen.dart';
 import 'screens/main/main_screen.dart';
 
+///////
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
