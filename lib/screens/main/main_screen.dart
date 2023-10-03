@@ -46,6 +46,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     setState(() {
       sidemenu = widget.pageNo;
+      print("check ---9");
       _getUser();
     });
     super.initState();
