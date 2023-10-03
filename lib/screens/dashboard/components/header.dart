@@ -193,9 +193,9 @@ class _ProfileCardState extends State<ProfileCard> {
               itemBuilder: (context) => [
                     PopupMenuItem(
                         onTap: () {
+                          nextScreen(context, ProfileDetails());
                           //ProfileDetails();
-                          MainScreen(pageNo: 9);
-                          print("yess");
+                          // MainScreen(pageNo: 9);
                         },
                         child: Row(
                           children: [
