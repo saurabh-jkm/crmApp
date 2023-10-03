@@ -305,7 +305,7 @@ dbRawQuery(query) async {
         for (var doc in res.docs) {
           //returnData2[doc.id] = doc.data();
           Map<String, dynamic> temp = doc.data();
-          print("${doc.data()} =====j2 ");
+          // print("${doc.data()} =====j2 ");
           temp['id'] = doc.id;
           returnData2[k] = temp;
           k++;
