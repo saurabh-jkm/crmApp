@@ -38,6 +38,7 @@ class ProductController {
   var quantityController = TextEditingController();
   var priceController = TextEditingController();
   var brandController = TextEditingController();
+  var stockDateController = TextEditingController();
 
   // supplire detials ===========================
   var c_name_controller = TextEditingController();
@@ -92,8 +93,17 @@ class ProductController {
     await default_var_set();
     await getCustomerNameList();
 
+    DateTime DateNow = DateTime.now();
+    String dateIs = DateFormat('dd/MM/yyyy').format(DateNow);
+    stockDateController.text = dateIs;
+
     // this is for edit ===========================================
     if (data != '') {
+      stockDateController.text =
+          (data['stock_date'] != null && data['stock_date'] != '')
+              ? data['stock_date']
+              : formatDate(data['date_at'], formate: 'dd/MM/yyyy');
+
       editData = data;
       //      documentId = widget.data['id'];
       nameController.text = data['name'];
@@ -461,6 +471,7 @@ class ProductController {
       "quantity": quantityController.text,
       //"price": priceController.text,
       "date_at": DateTime.now(),
+      "stock_date": stockDateController.text,
       "status": true
     };
     var location = {};

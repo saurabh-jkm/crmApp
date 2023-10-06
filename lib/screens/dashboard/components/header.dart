@@ -191,11 +191,10 @@ class _ProfileCardState extends State<ProfileCard> {
           PopupMenuButton(
               color: Colors.white,
               itemBuilder: (context) => [
-                    PopupMenuItem(
+                    /*PopupMenuItem(
                         onTap: () {
-                          nextScreen(context, ProfileDetails());
                           //ProfileDetails();
-                          // MainScreen(pageNo: 9);
+                          MainScreen(pageNo: 9);
                         },
                         child: Row(
                           children: [
@@ -214,7 +213,7 @@ class _ProfileCardState extends State<ProfileCard> {
                                   fontWeight: FontWeight.normal),
                             ),
                           ],
-                        )),
+                        )),*/
                     PopupMenuItem(
                         onTap: () {
                           //_LogoutAlert(context, gggg());

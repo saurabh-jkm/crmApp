@@ -210,6 +210,22 @@ class _addStockScreenState extends State<addStockScreen> {
                                               ],
                                             ),
                                           ),
+
+                                          // fireld 4 ==========================
+                                          Expanded(
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: formInput(
+                                                      context,
+                                                      "Stock Date",
+                                                      controller
+                                                          .stockDateController,
+                                                      padding: 8.0),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         ],
                                       ),
 

@@ -46,7 +46,6 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     setState(() {
       sidemenu = widget.pageNo;
-      print("check ---9");
       _getUser();
     });
     super.initState();
@@ -57,7 +56,6 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       // key: context.read<MenuAppController>().scaffoldKey,
       drawer: WdSideMenu(context),
-      //
       body: SafeArea(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,7 +325,6 @@ class _MainScreenState extends State<MainScreen> {
                       }
                     });
                   },
-                  //
                   horizontalTitleGap: 0.0,
                   leading: Icon(Icons.admin_panel_settings_outlined,
                       color: Colors.white),
