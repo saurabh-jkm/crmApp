@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, division_optimization
 
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'package:crm_demo/themes/style.dart';
@@ -380,31 +380,67 @@ class invoiceController {
       var t_ins_unit = (instData['$k']['unit'] == '')
           ? 0
           : int.parse(instData['$k']['unit'].toString());
+
+      // db data ================================
+
+      var t_productdb_unit = (subProducts['$i']['unit'] != '')
+          ? int.parse(subProducts['$i']['unit'].toString())
+          : 0;
+
+      var t_productdb_qnt = (productData['quantity'] == '')
+          ? 0
+          : int.parse(productData['quantity'].toString());
+
+      var t_subproduct_qnt = (subProducts['$i']['quantity'] == '')
+          ? 0
+          : int.parse(subProducts['$i']['quantity'].toString());
+
       var t_productdb_totalUnit = (subProducts['$i']['totalUnit'] == '')
           ? 0
           : int.parse(subProducts['$i']['totalUnit'].toString());
 
-      var t_productdb_unit = (subProducts['$i']['unit'] == '')
-          ? 0
-          : int.parse(subProducts['$i']['unit'].toString());
-      var t_productdb_qnt = (subProducts['$i']['quantity'] == '')
-          ? 0
-          : int.parse(subProducts['$i']['quantity'].toString());
+      // old data ================================
+      // var t_product_totalUnit = (subProducts['$i']['totalUnit'] == '')
+      //     ? 0
+      //     : int.parse(subProducts['$i']['totalUnit'].toString());
 
-      var t_product_qnt = (subProducts['quantity'] == '')
-          ? 0
-          : int.parse(productData['quantity'].toString());
+      // var t_product_qnt = (subProducts['$i']['quantity'] == '')
+      //     ? 0
+      //     : int.parse(subProducts['$i']['quantity'].toString());
+
+      // var t_product_unit = (subProducts['$i']['unit'] == '')
+      //     ? 0
+      //     : int.parse(subProducts['$i']['unit'].toString());
 
       // update all quantity & unit
       if (t_productdb_unit == 0) {
         t_productdb_qnt = t_productdb_qnt - t_ins_qnt;
-        t_product_qnt = t_product_qnt - t_ins_qnt;
+        t_subproduct_qnt = t_subproduct_qnt - t_ins_qnt;
       } else {
-        t_ins_unit =
-            (t_ins_unit == 0) ? t_ins_qnt * t_productdb_unit : t_ins_unit;
-        t_productdb_totalUnit = t_productdb_totalUnit - t_ins_unit;
-        int tQnt2 = (t_productdb_totalUnit / t_productdb_unit).toInt();
-        t_product_qnt = t_product_qnt - (t_productdb_qnt - tQnt2);
+        if (t_ins_unit == 0 || t_ins_unit == '') {
+          t_productdb_qnt = t_productdb_qnt - t_ins_qnt;
+          t_subproduct_qnt = t_subproduct_qnt - t_ins_qnt;
+        } else {
+          t_productdb_totalUnit =
+              (t_productdb_totalUnit == 0 || t_productdb_totalUnit == '')
+                  ? t_productdb_qnt * t_productdb_unit
+                  : t_productdb_totalUnit;
+
+          t_productdb_totalUnit = int.parse(t_productdb_totalUnit.toString()) -
+              int.parse(t_ins_unit.toString());
+
+          int tQnt2 = (t_ins_unit / t_productdb_unit).toInt();
+
+          t_productdb_qnt = t_productdb_qnt - tQnt2;
+          t_subproduct_qnt = t_subproduct_qnt - tQnt2;
+        }
+
+        // t_ins_unit =
+        //     (t_ins_unit == 0) ? t_ins_qnt * t_productdb_unit : t_ins_unit;
+        // t_productdb_totalUnit = t_productdb_totalUnit - t_ins_unit;
+        // int tQnt2 = (t_productdb_totalUnit / t_productdb_unit).toInt();
+        // t_productdb_qnt = t_productdb_qnt - t_ins_qnt;
+        // t_subproduct_qnt = t_subproduct_qnt - t_ins_qnt;
       }
       // check add or remove when update
       int diffRance = 0;
@@ -429,7 +465,7 @@ class invoiceController {
 
         if (t_productdb_unit == 0) {
           subProducts['$i']['totalUnit'] =
-              '${t_productdb_qnt + t_ins_qnt + (old_qnt - t_ins_qnt)}';
+              '${t_subproduct_qnt + t_ins_qnt + (old_qnt - t_ins_qnt)}';
           logQnt = old_qnt - t_ins_qnt;
           logType = (logQnt > 1) ? 'return' : 'add_more';
         } else {
@@ -444,9 +480,13 @@ class invoiceController {
           'date_at': DateTime.now()
         };
       } else {
+        // this is for new ==========================================
         // update product table
-        subProducts['$i']['totalUnit'] = '$t_productdb_totalUnit';
-        subProducts['$i']['quantity'] = '$t_productdb_qnt';
+
+        if (t_productdb_unit != 0) {
+          subProducts['$i']['totalUnit'] = '$t_productdb_totalUnit';
+        }
+        subProducts['$i']['quantity'] = '$t_subproduct_qnt';
       }
 
       // total quantity count
@@ -462,6 +502,7 @@ class invoiceController {
         'item_list': subProducts,
       };
       var r = await dbUpdate(db, tempW);
+      //print(tempW);
     }
 
     return NewLog;
@@ -616,6 +657,8 @@ class invoiceController {
       }
       // End this is for Supplier Log manage ====================
     }
+
+    //return false;
 
     dbArr['gst'] = totalGst;
     dbArr['subtotal'] = totalPrice - totalGst;

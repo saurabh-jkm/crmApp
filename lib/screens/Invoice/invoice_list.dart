@@ -152,7 +152,10 @@ class _Invoice_ListState extends State<Invoice_List> {
     final temp = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => addInvoiceScreen(header_name: "New Invoice")));
+            builder: (_) => addInvoiceScreen(
+                header_name: (selectedFilter == 'Buy')
+                    ? "Supllier Invoice"
+                    : "Customer Invoice")));
 
     if (temp == 'updated') {
       OrderList_data();
@@ -225,7 +228,10 @@ class _Invoice_ListState extends State<Invoice_List> {
                           ),
                           SizedBox(width: 20.0),
                           themeButton3(context, addNewInvoice,
-                              label: 'Add New', radius: 5.0),
+                              label: (selectedFilter == 'Buy')
+                                  ? "Buy Now"
+                                  : "Sale New",
+                              radius: 5.0),
                         ],
                       ),
                     )
@@ -352,8 +358,11 @@ class _Invoice_ListState extends State<Invoice_List> {
                                 radius: 2.0,
                                 borderColor: (selectedFilter == 'Sale')
                                     ? Colors.white
-                                    : Colors.transparent,
-                                buttonColor: Color.fromARGB(255, 4, 141, 134)),
+                                    : Colors.white,
+                                buttonColor: (selectedFilter == 'Sale')
+                                    ? Color.fromARGB(255, 4, 141, 134)
+                                    : const Color.fromARGB(0, 110, 110, 110)),
+
                             SizedBox(width: 10.0),
 
                             themeButton3(context, changeFilter,
@@ -361,9 +370,11 @@ class _Invoice_ListState extends State<Invoice_List> {
                                 label: 'Buy',
                                 radius: 2.0,
                                 borderColor: (selectedFilter == 'Buy')
-                                    ? Colors.white
-                                    : Colors.transparent,
-                                buttonColor: Color.fromARGB(255, 243, 67, 54)),
+                                    ? Colors.green
+                                    : Colors.white,
+                                buttonColor: (selectedFilter == 'Buy')
+                                    ? Color.fromARGB(255, 4, 141, 134)
+                                    : const Color.fromARGB(0, 110, 110, 110)),
 
                             // Container(
                             //   height: 30,
