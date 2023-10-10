@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new, unused_field, unused_label, unrelated_type_equality_checks, file_names, unnecessary_cast, unused_import
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new, unused_field, unused_label, unrelated_type_equality_checks, file_names, unnecessary_cast, unused_import, deprecated_colon_for_default_value, await_only_futures
 import 'dart:convert';
 import 'dart:io';
 
@@ -11,6 +11,7 @@ import 'package:crm_demo/themes/function.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 import '../customers/customer_widgets.dart';
@@ -43,8 +44,32 @@ class _TrackHistoryState extends State<TrackHistory> {
   @override
   void initState() {
     initFunctions();
+
+    // Replace these coordinates with your actual coordinates
+    double lat1 = 28.586764; // Latitude of point 1
+    double lon1 = 77.311018; // Longitude of point 1
+    double lat2 = 28.593416; // Latitude of point 2
+    double lon2 = 77.322782; // Longitude of point 2
+    var distance;
+    setState(() {
+      distance = calculateDistance(lat1, lon1, lat2, lon2);
+      print("$distance ++++++++++++++++++++++++");
+    });
+
     super.initState();
   }
+
+  ///////  distance in Kilo Meter ++++++++++++++++++++++++++++++++++++++++++++++
+  Future<double> calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) async {
+    double distanceInMeters =
+        await Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
+    double distanceInKm =
+        distanceInMeters / 1000; // Convert meters to kilometers
+    return distanceInKm;
+  }
+
+  ///
 
 ///////  delete  Product ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -73,12 +98,7 @@ class _TrackHistoryState extends State<TrackHistory> {
   }
 
 /////////////=====================================================================
-  // Replace these coordinates with your actual coordinates
-  double lat1 = 28.586764; // Latitude of point 1
-  double lon1 = 77.311018; // Longitude of point 1
-  double lat2 = 28.593416; // Latitude of point 2
-  double lon2 = 77.322782; // Longitude of point 2
-  double distance = 0.0;
+
   @override
   Widget build(BuildContext context) {
     return RawKeyboardListener(
@@ -172,11 +192,6 @@ class _TrackHistoryState extends State<TrackHistory> {
 // Table Heading ==========================
   Widget CTableRow(context, data, srNo,
       {rowColor: '', textColor: '', controller: ''}) {
-    // var abc = controller.calculateDistance(lat1, lon1, lat2, lon2);
-    // setState(() {
-    //   distance = abc;
-    // });
-
     List<dynamic> dataList = [];
     dataList.add('1');
     dataList.add('${data['name']}');
@@ -237,6 +252,8 @@ class _TrackHistoryState extends State<TrackHistory> {
                               IconButton(
                                   onPressed: () {
                                     if (controller != '') {
+                                      print(
+                                          "${data['location_points'].runtimeType}  ========f===");
                                       nextScreen(
                                           context,
                                           View_Location_Screen(

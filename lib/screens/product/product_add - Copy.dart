@@ -301,7 +301,7 @@ class _ProductAddState extends State<ProductAdd> {
     });
   }
 
-// get attribute list+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// get attribute list+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   _fnGetAttr() async {
     Map<String, dynamic> where = {'table': "attribute", 'status': '1'};
     myAttr = await dbFindDynamic(db, where);
@@ -311,7 +311,7 @@ class _ProductAddState extends State<ProductAdd> {
   Map<String, dynamic> subProduDetailList = {};
   List<dynamic> subProductBox = [];
   List<dynamic> Submit_subProductBox = [];
-/////////  change check box value  +++++++++++++++++++++++++++++++++++++++++++++++
+/////////  change check box value  +++++++++++++++++++++++++++++++++++++++++++++
 
   _fnChangeCheckVal(key, Value, checkType) {
     if (this.mounted)

@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_new, prefer_collection_literals
+// ignore_for_file: unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps, non_constant_identifier_names
 
 import 'package:crm_demo/screens/product/product/add_product_screen.dart';
 

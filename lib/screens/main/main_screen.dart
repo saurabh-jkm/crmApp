@@ -46,7 +46,6 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     setState(() {
       sidemenu = widget.pageNo;
-      print("check ---9");
       _getUser();
     });
     super.initState();
@@ -55,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
   ////////
   Widget build(BuildContext context) {
     return Scaffold(
-      // key: context.read<MenuAppController>().scaffoldKey,
+      key: context.read<MenuAppController>().scaffoldKey,
       drawer: WdSideMenu(context),
       //
       body: SafeArea(

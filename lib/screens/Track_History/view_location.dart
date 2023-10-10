@@ -32,8 +32,7 @@ class _View_Location_ScreenState extends State<View_Location_Screen> {
   List tempArr = [];
   double Location_lat = 0.0;
   double Location_alt = 0.0;
-  double End_lat = 0.0;
-  double End_alt = 0.0;
+
   _getUser() async {
     tempArr = widget.client_location;
     SharedPreferences prefs = await SharedPreferences.getInstance();

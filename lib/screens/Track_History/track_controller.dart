@@ -143,16 +143,4 @@ class orderController {
     });
     return 1;
   }
-
-///////  distance in Kilo Meter ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  Future<double> calculateDistance(
-      double lat1, double lon1, double lat2, double lon2) async {
-    double distanceInMeters =
-        await Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
-    double distanceInKm =
-        distanceInMeters / 1000; // Convert meters to kilometers
-    return distanceInKm;
-  }
-
-  ///
 }
