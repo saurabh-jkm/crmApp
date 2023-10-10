@@ -264,7 +264,9 @@ class ProductController {
 
     var dbData = await dbFindDynamic(db, {'table': 'category'});
     dbData.forEach((k, data) {
-      ListCategory.add(data['category_name']);
+      if (data['category_name'] != '') {
+        ListCategory.add(data['category_name']);
+      }
     });
   }
 

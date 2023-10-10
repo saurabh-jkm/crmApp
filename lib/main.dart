@@ -127,7 +127,10 @@ class _MyAppState extends State<MyApp> {
         '/invoice': (context) => Invoice_List(),
         '/dashboard': (context) => MainScreen(pageNo: 1),
         '/new_invoice': (context) => addInvoiceScreen(
-              header_name: "New Invoice",
+              header_name: "Customer",
+            ),
+        '/new_supplier_invoice': (context) => addInvoiceScreen(
+              header_name: "Suplier",
             ),
       },
     );

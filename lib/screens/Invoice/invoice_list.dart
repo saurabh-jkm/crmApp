@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
 import 'package:crm_demo/screens/Invoice/edit_invoice.dart';
 import 'package:crm_demo/screens/Invoice/pdf.dart';
 import 'package:crm_demo/screens/Invoice/view_invoice_screen.dart';
@@ -151,10 +152,12 @@ class _Invoice_ListState extends State<Invoice_List> {
   addNewInvoice() async {
     final temp = await Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (_) => addInvoiceScreen(
-                header_name:
-                    (selectedFilter == 'Buy') ? "Supllier" : "Customer")));
+        (selectedFilter == 'Buy')
+            ? MaterialPageRoute(
+                builder: (_) =>
+                    addInvoiceSupplierScreen(header_name: "Supplier"))
+            : MaterialPageRoute(
+                builder: (_) => addInvoiceScreen(header_name: "Customer")));
 
     if (temp == 'updated') {
       OrderList_data();

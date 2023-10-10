@@ -1,11 +1,12 @@
 // ignore_for_file: unnecessary_string_interpolations, unused_shown_name, division_optimization
-
+import 'dart:convert';
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'package:crm_demo/themes/style.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
@@ -14,13 +15,14 @@ import 'package:flutter/services.dart';
 class invoiceController {
   //var db = FirebaseFirestore.instance;
   //var db = Firestore.instance;
-
+  bool isSupplier = false;
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
       : FirebaseFirestore.instance;
 
   final formKeyInvoice = GlobalKey<FormState>();
   List<LogicalKeyboardKey> Keys = [];
+  Map<dynamic, dynamic> user = new Map();
 
   final Customer_nameController = TextEditingController();
   final Customer_MobileController = TextEditingController();
@@ -39,7 +41,6 @@ class invoiceController {
   List<String> itemList = ['All', 'Sale', 'Estimate'];
   String SaleType = 'Sale';
 
-  final categoryController = TextEditingController();
   final quantityController = TextEditingController();
   final priceController = TextEditingController();
   final brandController = TextEditingController();
@@ -49,7 +50,6 @@ class invoiceController {
   final newAttributeController = TextEditingController();
 
   // temporary
-  Map<String, TextEditingController> dynamicControllers = new Map();
 
   Map<String, TextEditingController> locationControllers = new Map();
   Map<String, TextEditingController> locationQuntControllers = new Map();
@@ -85,14 +85,32 @@ class invoiceController {
   int totalPrice = 0;
   int totalGst = 0;
 
+  // this is for dynamice controller
+  Map<String, dynamic> dynamicControllers = new Map();
+  Map<String, dynamic> ListAttribute = {};
+  Map<String, dynamic> ListAttributeWithId = {};
+  List<String> RackList = [];
+  Map<int, TextEditingController> productLocationController = new Map();
+  Map<int, TextEditingController> categoryController = new Map();
+  List<String> ListCategory = [];
+
   // init Function for all =========================================
   //================================================================
   //================================================================
   //================================================================
 
-  init_functions({dbData: ''}) async {
+  init_functions({dbData: '', type: ''}) async {
+    if (type == 'buy') {
+      isSupplier = true;
+      await getAttributeList();
+      await getRackList();
+      await getCategoryList();
+    }
+
+    await _getUser();
     await getProductNameList();
     await getCustomerNameList();
+
     // await getCategoryList();
     // await getAttributeList();
 
@@ -112,6 +130,8 @@ class invoiceController {
     ProductTotalControllers[1] = TextEditingController();
     ProductGstControllers[1] = TextEditingController();
     ProductDiscountControllers[1] = TextEditingController();
+    productLocationController[1] = TextEditingController();
+    categoryController[1] = TextEditingController();
     ProductQuntControllers[1]!.text = '1';
     ProductUnitControllers[1]!.text = '0';
     ProductDiscountControllers[1]!.text = '0';
@@ -191,6 +211,14 @@ class invoiceController {
     }
   }
 
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic userData = (prefs.getString('user'));
+    if (userData != null) {
+      user = jsonDecode(userData) as Map<dynamic, dynamic>;
+    }
+  }
+
   // reset controller
   resetController() {
     Customer_nameController.text = '';
@@ -232,6 +260,7 @@ class invoiceController {
               ListName.add(tempName);
               vl['id'] = data['id'];
               vl['list_item_id'] = i;
+              vl['category'] = data['category'];
               allProductList[tempName] = vl;
             }
           });
@@ -244,7 +273,8 @@ class invoiceController {
   // get all Customer name List =============================
   getCustomerNameList() async {
     ListCustomer = [];
-    var dbData = await dbFindDynamic(db, {'table': 'customer'});
+    var dbData = await dbFindDynamic(db,
+        {'table': 'customer', 'type': (isSupplier) ? 'Supplier' : 'Customer'});
 
     dbData.forEach((k, data) {
       if (data['name'] != null) {
@@ -254,20 +284,54 @@ class invoiceController {
     });
   }
 
-  // get product details ======================================
-  getProductDetails(productName) async {
-    if (allProductList[productName] != null) {
-      return allProductList[productName];
-    } else {
-      return Map();
-    }
-    // var dbData =
-    //     await dbFindDynamic(db, {'table': 'product', 'name': productName});
-    // if (dbData.isEmpty) {
-    //   return Map();
-    // } else {
-    //   return dbData[0];
-    // }
+  // get all  Attribute List =============================
+  getAttributeList() async {
+    ListAttribute = {};
+
+    var dbData = await dbFindDynamic(db, {'table': 'attribute'});
+    dbData.forEach((k, data) {
+      List<String> temp = [];
+      if (data['value'] != null) {
+        data['value'].forEach((k, v) {
+          temp.add(k);
+        });
+      }
+      ListAttribute[data['attribute_name'].toLowerCase()] = temp;
+
+      ListAttributeWithId[data['attribute_name'].toLowerCase()] = {
+        'id': data['id'],
+        'data': data
+      };
+      for (var i = 1; i <= totalProduct; i++) {
+        Map<String, TextEditingController> temp =
+            (dynamicControllers['$i'] != null)
+                ? dynamicControllers["$i"]
+                : new Map();
+        temp[data['attribute_name'].toLowerCase()] = TextEditingController();
+        dynamicControllers["$i"] = temp;
+      }
+    });
+  }
+
+  // get all product name List =============================
+  getRackList() async {
+    RackList = [];
+    //var dbData = await db.collection('product').get();
+    var dbData = await dbFindDynamic(db, {'table': 'rack'});
+    dbData.forEach((k, data) {
+      RackList.add(data['name']);
+    });
+  }
+
+  // category list ============================================
+  getCategoryList() async {
+    ListCategory = [];
+    var dbData = await dbFindDynamic(db, {'table': 'category'});
+    dbData.forEach((k, data) {
+      if (data['category_name'] != '') {
+        ListCategory.add(data['category_name']);
+      }
+    });
   }
 
   // quantity update ===========================
@@ -356,6 +420,27 @@ class invoiceController {
     } else {
       return '';
     }
+  }
+
+  // get product details ======================================
+  getProductDetails(productName) async {
+    if (allProductList[productName] != null) {
+      return allProductList[productName];
+    } else {
+      return Map();
+    }
+  }
+
+  //function get supplier products details ================================
+  fnGetProductDetails(productId, data) async {
+    categoryController[productId]!.text = data['category'];
+    productLocationController[productId]!.text = data['location'];
+    ProductUnitControllers[productId]!.text = data['unit'];
+    dynamicControllers['$productId'].forEach((key, value) {
+      if (data[key] != null) {
+        dynamicControllers['$productId'][key].text = data[key];
+      }
+    });
   }
 
   // update product quantity
@@ -511,6 +596,9 @@ class invoiceController {
 // ***************************************************************
 // insert product
 // ***************************************************************
+// ***************************************************************
+// ***************************************************************
+// ***************************************************************
 
   insertInvoiceDetails(context, {docId: ''}) async {
     var alert = '';
@@ -543,7 +631,7 @@ class invoiceController {
       "gst_no": Customer_GstNoController.text,
       "invoice_for": InvoiceType,
       "is_sale": SaleType,
-      "type": (InvoiceType == 'Customer') ? "Sale" : "Buy",
+      "type": (isSupplier) ? "Buy" : "Sale",
       // "category": categoryController.text,
       // "quantity": quantityController.text,
       "total": totalPrice,
@@ -558,7 +646,7 @@ class invoiceController {
       dbArr["update_at"] = DateTime.now();
     }
 
-    // all product
+    // all product ================================================
     int intTotalQuntity = 0;
     int intTotalUnit = 0;
     var i = 1;
@@ -599,6 +687,15 @@ class invoiceController {
             type: 'error');
         return false;
       }
+
+      if (isSupplier && categoryController[i] == '') {
+        themeAlert(context, "Row No. $i : Category Required", type: 'error');
+        return false;
+      } else if (isSupplier && productLocationController[i] == '') {
+        themeAlert(context, "Row No. $i : Location Required", type: 'error');
+        return false;
+      }
+
       products['${i - 1}'] = temp;
       i++;
     }
@@ -623,11 +720,32 @@ class invoiceController {
       }
     }
 
+    // update stok functions
+    Future<void> updateStock(products) async {
+      products.forEach((k, value) async {
+        int i = int.parse(k.toString()) + 1;
+        if (allProductList[ProductNameControllers[i]!.text] != null) {
+          // update
+          await stock_update(allProductList[ProductNameControllers[i]!.text],
+              products['$k'], dynamicControllers['$i']);
+        } else {
+          // insert new product
+          await stock_insert(
+              products['$k'],
+              dynamicControllers['$i'],
+              categoryController[i]!.text,
+              productLocationController[i]!.text,
+              invoiceDateController.text);
+        }
+      });
+    }
+
     if (dbArr['type'] == 'Sale') {
       await callUpdateFn();
     } else {
       // this is for Supplier Log manage ====================
       if (docId != '') {
+        // when edit
         var tempProduct = products;
 
         tempProduct.forEach((k, v) {
@@ -654,11 +772,12 @@ class invoiceController {
             }
           }
         });
+      } else {
+        // update Stock =======================================
+        updateStock(products);
       }
       // End this is for Supplier Log manage ====================
     }
-
-    //return false;
 
     dbArr['gst'] = totalGst;
     dbArr['subtotal'] = totalPrice - totalGst;
@@ -720,7 +839,11 @@ class invoiceController {
     if (docId == '') {
       await dbSave(db, dbArr);
       themeAlert(context, "Submitted Successfully ");
-      Navigator.popAndPushNamed(context, '/new_invoice');
+      if (isSupplier) {
+        Navigator.popAndPushNamed(context, '/new_supplier_invoice');
+      } else {
+        Navigator.popAndPushNamed(context, '/new_invoice');
+      }
     } else {
       dbArr['id'] = docId;
       var rData = await dbUpdate(db, dbArr);
@@ -810,6 +933,15 @@ class invoiceController {
       ctrId = ctrNewId;
     }
 
+    ListAttribute.forEach((key, value) {
+      Map<String, TextEditingController> temp =
+          (dynamicControllers['$totalProduct'] != null)
+              ? dynamicControllers["$totalProduct"]
+              : new Map();
+      temp[key] = TextEditingController();
+      dynamicControllers["$totalProduct"] = temp;
+    });
+
     ProductNameControllers[ctrId] = TextEditingController();
     ProductPriceControllers[ctrId] = TextEditingController();
     ProductQuntControllers[ctrId] = TextEditingController();
@@ -817,6 +949,8 @@ class invoiceController {
     ProductGstControllers[ctrId] = TextEditingController();
     ProductDiscountControllers[ctrId] = TextEditingController();
     ProductTotalControllers[ctrId] = TextEditingController();
+    productLocationController[ctrId] = TextEditingController();
+    categoryController[ctrId] = TextEditingController();
 
     ProductQuntControllers[ctrId]!.text = '1';
     ProductUnitControllers[ctrId]!.text = '0';
@@ -828,6 +962,7 @@ class invoiceController {
   // remove  row
   ctrRemoveRow(context) async {
     if (totalProduct > 1) {
+      dynamicControllers.remove(totalProduct);
       var ctrId = totalProduct;
       ProductNameControllers.remove(ctrId);
       ProductPriceControllers.remove(ctrId);
@@ -836,6 +971,8 @@ class invoiceController {
       ProductGstControllers.remove(ctrId);
       ProductDiscountControllers.remove(ctrId);
       ProductTotalControllers.remove(ctrId);
+      productLocationController.remove(ctrId);
+      categoryController.remove(ctrId);
       productDBdata.remove(ctrId);
       await ctrGrandTotal();
       totalProduct--;
@@ -874,6 +1011,156 @@ class invoiceController {
       }
     } else {
       Keys.remove(key);
+    }
+  }
+
+  // update Stock ====================================================
+  // update Stock ====================================================
+  // update Stock ====================================================
+  stock_update(old, currentData, dynamicData) async {
+    var dbArr = {
+      "table": "product",
+      "update_at": DateTime.now(),
+    };
+
+    // get saved data
+
+    var rData = await dbFind({'table': 'product', 'id': '${old['id']}'});
+
+    var listData = rData['item_list'];
+    var oldSubData;
+    var subData = oldSubData = (listData[old['list_item_id']] != null)
+        ? listData[old['list_item_id']]
+        : {};
+
+    var qnt = currentData['quantity'];
+    var unit = (currentData['unit'] == '') ? '0' : currentData['unit'];
+    var Tunit =
+        int.parse(currentData['unit'].toString()) * int.parse(qnt.toString());
+    dynamicData.forEach((k, v) {
+      subData['$k'] = v.text;
+    });
+
+    subData['quantity'] =
+        '${int.parse(subData['quantity'].toString()) + int.parse(qnt.toString())}';
+    subData['totalUnit'] =
+        '${int.parse(subData['totalUnit'].toString()) + int.parse(Tunit.toString())}';
+    subData['unit'] = '${unit}';
+
+    rData['item_list'][old['list_item_id']] = subData;
+    rData['quantity'] =
+        '${(int.parse(rData['quantity'].toString()) + int.parse(qnt.toString()))}';
+
+    rData['table'] = 'product';
+    rData['id'] = '${old['id']}';
+    await dbUpdate(db, rData);
+
+    // log update ====================================================
+    var logDb = await dbFindDynamic(
+        db, {'table': 'product_log', 'product_id': '${old['id']}'});
+
+    var newLog = (logDb.isNotEmpty && logDb[0]['log'] != null)
+        ? logDb[0]['log'].toList()
+        : [];
+
+    rData['log_date'] = DateTime.now();
+    rData['updatedBy'] = (user['id'] != null) ? user['id'] : '';
+    rData['updatedByName'] = (user['name'] != null) ? user['name'] : '';
+    rData['singleLog'] = 'Quntity Update';
+    rData['oldSubData'] = oldSubData;
+    rData['changedSubData'] = subData;
+
+    rData.remove('id');
+    rData.remove('table');
+
+    newLog.add(rData);
+    var updateArr = {
+      'table': 'product_log',
+      'product_id': '${old['id']}',
+      'log': newLog,
+      'last_update': DateTime.now()
+    };
+
+    if (logDb.isNotEmpty && logDb[0]['id'] != null) {
+      // update
+      updateArr['id'] = logDb[0]['id'];
+      await dbUpdate(db, updateArr);
+    } else {
+      // insert
+      await dbSave(db, updateArr);
+    }
+  }
+
+  // new stock add ====================================================
+  // new stock add ====================================================
+  // new stock add ====================================================
+  stock_insert(currentData, dynamicData, cat, location, stockDate) async {
+    var dbArr = {
+      "table": "product",
+      "name": currentData['name'],
+      "category": '$cat',
+      "price": currentData['price'],
+      "date_at": DateTime.now(),
+      "stock_date": stockDate,
+      "status": true
+    };
+
+    var qnt = currentData['quantity'];
+    var unit = (currentData['unit'] == '') ? '0' : currentData['unit'];
+    var Tunit =
+        int.parse(currentData['unit'].toString()) * int.parse(qnt.toString());
+
+    // get saved data
+    var subData = {};
+    dynamicData.forEach((k, v) {
+      subData['$k'] = v.text;
+    });
+
+    subData['quantity'] = '$qnt';
+    subData['unit'] = '$unit';
+    subData['totalUnit'] = '$Tunit';
+    subData['location'] = '$location';
+    subData['price'] = '${dbArr['price']}';
+
+    var itemList = {};
+    itemList['1'] = subData;
+    dbArr['item_list'] = itemList;
+
+    dbArr['quantity'] = '$qnt';
+    dbArr['brand'] = (subData['brand'] == null) ? '' : subData['brand'];
+    dbArr['item_location'] = {'${location}': '${dbArr['quantity']}'};
+
+    // return false;
+
+    var productID = await dbSave(db, dbArr);
+
+    //log update ====================================================
+    var logDb = await dbFindDynamic(
+        db, {'table': 'product_log', 'product_id': '$productID}'});
+
+    var newLog = (logDb.isNotEmpty && logDb[0]['log'] != null)
+        ? logDb[0]['log'].toList()
+        : [];
+
+    dbArr['log_date'] = DateTime.now();
+    dbArr['updatedBy'] = (user['id'] != null) ? user['id'] : '';
+    dbArr['updatedByName'] = (user['name'] != null) ? user['name'] : '';
+    dbArr['singleLog'] = 'new Product_from_suplier_invoice';
+    newLog.add(dbArr);
+    var updateArr = {
+      'table': 'product_log',
+      'product_id': '${productID}',
+      'log': newLog,
+      'last_update': DateTime.now()
+    };
+
+    if (logDb.isNotEmpty && logDb[0]['id'] != null) {
+      // update
+      updateArr['id'] = logDb[0]['id'];
+      await dbUpdate(db, updateArr);
+    } else {
+      // insert
+      await dbSave(db, updateArr);
     }
   }
 }
