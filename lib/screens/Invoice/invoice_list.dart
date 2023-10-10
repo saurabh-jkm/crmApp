@@ -63,7 +63,7 @@ class _Invoice_ListState extends State<Invoice_List> {
 ////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
   bool progressWidget = true;
   List<String> itemList = ['All', 'Sale', 'Buy'];
-  var selectedFilter = 'All';
+  var selectedFilter = 'Sale';
   TextEditingController startDate_controller = new TextEditingController();
   TextEditingController toDate_controller = new TextEditingController();
 
@@ -117,6 +117,8 @@ class _Invoice_ListState extends State<Invoice_List> {
 
       progressWidget = false;
     });
+
+    SearchFn(selectedFilter, filter: 'filter');
   }
 ////////////////////////////////////////========================================
 
