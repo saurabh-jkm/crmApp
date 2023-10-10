@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
 import 'package:crm_demo/screens/Invoice/edit_invoice.dart';
 import 'package:crm_demo/screens/Invoice/pdf.dart';
 import 'package:crm_demo/screens/Invoice/view_invoice_screen.dart';
@@ -62,7 +63,7 @@ class _Invoice_ListState extends State<Invoice_List> {
 ////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
   bool progressWidget = true;
   List<String> itemList = ['All', 'Sale', 'Buy'];
-  var selectedFilter = 'All';
+  var selectedFilter = 'Sale';
   TextEditingController startDate_controller = new TextEditingController();
   TextEditingController toDate_controller = new TextEditingController();
 
@@ -116,6 +117,8 @@ class _Invoice_ListState extends State<Invoice_List> {
 
       progressWidget = false;
     });
+
+    SearchFn(selectedFilter, filter: 'filter');
   }
 ////////////////////////////////////////========================================
 
@@ -151,8 +154,12 @@ class _Invoice_ListState extends State<Invoice_List> {
   addNewInvoice() async {
     final temp = await Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (_) => addInvoiceScreen(header_name: "New Invoice")));
+        (selectedFilter == 'Buy')
+            ? MaterialPageRoute(
+                builder: (_) =>
+                    addInvoiceSupplierScreen(header_name: "Supplier"))
+            : MaterialPageRoute(
+                builder: (_) => addInvoiceScreen(header_name: "Customer")));
 
     if (temp == 'updated') {
       OrderList_data();
@@ -225,7 +232,10 @@ class _Invoice_ListState extends State<Invoice_List> {
                           ),
                           SizedBox(width: 20.0),
                           themeButton3(context, addNewInvoice,
-                              label: 'Add New', radius: 5.0),
+                              label: (selectedFilter == 'Buy')
+                                  ? "Buy Now"
+                                  : "Sale New",
+                              radius: 5.0),
                         ],
                       ),
                     )
@@ -352,8 +362,11 @@ class _Invoice_ListState extends State<Invoice_List> {
                                 radius: 2.0,
                                 borderColor: (selectedFilter == 'Sale')
                                     ? Colors.white
-                                    : Colors.transparent,
-                                buttonColor: Color.fromARGB(255, 4, 141, 134)),
+                                    : Colors.white,
+                                buttonColor: (selectedFilter == 'Sale')
+                                    ? Color.fromARGB(255, 4, 141, 134)
+                                    : const Color.fromARGB(0, 110, 110, 110)),
+
                             SizedBox(width: 10.0),
 
                             themeButton3(context, changeFilter,
@@ -361,9 +374,11 @@ class _Invoice_ListState extends State<Invoice_List> {
                                 label: 'Buy',
                                 radius: 2.0,
                                 borderColor: (selectedFilter == 'Buy')
-                                    ? Colors.white
-                                    : Colors.transparent,
-                                buttonColor: Color.fromARGB(255, 243, 67, 54)),
+                                    ? Colors.green
+                                    : Colors.white,
+                                buttonColor: (selectedFilter == 'Buy')
+                                    ? Color.fromARGB(255, 4, 141, 134)
+                                    : const Color.fromARGB(0, 110, 110, 110)),
 
                             // Container(
                             //   height: 30,

@@ -252,11 +252,11 @@ class _ProductAddState extends State<ProductAdd> {
                               3: FlexColumnWidth(0.3),
                               4: FlexColumnWidth(0.4),
                               5: FlexColumnWidth(0.2),
-                              6: FlexColumnWidth(0.3),
-                              7: FlexColumnWidth(0.3),
-                              8: FlexColumnWidth(0.2),
+                              6: FlexColumnWidth(0.4),
+                              7: FlexColumnWidth(0.5),
+                              // 8: FlexColumnWidth(0.2),
                               9: FlexColumnWidth(0.3),
-                              10: IntrinsicColumnWidth(),
+                              // 10: IntrinsicColumnWidth(),
                             },
                             children: [
                               TableRow(
@@ -432,7 +432,10 @@ class _ProductAddState extends State<ProductAdd> {
   TableRow tableRowWidget(Sno, name, BrandName, cate_name, items_no, location,
       price, status, date, iid, data) {
     var statuss = statusOF(status);
-    final formattedDate = formatDate(date, formate: 'dd/MM/yyyy');
+    final formattedDate =
+        (data['stock_date'] != null && data['stock_date'] != '')
+            ? data['stock_date']
+            : formatDate(date, formate: 'dd/MM/yyyy');
 
     return TableRow(
         decoration: BoxDecoration(

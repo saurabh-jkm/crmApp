@@ -4,11 +4,10 @@ import 'dart:convert';
 
 import 'package:crm_demo/screens/customers/customers_list.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../controllers/MenuAppController.dart';
 import '../../responsive.dart';
-import '../About/about_us.dart';
+
 import '../Attributes/attribute_add.dart';
 import '../Invoice/invoice_list.dart';
 import '../Profile/profile_details.dart';
@@ -56,7 +55,6 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       key: context.read<MenuAppController>().scaffoldKey,
       drawer: WdSideMenu(context),
-      //
       body: SafeArea(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +324,6 @@ class _MainScreenState extends State<MainScreen> {
                       }
                     });
                   },
-                  //
                   horizontalTitleGap: 0.0,
                   leading: Icon(Icons.admin_panel_settings_outlined,
                       color: Colors.white),

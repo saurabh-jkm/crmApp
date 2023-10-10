@@ -136,6 +136,21 @@ class _editStockScreenState extends State<editStockScreen> {
                                               ],
                                             ),
                                           ),
+                                          // stock Date
+                                          Expanded(
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: formInput(
+                                                      context,
+                                                      "Stock Date",
+                                                      controller
+                                                          .stockDateController,
+                                                      padding: 8.0),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         ],
                                       ),
 

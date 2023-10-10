@@ -35,19 +35,20 @@ import 'package:intl/intl.dart';
 
 import 'invoice_controller.dart';
 
-class addInvoiceScreen extends StatefulWidget {
-  const addInvoiceScreen({super.key, required this.header_name});
+class addInvoiceSupplierScreen extends StatefulWidget {
+  const addInvoiceSupplierScreen({super.key, required this.header_name});
   final String header_name;
 
   @override
-  State<addInvoiceScreen> createState() => _addInvoiceScreenState();
+  State<addInvoiceSupplierScreen> createState() =>
+      _addInvoiceSupplierScreenState();
 }
 
-class _addInvoiceScreenState extends State<addInvoiceScreen> {
+class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
   bool isWait = true;
   // function get all list & name
   initList() async {
-    await controller.init_functions();
+    await controller.init_functions(type: 'buy');
     setState(() {
       isWait = false;
     });
@@ -245,145 +246,210 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                     106, 211, 234, 255),
                                                 margin: EdgeInsets.only(
                                                     right: 8.0, bottom: 10.0),
-                                                child: Row(
+                                                child: Column(
                                                   children: [
-                                                    // product Name
-                                                    Container(
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                    Row(
+                                                      children: [
+                                                        // product Name
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                          context)
                                                                       .size
                                                                       .width /
                                                                   3 -
                                                               10,
-                                                      child:
-                                                          autoCompleteFormInput(
-                                                        controller.ListName,
-                                                        "Products Name",
-                                                        controller
-                                                            // .Customer_nameController,
-                                                            .ProductNameControllers[i],
-                                                        padding: 8.0,
-                                                        method:
-                                                            fnCalcualtePrice,
-                                                        methodArg: i,
-                                                      ),
-                                                    ),
-                                                    // Price
-                                                    Expanded(
-                                                      child: formInput(
-                                                          context,
-                                                          "Price",
-                                                          controller
-                                                              // .Customer_nameController,
-                                                              .ProductPriceControllers[i],
-                                                          padding: 8.0,
-                                                          isNumber: true,
-                                                          isFloat: true,
-                                                          method: fnTotalPrice,
-                                                          methodArg: i),
-                                                    ),
+                                                          child:
+                                                              autoCompleteFormInput(
+                                                            controller.ListName,
+                                                            "Products Name",
+                                                            controller
+                                                                // .Customer_nameController,
+                                                                .ProductNameControllers[i],
+                                                            padding: 8.0,
+                                                            method:
+                                                                fnCalcualtePrice,
+                                                            methodArg: i,
+                                                          ),
+                                                        ),
+                                                        // Price
+                                                        Expanded(
+                                                          child: formInput(
+                                                              context,
+                                                              "Price",
+                                                              controller
+                                                                  // .Customer_nameController,
+                                                                  .ProductPriceControllers[i],
+                                                              padding: 8.0,
+                                                              isNumber: true,
+                                                              isFloat: true,
+                                                              method: fnTotalPrice,
+                                                              methodArg: i),
+                                                        ),
 
-                                                    // Quantity
-                                                    Expanded(
-                                                      child: formInput(
-                                                          context,
-                                                          "Quantity",
-                                                          controller
-                                                              .ProductQuntControllers[i],
-                                                          padding: 8.0,
-                                                          isNumber: true,
-                                                          method: fnTotalPrice,
-                                                          methodArg: i),
-                                                    ),
-                                                    // Unit
-                                                    Expanded(
-                                                      child: formInput(
-                                                          context,
-                                                          "Unit/Size",
-                                                          controller
-                                                                  .ProductUnitControllers[
-                                                              i],
-                                                          padding: 8.0,
-                                                          isNumber: true,
-                                                          method: fnTotalPrice,
-                                                          methodArg: i,
-                                                          readOnly: (controller
-                                                                              .readOnlyField[
-                                                                          i] !=
-                                                                      null &&
-                                                                  controller
-                                                                      .readOnlyField[i])
-                                                              ? true
-                                                              : false),
-                                                    ),
+                                                        // Quantity
+                                                        Expanded(
+                                                          child: formInput(
+                                                              context,
+                                                              "Quantity",
+                                                              controller
+                                                                      .ProductQuntControllers[
+                                                                  i],
+                                                              padding: 8.0,
+                                                              isNumber: true,
+                                                              method:
+                                                                  fnTotalPrice,
+                                                              methodArg: i),
+                                                        ),
+                                                        // Unit
+                                                        Expanded(
+                                                          child: formInput(
+                                                              context,
+                                                              "Unit/qnt.",
+                                                              controller
+                                                                      .ProductUnitControllers[
+                                                                  i],
+                                                              padding: 8.0,
+                                                              isNumber: true,
+                                                              method:
+                                                                  fnTotalPrice,
+                                                              methodArg: i,
+                                                              readOnly: (controller.readOnlyField[
+                                                                              i] !=
+                                                                          null &&
+                                                                      controller
+                                                                          .readOnlyField[i])
+                                                                  ? true
+                                                                  : false),
+                                                        ),
 
-                                                    // GST
-                                                    Expanded(
-                                                      child: formInput(
-                                                          context,
-                                                          "GST (%)",
-                                                          controller
-                                                              .ProductGstControllers[i],
-                                                          padding: 8.0,
-                                                          isNumber: true,
-                                                          isFloat: true,
-                                                          method: fnTotalPrice,
-                                                          methodArg: i),
-                                                    ),
+                                                        // GST
+                                                        Expanded(
+                                                          child: formInput(
+                                                              context,
+                                                              "GST (%)",
+                                                              controller
+                                                                      .ProductGstControllers[
+                                                                  i],
+                                                              padding: 8.0,
+                                                              isNumber: true,
+                                                              isFloat: true,
+                                                              method:
+                                                                  fnTotalPrice,
+                                                              methodArg: i),
+                                                        ),
 
-                                                    // Discount
-                                                    Expanded(
-                                                      child: formInput(
-                                                          context,
-                                                          "Discount",
-                                                          controller
-                                                              .ProductDiscountControllers[i],
-                                                          padding: 8.0,
-                                                          isNumber: true,
-                                                          isFloat: true,
-                                                          method: fnTotalPrice,
-                                                          methodArg: i),
-                                                    ),
+                                                        // Discount
+                                                        Expanded(
+                                                          child: formInput(
+                                                              context,
+                                                              "Discount",
+                                                              controller
+                                                                      .ProductDiscountControllers[
+                                                                  i],
+                                                              padding: 8.0,
+                                                              isNumber: true,
+                                                              isFloat: true,
+                                                              method:
+                                                                  fnTotalPrice,
+                                                              methodArg: i),
+                                                        ),
 
-                                                    // Total
-                                                    Container(
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                        // Total
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width /
                                                               4,
-                                                      child: Row(
-                                                        children: [
-                                                          // sub total
-                                                          Expanded(
-                                                            child: totalWidgets(
-                                                                context,
-                                                                'Sub Total',
-                                                                "${(controller.productDBdata[i] != null) ? int.parse(controller.ProductTotalControllers[i]!.text) - int.parse(controller.productDBdata[i]['gst']) : '0'}"),
-                                                          ),
-                                                          //GST
-                                                          Expanded(
-                                                              child: totalWidgets(
-                                                                  context,
-                                                                  'GST',
-                                                                  "${(controller.productDBdata[i] != null) ? controller.productDBdata[i]['gst'] : '0'}")),
-                                                          // Total
-                                                          Expanded(
-                                                              child: totalWidgets(
-                                                                  context,
-                                                                  'Total',
-                                                                  "${(controller.productDBdata[i] != null) ? controller.ProductTotalControllers[i]!.text : '0'}")),
+                                                          child: Row(
+                                                            children: [
+                                                              // sub total
+                                                              Expanded(
+                                                                child: totalWidgets(
+                                                                    context,
+                                                                    'Sub Total',
+                                                                    "${(controller.productDBdata[i] != null) ? int.parse(controller.ProductTotalControllers[i]!.text) - int.parse(controller.productDBdata[i]['gst']) : '0'}"),
+                                                              ),
+                                                              //GST
+                                                              Expanded(
+                                                                  child: totalWidgets(
+                                                                      context,
+                                                                      'GST',
+                                                                      "${(controller.productDBdata[i] != null) ? controller.productDBdata[i]['gst'] : '0'}")),
+                                                              // Total
+                                                              Expanded(
+                                                                  child: totalWidgets(
+                                                                      context,
+                                                                      'Total',
+                                                                      "${(controller.productDBdata[i] != null) ? controller.ProductTotalControllers[i]!.text : '0'}")),
 
-                                                          // Expanded(
-                                                          //     child: formInput(
-                                                          //         context,
-                                                          //         "Total",
-                                                          //         controller
-                                                          //             .ProductTotalControllers[i],
-                                                          //         padding: 8.0,
-                                                          //         isNumber: true)),
-                                                        ],
-                                                      ),
+                                                              // Expanded(
+                                                              //     child: formInput(
+                                                              //         context,
+                                                              //         "Total",
+                                                              //         controller
+                                                              //             .ProductTotalControllers[i],
+                                                              //         padding: 8.0,
+                                                              //         isNumber: true)),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    // second row
+                                                    Row(
+                                                      children: [
+                                                        Container(
+                                                          width: 200.0,
+                                                          child: autoCompleteFormInput(
+                                                              controller
+                                                                  .ListCategory,
+                                                              "Category*",
+                                                              controller
+                                                                  .categoryController[i],
+                                                              padding: 8.0),
+                                                        ),
+                                                        // Location
+                                                        Container(
+                                                          width: 200,
+                                                          child: autoCompleteFormInput(
+                                                              controller
+                                                                  .RackList,
+                                                              "Item Location *",
+                                                              controller
+                                                                  .productLocationController[i],
+                                                              padding: 8.0),
+                                                        ),
+
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width -
+                                                              430,
+                                                          child:
+
+                                                              // attributes ========
+                                                              (controller.dynamicControllers[
+                                                                          '$i'] !=
+                                                                      null)
+                                                                  ? Row(
+                                                                      children: [
+                                                                        for (String key in controller
+                                                                            .dynamicControllers['$i']
+                                                                            .keys)
+                                                                          Expanded(
+                                                                            child: autoCompleteFormInput(
+                                                                                controller.ListAttribute[key.toLowerCase()],
+                                                                                "${capitalize(key)}",
+                                                                                controller.dynamicControllers['$i'][key],
+                                                                                padding: 8.0),
+                                                                          ),
+                                                                      ],
+                                                                    )
+                                                                  : SizedBox(),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ],
                                                 ),
@@ -581,7 +647,13 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                   ? '0'
                   : controller.ProductDiscountControllers[controllerId]!.text;
         });
-        fnTotalPrice(controllerId);
+
+        // attributes =============================================
+        if (controller.isSupplier) {
+          await controller.fnGetProductDetails(controllerId, rData);
+        }
+
+        await fnTotalPrice(controllerId, rData: rData);
       }
     }
   }
@@ -605,7 +677,9 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
   }
 
   // Total Price
-  fnTotalPrice(controllerId) async {
+  fnTotalPrice(controllerId, {rData: ''}) async {
+    //if (rData != '') await controller.fnGetProductDetails(controllerId, rData);
+
     await controller.ctrTotalCalculate(controllerId);
     setState(() {});
   }

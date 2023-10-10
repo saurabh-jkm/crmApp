@@ -78,9 +78,8 @@ class _Details_productState extends State<Details_product> {
   fn_refresh() async {
     var w = {'table': 'product', 'id': widget.MapData['id']};
     var rData = await dbFind(w);
-    print(widget.MapData);
-    print(rData);
     data = rData;
+    setState(() {});
   }
 
   var controller = new ProductController();

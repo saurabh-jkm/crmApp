@@ -1,5 +1,6 @@
 import 'package:crm_demo/screens/Invoice/invoice_list.dart';
 import 'package:crm_demo/screens/dashboard/dashboard_screen.dart';
+import 'package:crm_demo/screens/privacy_policy/privacy_policy.dart';
 import 'package:crm_demo/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -122,10 +123,14 @@ class _MyAppState extends State<MyApp> {
               header_name: "Add New Stock",
             ),
         '/stock_list': (context) => ProductAdd(),
+        '/privacy-policy': (context) => privacyPolicy(),
         '/invoice': (context) => Invoice_List(),
         '/dashboard': (context) => MainScreen(pageNo: 1),
         '/new_invoice': (context) => addInvoiceScreen(
-              header_name: "New Invoice",
+              header_name: "Customer",
+            ),
+        '/new_supplier_invoice': (context) => addInvoiceScreen(
+              header_name: "Suplier",
             ),
       },
     );
