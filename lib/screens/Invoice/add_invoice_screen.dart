@@ -91,7 +91,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
           child: Column(
             children: [
               //header ======================
-              themeHeader2(context, "${widget.header_name}",
+              themeHeader2(context, "${widget.header_name} Invoice ",
                   widthBack: 'updated'),
               // formField =======================
               (isWait)

@@ -153,9 +153,8 @@ class _Invoice_ListState extends State<Invoice_List> {
         context,
         MaterialPageRoute(
             builder: (_) => addInvoiceScreen(
-                header_name: (selectedFilter == 'Buy')
-                    ? "Supllier Invoice"
-                    : "Customer Invoice")));
+                header_name:
+                    (selectedFilter == 'Buy') ? "Supllier" : "Customer")));
 
     if (temp == 'updated') {
       OrderList_data();
