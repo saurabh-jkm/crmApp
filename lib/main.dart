@@ -1,3 +1,4 @@
+import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
 import 'package:crm_demo/screens/Invoice/invoice_list.dart';
 import 'package:crm_demo/screens/dashboard/dashboard_screen.dart';
 import 'package:crm_demo/screens/privacy_policy/privacy_policy.dart';
@@ -129,7 +130,7 @@ class _MyAppState extends State<MyApp> {
         '/new_invoice': (context) => addInvoiceScreen(
               header_name: "Customer",
             ),
-        '/new_supplier_invoice': (context) => addInvoiceScreen(
+        '/new_supplier_invoice': (context) => addInvoiceSupplierScreen(
               header_name: "Suplier",
             ),
       },

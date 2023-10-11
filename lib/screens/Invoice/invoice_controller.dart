@@ -79,6 +79,7 @@ class invoiceController {
   // Map<String, dynamic> ListAttributeWithId = {};
 
   Map<dynamic, dynamic> productDBdata = {};
+  Map<int, bool> totalIdentifire = {};
 
   int totalLocation = 1;
   int totalProduct = 1;
@@ -102,6 +103,8 @@ class invoiceController {
   init_functions({dbData: '', type: ''}) async {
     if (type == 'buy') {
       isSupplier = true;
+      InvoiceType = 'Supplier';
+      SaleType = 'Sale';
       await getAttributeList();
       await getRackList();
       await getCategoryList();
@@ -123,6 +126,7 @@ class invoiceController {
     // locationQuntControllers['1'] = TextEditingController();
 
     // init default controllers
+    totalIdentifire[1] = false;
     ProductNameControllers[1] = TextEditingController();
     ProductQuntControllers[1] = TextEditingController();
     ProductUnitControllers[1] = TextEditingController();
@@ -683,7 +687,8 @@ class invoiceController {
           temp['price'] == '' ||
           temp['quantity'] == '' ||
           temp['total'] == '') {
-        themeAlert(context, "Row No. $i Some Fields are Empty!!",
+        themeAlert(context,
+            "Row No. $i :  Product Name, Price, Quantity  are required!!",
             type: 'error');
         return false;
       }
@@ -942,6 +947,8 @@ class invoiceController {
       dynamicControllers["$totalProduct"] = temp;
     });
 
+    totalIdentifire[ctrId] = false;
+
     ProductNameControllers[ctrId] = TextEditingController();
     ProductPriceControllers[ctrId] = TextEditingController();
     ProductQuntControllers[ctrId] = TextEditingController();
@@ -962,6 +969,7 @@ class invoiceController {
   // remove  row
   ctrRemoveRow(context) async {
     if (totalProduct > 1) {
+      totalIdentifire.remove(totalProduct);
       dynamicControllers.remove(totalProduct);
       var ctrId = totalProduct;
       ProductNameControllers.remove(ctrId);
@@ -1028,13 +1036,15 @@ class invoiceController {
     var rData = await dbFind({'table': 'product', 'id': '${old['id']}'});
 
     var listData = rData['item_list'];
-    var oldSubData;
-    var subData = oldSubData = (listData[old['list_item_id']] != null)
+    var oldSubData = {};
+    var subData = (listData[old['list_item_id']] != null)
         ? listData[old['list_item_id']]
         : {};
+    oldSubData['${old['list_item_id']}'] = listData[old['list_item_id']];
 
     var qnt = currentData['quantity'];
     var unit = (currentData['unit'] == '') ? '0' : currentData['unit'];
+    var price = (currentData['price'] == '') ? '0' : currentData['price'];
     var Tunit =
         int.parse(currentData['unit'].toString()) * int.parse(qnt.toString());
     dynamicData.forEach((k, v) {
@@ -1046,6 +1056,7 @@ class invoiceController {
     subData['totalUnit'] =
         '${int.parse(subData['totalUnit'].toString()) + int.parse(Tunit.toString())}';
     subData['unit'] = '${unit}';
+    subData['price'] = '${price}';
 
     rData['item_list'][old['list_item_id']] = subData;
     rData['quantity'] =
@@ -1054,6 +1065,9 @@ class invoiceController {
     rData['table'] = 'product';
     rData['id'] = '${old['id']}';
     await dbUpdate(db, rData);
+    // for log variable added
+    subData['qnt_added'] = qnt;
+    rData['item_list'][old['list_item_id']] = subData;
 
     // log update ====================================================
     var logDb = await dbFindDynamic(
@@ -1066,7 +1080,6 @@ class invoiceController {
     rData['log_date'] = DateTime.now();
     rData['updatedBy'] = (user['id'] != null) ? user['id'] : '';
     rData['updatedByName'] = (user['name'] != null) ? user['name'] : '';
-    rData['singleLog'] = 'Quntity Update';
     rData['oldSubData'] = oldSubData;
     rData['changedSubData'] = subData;
 

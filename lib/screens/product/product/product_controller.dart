@@ -595,6 +595,7 @@ class ProductController {
       themeAlert(context, "Submitted Successfully ");
       //Navigator.popAndPushNamed(context, '/add_stock');
     } else {
+      var oldData = await dbFind({'table': 'product', 'id': docId});
       dbArr['id'] = docId;
       var rData = await dbUpdate(db, dbArr);
       // save log
@@ -613,6 +614,7 @@ class ProductController {
           dbArr['log_date'] = DateTime.now();
           dbArr['updatedBy'] = (user['id'] != null) ? user['id'] : '';
           dbArr['updatedByName'] = (user['name'] != null) ? user['name'] : '';
+          dbArr['oldSubData'] = oldData['item_list'];
           newLog.add(dbArr);
           var updateArr = {
             'table': 'product_log',
