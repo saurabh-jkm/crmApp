@@ -448,6 +448,7 @@ class invoiceController {
   }
 
   // update product quantity
+  var oldSubProduct = {};
   fn_update_product_qnt(docId, i, liveData, instData) async {
     var k = i - 1;
     i = (liveData['list_item_id'] != null) ? liveData['list_item_id'] : i;
@@ -456,8 +457,13 @@ class invoiceController {
     var productData = (liveData['id'] == null)
         ? {}
         : await dbFind({'table': 'product', 'id': liveData['id']});
+
     var subProducts =
         (productData['item_list'] != null) ? productData['item_list'] : {};
+    subProducts.forEach((k, v) {
+      oldSubProduct[k] = v;
+    });
+    print(oldSubProduct);
 
     // if isset current product
 
@@ -531,12 +537,12 @@ class invoiceController {
         // t_productdb_qnt = t_productdb_qnt - t_ins_qnt;
         // t_subproduct_qnt = t_subproduct_qnt - t_ins_qnt;
       }
-      // check add or remove when update
+      // check add or remove when update =================================
+      var logType = 'Sale';
       int diffRance = 0;
       if (docId != '' && editProductQnt['$i'] != null) {
         var logUnit = 0;
         var logQnt = 0;
-        var logType = 'add_more';
         var oldData = editProductQnt['$i'];
 
         int old_totalUnit = (oldData['unit'] != null && oldData['unit'] == '')
@@ -553,10 +559,11 @@ class invoiceController {
         logType = (logUnit < 0) ? 'return' : 'add_more';
 
         if (t_productdb_unit == 0) {
-          subProducts['$i']['totalUnit'] =
-              '${t_subproduct_qnt + t_ins_qnt + (old_qnt - t_ins_qnt)}';
+          subProducts['$i']['totalUnit'] = '0';
           logQnt = old_qnt - t_ins_qnt;
           logType = (logQnt > 1) ? 'return' : 'add_more';
+          subProducts['$i']['quantity'] =
+              '${int.parse(subProducts['$i']['quantity'].toString()) + logQnt}';
         } else {
           subProducts['$i']['quantity'] =
               '${((int.parse(subProducts['$i']['totalUnit'].toString()) / t_productdb_unit).toInt())}';
@@ -591,7 +598,10 @@ class invoiceController {
         'item_list': subProducts,
       };
       var r = await dbUpdate(db, tempW);
-      //print(tempW);
+
+      // product log =============================================
+      await updateProductLog(liveData['id'], tempW, oldSubProduct,
+          logType: logType);
     }
 
     return NewLog;
@@ -1157,12 +1167,47 @@ class invoiceController {
 
     dbArr['log_date'] = DateTime.now();
     dbArr['updatedBy'] = (user['id'] != null) ? user['id'] : '';
-    dbArr['updatedByName'] = (user['name'] != null) ? user['name'] : '';
+    dbArr['updatedByName'] =
+        (user['name'] != null) ? "${user['name']} - Buy Invoice " : '';
     dbArr['singleLog'] = 'new Product_from_suplier_invoice';
     newLog.add(dbArr);
     var updateArr = {
       'table': 'product_log',
       'product_id': '${productID}',
+      'log': newLog,
+      'last_update': DateTime.now()
+    };
+
+    if (logDb.isNotEmpty && logDb[0]['id'] != null) {
+      // update
+      updateArr['id'] = logDb[0]['id'];
+      await dbUpdate(db, updateArr);
+    } else {
+      // insert
+      await dbSave(db, updateArr);
+    }
+  }
+
+  // update product log ==========================================
+  updateProductLog(docId, dbArr, oldSubProductList, {logType: 'Sale'}) async {
+    var logDb = await dbFindDynamic(
+        db, {'table': 'product_log', 'product_id': '$docId'});
+
+    var newLog = (logDb.isNotEmpty && logDb[0]['log'] != null)
+        ? logDb[0]['log'].toList()
+        : [];
+
+    dbArr.remove('id');
+    dbArr.remove('table');
+    dbArr['log_date'] = DateTime.now();
+    dbArr['updatedBy'] = (user['id'] != null) ? user['id'] : '';
+    dbArr['updatedByName'] =
+        (user['name'] != null) ? '${user['name']} - Sale Invoice $logType' : '';
+    dbArr['oldSubatDa'] = oldSubProductList;
+    newLog.add(dbArr);
+    var updateArr = {
+      'table': 'product_log',
+      'product_id': '$docId',
       'log': newLog,
       'last_update': DateTime.now()
     };

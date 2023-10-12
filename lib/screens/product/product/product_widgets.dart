@@ -297,6 +297,8 @@ Widget productTableHeading(context, data) {
 
 // log row widgets ===================================
 Widget logTableRow(context, i, data, headingList) {
+  var lotList = new List.from(data['log'].reversed);
+
   return (data['log'] == 'null')
       ? SizedBox()
       : Container(
@@ -304,8 +306,7 @@ Widget logTableRow(context, i, data, headingList) {
 
           child: Column(
             children: [
-              for (var k in data['log'])
-                SecondrRowForLog(context, k, headingList)
+              for (var k in lotList) SecondrRowForLog(context, k, headingList)
             ],
           ),
         );
@@ -321,7 +322,7 @@ Widget SecondrRowForLog(context, data, headingList) {
   return (newData == null)
       ? SizedBox()
       : Container(
-          margin: EdgeInsets.only(bottom: 30.0),
+          margin: EdgeInsets.only(bottom: 4.0),
           child: Column(
             children: [
               Container(
@@ -348,8 +349,12 @@ Widget SecondrRowForLog(context, data, headingList) {
 Widget log_TableRow(context, key, dataArr, headingList, oldSubData,
     {rowColor: ''}) {
   var arr = {};
-
-  arr = (dataArr[key] == null) ? {} : dataArr[key];
+  if (dataArr[key] != null) {
+    dataArr[key].forEach((k, v) {
+      arr[k] = v;
+    });
+  }
+  //arr = (dataArr[key] == null) ? {} : dataArr[key];
   if (oldSubData != null && oldSubData[key] != null) {
     var odata = oldSubData[key];
     arr['price'] = (odata['price'] != null)

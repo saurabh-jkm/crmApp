@@ -159,14 +159,6 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                           Expanded(
                                             child: inpuDropdDown(
                                                 context,
-                                                "Invoice For",
-                                                controller.ListType,
-                                                controller.InvoiceType,
-                                                method: updateInvoiceType),
-                                          ),
-                                          Expanded(
-                                            child: inpuDropdDown(
-                                                context,
                                                 "Sale/Estimate",
                                                 controller.ListSaleType,
                                                 controller.SaleType,

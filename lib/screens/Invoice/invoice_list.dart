@@ -66,6 +66,8 @@ class _Invoice_ListState extends State<Invoice_List> {
   var selectedFilter = 'Sale';
   TextEditingController startDate_controller = new TextEditingController();
   TextEditingController toDate_controller = new TextEditingController();
+  var tableColum = {};
+  var headerName = {};
 
 ///////////////////////// Order List Data fetch fn ++++++++++++++++++++++++++++
 
@@ -182,6 +184,37 @@ class _Invoice_ListState extends State<Invoice_List> {
   var baseController = new base_controller();
   @override
   Widget build(BuildContext context) {
+    var fw = MediaQuery.of(context).size.width;
+    tableColum = {
+      1: 50.0,
+      2: 100.0,
+      3: 100.0,
+      4: fw * 0.17,
+      5: fw * 0.07,
+      6: 90.0,
+      7: 40.0,
+      8: 60.0,
+      9: 60.0,
+      10: 80.0,
+      11: fw * 0.1,
+      12: fw * 0.1,
+    };
+
+    headerName = {
+      1: '#',
+      2: 'Order Id',
+      3: 'Type',
+      4: 'Product',
+      5: 'Buyer/Seller',
+      6: 'Mobile',
+      7: 'Qnt',
+      8: 'Unit',
+      9: 'Price',
+      10: 'Status',
+      11: 'Date',
+      12: 'Action',
+    };
+
     return RawKeyboardListener(
       autofocus: true,
       focusNode: FocusNode(),
@@ -409,7 +442,20 @@ class _Invoice_ListState extends State<Invoice_List> {
                 SizedBox(
                   height: 5,
                 ),
-                Table(
+                Container(
+                  decoration: BoxDecoration(
+                      color: themeBG4,
+                      border: Border(
+                          bottom: BorderSide(width: 3.0, color: Colors.white))),
+                  child: Row(
+                    children: [
+                      for (int i in headerName.keys)
+                        tableLable(context, i, headerName[i], tableColum),
+                    ],
+                  ),
+                ),
+
+                /*Table(
                   columnWidths: {
                     0: FlexColumnWidth(0.2),
                     1: FlexColumnWidth(0.2),
@@ -569,19 +615,30 @@ class _Invoice_ListState extends State<Invoice_List> {
                             ),
                           ),
                         ]),
-                    for (var index = 0; index < OrderList.length; index++)
-                      tableRowWidget(
-                          "${index + 1}",
-                          OrderList[index]['id'],
-                          OrderList[index]['customer_name'],
-                          OrderList[index]['mobile'],
-                          OrderList[index]['total'],
-                          OrderList[index]['status'],
-                          OrderList[index]['date_at'],
-                          OrderList[index],
-                          dbData: OrderList[index])
+                    // for (var index = 0; index < OrderList.length; index++)
+                    //   tableRowWidget(
+                    //       "${index + 1}",
+                    //       OrderList[index]['id'],
+                    //       OrderList[index]['customer_name'],
+                    //       OrderList[index]['mobile'],
+                    //       OrderList[index]['total'],
+                    //       OrderList[index]['status'],
+                    //       OrderList[index]['date_at'],
+                    //       OrderList[index],
+                    //       dbData: OrderList[index])
                   ],
-                ),
+                ),*/
+                for (var index = 0; index < OrderList.length; index++)
+                  tableRowWidget(
+                      "${index + 1}",
+                      OrderList[index]['id'],
+                      OrderList[index]['customer_name'],
+                      OrderList[index]['mobile'],
+                      OrderList[index]['total'],
+                      OrderList[index]['status'],
+                      OrderList[index]['date_at'],
+                      OrderList[index],
+                      dbData: OrderList[index])
               ],
             ),
           ),
@@ -592,8 +649,8 @@ class _Invoice_ListState extends State<Invoice_List> {
 
 ///////////////////////////////////////////////
 
-  TableRow tableRowWidget(String index, odID, user, buyer_mobile, _price,
-      pro_status, pay_date, edata,
+  tableRowWidget(String index, odID, user, buyer_mobile, _price, pro_status,
+      pay_date, edata,
       {dbData: ''}) {
     var statuss = statusOF(pro_status);
     var productTitle = edata['title'];
@@ -606,104 +663,121 @@ class _Invoice_ListState extends State<Invoice_List> {
             : (edata['is_sale'] != null && edata['is_sale'] == 'Estimate')
                 ? "Buy\nEstimate"
                 : "Buy";
+
+    // if (_price == 5500) {
+    //   print(edata['products']);
+    // }
+    var productList = edata['products'];
+    var subList = {};
+    if (productList.length > 1) {
+      subList = productList;
+    }
 //////////////////// ++++++++++++++++++++++++++++++++++++++++++++++
-    return TableRow(
-        decoration: BoxDecoration(
-            color: (matchString(type, 'Buy')) ? themeBG6 : themeBG5,
-            border:
-                Border(bottom: BorderSide(width: 3.0, color: Colors.white))),
-        children: [
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.middle,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
+    return Column(children: [
+      //for
+      Container(
+          decoration: BoxDecoration(
+              color: (matchString(type, 'Buy')) ? themeBG6 : themeBG5,
+              border:
+                  Border(bottom: BorderSide(width: 3.0, color: Colors.white))),
+          child: Row(children: [
+            Container(
+              width: tableColum[1],
               child: Text(index, style: textStyle3),
             ),
-          ),
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.middle,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text("${edata['sr_no'] == null ? odID : edata['sr_no']}",
-                  style: textStyle3),
+            Container(
+              width: tableColum[2],
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text("${edata['sr_no'] == null ? odID : edata['sr_no']}",
+                    style: textStyle3),
+              ),
             ),
-          ),
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.middle,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Container(child: Text("${type}", style: textStyle3)),
+            Container(
+              width: tableColum[3],
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Container(child: Text("${type}", style: textStyle3)),
+              ),
             ),
-          ),
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.middle,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child:
-                  Container(child: Text("${productTitle}", style: textStyle3)),
+            Container(
+              //verticalAlignment: TableCellVerticalAlignment.middle,
+              width: tableColum[4],
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Container(
+                    child: Text("${productTitle}", style: textStyle3)),
+              ),
             ),
-          ),
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.middle,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text('$user', style: textStyle3),
+            Container(
+              width: tableColum[5],
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text('$user', style: textStyle3),
+              ),
             ),
-          ),
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.middle,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text('$buyer_mobile', style: textStyle3),
+            Container(
+              width: tableColum[6],
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text('$buyer_mobile', style: textStyle3),
+              ),
             ),
-          ),
-          TableCell(
-              verticalAlignment: TableCellVerticalAlignment.middle,
+            Container(
+              width: tableColum[7],
               child: Text(
                   (edata['quantity'] != null) ? "${edata['quantity']}" : "-",
-                  style: textStyle3)),
-          TableCell(
-              verticalAlignment: TableCellVerticalAlignment.middle,
-              child: Text((edata['unit'] != null) ? "${edata['unit']}" : "-",
-                  style: textStyle3)),
-          TableCell(
-              verticalAlignment: TableCellVerticalAlignment.middle,
-              child:
-                  Text((_price != null) ? "$_price" : "-", style: textStyle3)),
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.middle,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Container(
-                  margin: EdgeInsets.only(right: 20),
-                  height: 25,
-                  alignment: Alignment.center,
-                  child: Text("$statuss",
-                      style: GoogleFonts.alike(
-                          color: (statuss == "Active")
-                              ? Color.fromARGB(255, 10, 103, 139)
-                              : const Color.fromARGB(255, 141, 28, 20),
-                          fontSize: 12.5))),
+                  style: textStyle3),
             ),
-          ),
-          TableCell(
-              verticalAlignment: TableCellVerticalAlignment.middle,
-              child: Text("$formattedDate", style: textStyle3)),
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.middle,
-            child: RowFor_Mobile_web(context, () async {
-              final data = await InvoiceService(
-                PriceDetail: edata,
-              ).createInvoice();
-              // final data = await service.createInvoice();
-              await savePdfFile("invoice", data, edata);
-            }, () {
-              setState(() {
-                viewInvoice(edata);
-              });
-            }, dbData: dbData),
-          ),
-        ]);
+            Container(
+              width: tableColum[8],
+              child: Text((edata['unit'] != null) ? "${edata['unit']}" : "-",
+                  style: textStyle3),
+            ),
+            Container(
+              width: tableColum[9],
+              child:
+                  Text((_price != null) ? "$_price" : "-", style: textStyle3),
+            ),
+            Container(
+              width: tableColum[10],
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Container(
+                    margin: EdgeInsets.only(right: 20),
+                    height: 25,
+                    alignment: Alignment.center,
+                    child: Text("$statuss",
+                        style: GoogleFonts.alike(
+                            color: (statuss == "Active")
+                                ? Color.fromARGB(255, 10, 103, 139)
+                                : const Color.fromARGB(255, 141, 28, 20),
+                            fontSize: 12.5))),
+              ),
+            ),
+            Container(
+              width: tableColum[11],
+              child: Text("$formattedDate", style: textStyle3),
+            ),
+            Container(
+              width: tableColum[12],
+              child: RowFor_Mobile_web(context, () async {
+                final data = await InvoiceService(
+                  PriceDetail: edata,
+                ).createInvoice();
+                // final data = await service.createInvoice();
+                await savePdfFile("invoice", data, edata);
+              }, () {
+                setState(() {
+                  viewInvoice(edata);
+                });
+              }, dbData: dbData),
+            ),
+          ])),
+
+      for (var k in subList.keys)
+        tableSubRow(context, k, subList[k], tableColum)
+    ]);
   }
 
 /////////////////////////////////////  Row GOt Action Button  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -848,6 +922,52 @@ class _Invoice_ListState extends State<Invoice_List> {
     } else {
       print("Date is not selected");
     }
+  }
+
+  // table header ===================================================
+  Widget tableLable(context, i, label, tableColum) {
+    return Container(
+      width: tableColum[i],
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Text('$label',
+            style: themeTextStyle(
+                size: 12.0, color: Colors.white, fw: FontWeight.bold)),
+      ),
+    );
+  }
+
+  Widget subTableLabel(context, i, label, tableColum) {
+    return Container(
+      width: tableColum[i],
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Text('$label',
+            style: themeTextStyle(size: 12.0, color: Colors.black)),
+      ),
+    );
+  }
+
+  // sub row =======================================================
+  Widget tableSubRow(context, k, data, tableColum) {
+    return Container(
+      decoration: BoxDecoration(
+          color: themeBG7,
+          border: Border(bottom: BorderSide(width: 3.0, color: Colors.white))),
+      child: Row(
+        children: [
+          subTableLabel(context, 1, '', tableColum),
+          subTableLabel(context, 2, '', tableColum),
+          subTableLabel(context, 3, '', tableColum),
+          subTableLabel(context, 4, data['name'], tableColum),
+          subTableLabel(context, 5, '', tableColum),
+          subTableLabel(context, 6, '', tableColum),
+          subTableLabel(context, 7, data['quantity'], tableColum),
+          subTableLabel(context, 8, data['unit'], tableColum),
+          subTableLabel(context, 9, data['price'], tableColum),
+        ],
+      ),
+    );
   }
 
 /////////////////////////////////////////////=====================================================
