@@ -210,7 +210,7 @@ class _Invoice_ListState extends State<Invoice_List> {
       7: 'Qnt',
       8: 'Unit',
       9: 'Price',
-      10: 'Status',
+      10: 'Balance',
       11: 'Date',
       12: 'Action',
     };
@@ -740,21 +740,27 @@ class _Invoice_ListState extends State<Invoice_List> {
                   Text((_price != null) ? "$_price" : "-", style: textStyle3),
             ),
             Container(
-              width: tableColum[10],
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                    margin: EdgeInsets.only(right: 20),
-                    height: 25,
-                    alignment: Alignment.center,
-                    child: Text("$statuss",
-                        style: GoogleFonts.alike(
-                            color: (statuss == "Active")
-                                ? Color.fromARGB(255, 10, 103, 139)
-                                : const Color.fromARGB(255, 141, 28, 20),
-                            fontSize: 12.5))),
-              ),
+              width: tableColum[9],
+              child: Text(
+                  (edata['balance'] != null) ? "${edata['balance']}" : "-",
+                  style: textStyle3),
             ),
+            // Container(
+            //   width: tableColum[10],
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(10.0),
+            //     child: Container(
+            //         margin: EdgeInsets.only(right: 20),
+            //         height: 25,
+            //         alignment: Alignment.center,
+            //         child: Text("$statuss",
+            //             style: GoogleFonts.alike(
+            //                 color: (statuss == "Active")
+            //                     ? Color.fromARGB(255, 10, 103, 139)
+            //                     : const Color.fromARGB(255, 141, 28, 20),
+            //                 fontSize: 12.5))),
+            //   ),
+            // ),
             Container(
               width: tableColum[11],
               child: Text("$formattedDate", style: textStyle3),

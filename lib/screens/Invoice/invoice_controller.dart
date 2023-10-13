@@ -463,7 +463,7 @@ class invoiceController {
     subProducts.forEach((k, v) {
       oldSubProduct[k] = v;
     });
-    print(oldSubProduct);
+    var tempSubQnt = subProducts[i]['quantity'];
 
     // if isset current product
 
@@ -600,7 +600,13 @@ class invoiceController {
       var r = await dbUpdate(db, tempW);
 
       // product log =============================================
-      await updateProductLog(liveData['id'], tempW, oldSubProduct,
+      // var temp = oldSubProduct[i];
+      // temp['quantity'] = tempSubQnt;
+      // //oldSubProduct[i] = temp;
+      // var tempOldSubData = {i: temp};
+
+      await updateProductLog(
+          liveData['id'], tempW, oldSubProduct, tempSubQnt, i, instData['$k'],
           logType: logType);
     }
 
@@ -1189,7 +1195,23 @@ class invoiceController {
   }
 
   // update product log ==========================================
-  updateProductLog(docId, dbArr, oldSubProductList, {logType: 'Sale'}) async {
+  updateProductLog(docId, dbArr, oldSubProductList, oldQnt, list_id, ins_data,
+      {logType: 'Sale'}) async {
+    var temp = oldSubProductList[list_id];
+    Map<dynamic, dynamic> oldMap = new Map();
+    oldMap['quantity'] = oldQnt;
+    oldMap['price'] = (temp['price'] != null) ? temp['price'] : '';
+    oldMap['unit'] = (temp['unit'] != null) ? temp['unit'] : '';
+    oldMap['location'] = (temp['location'] != null) ? temp['location'] : '';
+    oldMap['totalUnit'] = (temp['totalUnit'] != null) ? temp['totalUnit'] : '';
+    var oldSub = {list_id: oldMap};
+
+    // only updated row
+    var temp2 = dbArr['item_list'][list_id];
+    temp2['price'] = (ins_data['price'] != null) ? ins_data['price'] : '';
+    var temp3 = {list_id: temp2};
+    dbArr['item_list'] = temp3;
+
     var logDb = await dbFindDynamic(
         db, {'table': 'product_log', 'product_id': '$docId'});
 
@@ -1203,7 +1225,7 @@ class invoiceController {
     dbArr['updatedBy'] = (user['id'] != null) ? user['id'] : '';
     dbArr['updatedByName'] =
         (user['name'] != null) ? '${user['name']} - Sale Invoice $logType' : '';
-    dbArr['oldSubatDa'] = oldSubProductList;
+    dbArr['oldSubData'] = oldSub;
     newLog.add(dbArr);
     var updateArr = {
       'table': 'product_log',

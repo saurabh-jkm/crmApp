@@ -355,7 +355,9 @@ Widget log_TableRow(context, key, dataArr, headingList, oldSubData,
     });
   }
   //arr = (dataArr[key] == null) ? {} : dataArr[key];
+  print(oldSubData);
   if (oldSubData != null && oldSubData[key] != null) {
+    print("yess");
     var odata = oldSubData[key];
     arr['price'] = (odata['price'] != null)
         ? '${odata['price']} -> ${arr['price']}'
