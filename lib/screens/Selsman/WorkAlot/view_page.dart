@@ -87,6 +87,18 @@ class _MeetingViewState extends State<MeetingView> {
         color: Colors.black12,
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+          height: 100,
+          width: 100,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5.0),
+              image: DecorationImage(
+                  image: (priceData["image"])
+                      ? NetworkImage("${priceData["image"]}")
+                      : NetworkImage(
+                          "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
+                  fit: BoxFit.cover)),
+        ),
         productRow(context, "Meeting Id", "${priceData["id"]}"),
         productRow(context, "Customer Name", "${priceData["customer_name"]}"),
         productRow(context, "Mobile No.", "${priceData["mobile"]}"),
