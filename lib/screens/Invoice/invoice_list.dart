@@ -196,8 +196,8 @@ class _Invoice_ListState extends State<Invoice_List> {
       8: 60.0,
       9: 60.0,
       10: 80.0,
-      11: fw * 0.1,
-      12: fw * 0.1,
+      11: fw * 0.08,
+      12: 120.0,
     };
 
     headerName = {
@@ -654,7 +654,10 @@ class _Invoice_ListState extends State<Invoice_List> {
       {dbData: ''}) {
     var statuss = statusOF(pro_status);
     var productTitle = edata['title'];
-    final formattedDate = formatDate(pay_date);
+    final formattedDate =
+        (edata['invoice_date'] != null && edata['invoice_date'] != '')
+            ? edata['invoice_date']
+            : formatDate(pay_date, formate: 'dd/MM/yyyy');
     var type =
         (edata['invoice_for'] == 'Customer' || edata['invoice_for'] == '')
             ? (edata['is_sale'] != null && edata['is_sale'] == 'Estimate')

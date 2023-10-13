@@ -24,6 +24,7 @@ import 'controllers/MenuAppController.dart';
 //import 'screens/Login_Reg/Login_user.dart';
 import 'screens/Login_Reg/login_screen.dart';
 import 'screens/main/main_screen.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 ///////
 void main() async {
@@ -50,6 +51,7 @@ void main() async {
   }
 
   // ========================
+  setPathUrlStrategy();
   runApp(new MyApp());
 }
 
