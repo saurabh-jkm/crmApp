@@ -11,6 +11,7 @@ final Color themeBG3 = Color.fromARGB(255, 44, 108, 161);
 final Color themeBG4 = Color.fromARGB(255, 94, 86, 204);
 final Color themeBG5 = Color.fromARGB(255, 162, 155, 255);
 final Color themeBG6 = Color.fromARGB(255, 167, 187, 253);
+final Color themeBG7 = Color.fromARGB(255, 223, 198, 255);
 final Color buttonBG = Color(0xffff9100);
 
 const themeSecondaryColor = Color(0xFF2A2D3E);

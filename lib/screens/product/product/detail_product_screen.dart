@@ -4,7 +4,8 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/screens/product/product/product_controller.dart';
+import 'package:crm_demo/themes/base_controller.dart';
+//import 'package:crm_demo/screens/product/product/product_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:firedart/generated/google/firestore/v1/document.pb.dart';
@@ -41,6 +42,7 @@ class Details_product extends StatefulWidget {
 }
 
 class _Details_productState extends State<Details_product> {
+  var baseController = new base_controller();
   List<String> tableHeading = ['price', 'location', 'quantity'];
   var data = {};
 
@@ -65,7 +67,9 @@ class _Details_productState extends State<Details_product> {
   var logDb = new Map();
   fnGetProductLog() async {
     logDb = await dbFindDynamic(
-        db, {'table': 'product_log', 'product_id': '${data['id']}'});
+        db, {'table': 'product_log', 'product_id': '${widget.MapData['id']}'});
+
+    //print(logDb);
     setState(() {});
   }
 
@@ -78,26 +82,40 @@ class _Details_productState extends State<Details_product> {
   fn_refresh() async {
     var w = {'table': 'product', 'id': widget.MapData['id']};
     var rData = await dbFind(w);
-    data = rData;
-    setState(() {});
+    setState(() {
+      data = rData;
+      data['id'] = widget.MapData['id'];
+    });
+    fnGetProductLog();
   }
 
-  var controller = new ProductController();
+  //var controller = new ProductController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.white,
-        child: ListView(
-          children: [
-            //header ======================
-            themeHeader2(context, "${widget.header_name}",
-                refreshBUtton: 'Refresh', buttonFn: fn_refresh),
-            // formField =======================
-            Details_view(context, data, tableHeading)
-            // end form ====================================
-          ],
+    logDb = logDb;
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKey: (e) {
+        var rData = baseController.KeyPressFun(e, context);
+        if (rData != null && rData) {
+          setState(() {});
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          color: Colors.white,
+          child: ListView(
+            children: [
+              //header ======================
+              themeHeader2(context, "${widget.header_name}",
+                  refreshBUtton: 'Refresh', buttonFn: fn_refresh),
+              // formField =======================
+              Details_view(context, data, tableHeading)
+              // end form ====================================
+            ],
+          ),
         ),
       ),
     );
@@ -207,10 +225,28 @@ class _Details_productState extends State<Details_product> {
                                 ),
 
                                 // Log Sections =======================
+                                SizedBox(height: 30.0),
+
+                                Text(
+                                  "Stock Log",
+                                  style: themeTextStyle(
+                                      size: 20.0, fw: FontWeight.bold),
+                                ),
+
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 100,
+                                  child: Divider(
+                                    color: themeBG2,
+                                    thickness: 1.0,
+                                  ),
+                                  //child: SizedBox(height: 20.0),
+                                ),
+
                                 (logDb.isEmpty)
                                     ? SizedBox()
                                     : Container(
-                                        margin: EdgeInsets.only(top: 50.0),
+                                        margin: EdgeInsets.only(top: 10.0),
                                         width:
                                             (MediaQuery.of(context).size.width -
                                                 100),

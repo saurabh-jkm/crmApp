@@ -565,10 +565,8 @@ Widget formInput(BuildContext context, label, controller,
     isFloat: false,
     method: '',
     methodArg: '',
-    readOnly: false}) {
-  // if (editComplete != '' && currentController.text == '') {
-  //   controller.text = currentController.text;
-  // }
+    readOnly: false,
+    isPreloadInput: false}) {
   return Container(
       height: 55,
       padding: EdgeInsets.all(padding),
@@ -612,7 +610,7 @@ Widget formInput(BuildContext context, label, controller,
             )
           : TextFormField(
               // this is for auto complete
-              controller: controller,
+              controller: (isPreloadInput) ? currentController : controller,
               style: textStyle1,
               onEditingComplete: editComplete,
               focusNode: focusNode,
@@ -634,7 +632,8 @@ autoCompleteFormInput(suggationList, label, myController,
     myFocusNode: '',
     method: '',
     methodArg: '',
-    strinFilter: ''}) {
+    strinFilter: '',
+    isPreloadInput: false}) {
   return Autocomplete(
     fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
       controller.text = myController.text;
@@ -642,7 +641,8 @@ autoCompleteFormInput(suggationList, label, myController,
           editComplete: onEditingComplete,
           focusNode: (myFocusNode == '') ? focusNode : myFocusNode,
           currentController: myController,
-          padding: padding);
+          padding: padding,
+          isPreloadInput: isPreloadInput);
     },
     optionsBuilder: (TextEditingValue textEditingValue) {
       if (textEditingValue.text == '') {

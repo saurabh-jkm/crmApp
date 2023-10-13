@@ -113,7 +113,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       themeSpaceVertical(10.0),
-                                      themeHeading2("Customer Details"),
+                                      themeHeading2("Supplier Details"),
                                       themeSpaceVertical(15.0),
                                       Row(
                                         children: [
@@ -121,7 +121,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                           Expanded(
                                               child: autoCompleteFormInput(
                                                   controller.ListCustomer,
-                                                  "Customer Name",
+                                                  "Supplier Name",
                                                   controller
                                                       .Customer_nameController,
                                                   method:
@@ -157,22 +157,22 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                       ),
                                       Row(
                                         children: [
-                                          Expanded(
-                                            child: inpuDropdDown(
-                                                context,
-                                                "Invoice For",
-                                                controller.ListType,
-                                                controller.InvoiceType,
-                                                method: updateInvoiceType),
-                                          ),
-                                          Expanded(
-                                            child: inpuDropdDown(
-                                                context,
-                                                "Sale/Estimate",
-                                                controller.ListSaleType,
-                                                controller.SaleType,
-                                                method: updateSaleType),
-                                          ),
+                                          // Expanded(
+                                          //   child: inpuDropdDown(
+                                          //       context,
+                                          //       "Invoice For",
+                                          //       controller.ListType,
+                                          //       controller.InvoiceType,
+                                          //       method: updateInvoiceType),
+                                          // ),
+                                          // Expanded(
+                                          //   child: inpuDropdDown(
+                                          //       context,
+                                          //       "Sale/Estimate",
+                                          //       controller.ListSaleType,
+                                          //       controller.SaleType,
+                                          //       method: updateSaleType),
+                                          // ),
                                           Expanded(
                                             child: formInput(
                                                 context,
@@ -275,7 +275,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                                         Expanded(
                                                           child: formInput(
                                                               context,
-                                                              "Price",
+                                                              "Price*",
                                                               controller
                                                                   // .Customer_nameController,
                                                                   .ProductPriceControllers[i],
@@ -406,8 +406,17 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                                                   .ListCategory,
                                                               "Category*",
                                                               controller
-                                                                  .categoryController[i],
-                                                              padding: 8.0),
+                                                                      .categoryController[
+                                                                  i],
+                                                              padding: 8.0,
+                                                              isPreloadInput: (controller.totalIdentifire[
+                                                                              i] !=
+                                                                          null &&
+                                                                      controller
+                                                                              .totalIdentifire[i] ==
+                                                                          true)
+                                                                  ? true
+                                                                  : false),
                                                         ),
                                                         // Location
                                                         Container(
@@ -417,8 +426,17 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                                                   .RackList,
                                                               "Item Location *",
                                                               controller
-                                                                  .productLocationController[i],
-                                                              padding: 8.0),
+                                                                      .productLocationController[
+                                                                  i],
+                                                              padding: 8.0,
+                                                              isPreloadInput: (controller.totalIdentifire[
+                                                                              i] !=
+                                                                          null &&
+                                                                      controller
+                                                                              .totalIdentifire[i] ==
+                                                                          true)
+                                                                  ? true
+                                                                  : false),
                                                         ),
 
                                                         Container(
@@ -443,7 +461,8 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                                                                 controller.ListAttribute[key.toLowerCase()],
                                                                                 "${capitalize(key)}",
                                                                                 controller.dynamicControllers['$i'][key],
-                                                                                padding: 8.0),
+                                                                                padding: 8.0,
+                                                                                isPreloadInput: (controller.totalIdentifire[i] != null && controller.totalIdentifire[i] == true) ? true : false),
                                                                           ),
                                                                       ],
                                                                     )
@@ -628,6 +647,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
 
       if (rData.isNotEmpty) {
         setState(() {
+          controller.totalIdentifire[controllerId] = true;
           controller.ProductPriceControllers[controllerId]!.text =
               (rData != null && rData['price'] != null) ? rData['price'] : 0;
           controller.ProductGstControllers[controllerId]!.text =
@@ -648,12 +668,14 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                   : controller.ProductDiscountControllers[controllerId]!.text;
         });
 
-        // attributes =============================================
-        if (controller.isSupplier) {
-          await controller.fnGetProductDetails(controllerId, rData);
-        }
-
         await fnTotalPrice(controllerId, rData: rData);
+        // attributes =============================================
+        Future.delayed(const Duration(milliseconds: 200), () {
+          controller.fnGetProductDetails(controllerId, rData);
+          setState(() {
+            controller.totalIdentifire[controllerId] = false;
+          });
+        });
       }
     }
   }

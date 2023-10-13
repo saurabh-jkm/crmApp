@@ -297,6 +297,8 @@ Widget productTableHeading(context, data) {
 
 // log row widgets ===================================
 Widget logTableRow(context, i, data, headingList) {
+  var lotList = new List.from(data['log'].reversed);
+
   return (data['log'] == 'null')
       ? SizedBox()
       : Container(
@@ -304,8 +306,7 @@ Widget logTableRow(context, i, data, headingList) {
 
           child: Column(
             children: [
-              for (var k in data['log'])
-                SecondrRowForLog(context, k, headingList)
+              for (var k in lotList) SecondrRowForLog(context, k, headingList)
             ],
           ),
         );
@@ -313,6 +314,7 @@ Widget logTableRow(context, i, data, headingList) {
 
 Widget SecondrRowForLog(context, data, headingList) {
   var newData = data['item_list'];
+  var oldSubData = data['oldSubData'];
   //newData = (newData[key] == null) ? {} : data[key];
 
   //var tData = data['$k'];
@@ -320,7 +322,7 @@ Widget SecondrRowForLog(context, data, headingList) {
   return (newData == null)
       ? SizedBox()
       : Container(
-          margin: EdgeInsets.only(bottom: 30.0),
+          margin: EdgeInsets.only(bottom: 4.0),
           child: Column(
             children: [
               Container(
@@ -337,9 +339,62 @@ Widget SecondrRowForLog(context, data, headingList) {
                 ),
               ),
               for (String key in newData.keys)
-                productTableRow(context, key, newData, headingList,
+                log_TableRow(context, key, newData, headingList, oldSubData,
                     rowColor: Color.fromARGB(255, 101, 178, 209))
             ],
           ),
         );
+}
+
+Widget log_TableRow(context, key, dataArr, headingList, oldSubData,
+    {rowColor: ''}) {
+  var arr = {};
+  if (dataArr[key] != null) {
+    dataArr[key].forEach((k, v) {
+      arr[k] = v;
+    });
+  }
+  //arr = (dataArr[key] == null) ? {} : dataArr[key];
+  print(oldSubData);
+  if (oldSubData != null && oldSubData[key] != null) {
+    print("yess");
+    var odata = oldSubData[key];
+    arr['price'] = (odata['price'] != null)
+        ? '${odata['price']} -> ${arr['price']}'
+        : arr['price'];
+
+    arr['location'] = (odata['location'] != null)
+        ? '${odata['location']} -> ${arr['location']}'
+        : arr['location'];
+
+    arr['quantity'] = (odata['quantity'] != null)
+        ? '${odata['quantity']} -> ${arr['quantity']}'
+        : arr['quantity'];
+  }
+
+  if (arr['quantity'] != null && arr['qnt_added'] != null) {
+    arr['quantity'] = arr['qnt_added'];
+  }
+
+  return Container(
+    margin: EdgeInsets.only(bottom: 1.0),
+    padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+    decoration: BoxDecoration(color: (rowColor == '') ? themeBG : rowColor),
+    child: Row(
+      children: [
+        for (String k in headingList)
+          logValueWid(k, arr[k], qnt: arr['quantity'])
+      ],
+    ),
+  );
+}
+
+Widget logValueWid(k, value, {qnt: 1}) {
+  return Expanded(
+    child: Container(
+      child: Text(
+          "${(value == null || value == '' || value == '0') ? '-' : value}",
+          style: TextStyle(fontSize: 12.0, color: Colors.black)),
+    ),
+  );
 }

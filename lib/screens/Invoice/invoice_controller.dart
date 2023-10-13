@@ -79,6 +79,7 @@ class invoiceController {
   // Map<String, dynamic> ListAttributeWithId = {};
 
   Map<dynamic, dynamic> productDBdata = {};
+  Map<int, bool> totalIdentifire = {};
 
   int totalLocation = 1;
   int totalProduct = 1;
@@ -102,6 +103,8 @@ class invoiceController {
   init_functions({dbData: '', type: ''}) async {
     if (type == 'buy') {
       isSupplier = true;
+      InvoiceType = 'Supplier';
+      SaleType = 'Sale';
       await getAttributeList();
       await getRackList();
       await getCategoryList();
@@ -123,6 +126,7 @@ class invoiceController {
     // locationQuntControllers['1'] = TextEditingController();
 
     // init default controllers
+    totalIdentifire[1] = false;
     ProductNameControllers[1] = TextEditingController();
     ProductQuntControllers[1] = TextEditingController();
     ProductUnitControllers[1] = TextEditingController();
@@ -444,6 +448,7 @@ class invoiceController {
   }
 
   // update product quantity
+  var oldSubProduct = {};
   fn_update_product_qnt(docId, i, liveData, instData) async {
     var k = i - 1;
     i = (liveData['list_item_id'] != null) ? liveData['list_item_id'] : i;
@@ -452,8 +457,13 @@ class invoiceController {
     var productData = (liveData['id'] == null)
         ? {}
         : await dbFind({'table': 'product', 'id': liveData['id']});
+
     var subProducts =
         (productData['item_list'] != null) ? productData['item_list'] : {};
+    subProducts.forEach((k, v) {
+      oldSubProduct[k] = v;
+    });
+    var tempSubQnt = subProducts[i]['quantity'];
 
     // if isset current product
 
@@ -527,12 +537,12 @@ class invoiceController {
         // t_productdb_qnt = t_productdb_qnt - t_ins_qnt;
         // t_subproduct_qnt = t_subproduct_qnt - t_ins_qnt;
       }
-      // check add or remove when update
+      // check add or remove when update =================================
+      var logType = 'Sale';
       int diffRance = 0;
       if (docId != '' && editProductQnt['$i'] != null) {
         var logUnit = 0;
         var logQnt = 0;
-        var logType = 'add_more';
         var oldData = editProductQnt['$i'];
 
         int old_totalUnit = (oldData['unit'] != null && oldData['unit'] == '')
@@ -549,10 +559,11 @@ class invoiceController {
         logType = (logUnit < 0) ? 'return' : 'add_more';
 
         if (t_productdb_unit == 0) {
-          subProducts['$i']['totalUnit'] =
-              '${t_subproduct_qnt + t_ins_qnt + (old_qnt - t_ins_qnt)}';
+          subProducts['$i']['totalUnit'] = '0';
           logQnt = old_qnt - t_ins_qnt;
           logType = (logQnt > 1) ? 'return' : 'add_more';
+          subProducts['$i']['quantity'] =
+              '${int.parse(subProducts['$i']['quantity'].toString()) + logQnt}';
         } else {
           subProducts['$i']['quantity'] =
               '${((int.parse(subProducts['$i']['totalUnit'].toString()) / t_productdb_unit).toInt())}';
@@ -587,7 +598,16 @@ class invoiceController {
         'item_list': subProducts,
       };
       var r = await dbUpdate(db, tempW);
-      //print(tempW);
+
+      // product log =============================================
+      // var temp = oldSubProduct[i];
+      // temp['quantity'] = tempSubQnt;
+      // //oldSubProduct[i] = temp;
+      // var tempOldSubData = {i: temp};
+
+      await updateProductLog(
+          liveData['id'], tempW, oldSubProduct, tempSubQnt, i, instData['$k'],
+          logType: logType);
     }
 
     return NewLog;
@@ -683,7 +703,8 @@ class invoiceController {
           temp['price'] == '' ||
           temp['quantity'] == '' ||
           temp['total'] == '') {
-        themeAlert(context, "Row No. $i Some Fields are Empty!!",
+        themeAlert(context,
+            "Row No. $i :  Product Name, Price, Quantity  are required!!",
             type: 'error');
         return false;
       }
@@ -942,6 +963,8 @@ class invoiceController {
       dynamicControllers["$totalProduct"] = temp;
     });
 
+    totalIdentifire[ctrId] = false;
+
     ProductNameControllers[ctrId] = TextEditingController();
     ProductPriceControllers[ctrId] = TextEditingController();
     ProductQuntControllers[ctrId] = TextEditingController();
@@ -962,6 +985,7 @@ class invoiceController {
   // remove  row
   ctrRemoveRow(context) async {
     if (totalProduct > 1) {
+      totalIdentifire.remove(totalProduct);
       dynamicControllers.remove(totalProduct);
       var ctrId = totalProduct;
       ProductNameControllers.remove(ctrId);
@@ -1028,13 +1052,15 @@ class invoiceController {
     var rData = await dbFind({'table': 'product', 'id': '${old['id']}'});
 
     var listData = rData['item_list'];
-    var oldSubData;
-    var subData = oldSubData = (listData[old['list_item_id']] != null)
+    var oldSubData = {};
+    var subData = (listData[old['list_item_id']] != null)
         ? listData[old['list_item_id']]
         : {};
+    oldSubData['${old['list_item_id']}'] = listData[old['list_item_id']];
 
     var qnt = currentData['quantity'];
     var unit = (currentData['unit'] == '') ? '0' : currentData['unit'];
+    var price = (currentData['price'] == '') ? '0' : currentData['price'];
     var Tunit =
         int.parse(currentData['unit'].toString()) * int.parse(qnt.toString());
     dynamicData.forEach((k, v) {
@@ -1046,6 +1072,7 @@ class invoiceController {
     subData['totalUnit'] =
         '${int.parse(subData['totalUnit'].toString()) + int.parse(Tunit.toString())}';
     subData['unit'] = '${unit}';
+    subData['price'] = '${price}';
 
     rData['item_list'][old['list_item_id']] = subData;
     rData['quantity'] =
@@ -1054,6 +1081,9 @@ class invoiceController {
     rData['table'] = 'product';
     rData['id'] = '${old['id']}';
     await dbUpdate(db, rData);
+    // for log variable added
+    subData['qnt_added'] = qnt;
+    rData['item_list'][old['list_item_id']] = subData;
 
     // log update ====================================================
     var logDb = await dbFindDynamic(
@@ -1066,7 +1096,6 @@ class invoiceController {
     rData['log_date'] = DateTime.now();
     rData['updatedBy'] = (user['id'] != null) ? user['id'] : '';
     rData['updatedByName'] = (user['name'] != null) ? user['name'] : '';
-    rData['singleLog'] = 'Quntity Update';
     rData['oldSubData'] = oldSubData;
     rData['changedSubData'] = subData;
 
@@ -1144,12 +1173,63 @@ class invoiceController {
 
     dbArr['log_date'] = DateTime.now();
     dbArr['updatedBy'] = (user['id'] != null) ? user['id'] : '';
-    dbArr['updatedByName'] = (user['name'] != null) ? user['name'] : '';
+    dbArr['updatedByName'] =
+        (user['name'] != null) ? "${user['name']} - Buy Invoice " : '';
     dbArr['singleLog'] = 'new Product_from_suplier_invoice';
     newLog.add(dbArr);
     var updateArr = {
       'table': 'product_log',
       'product_id': '${productID}',
+      'log': newLog,
+      'last_update': DateTime.now()
+    };
+
+    if (logDb.isNotEmpty && logDb[0]['id'] != null) {
+      // update
+      updateArr['id'] = logDb[0]['id'];
+      await dbUpdate(db, updateArr);
+    } else {
+      // insert
+      await dbSave(db, updateArr);
+    }
+  }
+
+  // update product log ==========================================
+  updateProductLog(docId, dbArr, oldSubProductList, oldQnt, list_id, ins_data,
+      {logType: 'Sale'}) async {
+    var temp = oldSubProductList[list_id];
+    Map<dynamic, dynamic> oldMap = new Map();
+    oldMap['quantity'] = oldQnt;
+    oldMap['price'] = (temp['price'] != null) ? temp['price'] : '';
+    oldMap['unit'] = (temp['unit'] != null) ? temp['unit'] : '';
+    oldMap['location'] = (temp['location'] != null) ? temp['location'] : '';
+    oldMap['totalUnit'] = (temp['totalUnit'] != null) ? temp['totalUnit'] : '';
+    var oldSub = {list_id: oldMap};
+
+    // only updated row
+    var temp2 = dbArr['item_list'][list_id];
+    temp2['price'] = (ins_data['price'] != null) ? ins_data['price'] : '';
+    var temp3 = {list_id: temp2};
+    dbArr['item_list'] = temp3;
+
+    var logDb = await dbFindDynamic(
+        db, {'table': 'product_log', 'product_id': '$docId'});
+
+    var newLog = (logDb.isNotEmpty && logDb[0]['log'] != null)
+        ? logDb[0]['log'].toList()
+        : [];
+
+    dbArr.remove('id');
+    dbArr.remove('table');
+    dbArr['log_date'] = DateTime.now();
+    dbArr['updatedBy'] = (user['id'] != null) ? user['id'] : '';
+    dbArr['updatedByName'] =
+        (user['name'] != null) ? '${user['name']} - Sale Invoice $logType' : '';
+    dbArr['oldSubData'] = oldSub;
+    newLog.add(dbArr);
+    var updateArr = {
+      'table': 'product_log',
+      'product_id': '$docId',
       'log': newLog,
       'last_update': DateTime.now()
     };

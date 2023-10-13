@@ -1,3 +1,4 @@
+import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
 import 'package:crm_demo/screens/Invoice/invoice_list.dart';
 import 'package:crm_demo/screens/dashboard/dashboard_screen.dart';
 import 'package:crm_demo/screens/privacy_policy/privacy_policy.dart';
@@ -23,6 +24,7 @@ import 'controllers/MenuAppController.dart';
 //import 'screens/Login_Reg/Login_user.dart';
 import 'screens/Login_Reg/login_screen.dart';
 import 'screens/main/main_screen.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 ///////
 void main() async {
@@ -49,6 +51,7 @@ void main() async {
   }
 
   // ========================
+  setPathUrlStrategy();
   runApp(new MyApp());
 }
 
@@ -129,7 +132,7 @@ class _MyAppState extends State<MyApp> {
         '/new_invoice': (context) => addInvoiceScreen(
               header_name: "Customer",
             ),
-        '/new_supplier_invoice': (context) => addInvoiceScreen(
+        '/new_supplier_invoice': (context) => addInvoiceSupplierScreen(
               header_name: "Suplier",
             ),
       },
