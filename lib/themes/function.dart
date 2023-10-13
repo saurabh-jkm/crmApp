@@ -58,6 +58,16 @@ statusOF(bool boool) {
   return returnData;
 }
 
+MeetingStatusOF(bool boool) {
+  var returnData;
+  if (boool == true) {
+    returnData = "Pending";
+  } else {
+    returnData = "Done";
+  }
+  return returnData;
+}
+
 String formatDate(dateTime, {formate: "dd-MM-yyyy h:mm a"}) {
   final formatter = DateFormat(formate);
   return (!kIsWeb && Platform.isWindows)

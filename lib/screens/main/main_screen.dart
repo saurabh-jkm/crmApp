@@ -8,11 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../responsive.dart';
 
+import '../../themes/theme_widgets.dart';
 import '../Attributes/attribute_add.dart';
 import '../Invoice/invoice_list.dart';
 import '../Profile/profile_details.dart';
+import '../Selsman/WorkAlot/salesman_list.dart';
 import '../Sub Admin/Add_SubAdmin.dart';
-import '../Track_History/track_list.dart';
+import '../Selsman/Track_History/track_list.dart';
 import '../category/category_add.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../inventry/inventry_list.dart';
@@ -28,7 +30,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   var sidemenu;
-
+  var submenu;
   Map<dynamic, dynamic> user = new Map();
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -53,7 +55,7 @@ class _MainScreenState extends State<MainScreen> {
   ////////
   Widget build(BuildContext context) {
     return Scaffold(
-      key: context.read<MenuAppController>().scaffoldKey,
+      // key: context.read<MenuAppController>().scaffoldKey,
       drawer: WdSideMenu(context),
       body: SafeArea(
         child: Row(
@@ -101,7 +103,9 @@ class _MainScreenState extends State<MainScreen> {
               )
             else if (sidemenu == 7)
               Expanded(flex: 5, child: InventryList())
-            else if (sidemenu == 8)
+            else if (sidemenu == 8 && submenu == "work")
+              Expanded(flex: 5, child: SalemanList())
+            else if (sidemenu == 8 && submenu == "history")
               Expanded(flex: 5, child: TrackHistory())
             else if (sidemenu == 9)
               Expanded(flex: 5, child: ProfileDetails())
@@ -259,6 +263,7 @@ class _MainScreenState extends State<MainScreen> {
                   onTap: () {
                     setState(() {
                       sidemenu = 8;
+                      submenu = "work";
                       if (Responsive.isMobile(context)) {
                         Navigator.of(context).pop();
                       }
@@ -266,9 +271,70 @@ class _MainScreenState extends State<MainScreen> {
                   },
                   horizontalTitleGap: 0.0,
                   leading: Icon(Icons.location_history, color: Colors.white),
-                  title: Text(
-                    "Track History",
-                    style: TextStyle(color: Colors.white),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Salesman",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      PopupMenuButton(
+                          color: Colors.white,
+                          iconSize: 30,
+                          itemBuilder: (context) => [
+                                PopupMenuItem(
+                                    onTap: () {
+                                      setState(() {
+                                        sidemenu = 8;
+                                        submenu = "work";
+                                      });
+
+                                      // final edata = await InvoiceService(
+                                      //   PriceDetail: data,
+                                      // ).createInvoice();
+
+                                      // // final data = await service.createInvoice();
+                                      // await Next_pdf_page("invoice", edata, data);
+                                    },
+                                    child: Row(
+                                      children: const [
+                                        Icon(
+                                          Icons.person,
+                                          color: Colors.blue,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          "Saller Info",
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ],
+                                    )),
+                                PopupMenuItem(
+                                    onTap: () {
+                                      setState(() {
+                                        sidemenu = 8;
+                                        submenu = "history";
+                                      });
+                                    },
+                                    child: Row(
+                                      children: const [
+                                        Icon(
+                                          Icons.location_history,
+                                          color: Colors.blue,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          "Track History",
+                                          style: TextStyle(color: Colors.black),
+                                        ),
+                                      ],
+                                    )),
+                              ])
+                    ],
                   ),
                 )
               : SizedBox(),

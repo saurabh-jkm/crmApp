@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/themes/style.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
@@ -379,8 +380,7 @@ dbDelete(db, where) {
   return returnData;
 }
 
-win_dbDelete(db, where) {
-  var returnData = '';
+win_dbDelete(context, db, where) async {
   if (where == null || where == '') {
     return "Map data is empty";
   }
@@ -388,20 +388,23 @@ win_dbDelete(db, where) {
     return "Table name required!!";
   }
 
-  db
-      .collection(where['table'])
-      .document(where['id'])
-      .delete()
-      .then((value) {})
-      .catchError((error) {
-    returnData = "Updattion Failed: $error";
-  });
-
-  return returnData;
+  if (!kIsWeb && Platform.isWindows) {
+    await db
+        .collection(where['table'])
+        .document(where['id'])
+        .delete()
+        .then((value) {
+      themeAlert(context, "Deleted Successfully ");
+    }).catchError((error) {
+      themeAlert(context, 'Not find Data', type: "error");
+    });
+  } else {
+    await db.collection(where['table']).doc(where['id']).delete().then((value) {
+      themeAlert(context, "Deleted Successfully ");
+    }).catchError((error) {
+      themeAlert(context, 'Not find Data', type: "error");
+    });
+  }
 }
-
-
-
-
 
 ////////  =================================================================================

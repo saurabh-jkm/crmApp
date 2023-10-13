@@ -1,3 +1,3 @@
-library my_prj.globals;
+// library my_prj.globals;
 
-var dynamicURI = '';
+// var dynamicURI = '';

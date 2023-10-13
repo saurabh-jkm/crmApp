@@ -9,8 +9,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../themes/theme_widgets.dart';
-import '../dashboard/components/header.dart';
+import '../../../themes/theme_widgets.dart';
+import '../../dashboard/components/header.dart';
 
 class View_Location_Screen extends StatefulWidget {
   const View_Location_Screen({Key? key, required this.client_location})

@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/screens/Track_History/track_controller.dart';
-import 'package:crm_demo/screens/Track_History/view_location.dart';
+import 'package:crm_demo/screens/Selsman/Track_History/track_controller.dart';
+import 'package:crm_demo/screens/Selsman/Track_History/view_location.dart';
 
 import 'package:crm_demo/themes/base_controller.dart';
 import 'package:crm_demo/themes/function.dart';
@@ -12,10 +12,10 @@ import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../themes/style.dart';
-import '../../themes/theme_widgets.dart';
-import '../customers/customer_widgets.dart';
-import '../dashboard/components/header.dart';
+import '../../../themes/style.dart';
+import '../../../themes/theme_widgets.dart';
+import '../../customers/customer_widgets.dart';
+import '../../dashboard/components/header.dart';
 import 'track_widgets.dart';
 
 class TrackHistory extends StatefulWidget {

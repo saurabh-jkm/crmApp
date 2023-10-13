@@ -570,6 +570,7 @@ Widget formInput(BuildContext context, label, controller,
   //   controller.text = currentController.text;
   // }
   return Container(
+      height: 55,
       padding: EdgeInsets.all(padding),
       child: (editComplete == '')
           ? TextFormField(
@@ -739,7 +740,7 @@ Widget inputSearch(context, controller, label, {method: ''}) {
 // theme heading
 Widget themeHeading2(label) {
   return Padding(
-    padding: EdgeInsets.only(left: 16.0),
+    padding: EdgeInsets.only(left: 10.0),
     child: Text("$label",
         style: themeTextStyle(color: themeBG, fw: FontWeight.bold, size: 16.0)),
   );
@@ -841,4 +842,115 @@ Widget TableHeading(context, data, {rowColor: '', textColor: ''}) {
       ],
     ),
   );
+}
+
+Widget myFormField(BuildContext context, controller, label,
+    {readOnly = false,
+    onlyNumber = false,
+    icon = '',
+    fn = '',
+    maxLine = 1,
+    maxLength = 100}) {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.comment,
+              color: Colors.blue,
+              size: 30,
+            ),
+            SizedBox(width: 10),
+            GoogleText(
+                text: "$label",
+                fweight: FontWeight.bold,
+                color: Colors.black,
+                fsize: 15.0),
+          ],
+        ),
+        SizedBox(height: 5.0),
+        Container(
+          padding: EdgeInsets.symmetric(
+              vertical: (maxLine == 1) ? 0.0 : 7.0, horizontal: 10.0),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                  width: 1.0, color: Color.fromARGB(255, 206, 206, 206)),
+              borderRadius: BorderRadius.circular(10.0)),
+          child: TextFormField(
+            textInputAction:
+                (maxLine == 1) ? TextInputAction.go : TextInputAction.newline,
+
+            onChanged: (value) {
+              if (value.length == maxLength) {
+                FocusScope.of(context).nextFocus();
+              }
+            },
+
+            style: TextStyle(fontSize: 16.0, color: Colors.black),
+            // onTap: () {
+            //   if (fn == 'date_of_admission') {
+            //     datePick('date_of_admission');
+            //   } else if (fn == 'date_of_discharge') {
+            //     datePick('date_of_discharge');
+            //   }
+            // },
+            controller: controller,
+
+            readOnly: (readOnly) ? true : false,
+            maxLength: (maxLength == 100) ? 200 : maxLength,
+            maxLines: (maxLine == 1) ? 1 : maxLine,
+            keyboardType: (onlyNumber)
+                ? TextInputType.number
+                : (maxLine == 1)
+                    ? TextInputType.text
+                    : TextInputType.multiline,
+
+            obscureText: (label == 'Change PIN - (Optional)') ? true : false,
+            decoration: InputDecoration(
+              // fillColor: Colors.grey,
+              // focusColor: Colors.grey,
+              counterText: "",
+              hintText: label,
+              filled: true,
+              // fillColor: Color.fromARGB(255, 255, 255, 255),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                borderSide: const BorderSide(
+                  width: 0,
+                  style: BorderStyle.none,
+                ),
+              ),
+              suffixIcon: (icon == '')
+                  ? Text("")
+                  : Icon(
+                      icon,
+                      color: themeBG2,
+                    ),
+            ),
+          ),
+        ),
+        SizedBox(height: 15.0),
+      ],
+    ),
+  );
+}
+
+Widget GoogleText(
+    {text = "",
+    color = Colors.black,
+    fsize = 15.0,
+    fweight = FontWeight.normal,
+    fstyle = FontStyle.normal}) {
+  return Text("$text",
+      style: GoogleFonts.alike(
+          color: color,
+          fontSize: fsize,
+          fontWeight: fweight,
+          fontStyle: fstyle));
 }
