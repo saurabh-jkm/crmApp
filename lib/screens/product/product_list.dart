@@ -437,6 +437,17 @@ class _ProductAddState extends State<ProductAdd> {
             ? data['stock_date']
             : formatDate(date, formate: 'dd/MM/yyyy');
 
+    var tempArr = (data['item_list'].length == 1) ? data['item_list']['1'] : {};
+    var tempName = '';
+    tempArr.forEach((k, v) {
+      if (tempName == '' &&
+          (k.toLowerCase() == 'colors' ||
+              k.toLowerCase() == 'size' ||
+              k.toLowerCase() == 'brand')) {
+        tempName = v;
+      }
+    });
+
     return TableRow(
         decoration: BoxDecoration(
             color: themeBG5,

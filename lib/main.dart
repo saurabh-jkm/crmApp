@@ -1,6 +1,6 @@
 import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
 import 'package:crm_demo/screens/Invoice/invoice_list.dart';
-import 'package:crm_demo/screens/dashboard/dashboard_screen.dart';
+//import 'package:crm_demo/screens/dashboard/dashboard_screen.dart';
 import 'package:crm_demo/screens/privacy_policy/privacy_policy.dart';
 import 'package:crm_demo/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
