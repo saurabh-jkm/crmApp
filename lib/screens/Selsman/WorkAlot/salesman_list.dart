@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Selsman/Track_History/track_controller.dart';
 import 'package:crm_demo/screens/Selsman/Track_History/view_location.dart';
+import 'package:crm_demo/screens/Selsman/WorkAlot/add_meet_widget.dart';
 import 'package:crm_demo/screens/Selsman/WorkAlot/saler_contoller.dart';
 
 import 'package:crm_demo/themes/base_controller.dart';
@@ -23,6 +24,8 @@ import '../../customers/customer_widgets.dart';
 import '../../dashboard/components/header.dart';
 import 'view_page.dart';
 
+
+
 class SalemanList extends StatefulWidget {
   const SalemanList({super.key});
 
@@ -34,10 +37,23 @@ class _SalemanListState extends State<SalemanList> {
   var controller = new SellerController();
   var baseController = new base_controller();
 
+  fn_setstate() {
+    setState(() {});
+  }
+
   initFunctions() async {
     await controller.sellerList();
     await controller.getCustomerNameList();
     setState(() {});
+  }
+
+  // ===================================================
+  fn_change_state(key, val) {
+    setState(() {
+      if (key == 'ListShow') {
+        controller.ListShow = val;
+      }
+    });
   }
 
   @override
@@ -61,15 +77,24 @@ class _SalemanListState extends State<SalemanList> {
         }
       },
       child: Scaffold(
-        body: Container(
-          color: themeBG2,
-          child: Column(
-            children: [
-              Container(height: 70.0, child: Header(title: "Salesman List")),
-              CustomerList(context)
-            ],
-          ),
-        ),
+        body: (controller.secondScreen && controller.selectedSellerId != null)
+            ? Container(
+                color: Colors.white,
+                child: Column(children: [
+                  _ImageSelect_Alert(context, controller.selectedSellerId,
+                      controller.MeetingMap, controller.selectedSeller),
+                ]),
+              )
+            : Container(
+                color: themeBG2,
+                child: Column(
+                  children: [
+                    Container(
+                        height: 70.0, child: Header(title: "Salesman List")),
+                    CustomerList(context)
+                  ],
+                ),
+              ),
       ),
     );
   }
@@ -125,6 +150,8 @@ class _SalemanListState extends State<SalemanList> {
     dataList.add('${data['date_at']}');
     dataList.add('action');
 
+    _ImageSelect_Alert(
+        context, data, controller.MeetingMap, controller.selectedSeller);
     return Container(
       margin: EdgeInsets.only(bottom: 1.0),
       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
@@ -158,13 +185,16 @@ class _SalemanListState extends State<SalemanList> {
                                     controller.MeetingMap =
                                         await controller.OrderList_data(
                                             "${data['id']}");
-                                    _ImageSelect_Alert(
-                                        context, data, controller.MeetingMap);
+                                    setState(() {
+                                      controller.selectedSellerId = data['id'];
+                                      controller.selectedSeller = data;
+                                      controller.secondScreen = true;
+                                    });
                                   },
                                       label: "Meetings Info",
-                                      radius: 10,
+                                      radius: 10.0,
                                       buttonColor: Colors.green,
-                                      btnHeightSize: 35),
+                                      btnHeightSize: 35.0),
                                 ])
                           : Text("${dataList[i]}",
                               style: TextStyle(
@@ -180,8 +210,87 @@ class _SalemanListState extends State<SalemanList> {
   }
 
   //////////////////   popup Box for Image selection ++++++++++++++++++++++++++++++++++++++
-  bool ListShow = true;
-  void _ImageSelect_Alert(BuildContext context, Mdata, MapMeeting) {
+
+  Widget _ImageSelect_Alert(BuildContext context, Mdata, MapMeeting, data) {
+    return Container(
+        //height: MediaQuery.of(context).size.height,
+        //width: MediaQuery.of(context).size.width - 450,
+        child: (controller.ListShow)
+
+////////////////////////////////////////////     Listt Of Meeting ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            IconButton(
+                                onPressed: () async {
+                                  await controller.sellerList();
+                                  // todo
+                                  setState(() {
+                                    controller.selectedSeller = {};
+                                    controller.selectedSellerId = '';
+                                    controller.secondScreen = false;
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.black,
+                                )),
+                            Text(
+                              '${(controller.selectedSeller != null) ? controller.selectedSeller['name'] : ''}',
+                              style: themeTextStyle(color: Colors.black),
+                            ),
+                          ],
+                        ),
+                        Row(children: [
+                          IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  controller.OrderList_data(
+                                      controller.selectedSellerId);
+                                });
+                              },
+                              icon: Icon(
+                                Icons.refresh,
+                                color: Colors.black,
+                              )),
+                          SizedBox(width: 20.0),
+                          themeButton3(context, () {
+                            setState(() {
+                              controller.ListShow = false;
+                            });
+                          }, label: "+ New Meeting Asign", radius: 5.0),
+                        ]),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    TableHeading(context, controller.MeetingheadList,
+                        rowColor: Color.fromARGB(255, 94, 86, 204),
+                        textColor: Colors.white),
+                    Container(
+                        height: MediaQuery.of(context).size.height - 100,
+                        child: ListView(children: [
+                          for (int key in MapMeeting.keys)
+                            MeetingTableRow(context, MapMeeting[key], key,
+                                rowColor: Color.fromARGB(255, 217, 215, 239),
+                                textColor: const Color.fromARGB(255, 0, 0, 0),
+                                controllerr: controller),
+                        ])),
+                  ])
+            : addNewMeet_widget(context, controller, fnFetchCutomerDetails,
+                selectDate, controller.ListShow, fn_change_state, fn_setstate));
+  }
+
+  /*void _ImageSelect_Alert_(BuildContext context, Mdata, MapMeeting) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -230,323 +339,328 @@ class _SalemanListState extends State<SalemanList> {
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width - 450,
                 child: SingleChildScrollView(
-                  child: (ListShow == true)
+                    child: (controller.ListShow)
 
 ////////////////////////////////////////////     Listt Of Meeting ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  themeButton3(context, () {
-                                    setStatee(() {
-                                      ListShow = false;
-                                    });
-                                  }, label: "+ New Meeting Asign", radius: 5.0),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              TableHeading(context, controller.MeetingheadList,
-                                  rowColor: Color.fromARGB(255, 94, 86, 204),
-                                  textColor: Colors.white),
-                              for (int key in MapMeeting.keys)
-                                MeetingTableRow(
-                                    context,
-                                    MapMeeting[key],
-                                    key,
-                                    rowColor:
-                                        Color.fromARGB(255, 217, 215, 239),
-                                    textColor:
-                                        const Color.fromARGB(255, 0, 0, 0),
-                                    controllerr: controller,
-                                    setStatee),
-                            ])
-                      :
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    themeButton3(context, () {
+                                      setStatee(() {
+                                        controller.ListShow = false;
+                                      });
+                                    },
+                                        label: "+ New Meeting Asign",
+                                        radius: 5.0),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                TableHeading(
+                                    context, controller.MeetingheadList,
+                                    rowColor: Color.fromARGB(255, 94, 86, 204),
+                                    textColor: Colors.white),
+                                for (int key in MapMeeting.keys)
+                                  MeetingTableRow(context, MapMeeting[key], key,
+                                      rowColor:
+                                          Color.fromARGB(255, 217, 215, 239),
+                                      textColor:
+                                          const Color.fromARGB(255, 0, 0, 0),
+                                      controllerr: controller),
+                              ])
+                        : addNewMeet_widget(
+                            context,
+                            controller,
+                            fnFetchCutomerDetails,
+                            selectDate,
+                            controller.ListShow,
+                            fn_change_state)
 
 ////////////////////////////////////////////   New Add Meeting ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                IconButton(
-                                    onPressed: () {
-                                      setStatee(() {
-                                        ListShow = true;
-                                      });
-                                    },
-                                    icon: Icon(Icons.arrow_back_rounded,
-                                        color: Colors.black, size: 30))
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Form(
-                              key: controller.formKeyInvoice,
-                              child: Column(
-                                children: <Widget>[
-                                  ///    Add TextFormFields and ElevatedButton here.
-                                  Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: Container(
-                                              child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              themeSpaceVertical(5.0),
-                                              Row(
-                                                children: [
-                                                  Icon(Icons.person,
-                                                      color: Colors.black,
-                                                      size: 30),
-                                                  themeHeading2(
-                                                      "Customer Details "),
-                                                ],
-                                              ),
+                    // Column(
+                    //     mainAxisAlignment: MainAxisAlignment.start,
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     mainAxisSize: MainAxisSize.min,
+                    //     children: <Widget>[
+                    //       Row(
+                    //         children: [
+                    //           IconButton(
+                    //               onPressed: () {
+                    //                 setStatee(() {
+                    //                   controller.ListShow = true;
+                    //                 });
+                    //               },
+                    //               icon: Icon(Icons.arrow_back_rounded,
+                    //                   color: Colors.black, size: 30))
+                    //         ],
+                    //       ),
+                    //       SizedBox(
+                    //         height: 10,
+                    //       ),
+                    //       Form(
+                    //         key: controller.formKeyInvoice,
+                    //         child: Column(
+                    //           children: <Widget>[
+                    //             ///    Add TextFormFields and ElevatedButton here.
+                    //             Row(
+                    //                 crossAxisAlignment:
+                    //                     CrossAxisAlignment.start,
+                    //                 children: [
+                    //                   Expanded(
+                    //                     flex: 2,
+                    //                     child: Container(
+                    //                         child: Column(
+                    //                       crossAxisAlignment:
+                    //                           CrossAxisAlignment.start,
+                    //                       children: [
+                    //                         themeSpaceVertical(5.0),
+                    //                         Row(
+                    //                           children: [
+                    //                             Icon(Icons.person,
+                    //                                 color: Colors.black,
+                    //                                 size: 30),
+                    //                             themeHeading2(
+                    //                                 "Customer Details "),
+                    //                           ],
+                    //                         ),
 
-                                              themeSpaceVertical(4.0),
-                                              Row(
-                                                children: [
-                                                  // fireld 1 ==========================
-                                                  Expanded(
-                                                      child: autoCompleteFormInput(
-                                                          controller
-                                                              .ListCustomer,
-                                                          "Customer Name",
-                                                          controller
-                                                              .Customer_nameController,
-                                                          method:
-                                                              fnFetchCutomerDetails)),
+                    //                         themeSpaceVertical(4.0),
+                    //                         Row(
+                    //                           children: [
+                    //                             // fireld 1 ==========================
+                    //                             Expanded(
+                    //                                 child: autoCompleteFormInput(
+                    //                                     controller
+                    //                                         .ListCustomer,
+                    //                                     "Customer Name",
+                    //                                     controller
+                    //                                         .Customer_nameController,
+                    //                                     method:
+                    //                                         fnFetchCutomerDetails)),
 
-                                                  Expanded(
-                                                    child: formInput(
-                                                      context,
-                                                      "Mobile No.",
-                                                      controller
-                                                          .Customer_MobileController,
-                                                      padding: 8.0,
-                                                      isNumber: true,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: formInput(
-                                                        context,
-                                                        "Email Id",
-                                                        controller
-                                                            .Customer_emailController,
-                                                        padding: 8.0),
-                                                  ),
-                                                ],
-                                              ),
+                    //                             Expanded(
+                    //                               child: formInput(
+                    //                                 context,
+                    //                                 "Mobile No.*",
+                    //                                 controller
+                    //                                     .Customer_MobileController,
+                    //                                 padding: 8.0,
+                    //                                 isNumber: true,
+                    //                               ),
+                    //                             ),
+                    //                             Expanded(
+                    //                               child: formInput(
+                    //                                   context,
+                    //                                   "Email Id",
+                    //                                   controller
+                    //                                       .Customer_emailController,
+                    //                                   padding: 8.0),
+                    //                             ),
+                    //                           ],
+                    //                         ),
 
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: formInput(
-                                                        context,
-                                                        "Address",
-                                                        controller
-                                                            .Customer_addressController,
-                                                        padding: 8.0),
-                                                  ),
-                                                  Expanded(
-                                                    child: formInput(
-                                                        context,
-                                                        "Pin Code",
-                                                        controller
-                                                            .Customer_pincodeController,
-                                                        padding: 8.0),
-                                                  ),
-                                                  Expanded(
-                                                    child: formInput(
-                                                        context,
-                                                        "Shop No.",
-                                                        controller
-                                                            .Customer_shopNoController,
-                                                        padding: 8.0),
-                                                  ),
-                                                ],
-                                              ),
+                    //                         Row(
+                    //                           children: [
+                    //                             Expanded(
+                    //                               child: formInput(
+                    //                                   context,
+                    //                                   "Address *",
+                    //                                   controller
+                    //                                       .Customer_addressController,
+                    //                                   padding: 8.0),
+                    //                             ),
+                    //                             Expanded(
+                    //                               child: formInput(
+                    //                                   context,
+                    //                                   "Pin Code *",
+                    //                                   controller
+                    //                                       .Customer_pincodeController,
+                    //                                   padding: 8.0),
+                    //                             ),
+                    //                             Expanded(
+                    //                               child: formInput(
+                    //                                   context,
+                    //                                   "Shop No.",
+                    //                                   controller
+                    //                                       .Customer_shopNoController,
+                    //                                   padding: 8.0),
+                    //                             ),
+                    //                           ],
+                    //                         ),
 
-                                              // Row(
-                                              //   children: [
-                                              //     // fireld 1 ==========================
-                                              //     Expanded(
-                                              //         child: autoCompleteFormInput(
-                                              //             controller.ListType,
-                                              //             "Customer Type",
-                                              //             controller
-                                              //                 .Customer_TypeController,
-                                              //             method: fnFetchCutomerDetails)),
-                                              //     // fireld 2 ==========================
-                                              //     Expanded(
-                                              //       child: Text(""),
-                                              //     ),
-                                              //   ],
-                                              // ),
-                                              // 2nd row =============================================
-                                              // Header End ============================
+                    //                         // Row(
+                    //                         //   children: [
+                    //                         //     // fireld 1 ==========================
+                    //                         //     Expanded(
+                    //                         //         child: autoCompleteFormInput(
+                    //                         //             controller.ListType,
+                    //                         //             "Customer Type",
+                    //                         //             controller
+                    //                         //                 .Customer_TypeController,
+                    //                         //             method: fnFetchCutomerDetails)),
+                    //                         //     // fireld 2 ==========================
+                    //                         //     Expanded(
+                    //                         //       child: Text(""),
+                    //                         //     ),
+                    //                         //   ],
+                    //                         // ),
+                    //                         // 2nd row =============================================
+                    //                         // Header End ============================
 
-                                              themeSpaceVertical(10.0),
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 10, bottom: 10),
-                                                child: Row(
-                                                  children: [
-                                                    Icon(Icons.meeting_room,
-                                                        color: Colors.black,
-                                                        size: 30),
-                                                    themeHeading2(
-                                                        "Next Meeting "),
-                                                  ],
-                                                ),
-                                              ),
+                    //                         themeSpaceVertical(10.0),
+                    //                         Container(
+                    //                           margin: EdgeInsets.only(
+                    //                               top: 10, bottom: 10),
+                    //                           child: Row(
+                    //                             children: [
+                    //                               Icon(Icons.meeting_room,
+                    //                                   color: Colors.black,
+                    //                                   size: 30),
+                    //                               themeHeading2(
+                    //                                   "Next Meeting "),
+                    //                             ],
+                    //                           ),
+                    //                         ),
 
-                                              Container(
-                                                  padding: EdgeInsets.all(5),
-                                                  decoration: BoxDecoration(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              10, 0, 0, 0),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      border: Border.all(
-                                                          color: Colors.black)),
-                                                  child: Column(
-                                                    children: [
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            top: 10, left: 10),
-                                                        child: Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            GestureDetector(
-                                                                onTap: () {
-                                                                  selectDate(
-                                                                      context,
-                                                                      setStatee);
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                        margin: EdgeInsets.only(
-                                                                            top:
-                                                                                10,
-                                                                            left:
-                                                                                10),
-                                                                        decoration: BoxDecoration(
-                                                                            boxShadow:
-                                                                                themeBox,
-                                                                            color: Colors
-                                                                                .white,
-                                                                            borderRadius: BorderRadius.circular(
-                                                                                5)),
-                                                                        padding:
-                                                                            EdgeInsets.all(
-                                                                                5),
-                                                                        child:
-                                                                            Row(
-                                                                          children: [
-                                                                            Icon(
-                                                                              Icons.calendar_today,
-                                                                              size: 30,
-                                                                              color: Colors.blue,
-                                                                            ),
-                                                                            SizedBox(width: 10),
-                                                                            Text(
-                                                                              (controller.Next_date == "") ? "     Select date     " : controller.Next_date,
-                                                                              style: GoogleFonts.alike(fontSize: 13.0, color: (controller.Next_date == "") ? Colors.blue : Colors.green),
-                                                                            ),
-                                                                            SizedBox(width: 10),
-                                                                          ],
-                                                                        ))),
-                                                            (controller.Next_date ==
-                                                                    "")
-                                                                ? SizedBox()
-                                                                : IconButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      setStatee(
-                                                                          () {
-                                                                        controller.Next_date =
-                                                                            "";
-                                                                      });
-                                                                    },
-                                                                    icon: Icon(
-                                                                      Icons
-                                                                          .cancel,
-                                                                      color: Colors
-                                                                          .red,
-                                                                      size: 30,
-                                                                    ))
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 10),
-                                                      myFormField(
-                                                          context,
-                                                          controller
-                                                              .Customer_NextFollowUp_Controller,
-                                                          "Comments",
-                                                          maxLine: 4),
-                                                    ],
-                                                  ))
+                    //                         Container(
+                    //                             padding: EdgeInsets.all(5),
+                    //                             decoration: BoxDecoration(
+                    //                                 color:
+                    //                                     const Color.fromARGB(
+                    //                                         10, 0, 0, 0),
+                    //                                 borderRadius:
+                    //                                     BorderRadius.circular(
+                    //                                         10),
+                    //                                 border: Border.all(
+                    //                                     color: Colors.black)),
+                    //                             child: Column(
+                    //                               children: [
+                    //                                 Container(
+                    //                                   margin: EdgeInsets.only(
+                    //                                       top: 10, left: 10),
+                    //                                   child: Row(
+                    //                                     crossAxisAlignment:
+                    //                                         CrossAxisAlignment
+                    //                                             .end,
+                    //                                     children: [
+                    //                                       GestureDetector(
+                    //                                           onTap: () {
+                    //                                             selectDate(
+                    //                                                 context,
+                    //                                                 setStatee);
+                    //                                           },
+                    //                                           child:
+                    //                                               Container(
+                    //                                                   margin: EdgeInsets.only(
+                    //                                                       top:
+                    //                                                           10,
+                    //                                                       left:
+                    //                                                           10),
+                    //                                                   decoration: BoxDecoration(
+                    //                                                       boxShadow:
+                    //                                                           themeBox,
+                    //                                                       color: Colors
+                    //                                                           .white,
+                    //                                                       borderRadius: BorderRadius.circular(
+                    //                                                           5)),
+                    //                                                   padding:
+                    //                                                       EdgeInsets.all(
+                    //                                                           5),
+                    //                                                   child:
+                    //                                                       Row(
+                    //                                                     children: [
+                    //                                                       Icon(
+                    //                                                         Icons.calendar_today,
+                    //                                                         size: 30,
+                    //                                                         color: Colors.blue,
+                    //                                                       ),
+                    //                                                       SizedBox(width: 10),
+                    //                                                       Text(
+                    //                                                         (controller.Next_date == "") ? "     Select date     " : controller.Next_date,
+                    //                                                         style: GoogleFonts.alike(fontSize: 13.0, color: (controller.Next_date == "") ? Colors.blue : Colors.green),
+                    //                                                       ),
+                    //                                                       SizedBox(width: 10),
+                    //                                                     ],
+                    //                                                   ))),
+                    //                                       (controller.Next_date ==
+                    //                                               "")
+                    //                                           ? SizedBox()
+                    //                                           : IconButton(
+                    //                                               onPressed:
+                    //                                                   () {
+                    //                                                 setStatee(
+                    //                                                     () {
+                    //                                                   controller.Next_date =
+                    //                                                       "";
+                    //                                                 });
+                    //                                               },
+                    //                                               icon: Icon(
+                    //                                                 Icons
+                    //                                                     .cancel,
+                    //                                                 color: Colors
+                    //                                                     .red,
+                    //                                                 size: 30,
+                    //                                               ))
+                    //                                     ],
+                    //                                   ),
+                    //                                 ),
+                    //                                 SizedBox(height: 10),
+                    //                                 myFormField(
+                    //                                     context,
+                    //                                     controller
+                    //                                         .Customer_NextFollowUp_Controller,
+                    //                                     "Comments",
+                    //                                     maxLine: 4),
+                    //                               ],
+                    //                             ))
 
-                                              //field
-                                            ],
-                                          )),
-                                        ),
-                                      ]),
-                                  // auto complete =================================
+                    //                         //field
+                    //                       ],
+                    //                     )),
+                    //                   ),
+                    //                 ]),
+                    //             // auto complete =================================
 
-                                  themeSpaceVertical(5.0),
+                    //             themeSpaceVertical(5.0),
 
-                                  Divider(
-                                    thickness: 2.0,
-                                    color: Colors.black12,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            themeSpaceVertical(5.0),
-                            themeButton3(context,
-                                label: "Submit",
-                                btnHeightSize: 45.0,
-                                btnWidthSize: 250.0,
-                                buttonColor: themeBG4,
-                                radius: 10.0,
-                                fontSize: 20, () async {
-                              await controller.insertInvoiceDetails(context);
-                              // Navigator.of(context).pop();
-                            }),
-                            themeSpaceVertical(10.0),
-                          ],
-                        ),
-                ),
+                    //             Divider(
+                    //               thickness: 2.0,
+                    //               color: Colors.black12,
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //       themeSpaceVertical(5.0),
+                    //       themeButton3(context,
+                    //           label: "Submit",
+                    //           btnHeightSize: 45.0,
+                    //           btnWidthSize: 250.0,
+                    //           buttonColor: themeBG4,
+                    //           radius: 10.0,
+                    //           fontSize: 20, () async {
+                    //         await controller.insertInvoiceDetails(context);
+                    //         // Navigator.of(context).pop();
+                    //       }),
+                    //       themeSpaceVertical(10.0),
+                    //     ],
+                    //   ),
+                    ),
               ),
             );
           });
         });
-  }
+  } */
 
 // Table Heading ==========================
-  Widget MeetingTableRow(context, data, srNo, Setstate,
+  Widget MeetingTableRow(context, data, srNo,
       {rowColor: '', textColor: '', controllerr: ''}) {
     List<dynamic> dataList = [];
     var status = MeetingStatusOF(data['status']);
@@ -635,7 +749,7 @@ class _SalemanListState extends State<SalemanList> {
                                           "id": "${data["id"]}"
                                         });
 
-                                        Setstate(() {
+                                        setState(() {
                                           controller.OrderList_data(
                                               "${data['id']}");
                                         });
@@ -713,7 +827,7 @@ class _SalemanListState extends State<SalemanList> {
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2100));
     if (picked != null && picked != selectedDate) {
-      setstate(() {
+      setState(() {
         selectedDate = picked;
         controller.Next_date = DateFormat('dd-MM-yyyy').format(selectedDate);
       });

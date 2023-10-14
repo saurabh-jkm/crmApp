@@ -858,12 +858,12 @@ Widget myFormField(BuildContext context, controller, label,
       children: [
         Row(
           children: [
-            Icon(
-              Icons.comment,
-              color: Colors.blue,
-              size: 30,
-            ),
-            SizedBox(width: 10),
+            // Icon(
+            //   Icons.comment,
+            //   color: Colors.blue,
+            //   size: 30,
+            // ),
+            // SizedBox(width: 10),
             GoogleText(
                 text: "$label",
                 fweight: FontWeight.bold,

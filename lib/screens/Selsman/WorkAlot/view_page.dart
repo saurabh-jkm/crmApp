@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/screens/Selsman/WorkAlot/add_meet_widget.dart';
 
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
@@ -16,6 +17,8 @@ import '../../../../themes/theme_widgets.dart';
 import 'package:intl/intl.dart';
 
 import '../../product/product/product_widgets.dart';
+
+import 'package:photo_view/photo_view.dart';
 
 class MeetingView extends StatefulWidget {
   const MeetingView({super.key, required this.MapData});
@@ -36,27 +39,43 @@ class _MeetingViewState extends State<MeetingView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.white,
+        color: const Color.fromARGB(255, 255, 255, 255),
         child: ListView(
           children: [
             Container(
               margin: EdgeInsets.only(top: 20, left: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.location_history_rounded,
-                    color: Colors.green,
-                    size: 30,
-                  ),
-                  SizedBox(width: 5.0),
-                  Text(
-                    "Meeting Details",
-                    style: GoogleFonts.alike(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                  )
-                ],
+              child: Container(
+                child: Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                          size: 30.0,
+                        ))
+                  ],
+                ),
               ),
+
+              //  Row(
+              //   mainAxisAlignment: MainAxisAlignment.start,
+              //   children: [
+              //     Icon(
+              //       Icons.location_history_rounded,
+              //       color: Colors.green,
+              //       size: 30,
+              //     ),
+              //     SizedBox(width: 5.0),
+              //     Text(
+              //       "Meeting Details",
+              //       style: GoogleFonts.alike(
+              //           fontSize: 20, fontWeight: FontWeight.bold),
+              //     )
+              //   ],
+              // ),
             ),
             // formField =======================
             Container(
@@ -84,35 +103,106 @@ class _MeetingViewState extends State<MeetingView> {
       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5.0),
-        color: Colors.black12,
+        color: const Color.fromARGB(31, 128, 128, 128),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-          height: 100,
-          width: 100,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5.0),
-              image: DecorationImage(
-                  image: (priceData["image"])
-                      ? NetworkImage("${priceData["image"]}")
-                      : NetworkImage(
-                          "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
-                  fit: BoxFit.cover)),
+        GestureDetector(
+          onTap: () {
+            Modal_zoomImg(context, '');
+          },
+          child: Container(
+            height: 100,
+            width: 100,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                image: DecorationImage(
+                    image: (priceData["image"] != '')
+                        ? NetworkImage("${priceData["image"]}")
+                        : NetworkImage(
+                            "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
+                    fit: BoxFit.cover)),
+          ),
         ),
-        productRow(context, "Meeting Id", "${priceData["id"]}"),
-        productRow(context, "Customer Name", "${priceData["customer_name"]}"),
-        productRow(context, "Mobile No.", "${priceData["mobile"]}"),
-        productRow(context, "Email ID", "${priceData["email"]}"),
-        productRow(context, "Address", "${priceData["address"]}"),
-        productRow(context, "Status", status),
-        productRow(context, "Date At", date),
+
+        SizedBox(height: 20.0),
+        for (var key in priceData.keys)
+          rowFollowp(context, key, "${priceData[key]}"),
+
+        // productRow(context, "Meeting Id", "${priceData["id"]}"),
+        // productRow(context, "Customer Name", "${priceData["customer_name"]}"),
+        // productRow(context, "Mobile No.", "${priceData["mobile"]}"),
+        // productRow(context, "Email ID", "${priceData["email"]}"),
+        // productRow(context, "Address", "${priceData["address"]}"),
+        // productRow(context, "Status", status),
+        // productRow(context, "Date At", date),
         Divider(thickness: 1.5),
-        productRow(
-            context, "Meeting Comment", priceData["meeting_conversation"]),
+        rowFollowp(
+            context, "Meeting Comment", priceData["meeting_conversation"],
+            color: themeBG6),
         Divider(thickness: 1.5),
-        productRow(context, "Next Follow Up", priceData["next_follow_up"]),
+        rowFollowp(context, "Next Follow Up", priceData["next_follow_up"],
+            color: themeBG6),
       ]),
     );
+  }
+}
+
+void Modal_zoomImg(context, url) async {
+  {
+    showModalBottomSheet(
+        isScrollControlled: true, // for full screen
+        context: context,
+        backgroundColor: Color.fromARGB(0, 232, 232, 232),
+        builder: (BuildContext context) {
+          return ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0)),
+              child: Container(
+                  //height: MediaQuery.of(context).size.height - 200,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.0),
+                          topRight: Radius.circular(30.0))),
+                  child: Column(children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 36, 76, 80),
+                      ),
+                      child: ListTile(
+                          leading: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                ) // the arrow back icon
+                                ),
+                          ),
+                          title: Center(
+                              child: Text(
+                            "View Image",
+                            style: TextStyle(color: Colors.white),
+                          ) // Your desired title
+                              )),
+                    ),
+
+                    // Price Field
+                    SizedBox(height: 10.0),
+
+                    Container(
+                        width: MediaQuery.of(context).size.width - 100,
+                        height: MediaQuery.of(context).size.height - 100,
+                        child: PhotoView(
+                          imageProvider: NetworkImage(
+                              "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
+                        )),
+                  ])));
+        });
   }
 }
 

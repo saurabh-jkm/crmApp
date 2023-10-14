@@ -22,6 +22,10 @@ class SellerController {
   List<String> listCustomerName = [];
   Map<dynamic, dynamic> listOrder = new Map();
   TextEditingController searchTextController = new TextEditingController();
+  bool ListShow = true;
+  bool secondScreen = false;
+  var selectedSellerId;
+  var selectedSeller;
 
   List<String> headintList = ['#', 'Seller Name', 'date', 'Action'];
   List<String> MeetingheadList = [
@@ -72,9 +76,13 @@ class SellerController {
 //////////  ++++++++++++++++++++++++++++++++
   var MeetingMap = {};
   OrderList_data(id) async {
-    Map<dynamic, dynamic> w = {'table': "follow_up", 'sellerId': id};
-    var temp = await dbFindDynamic(db, w);
-    return temp;
+    Map<dynamic, dynamic> w = {
+      'table': "follow_up",
+      'sellerId': id,
+      'orderBy': '-next_follow_up_date'
+    };
+    MeetingMap = await dbFindDynamic(db, w);
+    return MeetingMap;
   }
 
 ///////===============================================
@@ -126,6 +134,7 @@ class SellerController {
 // ***************************************************************
 
   insertInvoiceDetails(context, {docId = ''}) async {
+    sellerId = selectedSellerId;
     var alert = '';
     if (Customer_nameController.text.length < 4) {
       alert = "Valid Customer Name  Required !!";
@@ -134,6 +143,8 @@ class SellerController {
       alert = "Valid Mobile Number Required !!";
     } else if (Customer_pincodeController.text == '') {
       alert = "Valid  Pincode Required !!";
+    } else if (Next_date == '') {
+      alert = "Meeting Date Required !!";
     }
 
     if (alert != '') {
@@ -144,7 +155,7 @@ class SellerController {
     // default value
     var dbArr = {
       "table": "follow_up",
-      "sellerId": "$sellerId",
+      "sellerId": "$selectedSellerId",
       "customer_name": Customer_nameController.text,
       "mobile": Customer_MobileController.text,
       "email": Customer_emailController.text,
@@ -170,15 +181,20 @@ class SellerController {
     if (docId == '') {
       await dbSave(db, dbArr);
       await resetController();
+      await OrderList_data(selectedSellerId);
       themeAlert(context, "Submitted Successfully ");
-      Navigator.pop(context);
+      return 'success';
+      //Navigator.pop(context);
     } else {
       dbArr['id'] = docId;
       var rData = await dbUpdate(db, dbArr);
 
       if (rData != null) {
+        await OrderList_data(selectedSellerId);
         themeAlert(context, "Updated Successfully !!");
-        Navigator.pop(context);
+        ListShow = true;
+        return 'success';
+        //Navigator.pop(context);
       }
     }
   }
