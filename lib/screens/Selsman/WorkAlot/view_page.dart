@@ -106,23 +106,39 @@ class _MeetingViewState extends State<MeetingView> {
         color: const Color.fromARGB(31, 128, 128, 128),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        GestureDetector(
-          onTap: () {
-            Modal_zoomImg(context, '');
-          },
-          child: Container(
-            height: 100,
-            width: 100,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5.0),
-                image: DecorationImage(
-                    image: (priceData["image"] != '')
-                        ? NetworkImage("${priceData["image"]}")
-                        : NetworkImage(
-                            "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
-                    fit: BoxFit.cover)),
-          ),
-        ),
+        (priceData["image"] == '')
+            ? SizedBox()
+            : Row(
+                children: [
+                  for (var i in priceData["image"].keys)
+                    GestureDetector(
+                      onTap: () {
+                        var url =
+                            "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg";
+                        if (priceData["image"][i] != null &&
+                            priceData["image"][i] != '') {
+                          url = priceData["image"][i];
+                        }
+
+                        Modal_zoomImg(context, url);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 10.0),
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            image: DecorationImage(
+                                image: (priceData["image"][i] != null &&
+                                        priceData["image"][i] != '')
+                                    ? NetworkImage("${priceData["image"][i]}")
+                                    : NetworkImage(
+                                        "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
+                                fit: BoxFit.cover)),
+                      ),
+                    ),
+                ],
+              ),
 
         SizedBox(height: 20.0),
         for (var key in priceData.keys)
@@ -198,8 +214,7 @@ void Modal_zoomImg(context, url) async {
                         width: MediaQuery.of(context).size.width - 100,
                         height: MediaQuery.of(context).size.height - 100,
                         child: PhotoView(
-                          imageProvider: NetworkImage(
-                              "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
+                          imageProvider: NetworkImage("$url"),
                         )),
                   ])));
         });

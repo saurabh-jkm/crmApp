@@ -2,11 +2,13 @@
 
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'dart:io';
+import 'dart:convert';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../themes/style.dart';
 import '../../../themes/theme_widgets.dart';
@@ -22,10 +24,13 @@ class SellerController {
   List<String> listCustomerName = [];
   Map<dynamic, dynamic> listOrder = new Map();
   TextEditingController searchTextController = new TextEditingController();
+  Map<dynamic, dynamic> user = new Map();
   bool ListShow = true;
   bool secondScreen = false;
   var selectedSellerId;
   var selectedSeller;
+
+  Map<dynamic, dynamic> imgList = {"0": ''};
 
   List<String> headintList = ['#', 'Seller Name', 'date', 'Action'];
   List<String> MeetingheadList = [
@@ -60,6 +65,14 @@ class SellerController {
 
   List<String> ListCustomer = [];
   Map<String, dynamic> CustomerArr = {};
+
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic userData = (prefs.getString('user'));
+    if (userData != null) {
+      user = jsonDecode(userData) as Map<dynamic, dynamic>;
+    }
+  }
 
   // get all Customer name List =============================
   getCustomerNameList() async {
@@ -162,11 +175,12 @@ class SellerController {
       "address": Customer_addressController.text,
       "pin_code": Customer_pincodeController.text,
       "shop_no": Customer_shopNoController.text,
-      "image": url_img,
+      "image": imgList,
       "meeting_conversation": Customer_meetingConversation_Controller.text,
       "next_follow_up_date": Next_date,
       "next_follow_up": Customer_NextFollowUp_Controller.text,
       // "customer_type": Customer_TypeController.text,
+      "assign_by": '${user['name']} - Crm Panel',
       "update_at": "",
       "date_at": DateTime.now(),
       "status": true,
@@ -205,6 +219,7 @@ class SellerController {
   //================================================================
 
   init_functions({dbData = ''}) async {
+    await _getUser();
     await getCustomerNameList();
 
     DateTime DateNow = DateTime.now();
