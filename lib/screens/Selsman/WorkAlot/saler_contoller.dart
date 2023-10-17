@@ -155,7 +155,7 @@ class SellerController {
       "meeting_conversation": Customer_meetingConversation_Controller.text,
       "next_follow_up_date": Next_date,
       "next_follow_up": Customer_NextFollowUp_Controller.text,
-      // "customer_type": Customer_TypeController.text,
+      "customer_type": Customer_TypeController.text,
       "update_at": "",
       "date_at": DateTime.now(),
       "status": true,
