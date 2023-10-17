@@ -51,7 +51,8 @@ void main() async {
   }
 
   // ========================
-  setPathUrlStrategy();
+  // Has Remove # from URL =======================
+  //setPathUrlStrategy();
   runApp(new MyApp());
 }
 

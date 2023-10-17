@@ -46,6 +46,7 @@ class addInvoiceSupplierScreen extends StatefulWidget {
 
 class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
   bool isWait = true;
+  bool buttonHide = false;
   // function get all list & name
   initList() async {
     await controller.init_functions(type: 'buy');
@@ -493,23 +494,32 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                 Container(
                                   width: 300.0,
                                   child: Center(
-                                    child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          primary: themeBG,
-                                          onPrimary: Colors.white,
-                                          elevation: 3,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0)),
-                                          minimumSize:
-                                              Size(150, 48), //////// HERE
-                                        ),
-                                        onPressed: () async {
-                                          controller
-                                              .insertInvoiceDetails(context);
-                                          //setState(() {});
-                                        },
-                                        child: Text('Submit')),
+                                    child: (buttonHide)
+                                        ? progress()
+                                        : ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              primary: themeBG,
+                                              onPrimary: Colors.white,
+                                              elevation: 3,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0)),
+                                              minimumSize:
+                                                  Size(150, 48), //////// HERE
+                                            ),
+                                            onPressed: () async {
+                                              setState(() {
+                                                buttonHide = true;
+                                              });
+                                              await controller
+                                                  .insertInvoiceDetails(
+                                                      context);
+                                              setState(() {
+                                                buttonHide = false;
+                                              });
+                                            },
+                                            child: Text('Submit')),
                                   ),
                                 ),
                                 Container(

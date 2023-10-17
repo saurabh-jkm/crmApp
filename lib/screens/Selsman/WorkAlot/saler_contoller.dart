@@ -2,11 +2,13 @@
 
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'dart:io';
+import 'dart:convert';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../themes/style.dart';
 import '../../../themes/theme_widgets.dart';
@@ -22,6 +24,13 @@ class SellerController {
   List<String> listCustomerName = [];
   Map<dynamic, dynamic> listOrder = new Map();
   TextEditingController searchTextController = new TextEditingController();
+  Map<dynamic, dynamic> user = new Map();
+  bool ListShow = true;
+  bool secondScreen = false;
+  var selectedSellerId;
+  var selectedSeller;
+
+  Map<dynamic, dynamic> imgList = {"0": ''};
 
   List<String> headintList = ['#', 'Seller Name', 'date', 'Action'];
   List<String> MeetingheadList = [
@@ -57,6 +66,14 @@ class SellerController {
   List<String> ListCustomer = [];
   Map<String, dynamic> CustomerArr = {};
 
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dynamic userData = (prefs.getString('user'));
+    if (userData != null) {
+      user = jsonDecode(userData) as Map<dynamic, dynamic>;
+    }
+  }
+
   // get all Customer name List =============================
   getCustomerNameList() async {
     ListCustomer = [];
@@ -72,9 +89,13 @@ class SellerController {
 //////////  ++++++++++++++++++++++++++++++++
   var MeetingMap = {};
   OrderList_data(id) async {
-    Map<dynamic, dynamic> w = {'table': "follow_up", 'sellerId': id};
-    var temp = await dbFindDynamic(db, w);
-    return temp;
+    Map<dynamic, dynamic> w = {
+      'table': "follow_up",
+      'sellerId': id,
+      'orderBy': '-next_follow_up_date'
+    };
+    MeetingMap = await dbFindDynamic(db, w);
+    return MeetingMap;
   }
 
 ///////===============================================
@@ -126,6 +147,7 @@ class SellerController {
 // ***************************************************************
 
   insertInvoiceDetails(context, {docId = ''}) async {
+    sellerId = selectedSellerId;
     var alert = '';
     if (Customer_nameController.text.length < 4) {
       alert = "Valid Customer Name  Required !!";
@@ -134,6 +156,8 @@ class SellerController {
       alert = "Valid Mobile Number Required !!";
     } else if (Customer_pincodeController.text == '') {
       alert = "Valid  Pincode Required !!";
+    } else if (Next_date == '') {
+      alert = "Meeting Date Required !!";
     }
 
     if (alert != '') {
@@ -144,18 +168,18 @@ class SellerController {
     // default value
     var dbArr = {
       "table": "follow_up",
-      "sellerId": "$sellerId",
+      "sellerId": "$selectedSellerId",
       "customer_name": Customer_nameController.text,
       "mobile": Customer_MobileController.text,
       "email": Customer_emailController.text,
       "address": Customer_addressController.text,
       "pin_code": Customer_pincodeController.text,
       "shop_no": Customer_shopNoController.text,
-      "image": url_img,
+      "image": imgList,
       "meeting_conversation": Customer_meetingConversation_Controller.text,
       "next_follow_up_date": Next_date,
       "next_follow_up": Customer_NextFollowUp_Controller.text,
-      "customer_type": Customer_TypeController.text,
+      // "customer_type": Customer_TypeController.text,
       "update_at": "",
       "date_at": DateTime.now(),
       "status": true,
@@ -170,15 +194,20 @@ class SellerController {
     if (docId == '') {
       await dbSave(db, dbArr);
       await resetController();
+      await OrderList_data(selectedSellerId);
       themeAlert(context, "Submitted Successfully ");
-      Navigator.pop(context);
+      return 'success';
+      //Navigator.pop(context);
     } else {
       dbArr['id'] = docId;
       var rData = await dbUpdate(db, dbArr);
 
       if (rData != null) {
+        await OrderList_data(selectedSellerId);
         themeAlert(context, "Updated Successfully !!");
-        Navigator.pop(context);
+        ListShow = true;
+        return 'success';
+        //Navigator.pop(context);
       }
     }
   }
@@ -189,6 +218,7 @@ class SellerController {
   //================================================================
 
   init_functions({dbData = ''}) async {
+    await _getUser();
     await getCustomerNameList();
 
     DateTime DateNow = DateTime.now();

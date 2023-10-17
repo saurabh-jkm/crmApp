@@ -441,10 +441,11 @@ class _ProductAddState extends State<ProductAdd> {
     var tempName = '';
     tempArr.forEach((k, v) {
       if (tempName == '' &&
+          v != '' &&
           (k.toLowerCase() == 'colors' ||
               k.toLowerCase() == 'size' ||
               k.toLowerCase() == 'brand')) {
-        tempName = v;
+        tempName = '-$v';
       }
     });
 
@@ -490,7 +491,7 @@ class _ProductAddState extends State<ProductAdd> {
             verticalAlignment: TableCellVerticalAlignment.middle,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("$name", style: textStyle3),
+              child: Text("$name $tempName", style: textStyle3),
             ),
           ),
           TableCell(
