@@ -24,8 +24,6 @@ import '../../customers/customer_widgets.dart';
 import '../../dashboard/components/header.dart';
 import 'view_page.dart';
 
-
-
 class SalemanList extends StatefulWidget {
   const SalemanList({super.key});
 
@@ -808,6 +806,7 @@ class _SalemanListState extends State<SalemanList> {
         ? controller.CustomerArr[tName]
         : {};
     if (tempData.isNotEmpty) {
+      controller.customerId = tempData['id'];
       controller.Customer_MobileController.text = tempData['mobile'];
       controller.Customer_emailController.text = tempData['email'];
       controller.Customer_addressController.text = tempData['address'];

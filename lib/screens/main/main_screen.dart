@@ -10,6 +10,7 @@ import '../../responsive.dart';
 
 import '../../themes/theme_widgets.dart';
 import '../Attributes/attribute_add.dart';
+import '../Balance/balance_list.dart';
 import '../Invoice/invoice_list.dart';
 import '../Profile/profile_details.dart';
 import '../Selsman/WorkAlot/salesman_list.dart';
@@ -95,6 +96,11 @@ class _MainScreenState extends State<MainScreen> {
               Expanded(
                 flex: 5,
                 child: Invoice_List(),
+              ) //BalanceList
+            else if (sidemenu == 12)
+              Expanded(
+                flex: 5,
+                child: BalanceList(),
               )
             else if (sidemenu == 6)
               Expanded(
@@ -233,7 +239,28 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(color: Colors.white),
             ),
           ),
-
+          (user["user_type"] == "admin")
+              ? ListTile(
+                  tileColor: (sidemenu == 12)
+                      ? const Color.fromARGB(127, 33, 149, 243)
+                      : const Color.fromARGB(0, 255, 255, 255),
+                  onTap: () {
+                    setState(() {
+                      sidemenu = 12;
+                      if (Responsive.isMobile(context)) {
+                        Navigator.of(context).pop();
+                      }
+                    });
+                  },
+                  horizontalTitleGap: 0.0,
+                  leading: Icon(Icons.admin_panel_settings_outlined,
+                      color: Colors.white),
+                  title: Text(
+                    "Balance",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              : SizedBox(),
           // All Customers
           ListTile(
             tileColor: (sidemenu == 11)
