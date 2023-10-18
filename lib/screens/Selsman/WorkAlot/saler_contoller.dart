@@ -180,7 +180,6 @@ class SellerController {
       "next_follow_up_date": Next_date,
       "next_follow_up": Customer_NextFollowUp_Controller.text,
       // "customer_type": Customer_TypeController.text,
-      "assign_by": '${user['name']} - Crm Panel',
       "update_at": "",
       "date_at": DateTime.now(),
       "status": true,
