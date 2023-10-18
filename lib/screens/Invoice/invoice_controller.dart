@@ -31,6 +31,8 @@ class invoiceController {
   final Customer_TypeController = TextEditingController();
   final Customer_GstNoController = TextEditingController();
 
+  Map<String, dynamic> productEditData = {};
+
   final c_payment_controller = TextEditingController();
   final c_balance_controller = TextEditingController();
 
@@ -71,6 +73,7 @@ class invoiceController {
   Map<String, dynamic> editProductQnt = {};
   // all product
   Map<String, dynamic> allProductList = {};
+  Map<String, dynamic> allProductList_byId = {};
 
   Map<dynamic, dynamic> readOnlyField = new Map();
 
@@ -209,18 +212,45 @@ class invoiceController {
           // if (productArr[v['id']] != null) {
           //   editProductQnt[v['id']] = v;
           // }
+
+          // if supplier ===================================================
           if (isSupplier) {
+            var subData = {};
+            var tempProductData = {};
+            // product attribute details for product table
+            if ((v['id'] != null) && allProductList_byId[v['id']] != null) {
+              var tSubList = allProductList_byId[v['id']]['item_list'];
+              tempProductData = allProductList_byId[v['id']];
+              if (tSubList != null && tSubList[v['list_item_id']] != null) {
+                subData = tSubList[v['list_item_id']];
+              }
+            }
+
             ListAttribute.forEach((key, value) {
               Map<String, TextEditingController> temp =
                   (dynamicControllers['$i'] != null)
                       ? dynamicControllers["$i"]
                       : new Map();
               temp[key] = TextEditingController();
+              temp[key]!.text = (subData.isNotEmpty && subData[key] != null)
+                  ? subData[key]
+                  : '';
               dynamicControllers["$i"] = temp;
             });
+            categoryController[i] = TextEditingController();
+            categoryController[i]!.text = (tempProductData.isNotEmpty &&
+                    tempProductData['category'] != null)
+                ? tempProductData['category']
+                : '';
+            productLocationController[i] = TextEditingController();
+            productLocationController[i]!.text =
+                (subData.isNotEmpty && subData['location'] != null)
+                    ? subData['location']
+                    : '';
 
             // update code for when product is null
             /*var tempV = v;
+            tempV['list_item_id'] =  (tempV['list_item_id'] == null)?'1':tempV['list_item_id'];
             if (v['id'] == null) {
               var t = await dbFindDynamic(
                   db, {'table': 'product', 'name': v['name']});
@@ -273,15 +303,17 @@ class invoiceController {
   getProductNameList() async {
     ListName = [];
     allProductList = {};
+    allProductList_byId = {};
     var dbData = await dbFindDynamic(db, {'table': 'product'});
     dbData.forEach((k, data) {
+      allProductList_byId[data['id']] = data;
       if (data['quantity'] != null &&
           int.parse(data['quantity'].toString()) < 1) {
         // then not add in list
       } else {
         if (data['item_list'] != null && data['item_list'].isNotEmpty) {
           data['item_list'].forEach((i, vl) {
-            var tempName = '${data['name']} -';
+            var tempName = '${data['name']}';
             if (vl.isNotEmpty) {
               vl.forEach((k, v) {
                 if (v == '' ||
@@ -292,7 +324,7 @@ class invoiceController {
                     k == 'totalUnit' ||
                     k == 'location') {
                 } else {
-                  tempName = '$tempName ${v}';
+                  tempName = '$tempName - ${v}';
                 }
               });
               ListName.add(tempName);
@@ -713,7 +745,18 @@ class invoiceController {
           ? ProductNameControllers[i]!.text
           : '$tempTitle, ${ProductNameControllers[i]!.text}';
 
-      temp['id'] = (productDBdata[i] != null) ? productDBdata[i]['id'] : '';
+      if (docId == '') {
+        temp['id'] = (allProductList[ProductNameControllers[i]!.text] != null)
+            ? allProductList[ProductNameControllers[i]!.text]['id']
+            : '';
+        temp['list_item_id'] =
+            (allProductList[ProductNameControllers[i]!.text] != null)
+                ? allProductList[ProductNameControllers[i]!.text]
+                    ['list_item_id']
+                : '';
+      } else {
+        temp['id'] = (productDBdata[i] != null) ? productDBdata[i]['id'] : '';
+      }
 
       temp['name'] = ProductNameControllers[i]!.text;
       temp['price'] = ProductPriceControllers[i]!.text;
@@ -1229,6 +1272,7 @@ class invoiceController {
             productLocationController[i]!.text,
             invoiceDateController.text);
         products['$k']['id'] = tempProductId;
+        products['$k']['list_item_id'] = '1';
       }
     }
   }
