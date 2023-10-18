@@ -617,6 +617,13 @@ class _editInvoiceState extends State<editInvoice> {
       var rData = await controller.getProductDetails(productName);
       controller.productDBdata[controllerId] = rData;
 
+      // controller.productEditData[controllerId] = {
+      //   'name':productName,
+      //   'id': (controller.allProductList[productName] != null)?controller.allProductList[productName]['id']:'',
+      //   'list_item_id': (controller.allProductList[productName] != null)?controller.allProductList[productName]['list_item_id']:'',
+      //   'dbQnt': (controller.allProductList[productName] != null)?controller.allProductList[productName]['quantity']:'',
+      // };
+
       if (rData.isNotEmpty) {
         setState(() {
           controller.ProductPriceControllers[controllerId]!.text =

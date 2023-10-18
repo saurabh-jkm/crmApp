@@ -96,8 +96,8 @@ inputStyle(lable) {
   return InputDecoration(
     labelText: '$lable',
     fillColor: Colors.black,
-    labelStyle: textStyle1,
-    hintStyle: TextStyle(color: Colors.black),
+    labelStyle: TextStyle(color: Color.fromARGB(255, 204, 157, 157)),
+    hintStyle: TextStyle(color: Color.fromARGB(255, 141, 141, 141)),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10.0),
       borderSide: BorderSide(
