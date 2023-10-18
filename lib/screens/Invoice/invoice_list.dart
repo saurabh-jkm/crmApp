@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
+import 'package:crm_demo/screens/Invoice/edit_supplier_invoice.dart';
 import 'package:crm_demo/screens/Invoice/edit_invoice.dart';
 import 'package:crm_demo/screens/Invoice/pdf.dart';
 import 'package:crm_demo/screens/Invoice/view_invoice_screen.dart';
@@ -185,12 +186,13 @@ class _Invoice_ListState extends State<Invoice_List> {
   @override
   Widget build(BuildContext context) {
     var fw = MediaQuery.of(context).size.width;
+
     tableColum = {
       1: 50.0,
       2: 100.0,
       3: 100.0,
-      4: fw * 0.17,
-      5: fw * 0.07,
+      4: (fw < 1300) ? fw * 0.12 : fw * 0.17,
+      5: (fw < 1300) ? fw * 0.05 : fw * 0.07,
       6: 90.0,
       7: 40.0,
       8: 60.0,
@@ -843,10 +845,16 @@ class _Invoice_ListState extends State<Invoice_List> {
                       final temp = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => editInvoice(
-                                    data: dbData,
-                                    header_name: "Edit Invoice",
-                                  )));
+                              builder: (_) =>
+                                  (selectedFilter.toLowerCase() == 'sale')
+                                      ? editInvoice(
+                                          data: dbData,
+                                          header_name: "Edit Invoice",
+                                        )
+                                      : editSuplierInvoice(
+                                          data: dbData,
+                                          header_name: "Edit Supplier Invoice",
+                                        )));
                       if (temp == 'updated') {
                         OrderList_data();
                       }

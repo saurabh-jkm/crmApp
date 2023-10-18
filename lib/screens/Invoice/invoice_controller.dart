@@ -169,7 +169,10 @@ class invoiceController {
       // for products
       var i = 1;
       if (dbData['products'] != null) {
-        dbData['products'].forEach((k, v) async {
+        //dbData['products'].forEach((k, v) async {
+        var productsUpdate = {};
+        for (var k in dbData['products'].keys) {
+          var v = dbData['products'][k];
           totalProduct = i;
           // initiate
           ctrNewRow(ctrNewId: i);
@@ -178,7 +181,6 @@ class invoiceController {
               (v != null && v['name'] != null) ? v['name'] : '';
           ProductPriceControllers[i]!.text =
               (v != null && v['price'] != null) ? v['price'] : '';
-          ;
           ProductQuntControllers[i]!.text =
               (v != null && v['quantity'] != null) ? v['quantity'] : '';
           ProductUnitControllers[i]!.text =
@@ -207,10 +209,42 @@ class invoiceController {
           // if (productArr[v['id']] != null) {
           //   editProductQnt[v['id']] = v;
           // }
+          if (isSupplier) {
+            ListAttribute.forEach((key, value) {
+              Map<String, TextEditingController> temp =
+                  (dynamicControllers['$i'] != null)
+                      ? dynamicControllers["$i"]
+                      : new Map();
+              temp[key] = TextEditingController();
+              dynamicControllers["$i"] = temp;
+            });
+
+            // update code for when product is null
+            /*var tempV = v;
+            if (v['id'] == null) {
+              var t = await dbFindDynamic(
+                  db, {'table': 'product', 'name': v['name']});
+
+              if (t.isNotEmpty) {
+                tempV['id'] = t[0]['id'];
+              }
+            }
+            productsUpdate[k] = tempV;
+            */
+          }
 
           ctrTotalCalculate(i);
           i++;
-        });
+        }
+
+        // update product id when id is null
+        // var ww = {
+        //   'table': 'order',
+        //   'id': dbData['id'],
+        //   'products': productsUpdate
+        // };
+
+        // await dbUpdate(db, ww);
       }
     }
   }
@@ -742,24 +776,6 @@ class invoiceController {
     }
 
     // update stok functions
-    Future<void> updateStock(products) async {
-      products.forEach((k, value) async {
-        int i = int.parse(k.toString()) + 1;
-        if (allProductList[ProductNameControllers[i]!.text] != null) {
-          // update
-          await stock_update(allProductList[ProductNameControllers[i]!.text],
-              products['$k'], dynamicControllers['$i']);
-        } else {
-          // insert new product
-          await stock_insert(
-              products['$k'],
-              dynamicControllers['$i'],
-              categoryController[i]!.text,
-              productLocationController[i]!.text,
-              invoiceDateController.text);
-        }
-      });
-    }
 
     if (dbArr['type'] == 'Sale') {
       await callUpdateFn();
@@ -795,7 +811,7 @@ class invoiceController {
         });
       } else {
         // update Stock =======================================
-        updateStock(products);
+        await updateStock(products);
       }
       // End this is for Supplier Log manage ====================
     }
@@ -1191,6 +1207,29 @@ class invoiceController {
     } else {
       // insert
       await dbSave(db, updateArr);
+    }
+
+    return productID;
+  }
+
+  Future<void> updateStock(products) async {
+    for (var k in products.keys) {
+      var value = products[k];
+      int i = int.parse(k.toString()) + 1;
+      if (allProductList[ProductNameControllers[i]!.text] != null) {
+        // update
+        await stock_update(allProductList[ProductNameControllers[i]!.text],
+            products['$k'], dynamicControllers['$i']);
+      } else {
+        // insert new product
+        var tempProductId = await stock_insert(
+            products['$k'],
+            dynamicControllers['$i'],
+            categoryController[i]!.text,
+            productLocationController[i]!.text,
+            invoiceDateController.text);
+        products['$k']['id'] = tempProductId;
+      }
     }
   }
 
