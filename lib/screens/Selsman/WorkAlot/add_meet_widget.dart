@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, sized_box_for_whitespace, deprecated_colon_for_default_value
+
 import "package:crm_demo/themes/function.dart";
 import "package:crm_demo/themes/style.dart";
 import "package:crm_demo/themes/theme_widgets.dart";
@@ -92,22 +94,24 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
                       ],
                     ),
 
-                    // Row(
-                    //   children: [
-                    //     // fireld 1 ==========================
-                    //     Expanded(
-                    //         child: autoCompleteFormInput(
-                    //             controller.ListType,
-                    //             "Customer Type",
-                    //             controller
-                    //                 .Customer_TypeController,
-                    //             method: fnFetchCutomerDetails)),
-                    //     // fireld 2 ==========================
-                    //     Expanded(
-                    //       child: Text(""),
-                    //     ),
-                    //   ],
-                    // ),
+                    Row(
+                      children: [
+                        // fireld 1 ==========================
+                        Expanded(
+                            child: autoCompleteFormInput(
+                                controller.ListType,
+                                "Customer Type",
+                                controller.Customer_TypeController,
+                                method: fnFetchCutomerDetails)),
+                        // fireld 2 ==========================
+                        Expanded(
+                          child: Text(""),
+                        ),
+                        Expanded(
+                          child: Text(""),
+                        ),
+                      ],
+                    ),
                     // 2nd row =============================================
                     // Header End ============================
 
@@ -222,7 +226,7 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
           fontSize: 20, () async {
         var rData = await controller.insertInvoiceDetails(context);
         if (rData == 'success') {
-          print("setState");
+          // print("setState");
           fn_setstate();
           fn_change_state('ListShow', true);
         }

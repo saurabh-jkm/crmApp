@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unnecessary_null_comparison, unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unnecessary_null_comparison, unused_local_variable, avoid_print
 
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'dart:io';
@@ -55,8 +55,8 @@ class SellerController {
 ////////  changes add My Nitin Sir++++++++++++++
   final Customer_pincodeController = TextEditingController();
   final Customer_shopNoController = TextEditingController();
-  var url_img = "";
 
+  var customerId = "";
 /////
   String Next_date = "";
   String sellerId = "";
@@ -165,6 +165,19 @@ class SellerController {
       return false;
     }
 
+    var customerData = {
+      "table": "customer",
+      "type": Customer_TypeController.text,
+      "name": Customer_nameController.text,
+      "mobile": Customer_MobileController.text,
+      "email": Customer_emailController.text,
+      "address": Customer_addressController.text,
+      "Add_by": "${user['user_type']}",
+      "gst_no": "",
+      "date_at": DateTime.now(),
+      "status": true
+    };
+
     // default value
     var dbArr = {
       "table": "follow_up",
@@ -192,7 +205,14 @@ class SellerController {
     }
 
     if (docId == '') {
+      if (customerId == "" ||
+          ListCustomer.contains(Customer_nameController.text) == false) {
+        await dbSave(db, customerData);
+      } else {
+        print("");
+      }
       await dbSave(db, dbArr);
+
       await resetController();
       await OrderList_data(selectedSellerId);
       themeAlert(context, "Submitted Successfully ");
@@ -257,8 +277,6 @@ class SellerController {
     Customer_TypeController.clear();
 ////////  changes add My Nitin Sir++++++++++++++
     Customer_pincodeController.clear();
-    Customer_shopNoController.clear();
-    url_img = "";
     Next_date = "";
     sellerId = "";
   }
