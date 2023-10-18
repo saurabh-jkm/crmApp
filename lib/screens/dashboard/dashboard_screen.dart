@@ -26,6 +26,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 
 import '../../../models/RecentFile.dart';
 import '../../../models/bar_charts.dart';
+import 'dashboard_controller.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -33,12 +34,20 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  var controller = new DashboardController();
   //////Crosss file picker
   final GlobalKey exportKey = GlobalKey();
   /////// get user data  +++++++++++++++++++++++++++++++++++++++++++++++++++
   Map<dynamic, dynamic> user = new Map();
   int no_todaySale = 0;
   bool isNewUpdate = false;
+
+  int invoiceNo = 0;
+  int StockNo = 0;
+  int UserNo = 0;
+  int Out_of_Stock_No = 0;
+  int no_of_year_sale = 0;
+  int BalanceCount = 0;
 
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -47,15 +56,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (userData != null) {
       user = await jsonDecode(userData) as Map<dynamic, dynamic>;
 
-      invo_Data();
-      Stock_Data();
-      User_Data();
-      OutofStock_Data();
+      invoiceNo = await controller.invo_Data_count();
+      StockNo = await controller.Stock_Data_count();
+      UserNo = await controller.User_Data_count();
+      Out_of_Stock_No = await controller.OutofStock_Data_count();
 
       // todaySale
       await todaySale();
       await yearSale();
       await appSetting();
+      BalanceCount = await controller.Balance_count();
     }
 
     setState(() {});
@@ -72,27 +82,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ? Firestore.instance
       : FirebaseFirestore.instance;
   bool progressWidget = true;
-  ////////// inoive ==========================================================
-  int invoiceNo = 0;
-  int StockNo = 0;
-  int UserNo = 0;
-  int Out_of_Stock_No = 0;
-  int no_of_year_sale = 0;
-
-  invo_Data() async {
-    List StoreDocs = [];
-    Map<dynamic, dynamic> w = {
-      'table': "order",
-      //'status': "$_StatusValue",
-    };
-    var temp = await dbFindDynamic(db, w);
-
-    setState(() {
-      invoiceNo = temp.length;
-    });
-  }
-
-  /////////=====================================================================
 
   appSetting() async {
     List StoreDocs = [];
@@ -108,36 +97,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  // ============================
-  Stock_Data() async {
-    List StoreDocs = [];
-    Map<dynamic, dynamic> w = {
-      'table': "product",
-      //'status': "$_StatusValue",
-    };
-    var temp = await dbFindDynamic(db, w);
-    setState(() {
-      StockNo = temp.length;
-    });
-  }
-
-////////////////
   ///
-  /////////=====================================================================
-
-  User_Data() async {
-    List StoreDocs = [];
-    Map<dynamic, dynamic> w = {
-      'table': "users",
-      //'status': "$_StatusValue",
-    };
-    var temp = await dbFindDynamic(db, w);
-    setState(() {
-      UserNo = temp.length;
-    });
-  }
-
-  /////////=====================================================================
 
   todaySale() async {
     List StoreDocs = [];
@@ -186,36 +146,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-////////////////
-  ///
-  /////////=====================================================================
-
-  OutofStock_Data() async {
-    List StoreDocs = [];
-
-    var _category = await Firestore.instance
-        .collection('product')
-        .where("quantity", isEqualTo: "0")
-        .get()
-        .then(
-      (querySnapshot) {
-        for (var docSnapshot in querySnapshot) {
-          setState(() {
-            StoreDocs.add(docSnapshot.map);
-            Out_of_Stock_No = StoreDocs.length;
-          });
-        }
-      },
-    );
-
-    // var temp = await dbFindDynamic(db, w);
-    setState(() {
-      // temp.forEach((k, v) {
-      //   StoreDocs.add(v);
-      //   UserNo = StoreDocs.length;
-      //});
-    });
-  }
 ////////////////
 
   final List<BarChartModel> data = [
@@ -336,6 +266,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
         color: Color.fromARGB(255, 235, 202, 16),
 
         PageNo: 5,
+      ),
+      CloudStorageInfo(
+        title: "Totall Balance",
+        numOfFiles: BalanceCount,
+        svgSrc: Icons.account_balance_outlined,
+        // svgSrc: "assets/icons/drop_box.svg",
+        color: Color.fromARGB(255, 241, 123, 123),
+
+        PageNo: 12,
       ),
     ];
     return (user.isEmpty)

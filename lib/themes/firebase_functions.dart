@@ -407,4 +407,43 @@ win_dbDelete(context, db, where) async {
   }
 }
 
+// dbCountQuery(db, where) async {
+//   var returnData = 0;
+//   if (where == null || where == '') {
+//     return {'error': 'Array Required'};
+//   }
+
+//   if (where['table'] == null) {
+//     return {'error': 'Table name required!!'};
+//   }
+//   if (where['orderby'] == null) {
+//     return {'error': 'orderby name required!!'};
+//   }
+//   var table = (where['table']);
+//   var orderby = (where['orderby']);
+//   where.remove('table');
+//   if (!kIsWeb && Platform.isWindows) {
+//     print("windosss");
+//     var query = await Firestore.instance
+//         .collection(table)
+//         .where(orderby)
+//         .get()
+//         .then((value) {
+//       return value.length;
+//     });
+//     returnData = query;
+//   } else {
+//     var query = await FirebaseFirestore.instance
+//         .collection(table)
+//         .where(orderby, isNotEqualTo: "")
+//         .count()
+//         .get()
+//         .then((value) {
+//       return value.count;
+//     });
+//     returnData = query;
+//   }
+//   return returnData;
+// }
+
 ////////  =================================================================================
