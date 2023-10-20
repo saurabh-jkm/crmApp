@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/product/product/add_product_screen.dart';
 import 'package:crm_demo/screens/product/product/edit_product_screen.dart';
+import 'package:crm_demo/screens/product/product/product_controller.dart';
 import 'package:crm_demo/themes/base_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
@@ -42,31 +43,20 @@ class ProductAdd extends StatefulWidget {
 }
 
 class _ProductAddState extends State<ProductAdd> {
+  var controllerr = new ProductController();
+
   final _controllers = TextEditingController();
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
       : FirebaseFirestore.instance;
   @override
   void initState() {
-    Pro_Data();
+    Pro_Data_list(_number_select);
     super.initState();
   }
 
-////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
-  bool progressWidget = true;
-  List finalProductList = [];
-  List productList = [];
-  Pro_Data() async {
-    var temp2 = [];
-    productList = finalProductList = [];
-
-    Map<dynamic, dynamic> w = {
-      'table': "product",
-      "orderBy": "-date_at"
-      //'status': "$_StatusValue",
-    };
-    var temp = await dbFindDynamic(db, w);
-
+  Pro_Data_list(Limit) async {
+    var temp = await controllerr.Pro_Data(Limit);
     setState(() {
       temp.forEach((k, v) {
         var tempLocation = '';
@@ -78,11 +68,11 @@ class _ProductAddState extends State<ProductAdd> {
         }
         v['location'] = tempLocation;
 
-        productList.add(v);
+        controllerr.productList.add(v);
       });
-      filteredItems = productList;
-      finalProductList = productList;
-      progressWidget = false;
+      filteredItems = controllerr.productList;
+      controllerr.finalProductList = controllerr.productList;
+      controllerr.progressWidget = false;
     });
   }
 
@@ -97,7 +87,7 @@ class _ProductAddState extends State<ProductAdd> {
           themeAlert(context, "Deleted Successfully ");
           _controllers.clear();
           productList2 = [];
-          Pro_Data();
+          Pro_Data_list(_number_select);
         });
       }).catchError(
           (error) => themeAlert(context, 'Not find Data', type: "error"));
@@ -109,7 +99,7 @@ class _ProductAddState extends State<ProductAdd> {
           themeAlert(context, "Deleted Successfully ");
           _controllers.clear();
           productList2 = [];
-          Pro_Data();
+          Pro_Data_list(_number_select);
         });
       }).catchError(
           (error) => themeAlert(context, 'Not find Data', type: "error"));
@@ -124,7 +114,7 @@ class _ProductAddState extends State<ProductAdd> {
         MaterialPageRoute(
             builder: (_) => addStockScreen(header_name: "Add New Stock")));
     if (temp == 'updated') {
-      Pro_Data();
+      Pro_Data_list(_number_select);
     }
   }
 
@@ -151,25 +141,26 @@ class _ProductAddState extends State<ProductAdd> {
       onError: (e) => print("Error completing: $e"),
     );
     // return _product;
-    progressWidget = true;
-    productList = [];
+    controllerr.progressWidget = true;
+    controllerr.productList = [];
     for (var i = 0; i < _product.length; i++) {
       setState(() {
-        productList.add(_product[i]);
+        controllerr.productList.add(_product[i]);
         ascen = !boolvalue;
       });
     }
-    progressWidget = false;
+    controllerr.progressWidget = false;
   }
 
   ///
   bool ascen = true;
   var baseController = new base_controller();
+  var _number_select = 50;
 
   ///
   @override
   Widget build(BuildContext context) {
-    return (progressWidget == true)
+    return (controllerr.progressWidget == true)
         ? Center(child: pleaseWait(context))
         : RawKeyboardListener(
             autofocus: true,
@@ -215,7 +206,7 @@ class _ProductAddState extends State<ProductAdd> {
                               children: [
                                 IconButton(
                                   onPressed: () {
-                                    Pro_Data();
+                                    Pro_Data_list(_number_select);
                                   },
                                   icon: Icon(Icons.refresh),
                                   tooltip: 'Refresh',
@@ -399,29 +390,97 @@ class _ProductAddState extends State<ProductAdd> {
                                     ),
                                   ]),
                               for (var index = 0;
-                                  index < productList.length;
+                                  index < controllerr.productList.length;
                                   index++)
                                 tableRowWidget(
                                     index + 1,
-                                    productList[index]['name'],
-                                    (productList[index]['brand'] == null)
+                                    controllerr.productList[index]['name'],
+                                    (controllerr.productList[index]['brand'] ==
+                                            null)
                                         ? ""
-                                        : productList[index]['brand'],
-                                    productList[index]['category'],
-                                    productList[index]['quantity'],
-                                    productList[index]['location'],
-                                    (productList[index]['price'] != "")
-                                        ? productList[index]['price']
+                                        : controllerr.productList[index]
+                                            ['brand'],
+                                    controllerr.productList[index]['category'],
+                                    controllerr.productList[index]['quantity'],
+                                    controllerr.productList[index]['location'],
+                                    (controllerr.productList[index]['price'] !=
+                                            "")
+                                        ? controllerr.productList[index]
+                                            ['price']
                                         : 00.00,
-                                    productList[index]['status'],
-                                    productList[index]['date_at'],
-                                    productList[index]['id'],
-                                    productList[index]),
+                                    controllerr.productList[index]['status'],
+                                    controllerr.productList[index]['date_at'],
+                                    controllerr.productList[index]['id'],
+                                    controllerr.productList[index]),
                             ],
                           ),
                         ],
                       ),
                     ),
+
+                    Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      Container(
+                        height: 40,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        margin:
+                            EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                        color: Colors.black,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Show",
+                              style: themeTextStyle(
+                                  fw: FontWeight.normal,
+                                  color: Colors.white,
+                                  size: 15),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 10.0),
+                              padding: EdgeInsets.all(2),
+                              height: 20,
+                              color: Colors.white,
+                              child: DropdownButton<int>(
+                                dropdownColor: Colors.white,
+                                iconEnabledColor: Colors.black,
+                                hint: Text(
+                                  "$_number_select",
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 12),
+                                ),
+                                value: _number_select,
+                                items:
+                                    <int>[50, 100, 150, 200].map((int value) {
+                                  return DropdownMenuItem<int>(
+                                    value: value,
+                                    child: Text(
+                                      "$value",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 12),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (newVal) {
+                                  _number_select = newVal!;
+                                  Pro_Data_list(newVal);
+                                },
+                                underline: SizedBox(),
+                              ),
+                            ),
+                            Text(
+                              "entries",
+                              style: themeTextStyle(
+                                  fw: FontWeight.normal,
+                                  color: Colors.white,
+                                  size: 15),
+                            ),
+                          ],
+                        ),
+                      )
+                    ]),
+                    SizedBox(
+                      height: 100,
+                    )
                   ],
                 ),
               ),
@@ -580,7 +639,7 @@ class _ProductAddState extends State<ProductAdd> {
                                             header_name: "Edit product details",
                                           )));
                               if (temp == 'updated') {
-                                Pro_Data();
+                                Pro_Data_list(_number_select);
                               }
                             },
                             icon: Icon(
@@ -669,7 +728,7 @@ class _ProductAddState extends State<ProductAdd> {
                             setState(() {
                               _controllers.clear();
                               productList2 = [];
-                              Pro_Data();
+                              Pro_Data_list(_number_select);
                             });
                           },
                           child: Icon(Icons.search_off, color: Colors.red))),
@@ -689,14 +748,14 @@ class _ProductAddState extends State<ProductAdd> {
   List productList2 = [];
   void _filterItems(String query) {
     List<String> searchField = ['name', 'category', 'brand', 'location'];
-    productList = [];
-    finalProductList.forEach((e) {
+    controllerr.productList = [];
+    controllerr.finalProductList.forEach((e) {
       bool isFind = false;
       searchField.forEach((key) {
         if (!isFind &&
             e['$key'] != null &&
             e['$key'].toLowerCase().contains(query.toLowerCase())) {
-          productList.add(e);
+          controllerr.productList.add(e);
           isFind = true;
         }
       });

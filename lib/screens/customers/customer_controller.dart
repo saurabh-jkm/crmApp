@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, avoid_function_literals_in_foreach_calls
 
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'dart:io';
@@ -37,19 +37,19 @@ class customerController {
   //================================================================
   //================================================================
 
-  init_functions({dbData: ''}) async {
-    await customerList();
+  init_functions(limit, {dbData: ''}) async {
+    await customerList(limit);
   }
 
   // reset controller
   resetController() {}
 
   // get all Customer List =============================
-  customerList() async {
+  customerList(int limitData) async {
     listCustomerName = [];
     listCustomer = {};
-    var dbData =
-        await dbFindDynamic(db, {'table': 'customer', 'orderBy': '-date_at'});
+    var dbData = await dbFindDynamic(
+        db, {'table': 'customer', 'orderBy': '-date_at', "limit": limitData});
 
     var i = 1;
     dbData.forEach((k, data) {

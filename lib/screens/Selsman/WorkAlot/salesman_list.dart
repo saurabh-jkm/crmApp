@@ -39,8 +39,8 @@ class _SalemanListState extends State<SalemanList> {
     setState(() {});
   }
 
-  initFunctions() async {
-    await controller.sellerList();
+  initFunctions(limit) async {
+    await controller.sellerList(limit);
     await controller.getCustomerNameList();
     setState(() {});
   }
@@ -56,7 +56,7 @@ class _SalemanListState extends State<SalemanList> {
 
   @override
   void initState() {
-    initFunctions();
+    initFunctions(_number_select);
     super.initState();
   }
 
@@ -97,7 +97,7 @@ class _SalemanListState extends State<SalemanList> {
     );
   }
 
-//
+  var _number_select = 50;
   // Body Part =================================================
   Widget CustomerList(context) {
     return Container(
@@ -132,6 +132,63 @@ class _SalemanListState extends State<SalemanList> {
                 rowColor: Color.fromARGB(255, 162, 155, 255),
                 textColor: const Color.fromARGB(255, 0, 0, 0),
                 controller: controller),
+
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Container(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              color: Colors.black,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Show",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: EdgeInsets.all(2),
+                    height: 20,
+                    color: Colors.white,
+                    child: DropdownButton<int>(
+                      dropdownColor: Colors.white,
+                      iconEnabledColor: Colors.black,
+                      hint: Text(
+                        "$_number_select",
+                        style: TextStyle(color: Colors.black, fontSize: 12),
+                      ),
+                      value: _number_select,
+                      items: <int>[50, 100, 150, 200].map((int value) {
+                        return DropdownMenuItem<int>(
+                          value: value,
+                          child: Text(
+                            "$value",
+                            style: TextStyle(color: Colors.black, fontSize: 12),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newVal) {
+                        _number_select = newVal!;
+                        initFunctions(newVal);
+                      },
+                      underline: SizedBox(),
+                    ),
+                  ),
+                  Text(
+                    "entries",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                ],
+              ),
+            )
+          ]),
+
+          SizedBox(
+            height: 100,
+          ),
         ],
       ),
     );
@@ -229,7 +286,7 @@ class _SalemanListState extends State<SalemanList> {
                           children: [
                             IconButton(
                                 onPressed: () async {
-                                  await controller.sellerList();
+                                  await controller.sellerList(_number_select);
                                   // todo
                                   setState(() {
                                     controller.selectedSeller = {};

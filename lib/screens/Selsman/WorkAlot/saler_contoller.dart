@@ -282,11 +282,11 @@ class SellerController {
   }
 
   // get all Customer List =============================
-  sellerList() async {
+  sellerList(int limitData) async {
     listCustomerName = [];
     listCustomer = {};
-    Map dbData =
-        await dbFindDynamic(db, {'table': 'users', 'user_type': 'Sales Man'});
+    Map dbData = await dbFindDynamic(
+        db, {'table': 'users', 'user_type': 'Sales Man', "limit": limitData});
     var i = 1;
 
     if (dbData != null) {

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, unused_import, body_might_complete_normally_nullable, no_leading_underscores_for_local_identifiers, unused_field, depend_on_referenced_packages, avoid_print, sized_box_for_whitespace, unnecessary_new, unused_shown_name, unnecessary_cast, duplicate_ignore, await_only_futures
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, unused_import, body_might_complete_normally_nullable, no_leading_underscores_for_local_identifiers, unused_field, depend_on_referenced_packages, avoid_print, sized_box_for_whitespace, unnecessary_new, unused_shown_name, unnecessary_cast, duplicate_ignore, await_only_futures, prefer_is_empty
 import 'dart:convert';
 import 'dart:io';
 
@@ -18,6 +18,9 @@ import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
+import 'attribute_controller.dart';
+import 'attributes_widgets.dart';
+
 class AttributeAdd extends StatefulWidget {
   const AttributeAdd({super.key});
   @override
@@ -25,47 +28,35 @@ class AttributeAdd extends StatefulWidget {
 }
 
 class _AttributeAddState extends State<AttributeAdd> {
+  final _formKey = GlobalKey<FormState>();
+  var baseController = new base_controller();
+  var controllerr = new attributeController();
   var db = (kIsWeb)
       ? FirebaseFirestore.instance
       : (!kIsWeb && Platform.isWindows)
           ? Firestore.instance
           : FirebaseFirestore.instance;
 
-  final _formKey = GlobalKey<FormState>();
-//////
-  final AttributeController = TextEditingController();
-  final Sub_AttributeController = TextEditingController();
-  String? _StatusValue = "Active";
-  String Date_at = DateFormat('dd-MM-yyyy' "  hh:mm").format(DateTime.now());
-  bool progressWidget = true;
-/////
-  clearText() {
-    AttributeController.clear();
-    _StatusValue = "Active";
+  @override
+  void initState() {
+    AttributeListData(_number_select);
+    super.initState();
   }
 
-///////////  firebase property Database access  +++++++++++++++++++++++++++
-
-  List StoreDocs = [];
-  var baseController = new base_controller();
-
-  _AttributeData() async {
-    StoreDocs = [];
-    CollectionReference _attribute =
-        FirebaseFirestore.instance.collection('attribute');
-    var querySnapshot = await _attribute.get();
-    for (var queryDocumentSnapshot in querySnapshot.docs) {
-      // ignore: unnecessary_cast
-      Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
-      StoreDocs.add(data);
-      data["id"] = queryDocumentSnapshot.id;
-    }
+//////// Attribute data  ++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+  ///=============================================================================
+  AttributeListData(limitData) async {
+    var temp = await controllerr.AttributeData(limitData);
     setState(() {
-      progressWidget = false;
+      temp.forEach((k, v) {
+        controllerr.StoreDocs.add(v);
+      });
+      controllerr.progressWidget = false;
     });
   }
 
-/////////////
+////////////====================================================================
+  ///=============================================================================
   Color mycolor = Colors.grey;
   var Head_Name;
   var hexString;
@@ -94,8 +85,8 @@ class _AttributeAddState extends State<AttributeAdd> {
       dbData = pathData.data() as Map<String, dynamic>?;
       setState(() {
         _Status = dbData!['status'];
-        AttributeController.text = dbData!['attribute_name'];
-        Sub_AttributeController.text = dbData!["attribute_name"];
+        controllerr.AttributeController.text = dbData!['attribute_name'];
+        controllerr.Sub_AttributeController.text = dbData!["attribute_name"];
         value_color = dbData!["value"];
         value_color.forEach((k, v) => Color_list.add(v));
         // print("$Color_list  ++++++");
@@ -104,58 +95,6 @@ class _AttributeAddState extends State<AttributeAdd> {
   }
 
   ///
-
-/////// add Category Data  =+++++++++++++++++++
-
-  Future<void> addList() async {
-    if (!kIsWeb && Platform.isWindows) {
-      var attribute = await Firestore.instance.collection('attribute');
-      await _saveAttr(attribute);
-    } else {
-      CollectionReference attribute =
-          FirebaseFirestore.instance.collection('attribute');
-      await _saveAttr(attribute);
-    }
-
-    if (Platform.isWindows) {
-      All_AttributeData();
-    } else {
-      _AttributeData();
-    }
-    clearText();
-  }
-
-  // save attribute
-  _saveAttr(attribute) {
-    return attribute.add({
-      'attribute_name': "${AttributeController.text}",
-      "value": {},
-      'status': "${(_StatusValue == 'Active') ? '1' : "2"}",
-      "date_at": "$Date_at"
-    }).then((value) {
-      setState(() {
-        themeAlert(context, "Added Successfully");
-      });
-    }).catchError(
-        (error) => themeAlert(context, 'Failed to Submit', type: "error"));
-  }
-
-//////////
-
-////////// delete Category Data ++++++++++++++++
-
-  Future<void> deleteUser(id) {
-    CollectionReference _attribute =
-        FirebaseFirestore.instance.collection('attribute');
-    return _attribute.doc(id).delete().then((value) {
-      setState(() {
-        themeAlert(context, "Deleted Successfully ");
-      });
-    }).catchError(
-        (error) => themeAlert(context, 'Not find Data', type: "error"));
-  }
-
-  ////////////
 
 /////// Update
 
@@ -169,14 +108,14 @@ class _AttributeAddState extends State<AttributeAdd> {
           : (_Status == "Inactive")
               ? "2"
               : "",
-      "date_at": "$Date_at"
+      "update_at": "${controllerr.Date_at}"
     }).then((value) {
       themeAlert(context, "Successfully Update");
       setState(() {
         _Status = null;
-        _StatusValue = null;
-        AttributeController.clear();
-        _AttributeData();
+        controllerr.StatusValue = null;
+        controllerr.AttributeController.clear();
+        AttributeListData(_number_select);
         updateWidget = false;
       });
     }).catchError(
@@ -184,34 +123,6 @@ class _AttributeAddState extends State<AttributeAdd> {
   }
 
 /////////
-
-  @override
-  void initState() {
-    if (!kIsWeb && Platform.isWindows) {
-      All_AttributeData();
-    } else {
-      _AttributeData();
-    }
-
-    super.initState();
-  }
-
-//////////// hhh
-
-  All_AttributeData() async {
-    // print("object   +++++++++++++++++++++");
-    StoreDocs = [];
-    final _attribute = Firestore.instance.collection('attribute');
-    final documents = await _attribute.get();
-    for (var document in documents) {
-      Map data = document.map as Map<String, dynamic>;
-      StoreDocs.add(data);
-      data["id"] = document.id;
-    }
-    setState(() {
-      progressWidget = false;
-    });
-  }
 
   Future All_Update_initial(id) async {
     Color_list = [];
@@ -222,13 +133,13 @@ class _AttributeAddState extends State<AttributeAdd> {
     if (pathData != null) {
       dbData = pathData.map as Map<String, dynamic>?;
 
-      _StatusValue = (dbData!['status'] == "1")
+      controllerr.StatusValue = (dbData!['status'] == "1")
           ? "Active"
           : (dbData!['status'] == "2")
               ? "Inactive"
               : "";
-      AttributeController.text = dbData!['attribute_name'];
-      Sub_AttributeController.text = '';
+      controllerr.AttributeController.text = dbData!['attribute_name'];
+      controllerr.Sub_AttributeController.text = '';
       value_color = dbData!["value"];
       value_color.forEach((k, v) {
         Color_list.add(v);
@@ -254,14 +165,14 @@ class _AttributeAddState extends State<AttributeAdd> {
           : (_Status == "Inactive")
               ? "2"
               : "",
-      "date_at": "$Date_at"
+      "update_at": "${controllerr.Date_at}"
     }).then((value) {
       themeAlert(context, "Successfully Update");
       setState(() {
         _Status = null;
-        _StatusValue = null;
-        AttributeController.clear();
-        All_AttributeData();
+        controllerr.StatusValue = null;
+        controllerr.AttributeController.clear();
+        AttributeListData(_number_select);
         updateWidget = false;
       });
     }).catchError(
@@ -270,7 +181,7 @@ class _AttributeAddState extends State<AttributeAdd> {
 
 ///////// =============================================
   _fnAddSubAttribute(id) async {
-    if (Sub_AttributeController.text.length < 1) {
+    if (controllerr.Sub_AttributeController.text.length < 1) {
       themeAlert(context, "Please Enter valid Sub Attribute Name",
           type: 'error');
       return false;
@@ -278,17 +189,18 @@ class _AttributeAddState extends State<AttributeAdd> {
 
     var tempColor = dbData!['value'];
     if (dbData!['attribute_name'] == 'Colors') {
-      tempColor[Sub_AttributeController.text.trim()] = {
-        "name": "${Sub_AttributeController.text.trim()}",
+      tempColor[controllerr.Sub_AttributeController.text.trim()] = {
+        "name": "${controllerr.Sub_AttributeController.text.trim()}",
         "color": hexString,
         "status": 1,
-        "date_at": "$Date_at",
+        "date_at": "${controllerr.Date_at}",
       };
     } else {
-      tempColor[Sub_AttributeController.text.trim()] = {
-        "name": "${Sub_AttributeController.text.trim()}",
+      tempColor[controllerr.Sub_AttributeController.text.trim()] = {
+        "name": "${controllerr.Sub_AttributeController.text.trim()}",
         "status": 1,
-        "date_at": "$Date_at",
+        "update_at": "",
+        "date_at": "${controllerr.Date_at}",
       };
     }
 
@@ -306,8 +218,8 @@ class _AttributeAddState extends State<AttributeAdd> {
       await Update_initial(id);
     }
 
-    _Status = null;
-    Sub_AttributeController.clear();
+    _Status = "";
+    controllerr.Sub_AttributeController.clear();
   }
 
   ///
@@ -317,7 +229,7 @@ class _AttributeAddState extends State<AttributeAdd> {
   var update_id;
   @override
   Widget build(BuildContext context) {
-    return (progressWidget == true)
+    return (controllerr.progressWidget == true)
         ? Center(child: pleaseWait(context))
         : RawKeyboardListener(
             autofocus: true,
@@ -426,7 +338,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                                   color: Colors.black,
                                   size: 15,
                                   fw: FontWeight.bold)),
-                          Text_field(context, AttributeController,
+                          Text_field(context, controllerr.AttributeController,
                               "Attribute Name", "Enter Category Name"),
                         ],
                       ))),
@@ -451,13 +363,13 @@ class _AttributeAddState extends State<AttributeAdd> {
                           padding: EdgeInsets.only(left: 10, right: 10),
                           child: DropdownButton(
                             dropdownColor: Colors.white,
-                            hint: _StatusValue == null
+                            hint: controllerr.StatusValue == null
                                 ? Text(
                                     'Select',
                                     style: TextStyle(color: Colors.black),
                                   )
                                 : Text(
-                                    _StatusValue!,
+                                    controllerr.StatusValue!,
                                     style: TextStyle(
                                         color: Color.fromARGB(255, 1, 0, 0)),
                                   ),
@@ -481,7 +393,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                             onChanged: (val) {
                               setState(
                                 () {
-                                  _StatusValue = val!;
+                                  controllerr.StatusValue = val!;
                                 },
                               );
                             },
@@ -495,9 +407,9 @@ class _AttributeAddState extends State<AttributeAdd> {
                   ),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     themeButton3(context, () {
-                      addList();
-
+                      controllerr.addList(context);
                       setState(() {
+                        AttributeListData(_number_select);
                         Add_Attribute = false;
                       });
                     }, buttonColor: Colors.green, label: "Submit"),
@@ -506,7 +418,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                     ),
                     themeButton3(context, () {
                       setState(() {
-                        clearText();
+                        controllerr.clearText();
                       });
                     }, label: "Reset", buttonColor: Colors.black),
                     SizedBox(width: 20.0),
@@ -521,7 +433,7 @@ class _AttributeAddState extends State<AttributeAdd> {
 
 ////////////////////////////// List ++++++++++++++++++++++++++++++++++++++++++++
   bool Add_Attribute = false;
-  var _number_select = 10;
+  var _number_select = 50;
   Widget listList(BuildContext context, sub_text) {
     return Container(
       height: MediaQuery.of(context).size.height,
@@ -545,86 +457,6 @@ class _AttributeAddState extends State<AttributeAdd> {
             ),
             child: Column(
               children: [
-                Container(
-                    padding: EdgeInsets.all(10),
-                    color: Theme.of(context).secondaryHeaderColor,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Attribute List",
-                              style: themeTextStyle(
-                                  fw: FontWeight.bold,
-                                  color: Colors.white,
-                                  size: 15),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "Show",
-                                  style: themeTextStyle(
-                                      fw: FontWeight.normal,
-                                      color: Colors.white,
-                                      size: 15),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 5),
-                                  padding: EdgeInsets.all(2),
-                                  height: 20,
-                                  color: Colors.white,
-                                  child: DropdownButton<int>(
-                                    dropdownColor: Colors.white,
-                                    iconEnabledColor: Colors.black,
-                                    hint: Text(
-                                      "$_number_select",
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 12),
-                                    ),
-                                    value: _number_select,
-                                    items:
-                                        <int>[10, 25, 50, 100].map((int value) {
-                                      return new DropdownMenuItem<int>(
-                                        value: value,
-                                        child: new Text(
-                                          value.toString(),
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newVal) {
-                                      setState(() {
-                                        _number_select = newVal!;
-                                      });
-                                    },
-                                    underline: SizedBox(),
-                                  ),
-                                ),
-                                Text(
-                                  "entries",
-                                  style: themeTextStyle(
-                                      fw: FontWeight.normal,
-                                      color: Colors.white,
-                                      size: 15),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                        //     Container(
-                        //         margin: EdgeInsets.symmetric(horizontal: 10),
-                        //         height: MediaQuery.of(context).size.height * 0.05,
-                        //         width: MediaQuery.of(context).size.width * 0.4,
-                        //         child: SearchField())
-                      ],
-                    )),
                 SizedBox(
                   height: 5,
                 ),
@@ -695,30 +527,86 @@ class _AttributeAddState extends State<AttributeAdd> {
                                           fontWeight: FontWeight.bold)),
                                 ),
                               ]),
-                    for (var index = 0; index < StoreDocs.length; index++)
+                    for (var index = 0;
+                        index < controllerr.StoreDocs.length;
+                        index++)
                       (Responsive.isMobile(context))
-                          ? tableRowWidget_mobile(
-                              "${StoreDocs[index]["attribute_name"]}",
-                              "${StoreDocs[index]["status"]}",
-                              "${StoreDocs[index]["date_at"]}",
-                              "${StoreDocs[index]["id"]}")
+                          ? tableRowWidget_mobile(controllerr.StoreDocs[index])
                           : tableRowWidget(
-                              "${index + 1}",
-                              "${StoreDocs[index]["attribute_name"]}",
-                              "${StoreDocs[index]["status"]}",
-                              "${StoreDocs[index]["date_at"]}",
-                              "${StoreDocs[index]["id"]}"),
+                              "${index + 1}", controllerr.StoreDocs[index])
                   ],
                 ),
               ],
             ),
           ),
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Container(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              color: Colors.black,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Show",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: EdgeInsets.all(2),
+                    height: 20,
+                    color: Colors.white,
+                    child: DropdownButton<int>(
+                      dropdownColor: Colors.white,
+                      iconEnabledColor: Colors.black,
+                      hint: Text(
+                        "$_number_select",
+                        style: TextStyle(color: Colors.black, fontSize: 12),
+                      ),
+                      value: _number_select,
+                      items: <int>[50, 100, 150, 200].map((int value) {
+                        return DropdownMenuItem<int>(
+                          value: value,
+                          child: Text(
+                            "$value",
+                            style: TextStyle(color: Colors.black, fontSize: 12),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newVal) {
+                        _number_select = newVal!;
+                        AttributeListData(newVal);
+                        // CategoryData(newVal);
+                      },
+                      underline: SizedBox(),
+                    ),
+                  ),
+                  Text(
+                    "entries",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                ],
+              ),
+            )
+          ]),
+          SizedBox(
+            height: 100,
+          )
         ],
       ),
     );
   }
 
-  TableRow tableRowWidget(sno, name, status, date, iid) {
+  TableRow tableRowWidget(sno, data) {
+    var status = (data["status"] == "1")
+        ? "Active"
+        : (data["status"] == "2")
+            ? "Inactive"
+            : "";
+    var iid = data["id"];
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -733,28 +621,23 @@ class _AttributeAddState extends State<AttributeAdd> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Text("$name",
+          child: Text("${data["attribute_name"]}",
               style: GoogleFonts.alike(
                   fontWeight: FontWeight.normal, fontSize: 11)),
         ),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text(
-            (status == "1")
-                ? "Active"
-                : (status == "2")
-                    ? "Inactive"
-                    : "",
+        child: Text("$status",
             style: GoogleFonts.alike(
               fontWeight: FontWeight.normal,
-              color: (status == "1") ? Colors.green : Colors.red,
+              color: (status == "Active") ? Colors.green : Colors.red,
               fontSize: 11,
             )),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$date",
+        child: Text("${data["date_at"]}",
             style:
                 GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
@@ -802,7 +685,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                         setState(() {
                           update_subAttribute = true;
                           update_id = iid;
-                          Head_Name = name;
+                          Head_Name = data["attribute_name"];
                           if (kIsWeb) {
                             Update_initial(iid);
                           } else if (!kIsWeb) {
@@ -821,7 +704,13 @@ class _AttributeAddState extends State<AttributeAdd> {
     ]);
   }
 
-  TableRow tableRowWidget_mobile(name, status, date, iid) {
+  TableRow tableRowWidget_mobile(data) {
+    var iid = data["id"];
+    var status = (data["status"] == "1")
+        ? "Active"
+        : (data["status"] == "2")
+            ? "Inactive"
+            : "";
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -833,9 +722,11 @@ class _AttributeAddState extends State<AttributeAdd> {
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  themeListRow(context, "Name", "$name", fontsize: 11),
+                  themeListRow(context, "Name", "${data["attribute_name"]}",
+                      fontsize: 11),
                   themeListRow(context, "Satus", "$status", fontsize: 11),
-                  themeListRow(context, "Date", "$date", fontsize: 11),
+                  themeListRow(context, "Date", "${data["date_at"]}",
+                      fontsize: 11),
                   SizedBox(
                     height: 10,
                   ),
@@ -1005,7 +896,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                           ),
                           child: TextFormField(
                             autofocus: false,
-                            controller: AttributeController,
+                            controller: controllerr.AttributeController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Enter Attribute Name";
@@ -1046,13 +937,13 @@ class _AttributeAddState extends State<AttributeAdd> {
                     padding: EdgeInsets.only(left: 10, right: 10),
                     child: DropdownButton(
                       dropdownColor: Colors.white,
-                      hint: _StatusValue == null
+                      hint: controllerr.StatusValue == null
                           ? Text(
                               '$_Status',
                               style: TextStyle(color: Colors.black),
                             )
                           : Text(
-                              _StatusValue!,
+                              controllerr.StatusValue!,
                               style: TextStyle(color: Colors.black),
                             ),
                       isExpanded: true,
@@ -1074,7 +965,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                       onChanged: (val) {
                         setState(
                           () {
-                            _StatusValue = val!;
+                            controllerr.StatusValue = val!;
                           },
                         );
                       },
@@ -1085,14 +976,17 @@ class _AttributeAddState extends State<AttributeAdd> {
                   ),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     themeButton3(context, () {
-                      if (AttributeController != null && _StatusValue != null) {
+                      if (controllerr.AttributeController != null &&
+                          controllerr.StatusValue != null) {
                         setState(() {
                           if (kIsWeb) {
-                            updatelist(
-                                id, AttributeController.text, _StatusValue);
+                            updatelist(id, controllerr.AttributeController.text,
+                                controllerr.StatusValue);
                           } else if (!kIsWeb) {
                             All_updatelist(
-                                id, AttributeController.text, _StatusValue);
+                                id,
+                                controllerr.AttributeController.text,
+                                controllerr.StatusValue);
                           }
                         });
                       } else {
@@ -1105,10 +999,10 @@ class _AttributeAddState extends State<AttributeAdd> {
                     ),
                     themeButton3(context, () {
                       setState(() {
-                        clearText();
+                        controllerr.clearText();
                         _Status = null;
-                        _StatusValue = "";
-                        AttributeController.clear();
+                        controllerr.StatusValue = "";
+                        controllerr.AttributeController.clear();
                       });
                     }, label: "Reset", buttonColor: Colors.black),
                     SizedBox(width: 20.0),
@@ -1205,13 +1099,14 @@ class _AttributeAddState extends State<AttributeAdd> {
                                         fw: FontWeight.bold)),
                                 Text_field(
                                     context,
-                                    Sub_AttributeController,
+                                    controllerr.Sub_AttributeController,
                                     "Enter Sub Attribute Name",
                                     "Sub Attribute Name "),
 
                                 // add button =========================
                                 themeButton3(context, () {
-                                  if (Sub_AttributeController.text.isNotEmpty) {
+                                  if (controllerr.Sub_AttributeController.text
+                                      .isNotEmpty) {
                                     _fnAddSubAttribute(id);
                                   } else {
                                     themeAlert(
@@ -1317,8 +1212,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                                                                   (Color
                                                                       color) {
                                                                 //on color picked
-                                                                setState(
-                                                                    () async {
+                                                                setState(() {
                                                                   mycolor =
                                                                       color;
                                                                   hexString = color
@@ -1350,7 +1244,7 @@ class _AttributeAddState extends State<AttributeAdd> {
                                                                     "status":
                                                                         "${Color_list[i]["status"]}",
                                                                     "date_at":
-                                                                        "$Date_at",
+                                                                        "${controllerr.Date_at}",
                                                                   };
                                                                   dbData!['value'] =
                                                                       tempColor;
@@ -1455,38 +1349,6 @@ class _AttributeAddState extends State<AttributeAdd> {
           )
         ]));
   }
-///////////////////////////
-
-///////  Text_field 22 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  ///
-  Widget Text_field(BuildContext context, ctr_name, lebel, hint) {
-    return Container(
-        height: 40,
-        margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: TextFormField(
-          controller: ctr_name,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please Enter value';
-            }
-          },
-          style: TextStyle(color: Colors.black),
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            hintText: '$hint',
-            hintStyle: TextStyle(
-              color: Colors.grey,
-              fontSize: 16,
-            ),
-          ),
-        ));
-  }
-///////////
 }
 
 /// Class CLose

@@ -1,26 +1,14 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new, unused_field, unused_label, unrelated_type_equality_checks, file_names, unnecessary_cast
 
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/customers/customer_controller.dart';
 import 'package:crm_demo/screens/customers/customer_widgets.dart';
 import 'package:crm_demo/themes/base_controller.dart';
 
-import 'package:firedart/firestore/firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../../constants.dart';
-import '../../responsive.dart';
-
-import '../../themes/firebase_functions.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
-import 'package:intl/intl.dart';
 
 class CustomerList extends StatefulWidget {
   const CustomerList({super.key});
@@ -33,8 +21,8 @@ class _CustomerListState extends State<CustomerList> {
   var controller = new customerController();
   var baseController = new base_controller();
 
-  initFunctions() async {
-    await controller.init_functions();
+  initFunctions(limit) async {
+    await controller.init_functions(limit);
     orderDetails();
     setState(() {});
   }
@@ -48,10 +36,11 @@ class _CustomerListState extends State<CustomerList> {
   @override
   void initState() {
     // TODO: implement initState
-    initFunctions();
+    initFunctions(_number_select);
     super.initState();
   }
 
+  var _number_select = 50;
   @override
   Widget build(BuildContext context) {
     return RawKeyboardListener(
@@ -111,6 +100,63 @@ class _CustomerListState extends State<CustomerList> {
                 rowColor: Color.fromARGB(255, 162, 155, 255),
                 textColor: const Color.fromARGB(255, 0, 0, 0),
                 controller: controller),
+
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Container(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              color: Colors.black,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Show",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: EdgeInsets.all(2),
+                    height: 20,
+                    color: Colors.white,
+                    child: DropdownButton<int>(
+                      dropdownColor: Colors.white,
+                      iconEnabledColor: Colors.black,
+                      hint: Text(
+                        "$_number_select",
+                        style: TextStyle(color: Colors.black, fontSize: 12),
+                      ),
+                      value: _number_select,
+                      items: <int>[50, 100, 150, 200].map((int value) {
+                        return DropdownMenuItem<int>(
+                          value: value,
+                          child: Text(
+                            "$value",
+                            style: TextStyle(color: Colors.black, fontSize: 12),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newVal) {
+                        _number_select = newVal!;
+                        initFunctions(newVal);
+                      },
+                      underline: SizedBox(),
+                    ),
+                  ),
+                  Text(
+                    "entries",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                ],
+              ),
+            )
+          ]),
+
+          SizedBox(
+            height: 100,
+          ),
         ],
       ),
     );
