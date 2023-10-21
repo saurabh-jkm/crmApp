@@ -98,6 +98,7 @@ class _SalemanListState extends State<SalemanList> {
   }
 
   var _number_select = 50;
+  var _number_select_meeting = 50;
   // Body Part =================================================
   Widget CustomerList(context) {
     return Container(
@@ -238,7 +239,8 @@ class _SalemanListState extends State<SalemanList> {
                                   themeButton3(context, () async {
                                     controller.MeetingMap =
                                         await controller.OrderList_data(
-                                            "${data['id']}");
+                                            "${data['id']}",
+                                            _number_select_meeting);
                                     setState(() {
                                       controller.selectedSellerId = data['id'];
                                       controller.selectedSeller = data;
@@ -308,7 +310,8 @@ class _SalemanListState extends State<SalemanList> {
                               onPressed: () {
                                 setState(() {
                                   controller.OrderList_data(
-                                      controller.selectedSellerId);
+                                      controller.selectedSellerId,
+                                      _number_select_meeting);
                                 });
                               },
                               icon: Icon(
@@ -338,6 +341,80 @@ class _SalemanListState extends State<SalemanList> {
                                 rowColor: Color.fromARGB(255, 217, 215, 239),
                                 textColor: const Color.fromARGB(255, 0, 0, 0),
                                 controllerr: controller),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Container(
+                                  height: 40,
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 20, horizontal: 20),
+                                  color: Colors.black,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Show",
+                                        style: themeTextStyle(
+                                            fw: FontWeight.normal,
+                                            color: Colors.white,
+                                            size: 15),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 10.0),
+                                        padding: EdgeInsets.all(2),
+                                        height: 20,
+                                        color: Colors.white,
+                                        child: DropdownButton<int>(
+                                          dropdownColor: Colors.white,
+                                          iconEnabledColor: Colors.black,
+                                          hint: Text(
+                                            "$_number_select_meeting",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12),
+                                          ),
+                                          value: _number_select_meeting,
+                                          items: <int>[50, 100, 150, 200]
+                                              .map((int value) {
+                                            return DropdownMenuItem<int>(
+                                              value: value,
+                                              child: Text(
+                                                "$value",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12),
+                                              ),
+                                            );
+                                          }).toList(),
+                                          onChanged: (newVal) async {
+                                            setState(() {
+                                              _number_select_meeting = newVal!;
+                                            });
+
+                                            await controller.OrderList_data(
+                                                controller.selectedSellerId,
+                                                newVal);
+                                            setState(() {});
+                                          },
+                                          underline: SizedBox(),
+                                        ),
+                                      ),
+                                      Text(
+                                        "entries",
+                                        style: themeTextStyle(
+                                            fw: FontWeight.normal,
+                                            color: Colors.white,
+                                            size: 15),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ]),
+                          SizedBox(
+                            height: 100,
+                          ),
                         ])),
                   ])
             : addNewMeet_widget(context, controller, fnFetchCutomerDetails,
@@ -805,7 +882,8 @@ class _SalemanListState extends State<SalemanList> {
 
                                         setState(() {
                                           controller.OrderList_data(
-                                              "${data['id']}");
+                                              "${data['id']}",
+                                              _number_select_meeting);
                                         });
                                       },
                                       icon: Icon(

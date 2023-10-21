@@ -88,11 +88,12 @@ class SellerController {
 
 //////////  ++++++++++++++++++++++++++++++++
   var MeetingMap = {};
-  OrderList_data(id) async {
+  OrderList_data(id, limit) async {
     Map<dynamic, dynamic> w = {
       'table': "follow_up",
       'sellerId': id,
-      'orderBy': '-next_follow_up_date'
+      "limit": limit,
+      'orderBy': '-next_follow_up_date',
     };
     MeetingMap = await dbFindDynamic(db, w);
     return MeetingMap;
@@ -214,7 +215,7 @@ class SellerController {
       await dbSave(db, dbArr);
 
       await resetController();
-      await OrderList_data(selectedSellerId);
+      await OrderList_data(selectedSellerId, 50);
       themeAlert(context, "Submitted Successfully ");
       return 'success';
       //Navigator.pop(context);
@@ -223,7 +224,7 @@ class SellerController {
       var rData = await dbUpdate(db, dbArr);
 
       if (rData != null) {
-        await OrderList_data(selectedSellerId);
+        await OrderList_data(selectedSellerId, 50);
         themeAlert(context, "Updated Successfully !!");
         ListShow = true;
         return 'success';
