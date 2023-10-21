@@ -8,17 +8,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../constants.dart';
 import '../../responsive.dart';
-
 import '../../themes/firebase_functions.dart';
 import '../../themes/style.dart';
 import '../../themes/base_controller.dart';
 import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
-import 'package:intl/intl.dart';
+import 'sub_admin_controller.dart';
 
 class SubAdmin extends StatefulWidget {
   const SubAdmin({super.key});
@@ -28,112 +25,59 @@ class SubAdmin extends StatefulWidget {
 
 class _SubAdminState extends State<SubAdmin> {
 ////////// variable of Sub Admin ++++++++++++++++++++++++++++++++++++++++++++++++++
+  var controllerr = new SubadminController();
   var baseController = new base_controller();
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
-  String email = "";
-  String password = "";
-  String fname = "";
-  String lname = "";
-  String fullName = "";
-  String Mobile = "";
-  String? _StatusValue = "";
-  String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
       : FirebaseFirestore.instance;
-  bool progressWidget = true;
+
   ///////////======================================================================
-  String? _dropDownValue;
-  String _User_Cate = '';
-  clearText() {
-    setState(() {
-      fname = "";
-      lname = "";
-      email = "";
-      fullName = "";
-      password = "";
-      _User_Cate = '';
-      Mobile = "";
-      _StatusValue = "";
-    });
-  }
+
 //////
 
-///////////  firebase property Database access  +++++++++++++++++++++++++++
+  var Tablelable = [
+    "S.No",
+    "Name",
+    "Role",
+    "Email",
+    "Status",
+    "Date At",
+    "Action",
+  ];
 
-////////
+  @override
+  void initState() {
+    // if (!kIsWeb && Platform.isWindows) {
+    //   Win_SubAdmin_ListData();
+    // } else {
+    //   _SubAdmin_ListData();
+    // }
 
+    _SubAdmin_ListData(_number_select);
+    super.initState();
+  }
 /////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
 
-  List StoreDocs = [];
-  List UserIDcheck = [];
-  _SubAdmin_ListData() async {
-    StoreDocs = [];
-    var collection = FirebaseFirestore.instance.collection('users');
-    var querySnapshot = await collection.get();
-    for (var queryDocumentSnapshot in querySnapshot.docs) {
-      Map data = queryDocumentSnapshot.data() as Map<String, dynamic>;
-      // print("${data["user_type"]} ++++tttt+++");
-      if (data["user_type"] != "admin") {
-        StoreDocs.add(data);
-        // print("$StoreDocs    ++++tttt+++");
-        data["id"] = queryDocumentSnapshot.id;
-      }
-    }
+//////// Attribute data  ++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+  ///=============================================================================
+  _SubAdmin_ListData(limitData) async {
+    var temp = await controllerr.SubAdminData(limitData);
+    var tempCate = await controllerr.CateData();
     setState(() {
-      progressWidget = false;
-      _CateData();
-    });
-  }
-
-  Win_SubAdmin_ListData() async {
-    StoreDocs = [];
-    final collection = Firestore.instance.collection('users');
-    final querySnapshot = await collection.get();
-    for (var queryDocumentSnapshot in querySnapshot) {
-      Map data = queryDocumentSnapshot.map as Map<String, dynamic>;
-      setState(() {
-        if (data["user_type"] != "admin") {
-          StoreDocs.add(data);
-          // print("$StoreDocs    ++++tttt+++");
-          data["id"] = queryDocumentSnapshot.id;
-        }
+      temp.forEach((k, v) {
+        controllerr.StoreDocs.add(v);
       });
-    }
 
-    setState(() {
-      String base64String;
-      String decodedString;
-      /*for (var i = 0; i < StoreDocs.length; i++) {
-        base64String = '${StoreDocs[i]["uid"]}';
-        decodedString = utf8.decode(base64.decode(base64String));
-        UserIDcheck.add(decodedString);
-      }*/
-      progressWidget = false;
-      _CateData();
+      tempCate.forEach((k, v) {
+        controllerr.Cate_Name_list[v['category_name']] = v['category_name'];
+      });
+      controllerr.progressWidget = false;
     });
   }
 
-/////////////
-////////////  User Category  data +++++++++++++++++++++++++++++++++++++++++++++++++
-  Map<int, String> v_status = {0: "Select", 1: 'Active', 2: 'Inactive'};
-  Map<String, String> Cate_Name_list = {'Select': ''};
-  _CateData() async {
-    Map<dynamic, dynamic> w = {
-      'table': 'user_category',
-      //'status':'1',
-    };
-
-    // var dbData = await dbFindDynamic(db, w);
-    var dbData = await dbFindDynamic(db, w);
-    dbData.forEach((k, v) {
-      Cate_Name_list[v['category_name']] = v['category_name'];
-    });
-    // print("$Cate_Name_list  +++++++++++++++++++++");
-  }
-
-///////// ====================================================================
   ///
 
   var firstName;
@@ -160,8 +104,8 @@ class _SubAdminState extends State<SubAdmin> {
         _mobile = data!['mobile_no'];
         _passwd = data!['password'];
         _date = data!['date_at'];
-        _User_Cate = data!['user_type'];
-        _StatusValue = (data!['status'] == "1")
+        controllerr.User_Cate = data!['user_type'];
+        controllerr.StatusValue = (data!['status'] == "1")
             ? "Active"
             : (data!['status'] == "2")
                 ? "Inactive"
@@ -190,7 +134,7 @@ class _SubAdminState extends State<SubAdmin> {
         "first_name": fname,
         "last_name": lname,
         "email": email,
-        "mobile_no": Mobile,
+        "mobile_no": controllerr.Mobile,
         "password": password,
         //"user_type": user_Cate,
         "user_type": user_Cate,
@@ -199,7 +143,7 @@ class _SubAdminState extends State<SubAdmin> {
         "date_at": date_at,
         "uid": "$base64Str",
       };
-      if (UserIDcheck.contains(email) != true) {
+      if (controllerr.UserIDcheck.contains(email) != true) {
         if (!kIsWeb && Platform.isWindows) {
           await win_dbSave(db, w);
         } else {
@@ -208,12 +152,13 @@ class _SubAdminState extends State<SubAdmin> {
 
         themeAlert(context, "Successfully Submitted");
         setState(() {
-          clearText();
-          if (!kIsWeb && Platform.isWindows) {
-            Win_SubAdmin_ListData();
-          } else {
-            _SubAdmin_ListData();
-          }
+          controllerr.clearText();
+          // if (!kIsWeb && Platform.isWindows) {
+          //   Win_SubAdmin_ListData();
+          // } else {
+          //   _SubAdmin_ListData();
+          // }
+          _SubAdmin_ListData(_number_select);
           Add_Category = false;
         });
       } else {
@@ -237,7 +182,7 @@ class _SubAdminState extends State<SubAdmin> {
     return _UsersSubAdmin.doc(id).delete().then((value) {
       setState(() {
         themeAlert(context, "Deleted Successfully ");
-        _SubAdmin_ListData();
+        _SubAdmin_ListData(_number_select);
       });
     }).catchError(
         (error) => themeAlert(context, 'Not find Data', type: "error"));
@@ -248,7 +193,7 @@ class _SubAdminState extends State<SubAdmin> {
     return _UsersSubAdmin.document(id).delete().then((value) {
       setState(() {
         themeAlert(context, "Deleted Successfully ");
-        Win_SubAdmin_ListData();
+        _SubAdmin_ListData(_number_select);
       });
     }).catchError(
         (error) => themeAlert(context, 'Not find Data', type: "error"));
@@ -277,12 +222,12 @@ class _SubAdminState extends State<SubAdmin> {
             : (_Status == "Inactive")
                 ? "2"
                 : "0",
-        "date_at": Date_at,
+        "date_at": controllerr.Date_at,
       }).then((value) {
         themeAlert(context, "Successfully Update");
         setState(() {
           updateWidget = false;
-          _SubAdmin_ListData();
+          _SubAdmin_ListData(_number_select);
         });
       }).catchError(
           (error) => themeAlert(context, 'Failed to update', type: "error"));
@@ -313,12 +258,12 @@ class _SubAdminState extends State<SubAdmin> {
             : (_Status == "Inactive")
                 ? "2"
                 : "0",
-        "date_at": Date_at,
+        "date_at": controllerr.Date_at,
       }).then((value) {
         themeAlert(context, "Successfully Update");
         setState(() {
           updateWidget = false;
-          Win_SubAdmin_ListData();
+          _SubAdmin_ListData(_number_select);
         });
       }).catchError(
           (error) => themeAlert(context, 'Failed to update', type: "error"));
@@ -334,21 +279,11 @@ class _SubAdminState extends State<SubAdmin> {
 
   bool Add_Category = false;
 
-  @override
-  void initState() {
-    if (!kIsWeb && Platform.isWindows) {
-      Win_SubAdmin_ListData();
-    } else {
-      _SubAdmin_ListData();
-    }
-    super.initState();
-  }
-
   bool updateWidget = false;
   var update_id;
   @override
   Widget build(BuildContext context) {
-    return (progressWidget == true)
+    return (controllerr.progressWidget == true)
         ? Center(child: pleaseWait(context))
         : RawKeyboardListener(
             autofocus: true,
@@ -469,7 +404,7 @@ class _SubAdminState extends State<SubAdmin> {
                                 padding: EdgeInsets.only(left: 10, right: 10),
                                 child: DropdownButton(
                                   dropdownColor: Colors.white,
-                                  value: _User_Cate,
+                                  value: controllerr.User_Cate,
                                   underline: Container(),
                                   isExpanded: true,
                                   icon: Icon(
@@ -481,7 +416,7 @@ class _SubAdminState extends State<SubAdmin> {
                                       color: Color.fromARGB(255, 5, 8, 10)),
                                   items: [
                                     for (MapEntry<String, String> e
-                                        in Cate_Name_list.entries)
+                                        in controllerr.Cate_Name_list.entries)
                                       DropdownMenuItem(
                                         value: e.value,
                                         child: Text(e.key),
@@ -490,7 +425,7 @@ class _SubAdminState extends State<SubAdmin> {
                                   onChanged: (val) {
                                     setState(
                                       () {
-                                        _User_Cate = val!;
+                                        controllerr.User_Cate = val!;
                                       },
                                     );
                                   },
@@ -532,7 +467,7 @@ class _SubAdminState extends State<SubAdmin> {
                                                 )),
                                         onChanged: (val) {
                                           setState(() {
-                                            fname = val;
+                                            controllerr.fname = val;
                                           });
                                         },
                                         validator: (val) {
@@ -575,7 +510,7 @@ class _SubAdminState extends State<SubAdmin> {
                                                   )),
                                           onChanged: (val) {
                                             setState(() {
-                                              lname = val;
+                                              controllerr.lname = val;
                                             });
                                           },
                                           validator: (val) {
@@ -620,7 +555,7 @@ class _SubAdminState extends State<SubAdmin> {
                                           )),
                                       onChanged: (val) {
                                         setState(() {
-                                          lname = val;
+                                          controllerr.lname = val;
                                         });
                                       },
                                     ),
@@ -667,7 +602,7 @@ class _SubAdminState extends State<SubAdmin> {
                                                   )),
                                           onChanged: (val) {
                                             setState(() {
-                                              email = val;
+                                              controllerr.email = val;
                                             });
                                           },
 
@@ -715,7 +650,7 @@ class _SubAdminState extends State<SubAdmin> {
                                                     )),
                                             onChanged: (val) {
                                               setState(() {
-                                                Mobile = val;
+                                                controllerr.Mobile = val;
                                               });
                                             },
                                             validator: (val) {
@@ -765,7 +700,7 @@ class _SubAdminState extends State<SubAdmin> {
                                                   )),
                                           onChanged: (val) {
                                             setState(() {
-                                              Mobile = val;
+                                              controllerr.Mobile = val;
                                             });
                                           },
                                           validator: (val) {
@@ -826,7 +761,7 @@ class _SubAdminState extends State<SubAdmin> {
                                           },
                                           onChanged: (val) {
                                             setState(() {
-                                              password = val;
+                                              controllerr.password = val;
                                             });
                                           },
                                         ),
@@ -857,18 +792,19 @@ class _SubAdminState extends State<SubAdmin> {
                             themeButton3(context, () {
                               setState(() async {
                                 await Add_Sub_user(
-                                    fname,
-                                    lname,
-                                    email,
-                                    Mobile,
-                                    password,
-                                    _User_Cate,
-                                    (_StatusValue == "Active")
+                                    controllerr.fname,
+                                    controllerr.lname,
+                                    controllerr.email,
+                                    controllerr.Mobile,
+                                    controllerr.password,
+                                    controllerr.User_Cate,
+                                    (controllerr.StatusValue == "Active")
                                         ? "1"
-                                        : (_StatusValue == "Inactive")
+                                        : (controllerr.StatusValue ==
+                                                "Inactive")
                                             ? "2"
                                             : "",
-                                    Date_at);
+                                    controllerr.Date_at);
 
                                 // clearText();
                               });
@@ -878,7 +814,7 @@ class _SubAdminState extends State<SubAdmin> {
                             ),
                             themeButton3(context, () {
                               setState(() {
-                                clearText();
+                                controllerr.clearText();
                               });
                             }, label: "Reset", buttonColor: Colors.black),
                             SizedBox(width: 20.0),
@@ -892,7 +828,7 @@ class _SubAdminState extends State<SubAdmin> {
   }
 
 ////////////////////////////// List ++++++++++++++++++++++++++++++++++++++++++++
-  var _number_select = 10;
+  var _number_select = 50;
   Widget listList(BuildContext context, sub_text) {
     return Container(
       height: MediaQuery.of(context).size.height,
@@ -917,85 +853,6 @@ class _SubAdminState extends State<SubAdmin> {
             ),
             child: Column(
               children: [
-                Container(
-                    padding: EdgeInsets.all(10),
-                    color: Theme.of(context).secondaryHeaderColor,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Sub Admin List",
-                              style: themeTextStyle(
-                                  fw: FontWeight.bold,
-                                  color: Colors.white,
-                                  size: 15),
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              children: [
-                                Text(
-                                  "Show",
-                                  style: themeTextStyle(
-                                      fw: FontWeight.normal,
-                                      color: Colors.white,
-                                      size: 15),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 5),
-                                  padding: EdgeInsets.all(2),
-                                  height: 20,
-                                  color: Colors.white,
-                                  child: DropdownButton<int>(
-                                      dropdownColor: Colors.white,
-                                      iconEnabledColor: Colors.black,
-                                      hint: Text(
-                                        "$_number_select",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 12),
-                                      ),
-                                      value: _number_select,
-                                      items: <int>[10, 25, 50, 100]
-                                          .map((int value) {
-                                        return new DropdownMenuItem<int>(
-                                          value: value,
-                                          child: new Text(
-                                            value.toString(),
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      onChanged: (newVal) {
-                                        setState(() {
-                                          _number_select = newVal!;
-                                        });
-                                      }),
-                                ),
-                                Text(
-                                  "entries",
-                                  style: themeTextStyle(
-                                      fw: FontWeight.normal,
-                                      color: Colors.white,
-                                      size: 15),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                        Container(
-                            margin: EdgeInsets.symmetric(horizontal: 10),
-                            height: MediaQuery.of(context).size.height * 0.05,
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            child: SearchField())
-                      ],
-                    )),
-                SizedBox(
-                  height: 5,
-                ),
                 Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   border: TableBorder(
@@ -1021,154 +878,121 @@ class _SubAdminState extends State<SubAdmin> {
                             decoration: BoxDecoration(
                                 color: Theme.of(context).secondaryHeaderColor),
                             children: [
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text('S.No.',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text("Name",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Text("Role",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Text("Email",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Text("Status",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Text("Date",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                                TableCell(
-                                  verticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  child: Text("Actions",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
+                                for (var index = 0;
+                                    index < Tablelable.length;
+                                    index++)
+                                  LableText(Tablelable[index],
+                                      fsize: 12.0, fw: FontWeight.bold),
                               ]),
-                    for (var index = 0; index < StoreDocs.length; index++)
+                    for (var index = 0;
+                        index < controllerr.StoreDocs.length;
+                        index++)
                       (Responsive.isMobile(context))
-                          ? tableRowWidget_mobile(
-                              StoreDocs[index],
-                              "${StoreDocs[index]["first_name"]} ${StoreDocs[index]["last_name"]}",
-                              "${StoreDocs[index]["user_type"]}",
-                              "${StoreDocs[index]["email"]}",
-                              (StoreDocs[index]["status"] == "1")
-                                  ? "Active"
-                                  : (StoreDocs[index]["status"] == "2")
-                                      ? "Inactive"
-                                      : "",
-                              "${StoreDocs[index]["date_at"]}",
-                              "${StoreDocs[index]["uid"]}")
+                          ? tableRowWidget_mobile(controllerr.StoreDocs[index])
                           : tableRowWidget(
-                              StoreDocs[index],
+                              controllerr.StoreDocs[index],
                               "${index + 1}",
-                              "${StoreDocs[index]["first_name"]} ${StoreDocs[index]["last_name"]}",
-                              "${StoreDocs[index]["user_type"]}",
-                              "${StoreDocs[index]["email"]}",
-                              (StoreDocs[index]["status"] == "1")
-                                  ? "Active"
-                                  : (StoreDocs[index]["status"] == "2")
-                                      ? "Inactive"
-                                      : "",
-                              "${StoreDocs[index]["date_at"]}",
-                              (!kIsWeb && Platform.isWindows)
-                                  ? "${StoreDocs[index]["id"]}"
-                                  : "${StoreDocs[index]["uid"]}"),
+                            )
                   ],
                 ),
               ],
             ),
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Container(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              color: Colors.black,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Show",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: EdgeInsets.all(2),
+                    height: 20,
+                    color: Colors.white,
+                    child: DropdownButton<int>(
+                      dropdownColor: Colors.white,
+                      iconEnabledColor: Colors.black,
+                      hint: Text(
+                        "$_number_select",
+                        style: TextStyle(color: Colors.black, fontSize: 12),
+                      ),
+                      value: _number_select,
+                      items: <int>[50, 100, 150, 200].map((int value) {
+                        return DropdownMenuItem<int>(
+                          value: value,
+                          child: Text(
+                            "$value",
+                            style: TextStyle(color: Colors.black, fontSize: 12),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newVal) {
+                        _number_select = newVal!;
+                        _SubAdmin_ListData(newVal);
+                        //  initFunctions(newVal);
+                      },
+                      underline: SizedBox(),
+                    ),
+                  ),
+                  Text(
+                    "entries",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                ],
+              ),
+            )
+          ]),
+          SizedBox(
+            height: 100,
           ),
         ],
       ),
     );
   }
 
-  TableRow tableRowWidget(data, sno, name, U_type, email, status, date, iid) {
+  TableRow tableRowWidget(
+    data,
+    sno,
+  ) {
+    var status = (data!["status"] == "1")
+        ? "Active"
+        : (data!["status"] == "2")
+            ? "Inactive"
+            : "";
+    var iid = data!["id"];
+    // (!kIsWeb && Platform.isWindows) ? "${data["id"]}" : "${data["uid"]}";
     return TableRow(children: [
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text("$sno",
-              style: GoogleFonts.alike(
-                  fontWeight: FontWeight.normal, fontSize: 11)),
-        ),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        // horizentalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$name",
-            style:
-                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        // horizentalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$U_type",
-            style:
-                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text("$email",
-              style: GoogleFonts.alike(
-                  fontWeight: FontWeight.normal, fontSize: 11)),
-        ),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$status",
-            style:
-                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
-      ),
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$date",
-            style:
-                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
-      ),
+      LableText("$sno"),
+      LableText("${data["first_name"]} ${data["last_name"]}"),
+      LableText("${data["user_type"]}"),
+      LableText("${data["email"]}"),
+      LableText("$status",
+          color: status == "Active" ? Colors.green : Colors.red),
+      LableText("${data["date_at"]}"),
       TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
           child: Action_btn(context, iid)),
     ]);
   }
 
-  TableRow tableRowWidget_mobile(data, name, U_type, email, status, date, iid) {
+  TableRow tableRowWidget_mobile(data) {
+    var iid = data["id"];
+
+    var status = (data!["status"] == "1")
+        ? "Active"
+        : (data!["status"] == "2")
+            ? "Inactive"
+            : "";
+
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -1180,11 +1004,12 @@ class _SubAdminState extends State<SubAdmin> {
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  themeListRow(context, "Name", "$name"),
-                  themeListRow(context, "User Type", "$U_type"),
-                  themeListRow(context, "Email", "$email"),
+                  themeListRow(context, "Name",
+                      "${data["first_name"]} ${data["last_name"]}"),
+                  themeListRow(context, "User Type", "${data["user_type"]}"),
+                  themeListRow(context, "Email", "${data["email"]}"),
                   themeListRow(context, "Status", "$status"),
-                  themeListRow(context, "Date", "$date"),
+                  themeListRow(context, "Date", "${data["date_at"]}"),
                   SizedBox(
                     height: 10,
                   ),
@@ -1330,8 +1155,8 @@ class _SubAdminState extends State<SubAdmin> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    setState(() async {
-                      await clearText();
+                    setState(() {
+                      controllerr.clearText();
                       updateWidget = false;
                     });
                   },
@@ -1405,7 +1230,7 @@ class _SubAdminState extends State<SubAdmin> {
                                         EdgeInsets.only(left: 10, right: 10),
                                     child: DropdownButton(
                                       dropdownColor: Colors.white,
-                                      value: _User_Cate,
+                                      value: controllerr.User_Cate,
                                       underline: Container(),
                                       isExpanded: true,
                                       icon: Icon(
@@ -1417,7 +1242,8 @@ class _SubAdminState extends State<SubAdmin> {
                                           color: Color.fromARGB(255, 5, 8, 10)),
                                       items: [
                                         for (MapEntry<String, String> e
-                                            in Cate_Name_list.entries)
+                                            in controllerr
+                                                .Cate_Name_list.entries)
                                           DropdownMenuItem(
                                             value: e.value,
                                             child: Text(e.key),
@@ -1426,7 +1252,7 @@ class _SubAdminState extends State<SubAdmin> {
                                       onChanged: (val) {
                                         setState(
                                           () {
-                                            _User_Cate = val!;
+                                            controllerr.User_Cate = val!;
                                           },
                                         );
                                       },
@@ -1941,10 +1767,10 @@ class _SubAdminState extends State<SubAdmin> {
                                           _email,
                                           _mobile,
                                           _passwd,
-                                          _User_Cate,
-                                          (_StatusValue != null)
-                                              ? _StatusValue
-                                              : _StatusValue);
+                                          controllerr.User_Cate,
+                                          (controllerr.StatusValue != null)
+                                              ? controllerr.StatusValue
+                                              : controllerr.StatusValue);
                                     } else {
                                       await updatelist(
                                           id,
@@ -1953,13 +1779,13 @@ class _SubAdminState extends State<SubAdmin> {
                                           _email,
                                           _mobile,
                                           _passwd,
-                                          _User_Cate,
-                                          (_StatusValue != null)
-                                              ? _StatusValue
-                                              : _StatusValue);
+                                          controllerr.User_Cate,
+                                          (controllerr.StatusValue != null)
+                                              ? controllerr.StatusValue
+                                              : controllerr.StatusValue);
                                     }
 
-                                    clearText();
+                                    controllerr.clearText();
                                   });
                                 }, buttonColor: Colors.green, label: "Update"),
                                 SizedBox(
@@ -1967,7 +1793,7 @@ class _SubAdminState extends State<SubAdmin> {
                                 ),
                                 themeButton3(context, () {
                                   setState(() {
-                                    clearText();
+                                    controllerr.clearText();
                                   });
                                 }, label: "Reset", buttonColor: Colors.black),
                                 SizedBox(width: 20.0),
@@ -2056,7 +1882,7 @@ class _SubAdminState extends State<SubAdmin> {
                           context, "First Name", "$firstName $lastName",
                           descColor: Colors.black, headColor: Colors.black),
                       SizedBox(height: defaultPadding),
-                      themeListRow(context, "Role", "$_User_Cate",
+                      themeListRow(context, "Role", "${controllerr.User_Cate}",
                           descColor: Colors.black, headColor: Colors.black),
                       SizedBox(height: defaultPadding),
                       themeListRow(context, "Email Id", "$_email",
@@ -2065,7 +1891,8 @@ class _SubAdminState extends State<SubAdmin> {
                       themeListRow(context, "Mobile No.", "$_mobile",
                           descColor: Colors.black, headColor: Colors.black),
                       SizedBox(height: defaultPadding),
-                      themeListRow(context, "Status", "$_StatusValue",
+                      themeListRow(
+                          context, "Status", "${controllerr.StatusValue}",
                           descColor: Colors.black, headColor: Colors.black),
                       SizedBox(height: defaultPadding),
                       themeListRow(context, "Date At", "$_date",
@@ -2221,13 +2048,13 @@ class _SubAdminState extends State<SubAdmin> {
             padding: EdgeInsets.only(left: 10, right: 10),
             child: DropdownButton(
               dropdownColor: Colors.white,
-              hint: _StatusValue == ""
+              hint: controllerr.StatusValue == ""
                   ? Text(
                       "Select",
                       style: TextStyle(color: Colors.black),
                     )
                   : Text(
-                      _StatusValue!,
+                      controllerr.StatusValue!,
                       style: TextStyle(color: Colors.black),
                     ),
               isExpanded: true,
@@ -2249,7 +2076,7 @@ class _SubAdminState extends State<SubAdmin> {
               onChanged: (val) {
                 setState(
                   () {
-                    _StatusValue = val!;
+                    controllerr.StatusValue = val!;
                   },
                 );
               },

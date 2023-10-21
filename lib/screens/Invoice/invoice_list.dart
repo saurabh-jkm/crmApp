@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals, unused_local_variable, deprecated_member_use, unused_element, camel_case_types, await_only_futures
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals, unused_local_variable, deprecated_member_use, unused_element, camel_case_types, await_only_futures, deprecated_colon_for_default_value, prefer_if_null_operators
 
 import 'dart:convert';
 import 'dart:io' show Platform;
@@ -154,8 +154,8 @@ class _Invoice_ListState extends State<Invoice_List> {
 
     tableColum = {
       1: 50.0,
-      2: 100.0,
-      3: 100.0,
+      2: 70.0,
+      3: 70.0,
       4: (fw < 1300) ? fw * 0.12 : fw * 0.17,
       5: (fw < 1300) ? fw * 0.05 : fw * 0.07,
       6: 90.0,
@@ -258,7 +258,7 @@ class _Invoice_ListState extends State<Invoice_List> {
   Widget listList(BuildContext context, itemList) {
     return Container(
       height: MediaQuery.of(context).size.height,
-      margin: EdgeInsets.all(10),
+      margin: EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
       ),
@@ -400,180 +400,6 @@ class _Invoice_ListState extends State<Invoice_List> {
                     ],
                   ),
                 ),
-
-                /*Table(
-                  columnWidths: {
-                    0: FlexColumnWidth(0.2),
-                    1: FlexColumnWidth(0.2),
-                    2: FlexColumnWidth(0.3),
-                    3: FlexColumnWidth(0.5),
-                    4: FlexColumnWidth(0.6),
-                    5: FlexColumnWidth(0.5),
-                    6: FlexColumnWidth(0.2),
-                    7: FlexColumnWidth(0.2),
-                    8: FlexColumnWidth(0.2),
-                    9: FlexColumnWidth(0.3),
-                    10: FlexColumnWidth(0.4),
-                    11: IntrinsicColumnWidth()
-                  },
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  border: TableBorder(
-                    horizontalInside: BorderSide(width: .5, color: Colors.grey),
-                  ),
-                  children: [
-                    TableRow(
-                        decoration: BoxDecoration(color: themeBG4),
-                        children: [
-                          TableCell(
-                              verticalAlignment:
-                                  TableCellVerticalAlignment.middle,
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text('#',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              )),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: SizedBox(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text('OrderId',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 10.0)),
-                              ),
-                              width: 40,
-                            ),
-                          ),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: SizedBox(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text('Type',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 10.0)),
-                              ),
-                              width: 40,
-                            ),
-                          ),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text("Product",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10.0)),
-                            ),
-                          ),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text("Buyer Name",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10.0)),
-                            ),
-                          ),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text("Mobile no.",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10.0)),
-                            ),
-                          ),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text("Qnt.",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10.0)),
-                            ),
-                          ),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text("Unit",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10.0)),
-                            ),
-                          ),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text("Price",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10.0)),
-                            ),
-                          ),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text("Status",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10.0)),
-                            ),
-                          ),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text("Date",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10.0)),
-                            ),
-                          ),
-                          TableCell(
-                            verticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text("Action",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10.0)),
-                            ),
-                          ),
-                        ]),
-                    // for (var index = 0; index < OrderList.length; index++)
-                    //   tableRowWidget(
-                    //       "${index + 1}",
-                    //       OrderList[index]['id'],
-                    //       OrderList[index]['customer_name'],
-                    //       OrderList[index]['mobile'],
-                    //       OrderList[index]['total'],
-                    //       OrderList[index]['status'],
-                    //       OrderList[index]['date_at'],
-                    //       OrderList[index],
-                    //       dbData: OrderList[index])
-                  ],
-                ),*/
                 for (var index = 0;
                     index < controllerr.OrderList.length;
                     index++)
@@ -738,7 +564,7 @@ class _Invoice_ListState extends State<Invoice_List> {
             ),
             Container(
               width: tableColum[9],
-              child: Text((edata['total'] != null) ? "$edata['total']" : "-",
+              child: Text((edata['total'] != null) ? "${edata['total']}" : "-",
                   style: textStyle3),
             ),
             Container(
@@ -943,11 +769,12 @@ class _Invoice_ListState extends State<Invoice_List> {
     return Container(
       width: tableColum[i],
       child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Text('$label',
-            style: themeTextStyle(
-                size: 12.0, color: Colors.white, fw: FontWeight.bold)),
-      ),
+          padding: const EdgeInsets.all(5.0),
+          child: GoogleText(
+              text: "$label",
+              fsize: 12.0,
+              fweight: FontWeight.bold,
+              color: Colors.white)),
     );
   }
 

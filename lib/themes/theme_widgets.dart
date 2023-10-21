@@ -954,3 +954,16 @@ Widget GoogleText(
           fontWeight: fweight,
           fontStyle: fstyle));
 }
+
+Widget LableText(String text, {color: '', fsize: '', fw = ''}) {
+  return TableCell(
+    verticalAlignment: TableCellVerticalAlignment.middle,
+    child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GoogleText(
+            text: text,
+            fweight: (fw == '') ? FontWeight.normal : fw,
+            color: (color == '') ? Colors.white : color,
+            fsize: (fsize == '') ? 10.5 : fsize)),
+  );
+}
