@@ -738,7 +738,7 @@ class _Invoice_ListState extends State<Invoice_List> {
             ),
             Container(
               width: tableColum[9],
-              child: Text((edata['total'] != null) ? "${edata['total']}" : "-",
+              child: Text((edata['total'] != null) ? "$edata['total']" : "-",
                   style: textStyle3),
             ),
             Container(

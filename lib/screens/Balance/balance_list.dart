@@ -90,7 +90,7 @@ class _BalanceListState extends State<BalanceList> {
   }
 
   ///////// PDF  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+/////========================================================================
   Future<void> savePdfFile(
       String fileName, Uint8List byteList, PriceDetail) async {
     if (kIsWeb) {
@@ -644,6 +644,17 @@ class _BalanceListState extends State<BalanceList> {
       print("Date is not selected");
     }
   }
+
+  // Widget subTableLabel(context, i, label, tableColum) {
+  //   return Container(
+  //     width: tableColum[i],
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(5.0),
+  //       child: Text('$label',
+  //           style: themeTextStyle(size: 12.0, color: Colors.black)),
+  //     ),
+  //   );
+  // }
 
 /////////////////////////////////////////////=====================================================
 }

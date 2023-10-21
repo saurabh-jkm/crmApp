@@ -516,25 +516,38 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
                                       Container(
                                         width: 300.0,
                                         child: Center(
-                                          child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                primary: themeBG,
-                                                onPrimary: Colors.white,
-                                                elevation: 3,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0)),
-                                                minimumSize:
-                                                    Size(150, 48), //////// HERE
-                                              ),
-                                              onPressed: () async {
-                                                controller.insertInvoiceDetails(
-                                                    context,
-                                                    docId: widget.data['id']);
-                                                //setState(() {});
-                                              },
-                                              child: Text('Update')),
+                                          child: (isWait)
+                                              ? progress()
+                                              : ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    primary: themeBG,
+                                                    onPrimary: Colors.white,
+                                                    elevation: 3,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0)),
+                                                    minimumSize: Size(
+                                                        150, 48), //////// HERE
+                                                  ),
+                                                  onPressed: () async {
+                                                    setState(() {
+                                                      isWait = true;
+                                                    });
+
+                                                    await controller
+                                                        .insertInvoiceDetails(
+                                                            context,
+                                                            docId: widget
+                                                                .data['id']);
+                                                    setState(() {
+                                                      isWait = false;
+                                                    });
+                                                  },
+                                                  child: Text('Update')),
                                         ),
                                       ),
                                       Container(
