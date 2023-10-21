@@ -185,7 +185,6 @@ class _SalemanListState extends State<SalemanList> {
               ),
             )
           ]),
-
           SizedBox(
             height: 100,
           ),

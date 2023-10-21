@@ -144,7 +144,7 @@ class DashboardController {
     } else {
       var query = await FirebaseFirestore.instance
           .collection('order')
-          .where("balance", isNotEqualTo: "")
+          .where("balance", isNotEqualTo: "0")
           .count()
           .get()
           .then((value) {

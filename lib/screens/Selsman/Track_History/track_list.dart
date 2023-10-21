@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new, unused_field, unused_label, unrelated_type_equality_checks, file_names, unnecessary_cast, unused_import, deprecated_colon_for_default_value, await_only_futures
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, unnecessary_string_interpolations, prefer_final_fields, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unnecessary_null_comparison, sort_child_properties_last, no_leading_underscores_for_local_identifiers, sized_box_for_whitespace, depend_on_referenced_packages, avoid_print, unnecessary_new, unused_field, unused_label, unrelated_type_equality_checks, file_names, unnecessary_cast, unused_import, deprecated_colon_for_default_value, await_only_futures, unnecessary_brace_in_string_interps
 import 'dart:convert';
 import 'dart:io';
 
@@ -29,10 +29,24 @@ class _TrackHistoryState extends State<TrackHistory> {
   var controller = new trackController();
   var baseController = new base_controller();
 
-  initFunctions() async {
-    await controller.init_functions();
-    orderDetails();
-    setState(() {});
+  initFunctions(limit) async {
+    await controller.init_functions(limit);
+    await orderDetails();
+    for (String key in controller.listCustomer.keys) {
+      controller.loc =
+          jsonDecode(controller.listCustomer[key]["location_points"]);
+
+      for (var i = 0; i < controller.loc.length; i++) {
+        controller.distance = await controller.calculateDistance(
+            controller.loc[0][0],
+            controller.loc[0][1],
+            controller.loc[controller.loc.length - 1][0],
+            controller.loc[controller.loc.length - 1][1]);
+      }
+      setState(() {
+        controller.tempLocation.add(controller.distance);
+      });
+    }
   }
 
   // get order details
@@ -43,35 +57,9 @@ class _TrackHistoryState extends State<TrackHistory> {
 
   @override
   void initState() {
-    initFunctions();
-
-    // Replace these coordinates with your actual coordinates
-    double lat1 = 28.586764; // Latitude of point 1
-    double lon1 = 77.311018; // Longitude of point 1
-    double lat2 = 28.593416; // Latitude of point 2
-    double lon2 = 77.322782; // Longitude of point 2
-    var distance;
-    setState(() {
-      distance = calculateDistance(lat1, lon1, lat2, lon2);
-      print("$distance ++++++++++++++++++++++++");
-    });
-
+    initFunctions(_number_select);
     super.initState();
   }
-
-  ///////  distance in Kilo Meter ++++++++++++++++++++++++++++++++++++++++++++++
-  Future<double> calculateDistance(
-      double lat1, double lon1, double lat2, double lon2) async {
-    double distanceInMeters =
-        await Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
-    double distanceInKm =
-        distanceInMeters / 1000; // Convert meters to kilometers
-    return distanceInKm;
-  }
-
-  ///
-
-///////  delete  Product ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   Future<void> delete_Pro(id) {
     // var db = FirebaseFirestore.instance;
@@ -79,7 +67,7 @@ class _TrackHistoryState extends State<TrackHistory> {
       final _product = Firestore.instance.collection('client_location');
       return _product.document(id).delete().then((value) {
         setState(() {
-          initFunctions();
+          initFunctions(_number_select);
           themeAlert(context, "Deleted Successfully ");
         });
       }).catchError(
@@ -89,7 +77,7 @@ class _TrackHistoryState extends State<TrackHistory> {
           FirebaseFirestore.instance.collection('client_location');
       return _product.doc(id).delete().then((value) {
         setState(() {
-          initFunctions();
+          initFunctions(_number_select);
           themeAlert(context, "Deleted Successfully ");
         });
       }).catchError(
@@ -126,6 +114,7 @@ class _TrackHistoryState extends State<TrackHistory> {
     );
   }
 
+  var _number_select = 50;
 //
   // Body Part =================================================
   Widget CustomerList(context) {
@@ -177,6 +166,62 @@ class _TrackHistoryState extends State<TrackHistory> {
                 rowColor: Color.fromARGB(255, 162, 155, 255),
                 textColor: const Color.fromARGB(255, 0, 0, 0),
                 controller: controller),
+
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Container(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              color: Colors.black,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Show",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: EdgeInsets.all(2),
+                    height: 20,
+                    color: Colors.white,
+                    child: DropdownButton<int>(
+                      dropdownColor: Colors.white,
+                      iconEnabledColor: Colors.black,
+                      hint: Text(
+                        "$_number_select",
+                        style: TextStyle(color: Colors.black, fontSize: 12),
+                      ),
+                      value: _number_select,
+                      items: <int>[50, 100, 150, 200].map((int value) {
+                        return DropdownMenuItem<int>(
+                          value: value,
+                          child: Text(
+                            "$value",
+                            style: TextStyle(color: Colors.black, fontSize: 12),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newVal) {
+                        _number_select = newVal!;
+                        initFunctions(newVal);
+                      },
+                      underline: SizedBox(),
+                    ),
+                  ),
+                  Text(
+                    "entries",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                ],
+              ),
+            )
+          ]),
+          SizedBox(
+            height: 100,
+          ),
         ],
       ),
     );
@@ -192,10 +237,15 @@ class _TrackHistoryState extends State<TrackHistory> {
 // Table Heading ==========================
   Widget CTableRow(context, data, srNo,
       {rowColor: '', textColor: '', controller: ''}) {
+    var distance;
+    int no = int.parse("${srNo}") - 1;
+
     List<dynamic> dataList = [];
     dataList.add('1');
     dataList.add('${data['name']}');
-    dataList.add("2.5 Km");
+
+    dataList.add(
+        "${double.parse((controller.tempLocation[no]).toStringAsFixed(2))} Km");
     dataList.add(
         '${(data['date'] == null) ? '-' : formatDate(data['date'], formate: 'dd/MM/yyyy')}');
     dataList.add('action');
@@ -252,8 +302,6 @@ class _TrackHistoryState extends State<TrackHistory> {
                               IconButton(
                                   onPressed: () {
                                     if (controller != '') {
-                                      print(
-                                          "${data['location_points'].runtimeType}  ========f===");
                                       nextScreen(
                                           context,
                                           View_Location_Screen(

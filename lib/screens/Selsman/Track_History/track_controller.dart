@@ -21,21 +21,27 @@ class trackController {
 
   List<String> headintList = ['#', 'Seller Name', 'Distance', 'date', 'Action'];
   var selected_pro = {};
+  /////// distance Calculate controller ++++++++++++++++++++++++++++++++++++++++
+  var distance;
+  var tempLocation = [];
+  List loc = [];
+  ///////////////////==========================================================
   // init Function for all =========================================
   //================================================================
 
-  init_functions({dbData: ''}) async {
-    await customerList();
+  init_functions(LimitData, {dbData: ''}) async {
+    await customerList(LimitData);
   }
 
   // reset controller
   resetController() {}
 
   // get all Customer List =============================
-  customerList() async {
+  customerList(int Limit) async {
     listCustomerName = [];
     listCustomer = {};
-    var dbData = await dbFindDynamic(db, {'table': 'client_location'});
+    var dbData =
+        await dbFindDynamic(db, {'table': 'client_location', "limit": Limit});
 
     var i = 1;
     dbData.forEach((k, data) async {
@@ -53,6 +59,19 @@ class trackController {
       }
     });
   }
+
+  /////// distance Calculate fun ++++++++++++++++++++++++++++++++++++++++
+
+  Future<double> calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) async {
+    double distanceInMeters =
+        await Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
+    double distanceInKm =
+        distanceInMeters / 1000; // Convert meters to kilometers
+
+    return distanceInKm;
+  }
+/////// =====================================================================
 
   // seach function -----------------------
   ctr_fn_search() {
