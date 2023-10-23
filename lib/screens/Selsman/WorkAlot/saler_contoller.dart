@@ -32,7 +32,13 @@ class SellerController {
 
   Map<dynamic, dynamic> imgList = {"0": ''};
 
-  List<String> headintList = ['#', 'Seller Name', 'date', 'Action'];
+  List<String> headintList = [
+    '#',
+    'Seller Name',
+    'Panding Meeting',
+    'date',
+    'Action'
+  ];
   List<String> MeetingheadList = [
     '#',
     'Customer Name',
@@ -100,6 +106,38 @@ class SellerController {
   }
 
 ///////===============================================
+
+  /////////  if Notication seller Done Meeting =====================================================================
+
+  Meeting_done_Notifications(salesmanIdd) async {
+    var tempCount = 0;
+    if (!kIsWeb && Platform.isWindows) {
+      var query = await Firestore.instance
+          .collection('follow_up')
+          .where("sellerId", isEqualTo: "$salesmanIdd")
+          .where("status", isEqualTo: true)
+          .get()
+          .then((value) {
+        return value.length;
+      });
+      tempCount = query;
+    } else {
+      var query = await FirebaseFirestore.instance
+          .collection('follow_up')
+          .where("sellerId", isEqualTo: "$salesmanIdd")
+          .where("status", isEqualTo: true)
+          .count()
+          .get()
+          .then((value) {
+        return value.count;
+      });
+      tempCount = query;
+    }
+
+    return tempCount;
+  }
+
+  /////////=====================================================================
 // auto complete =================================
   autoCompleteFormInput(suggationList, label, myController,
       {padding = 10.0,
@@ -288,17 +326,19 @@ class SellerController {
     listCustomer = {};
     Map dbData = await dbFindDynamic(
         db, {'table': 'users', 'user_type': 'Sales Man', "limit": limitData});
+
     var i = 1;
 
     if (dbData != null) {
       for (var key in dbData.keys) {
         Map<dynamic, dynamic> data = dbData[key];
         // var datar = await dbFind({'table': 'users', 'id': data['client_id']});
+        var notify = await Meeting_done_Notifications(data["id"]);
         String name = "${data["first_name"]} ${data["last_name"]}";
-
         data["name"] = name;
         data["date_at"] = data["date_at"];
         data["id"] = data["id"];
+        data["notification"] = notify;
         data[""] = listCustomer['$i'] = data;
         listCustomerAllDataArr['$i'] = data;
         listCustomerName.add("$data");
@@ -306,4 +346,21 @@ class SellerController {
       }
     }
   }
-}
+
+  // seach function -----------------------
+  ctr_fn_search() {
+    var search = searchTextController.text;
+    listCustomer = {};
+    for (String key in listCustomerAllDataArr.keys) {
+      if (listCustomerAllDataArr[key]['first_name']
+              .toLowerCase()
+              .contains(search.toLowerCase()) ||
+          listCustomerAllDataArr[key]['last_name']
+              .toLowerCase()
+              .contains(search.toLowerCase())) {
+        listCustomer[key] = listCustomerAllDataArr[key];
+      }
+    }
+    return 1;
+  }
+}/////   closs class
