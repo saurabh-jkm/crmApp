@@ -241,6 +241,7 @@ class _SalemanListState extends State<SalemanList> {
                                             _number_select_meeting);
                                     setState(() {
                                       controller.selectedSellerId = data['id'];
+                                      controller.deviceId = data['DeviceId'];
                                       controller.selectedSeller = data;
                                       controller.secondScreen = true;
                                     });
@@ -426,6 +427,7 @@ class _SalemanListState extends State<SalemanList> {
     var status = MeetingStatusOF(data['status']);
     dataList.add('1');
     dataList.add('${data['customer_name']}');
+    dataList.add('${data['customer_type']}');
     dataList.add('${data['next_follow_up']}');
     dataList.add('${data['next_follow_up_date']}');
     dataList.add('${status}');
@@ -461,36 +463,6 @@ class _SalemanListState extends State<SalemanList> {
                     child: Container(
                       child: (dataList[i] == 'action')
                           ? Row(children: [
-                              ////// view Update Edit  Sub Admin+++++++++
-                              // Container(
-                              //     height: 40,
-                              //     width: 40,
-                              //     alignment: Alignment.center,
-                              //     decoration: BoxDecoration(
-                              //       color: Colors.blue.withOpacity(0.2),
-                              //       borderRadius: const BorderRadius.all(
-                              //           Radius.circular(10)),
-                              //     ),
-                              //     child: IconButton(
-                              //         onPressed: () {
-                              //           // setState(() {
-                              //           //   updateWidget = true;
-                              //           //   update_id = iid;
-                              //           //   if (!kIsWeb && Platform.isWindows) {
-                              //           //     All_Update_initial(iid);
-                              //           //   } else {
-                              //           //     Update_initial(iid);
-                              //           //   }
-                              //           // });
-                              //         },
-                              //         icon: Icon(
-                              //           Icons.edit,
-                              //           color: Colors.blue,
-                              //           size: 20,
-                              //         )) ////
-                              //     ),
-
-                              ////// view delete  Sub Admin+++++++++++++++++++++++
                               SizedBox(width: 10),
                               Container(
                                   height: 40,

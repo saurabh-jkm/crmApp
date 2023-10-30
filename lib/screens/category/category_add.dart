@@ -148,25 +148,26 @@ class _CategoryAddState extends State<CategoryAdd> {
 
 //////////
 
-  var slugUrl;
+  var slugUrl = "";
   var image = "";
-  var Catename;
+  var Catename = "";
 //////
-  Map<String, dynamic>? data;
+  Map data = {};
   Future _Update_initial(id) async {
     Map<dynamic, dynamic> w = {'table': "category", 'id': id};
     data = await dbFind(w);
     if (data != null) {
       setState(() {
-        controllerr.PerentCate = data!['parent_cate'];
-        slugUrl = data!['slug_url'];
-        image = data!["image"];
-        controllerr.StatusValue = (data!['status'] == "1")
+        print("$data  +++++++++");
+        Catename = data['category_name'];
+        controllerr.PerentCate = data['parent_cate'];
+        slugUrl = data['slug_url'];
+        image = data["image"];
+        controllerr.StatusValue = (data['status'] == "1")
             ? "Active"
-            : (data!['status'] == "2")
+            : (data['status'] == "2")
                 ? "Inactive"
                 : "Select";
-        Catename = data!['category_name'];
       });
     }
   }
@@ -937,7 +938,7 @@ class _CategoryAddState extends State<CategoryAdd> {
         : (data["status"] == "2")
             ? "Inactive"
             : "Select";
-    var iid = data["id"];
+
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -1017,9 +1018,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                       onPressed: () {
                         setState(() {
                           updateWidget = true;
-                          update_id = iid;
-
-                          _Update_initial(iid);
+                          update_id = data["id"];
+                          _Update_initial(data["id"]);
                         });
                       },
                       icon: Icon(
@@ -1261,45 +1261,45 @@ class _CategoryAddState extends State<CategoryAdd> {
                                           ),
                                         ),
                                       )),
-                                  SizedBox(height: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    SizedBox(width: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    Container(
-                                        height: 40,
-                                        margin: EdgeInsets.only(
-                                            top: 10, bottom: 10, right: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: TextFormField(
-                                          initialValue: slugUrl,
-                                          autofocus: false,
-                                          onChanged: (value) => slugUrl = value,
-                                          // controller: ctr_name,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Enter Slug Url";
-                                            }
-                                            return null;
-                                          },
-                                          style: TextStyle(color: Colors.black),
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 15),
-                                            hintText: "Slug Url",
-                                            hintStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        )),
+                                  // SizedBox(height: defaultPadding),
+                                  // if (Responsive.isMobile(context))
+                                  //   SizedBox(width: defaultPadding),
+                                  // if (Responsive.isMobile(context))
+                                  //   Container(
+                                  //       height: 40,
+                                  //       margin: EdgeInsets.only(
+                                  //           top: 10, bottom: 10, right: 10),
+                                  //       decoration: BoxDecoration(
+                                  //         color: Colors.white,
+                                  //         borderRadius:
+                                  //             BorderRadius.circular(10),
+                                  //       ),
+                                  //       child: TextFormField(
+                                  //         initialValue: slugUrl,
+                                  //         autofocus: false,
+                                  //         onChanged: (value) => slugUrl = value,
+                                  //         // controller: ctr_name,
+                                  //         validator: (value) {
+                                  //           if (value == null ||
+                                  //               value.isEmpty) {
+                                  //             return "Enter Slug Url";
+                                  //           }
+                                  //           return null;
+                                  //         },
+                                  //         style: TextStyle(color: Colors.black),
+                                  //         decoration: InputDecoration(
+                                  //           border: InputBorder.none,
+                                  //           contentPadding:
+                                  //               EdgeInsets.symmetric(
+                                  //                   horizontal: 20,
+                                  //                   vertical: 15),
+                                  //           hintText: "Slug Url",
+                                  //           hintStyle: TextStyle(
+                                  //             color: Colors.grey,
+                                  //             fontSize: 16,
+                                  //           ),
+                                  //         ),
+                                  //       )),
                                 ],
                               ),
                             ),
@@ -1439,85 +1439,85 @@ class _CategoryAddState extends State<CategoryAdd> {
                                   ),
 
                                   // Text_field(context,"category_name","Category Name","Enter Category Name"),
-                                  SizedBox(height: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    SizedBox(width: defaultPadding),
-                                  if (Responsive.isMobile(context))
+                                  // SizedBox(height: defaultPadding),
+                                  // if (Responsive.isMobile(context))
+                                  //   SizedBox(width: defaultPadding),
+                                  // if (Responsive.isMobile(context))
 
-                                    //   Text_field(context,"slug_url","Slug Url","Enter Slug Url"),
+                                  //   Text_field(context,"slug_url","Slug Url","Enter Slug Url"),
 
-                                    // Container(
-                                    //   child: Column(
-                                    //     crossAxisAlignment:
-                                    //         CrossAxisAlignment.start,
-                                    //     children: [
-                                    //       Container(
-                                    //           child: Text("Parent Category",
-                                    //               style: themeTextStyle(
-                                    //                   color: Colors.black,
-                                    //                   size: 15,
-                                    //                   fw: FontWeight.bold))),
-                                    //       Container(
-                                    //         height: 40,
-                                    //         margin: EdgeInsets.only(
-                                    //             top: 10, bottom: 10, right: 10),
-                                    //         decoration: BoxDecoration(
-                                    //           color: Colors.white,
-                                    //           borderRadius:
-                                    //               BorderRadius.circular(10),
-                                    //         ),
-                                    //         padding: EdgeInsets.only(
-                                    //             left: 10, right: 10),
-                                    //         child: DropdownButton(
-                                    //           dropdownColor: Colors.white,
-                                    //           hint: _dropDownValue == null
-                                    //               ? Text(
-                                    //                   'select',
-                                    //                   style: TextStyle(
-                                    //                       color: Colors.black),
-                                    //                 )
-                                    //               : Text(
-                                    //                   _dropDownValue!,
-                                    //                   style: TextStyle(
-                                    //                       color: Colors.black),
-                                    //                 ),
-                                    //           underline: Container(),
-                                    //           isExpanded: true,
-                                    //           icon: Icon(
-                                    //             Icons.arrow_drop_down,
-                                    //             color: Colors.black,
-                                    //           ),
-                                    //           iconSize: 35,
-                                    //           style: TextStyle(
-                                    //               color: Color.fromARGB(
-                                    //                   255, 1, 1, 2)),
-                                    //           items: [
-                                    //             'Select',
-                                    //             'One',
-                                    //             'Two',
-                                    //             'Three'
-                                    //           ].map(
-                                    //             (val) {
-                                    //               return DropdownMenuItem<
-                                    //                   String>(
-                                    //                 value: val,
-                                    //                 child: Text(val),
-                                    //               );
-                                    //             },
-                                    //           ).toList(),
-                                    //           onChanged: (val) {
-                                    //             setState(
-                                    //               () {
-                                    //                 _dropDownValue = val!;
-                                    //               },
-                                    //             );
-                                    //           },
-                                    //         ),
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // )
-                                    SizedBox()
+                                  // Container(
+                                  //   child: Column(
+                                  //     crossAxisAlignment:
+                                  //         CrossAxisAlignment.start,
+                                  //     children: [
+                                  //       Container(
+                                  //           child: Text("Parent Category",
+                                  //               style: themeTextStyle(
+                                  //                   color: Colors.black,
+                                  //                   size: 15,
+                                  //                   fw: FontWeight.bold))),
+                                  //       Container(
+                                  //         height: 40,
+                                  //         margin: EdgeInsets.only(
+                                  //             top: 10, bottom: 10, right: 10),
+                                  //         decoration: BoxDecoration(
+                                  //           color: Colors.white,
+                                  //           borderRadius:
+                                  //               BorderRadius.circular(10),
+                                  //         ),
+                                  //         padding: EdgeInsets.only(
+                                  //             left: 10, right: 10),
+                                  //         child: DropdownButton(
+                                  //           dropdownColor: Colors.white,
+                                  //           hint: _dropDownValue == null
+                                  //               ? Text(
+                                  //                   'select',
+                                  //                   style: TextStyle(
+                                  //                       color: Colors.black),
+                                  //                 )
+                                  //               : Text(
+                                  //                   _dropDownValue!,
+                                  //                   style: TextStyle(
+                                  //                       color: Colors.black),
+                                  //                 ),
+                                  //           underline: Container(),
+                                  //           isExpanded: true,
+                                  //           icon: Icon(
+                                  //             Icons.arrow_drop_down,
+                                  //             color: Colors.black,
+                                  //           ),
+                                  //           iconSize: 35,
+                                  //           style: TextStyle(
+                                  //               color: Color.fromARGB(
+                                  //                   255, 1, 1, 2)),
+                                  //           items: [
+                                  //             'Select',
+                                  //             'One',
+                                  //             'Two',
+                                  //             'Three'
+                                  //           ].map(
+                                  //             (val) {
+                                  //               return DropdownMenuItem<
+                                  //                   String>(
+                                  //                 value: val,
+                                  //                 child: Text(val),
+                                  //               );
+                                  //             },
+                                  //           ).toList(),
+                                  //           onChanged: (val) {
+                                  //             setState(
+                                  //               () {
+                                  //                 _dropDownValue = val!;
+                                  //               },
+                                  //             );
+                                  //           },
+                                  //         ),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // )
+                                  SizedBox()
                                 ],
                               ),
                             ),

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
 import 'package:crm_demo/screens/Invoice/invoice_list.dart';
 //import 'package:crm_demo/screens/dashboard/dashboard_screen.dart';
@@ -114,7 +116,7 @@ class _MyAppState extends State<MyApp> {
               ? Scaffold(
                   body: Container(child: Center(child: pleaseWait(context))))
               : (loginIs == true)
-                  ? MainScreen(pageNo: 1)
+                  ? MainScreen(pageNo: 1, stockvalue: 0)
                   : Login_Copy()),
       // child: Scaffold(
       //     body: (loginIs)
@@ -129,7 +131,7 @@ class _MyAppState extends State<MyApp> {
         '/stock_list': (context) => ProductAdd(),
         '/privacy-policy': (context) => privacyPolicy(),
         '/invoice': (context) => Invoice_List(),
-        '/dashboard': (context) => MainScreen(pageNo: 1),
+        '/dashboard': (context) => MainScreen(pageNo: 1, stockvalue: 0),
         '/new_invoice': (context) => addInvoiceScreen(
               header_name: "Customer",
             ),

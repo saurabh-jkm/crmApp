@@ -7,8 +7,12 @@ import '../../../responsive.dart';
 import 'file_info_card.dart';
 
 class MyFiles extends StatefulWidget {
-  const MyFiles({required this.quantity_no, required this.demoMyFiles})
+  const MyFiles(
+      {required this.quantity_no,
+      required this.demoMyFiles,
+      required this.value})
       : super();
+  final int value;
   final int quantity_no;
   final List demoMyFiles;
 
@@ -28,13 +32,16 @@ class _MyFilesState extends State<MyFiles> {
             crossAxisCount: _size.width < 650 ? 2 : 4,
             childAspectRatio: _size.width < 650 && _size.width > 350 ? 1.3 : 1,
             demoMyFiles: widget.demoMyFiles,
+            valuee: widget.value,
           ),
           tablet: FileInfoCardGridView(
             demoMyFiles: widget.demoMyFiles,
+            valuee: widget.value,
           ),
           desktop: FileInfoCardGridView(
             demoMyFiles: widget.demoMyFiles,
             childAspectRatio: _size.width < 1400 ? 1.1 : 1.4,
+            valuee: widget.value,
           ),
         ),
       ],
@@ -92,11 +99,12 @@ class _MyFilesState extends State<MyFiles> {
 class FileInfoCardGridView extends StatelessWidget {
   const FileInfoCardGridView({
     Key? key,
+    required this.valuee,
     this.crossAxisCount = 4,
     this.childAspectRatio = 1,
     required this.demoMyFiles,
   }) : super(key: key);
-
+  final int valuee;
   final int crossAxisCount;
   final double childAspectRatio;
   final List demoMyFiles;
@@ -112,7 +120,8 @@ class FileInfoCardGridView extends StatelessWidget {
         mainAxisSpacing: defaultPadding,
         childAspectRatio: childAspectRatio,
       ),
-      itemBuilder: (context, index) => FileInfoCard(info: demoMyFiles[index]),
+      itemBuilder: (context, index) =>
+          FileInfoCard(info: demoMyFiles[index], value: valuee),
     );
   }
 }

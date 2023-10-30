@@ -6,20 +6,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/customers/customer_controller.dart';
 import 'package:crm_demo/screens/customers/customer_widgets.dart';
-
-import 'package:firedart/firestore/firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-import '../../constants.dart';
-import '../../responsive.dart';
-
-import '../../themes/firebase_functions.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
-import '../dashboard/components/header.dart';
-import 'package:intl/intl.dart';
 
 class CustomerAllOrderList extends StatefulWidget {
   const CustomerAllOrderList({super.key, @required this.data, this.title});

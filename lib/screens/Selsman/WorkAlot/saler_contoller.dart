@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unnecessary_null_comparison, unused_local_variable, avoid_print
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unnecessary_null_comparison, unused_local_variable, avoid_print, prefer_const_declarations
 
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'dart:io';
@@ -13,6 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../themes/style.dart';
 import '../../../themes/theme_widgets.dart';
 import '../../order/invoice_service.dart';
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class SellerController {
   var db = (!kIsWeb && Platform.isWindows)
@@ -29,19 +32,20 @@ class SellerController {
   bool secondScreen = false;
   var selectedSellerId;
   var selectedSeller;
-
+  var deviceId;
   Map<dynamic, dynamic> imgList = {"0": ''};
 
   List<String> headintList = [
     '#',
     'Seller Name',
-    'Panding Meeting',
+    'Pending Meeting',
     'date',
     'Action'
   ];
   List<String> MeetingheadList = [
     '#',
     'Customer Name',
+    'Type',
     'Meeting Reason',
     'Meeting Date',
     'Status',
@@ -221,6 +225,7 @@ class SellerController {
     var dbArr = {
       "table": "follow_up",
       "sellerId": "$selectedSellerId",
+      "customerId": "$customerId",
       "customer_name": Customer_nameController.text,
       "mobile": Customer_MobileController.text,
       "email": Customer_emailController.text,
@@ -231,7 +236,7 @@ class SellerController {
       "meeting_conversation": Customer_meetingConversation_Controller.text,
       "next_follow_up_date": Next_date,
       "next_follow_up": Customer_NextFollowUp_Controller.text,
-      // "customer_type": Customer_TypeController.text,
+      "customer_type": Customer_TypeController.text,
       "update_at": "",
       "date_at": DateTime.now(),
       "status": true,
@@ -246,15 +251,18 @@ class SellerController {
     if (docId == '') {
       if (customerId == "" ||
           ListCustomer.contains(Customer_nameController.text) == false) {
-        await dbSave(db, customerData);
+        customerId = await dbSave(db, customerData);
       } else {
         print("");
       }
       await dbSave(db, dbArr);
 
-      await resetController();
       await OrderList_data(selectedSellerId, 50);
+      await sendNotification(deviceId, "New Meeting Asign !!",
+          "${Customer_NextFollowUp_Controller.text}");
+      await resetController();
       themeAlert(context, "Submitted Successfully ");
+
       return 'success';
       //Navigator.pop(context);
     } else {
@@ -362,5 +370,39 @@ class SellerController {
       }
     }
     return 1;
+  }
+
+  Future sendNotification(String token, String title, String body) async {
+    final String apiUrl = 'https://fcm.googleapis.com/fcm/send';
+
+    final Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization':
+          'key=AAAAbmsM86Q:APA91bH-pkLUnIYCjVsWZs4iY0EyC99n2xKIvNhSZvj7xEP9GlMWYvKEkl-MCQyFod-qeIXTDcegGKXm4vQ7bmX3YBe6Vi_hSAW_d7NiYByZBoEo52bba4beWE9kP-ho9iR3pAMypIWx'
+    };
+
+    final Map<String, dynamic> data = {
+      "registration_ids": [token],
+      "notification": {
+        "body": "$body",
+        "title": "$title",
+        "android_channel_id": "high_importance_channel",
+        "image":
+            "https://media.istockphoto.com/id/1248867189/photo/crm-customer-relationship-management-for-business-sales-marketing-system-concept.jpg?s=1024x1024&w=is&k=20&c=l1rJZYe0NSNxairRLv93R09pPCEbaWyBu6zIACqkD5g=",
+        "sound": false
+      }
+    };
+
+    final http.Response response = await http.post(
+      Uri.parse(apiUrl),
+      headers: headers,
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+      print('Notification sent successfully ======');
+    } else {
+      print('Error sending notification  =========');
+    }
   }
 }/////   closs class

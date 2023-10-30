@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, prefer_const_constructors, unused_local_variable, avoid_print
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, prefer_const_constructors, unused_local_variable, avoid_print, avoid_function_literals_in_foreach_calls, unnecessary_new, prefer_collection_literals
 
 import 'dart:io';
 
@@ -12,7 +12,7 @@ class DashboardController {
   //     : FirebaseFirestore.instance;
 
   // ============================
-  Stock_Data_count() async {
+  stock_Data_count() async {
     var tempCount = 0;
     if (!kIsWeb && Platform.isWindows) {
       var query =
@@ -82,11 +82,15 @@ class DashboardController {
     }
     return tempCount;
   }
-  /////////=====================================================================
-  /////////  Out of Stoke =====================================================================
 
+  /////////=====================================================================
+  /////////  Out of Stoke ======================================================
+
+  var tempCount = 0;
+  Map<int, dynamic> Out_of_stock_Data2 = new Map();
   OutofStock_Data_count() async {
-    var tempCount = 0;
+    Out_of_stock_Data2 = {};
+    int k = 0;
     if (!kIsWeb && Platform.isWindows) {
       var query = await Firestore.instance
           .collection('product')
@@ -100,36 +104,25 @@ class DashboardController {
       var query = await FirebaseFirestore.instance
           .collection('product')
           .where("quantity", isEqualTo: "0")
-          .count()
           .get()
-          .then((value) {
-        return value.count;
+          .then((res) {
+        for (var doc in res.docs) {
+          //returnData2[doc.id] = doc.data();
+          Map<String, dynamic> temp = doc.data();
+          temp['id'] = doc.id;
+          Out_of_stock_Data2[k] = temp;
+          k++;
+        }
+        return Out_of_stock_Data2.length;
       });
       tempCount = query;
     }
     return tempCount;
-
-    // List StoreDocs = [];
-    // var _category = await Firestore.instance
-    //     .collection('product')
-    //     .where("quantity", isEqualTo: "0")
-    //     .get()
-    //     .then(
-    //   (querySnapshot) {
-    //     for (var docSnapshot in querySnapshot) {
-    //       setState(() {
-    //         StoreDocs.add(docSnapshot.map);
-    //         Out_of_Stock_No = StoreDocs.length;
-    //       });
-    //     }
-    //   },
-    // );
-    // setState(() {});
   }
 
 ////////////////
 
-  //////  Balance data call  ++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //////  Balance data call  +++++++++++++++++++++++++++++++++++++++++
   Balance_count() async {
     var tempCount = 0;
     if (!kIsWeb && Platform.isWindows) {

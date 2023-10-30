@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, use_key_in_widget_constructors, annotate_overrides, prefer_typing_uninitialized_variables, unused_element
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, use_key_in_widget_constructors, annotate_overrides, prefer_typing_uninitialized_variables, unused_element, unnecessary_new, prefer_collection_literals
 
 import 'dart:convert';
 
@@ -23,8 +23,9 @@ import '../order/oreder_list.dart';
 import '../product/product_list.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({required this.pageNo}) : super();
+  const MainScreen({required this.pageNo, required this.stockvalue}) : super();
   final int pageNo;
+  final int stockvalue;
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
@@ -39,15 +40,16 @@ class _MainScreenState extends State<MainScreen> {
     if (userData != null) {
       setState(() {
         user = jsonDecode(userData) as Map<dynamic, dynamic>;
-        // print("$user  ++++tttt+++");
       });
     }
   }
 
+  var stvalue;
   @override
   void initState() {
     setState(() {
       sidemenu = widget.pageNo;
+      stvalue = widget.stockvalue;
       _getUser();
     });
     super.initState();
@@ -90,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
             else if (sidemenu == 4)
               Expanded(
                 flex: 5,
-                child: ProductAdd(),
+                child: ProductAdd(OutStock: "${stvalue}"),
               )
             else if (sidemenu == 5)
               Expanded(
@@ -206,6 +208,7 @@ class _MainScreenState extends State<MainScreen> {
                 : const Color.fromARGB(0, 255, 255, 255),
             onTap: () {
               setState(() {
+                stvalue = 0;
                 sidemenu = 4;
                 if (Responsive.isMobile(context)) {
                   Navigator.of(context).pop();
@@ -253,8 +256,7 @@ class _MainScreenState extends State<MainScreen> {
                     });
                   },
                   horizontalTitleGap: 0.0,
-                  leading: Icon(Icons.admin_panel_settings_outlined,
-                      color: Colors.white),
+                  leading: Icon(Icons.balance, color: Colors.white),
                   title: Text(
                     "Balance",
                     style: TextStyle(color: Colors.white),

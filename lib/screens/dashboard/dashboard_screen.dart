@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, avoid_returning_null_for_void, no_leading_underscores_for_local_identifiers, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, sized_box_for_whitespace, unused_import, unnecessary_new, unnecessary_brace_in_string_interps, prefer_collection_literals, unused_local_variable
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, avoid_returning_null_for_void, no_leading_underscores_for_local_identifiers, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, sized_box_for_whitespace, unused_import, unnecessary_new, unnecessary_brace_in_string_interps, prefer_collection_literals, unused_local_variable, await_only_futures, prefer_typing_uninitialized_variables, avoid_unnecessary_containers
 
 import 'dart:convert';
 import 'dart:io';
@@ -48,7 +48,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int Out_of_Stock_No = 0;
   int no_of_year_sale = 0;
   int BalanceCount = 0;
-
+  var tempMap = {};
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic userData = (prefs.getString('user'));
@@ -57,7 +57,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       user = await jsonDecode(userData) as Map<dynamic, dynamic>;
 
       invoiceNo = await controller.invo_Data_count();
-      StockNo = await controller.Stock_Data_count();
+      StockNo = await controller.stock_Data_count();
       UserNo = await controller.User_Data_count();
       Out_of_Stock_No = await controller.OutofStock_Data_count();
 
@@ -146,48 +146,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-////////////////
+// ////////////////
 
-  final List<BarChartModel> data = [
-    BarChartModel(
-      year: "Jan",
-      Sale: 200,
-      Expenses: 100,
-      Profit: 50,
-      color: charts.ColorUtil.fromDartColor(Colors.green),
-      color1: charts.ColorUtil.fromDartColor(Colors.red),
-      color2: charts.ColorUtil.fromDartColor(Colors.yellow),
-    ),
-    BarChartModel(
-      year: "Feb",
-      Sale: 350,
-      Expenses: 200,
-      Profit: 100,
-      color: charts.ColorUtil.fromDartColor(Colors.green),
-      color1: charts.ColorUtil.fromDartColor(Colors.red),
-      color2: charts.ColorUtil.fromDartColor(Colors.yellow),
-    ),
-    BarChartModel(
-      year: "March",
-      Sale: 450,
-      Expenses: 200,
-      Profit: 250,
-      color: charts.ColorUtil.fromDartColor(Colors.green),
-      color1: charts.ColorUtil.fromDartColor(Colors.red),
-      color2: charts.ColorUtil.fromDartColor(Colors.yellow),
-    ),
-    BarChartModel(
-      year: "April",
-      Sale: 300,
-      Expenses: 200,
-      Profit: 100,
-      color: charts.ColorUtil.fromDartColor(Colors.green),
-      color1: charts.ColorUtil.fromDartColor(Colors.red),
-      color2: charts.ColorUtil.fromDartColor(Colors.yellow),
-    ),
-  ];
+//   final List<BarChartModel> data = [
+//     BarChartModel(
+//       year: "Jan",
+//       Sale: 200,
+//       Expenses: 100,
+//       Profit: 50,
+//       color: charts.ColorUtil.fromDartColor(Colors.green),
+//       color1: charts.ColorUtil.fromDartColor(Colors.red),
+//       color2: charts.ColorUtil.fromDartColor(Colors.yellow),
+//     ),
+//     BarChartModel(
+//       year: "Feb",
+//       Sale: 350,
+//       Expenses: 200,
+//       Profit: 100,
+//       color: charts.ColorUtil.fromDartColor(Colors.green),
+//       color1: charts.ColorUtil.fromDartColor(Colors.red),
+//       color2: charts.ColorUtil.fromDartColor(Colors.yellow),
+//     ),
+//     BarChartModel(
+//       year: "March",
+//       Sale: 450,
+//       Expenses: 200,
+//       Profit: 250,
+//       color: charts.ColorUtil.fromDartColor(Colors.green),
+//       color1: charts.ColorUtil.fromDartColor(Colors.red),
+//       color2: charts.ColorUtil.fromDartColor(Colors.yellow),
+//     ),
+//     BarChartModel(
+//       year: "April",
+//       Sale: 300,
+//       Expenses: 200,
+//       Profit: 100,
+//       color: charts.ColorUtil.fromDartColor(Colors.green),
+//       color1: charts.ColorUtil.fromDartColor(Colors.red),
+//       color2: charts.ColorUtil.fromDartColor(Colors.yellow),
+//     ),
+//   ];
 
-///////=======================================================================
+// ///////=======================================================================
   @override
   Widget build(BuildContext context) {
     // List<charts.Series<BarChartModel, String>> series = [
@@ -244,6 +244,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         title: "Out of stock",
         numOfFiles: Out_of_Stock_No,
         svgSrc: Icons.production_quantity_limits_outlined,
+
         // svgSrc: "assets/icons/drop_box.svg",
         color: Color.fromARGB(255, 119, 143, 31),
 
@@ -324,8 +325,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: Column(
                                 children: [
                                   MyFiles(
-                                      demoMyFiles: demoMyFiles,
-                                      quantity_no: 10),
+                                    demoMyFiles: demoMyFiles,
+                                    quantity_no: 10,
+                                    value: controller.tempCount,
+                                  ),
 
                                   SizedBox(height: defaultPadding),
 
@@ -441,23 +444,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
   }
 
-  Widget demo_color(BuildContext context, clr, name) {
-    return Container(
-      margin: EdgeInsets.only(right: 30),
-      child: Row(children: [
-        Container(
-          margin: EdgeInsets.only(right: 10),
-          decoration: BoxDecoration(
-              color: clr, borderRadius: BorderRadius.circular(2.5)),
-          height: 15,
-          width: 15,
-        ),
-        Text("$name",
-            style: GoogleFonts.alike(
-                fontSize: 13,
-                color: Colors.black54,
-                fontWeight: FontWeight.normal)),
-      ]),
-    );
-  }
+  // Widget demo_color(BuildContext context, clr, name) {
+  //   return Container(
+  //     margin: EdgeInsets.only(right: 30),
+  //     child: Row(children: [
+  //       Container(
+  //         margin: EdgeInsets.only(right: 10),
+  //         decoration: BoxDecoration(
+  //             color: clr, borderRadius: BorderRadius.circular(2.5)),
+  //         height: 15,
+  //         width: 15,
+  //       ),
+  //       Text("$name",
+  //           style: GoogleFonts.alike(
+  //               fontSize: 13,
+  //               color: Colors.black54,
+  //               fontWeight: FontWeight.normal)),
+  //     ]),
+  //   );
+  // }
 }

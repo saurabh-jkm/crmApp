@@ -185,12 +185,6 @@ dbFind(where) async {
           .get()
           .then((documentSnapshot) {
           return documentSnapshot.map;
-          // if (documentSnapshot.exists) {
-          //   Map<int, dynamic> returnData2 = new Map();
-          //   return documentSnapshot.data();
-          // } else {
-          //   return 'Document does not exist on the database';
-          // }
         })
       : await FirebaseFirestore.instance
           .collection(table)
@@ -199,7 +193,6 @@ dbFind(where) async {
           .then((DocumentSnapshot documentSnapshot) {
           if (documentSnapshot.exists) {
             Map<int, dynamic> returnData2 = new Map();
-            print("${documentSnapshot.data()}  jjjj==");
             return documentSnapshot.data();
           } else {
             return 'Document does not exist on the database';

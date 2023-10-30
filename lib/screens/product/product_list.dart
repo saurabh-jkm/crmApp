@@ -33,18 +33,19 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:slug_it/slug_it.dart';
 import 'package:intl/intl.dart';
 
+import '../dashboard/dashboard_controller.dart';
 import 'product/detail_product_screen.dart';
 
 class ProductAdd extends StatefulWidget {
-  const ProductAdd({super.key});
-
+  const ProductAdd({super.key, required this.OutStock});
+  final String OutStock;
   @override
   State<ProductAdd> createState() => _ProductAddState();
 }
 
 class _ProductAddState extends State<ProductAdd> {
   var controllerr = new ProductController();
-
+  var out_controller = new DashboardController();
   final _controllers = TextEditingController();
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
@@ -56,24 +57,47 @@ class _ProductAddState extends State<ProductAdd> {
   }
 
   Pro_Data_list(Limit) async {
-    var temp = await controllerr.Pro_Data(Limit);
-    setState(() {
-      temp.forEach((k, v) {
-        var tempLocation = '';
+    controllerr.productList = [];
+    if (widget.OutStock != "0") {
+      await out_controller.OutofStock_Data_count();
+      setState(() {
+        out_controller.Out_of_stock_Data2.forEach((k, v) {
+          var tempLocation = '';
+          if (v['item_location'] != null && v['item_location'].isNotEmpty) {
+            v['item_location'].forEach((ke, vl) {
+              tempLocation =
+                  (tempLocation == '') ? "$ke" : '$tempLocation , $ke';
+            });
+          }
+          v['location'] = tempLocation;
 
-        if (v['item_location'] != null && v['item_location'].isNotEmpty) {
-          v['item_location'].forEach((ke, vl) {
-            tempLocation = (tempLocation == '') ? "$ke" : '$tempLocation , $ke';
-          });
-        }
-        v['location'] = tempLocation;
-
-        controllerr.productList.add(v);
+          controllerr.productList.add(v);
+        });
+        filteredItems = controllerr.productList;
+        controllerr.finalProductList = controllerr.productList;
+        controllerr.progressWidget = false;
       });
-      filteredItems = controllerr.productList;
-      controllerr.finalProductList = controllerr.productList;
-      controllerr.progressWidget = false;
-    });
+    } else {
+      var temp = await controllerr.Pro_Data(Limit);
+      setState(() {
+        temp.forEach((k, v) {
+          var tempLocation = '';
+
+          if (v['item_location'] != null && v['item_location'].isNotEmpty) {
+            v['item_location'].forEach((ke, vl) {
+              tempLocation =
+                  (tempLocation == '') ? "$ke" : '$tempLocation , $ke';
+            });
+          }
+          v['location'] = tempLocation;
+
+          controllerr.productList.add(v);
+        });
+        filteredItems = controllerr.productList;
+        controllerr.finalProductList = controllerr.productList;
+        controllerr.progressWidget = false;
+      });
+    }
   }
 
 ///////  delete  Product ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -84,7 +108,6 @@ class _ProductAddState extends State<ProductAdd> {
       final _product = Firestore.instance.collection('product');
       return _product.document(id).delete().then((value) {
         setState(() {
-          themeAlert(context, "Deleted Successfully ");
           _controllers.clear();
           productList2 = [];
           Pro_Data_list(_number_select);
@@ -96,7 +119,6 @@ class _ProductAddState extends State<ProductAdd> {
           FirebaseFirestore.instance.collection('product');
       return _product.doc(id).delete().then((value) {
         setState(() {
-          themeAlert(context, "Deleted Successfully ");
           _controllers.clear();
           productList2 = [];
           Pro_Data_list(_number_select);
@@ -690,6 +712,7 @@ class _ProductAddState extends State<ProductAdd> {
               selected_pro.forEach(
                   (k, v) async => await delete_Pro(k) //   showExitPopup(k)
                   );
+              themeAlert(context, "Deleted Successfully ");
               setState(() {
                 selected_pro = {};
               });
@@ -832,6 +855,7 @@ class _ProductAddState extends State<ProductAdd> {
                 child: TextButton(
                   onPressed: () async {
                     await delete_Pro(iid_delete);
+                    themeAlert(context, "Deleted Successfully ");
                     Navigator.of(context).pop(false);
                   },
                   child: Text(
