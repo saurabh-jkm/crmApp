@@ -28,6 +28,7 @@ import '../../themes/firebase_functions.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 import '../Invoice/add_invoice_screen.dart';
+import '../Invoice/invoice_controller.dart';
 import '../Invoice/invoice_serv.dart';
 import '../dashboard/components/header.dart';
 import '../dashboard/components/my_fields.dart';
@@ -40,6 +41,7 @@ import 'package:intl/intl.dart';
 
 import '../order/invoice_service.dart';
 import '../order/syncPdf.dart';
+import 'balance_widget.dart';
 
 // ignore: camel_case_types
 class BalanceList extends StatefulWidget {
@@ -50,13 +52,14 @@ class BalanceList extends StatefulWidget {
 }
 
 class _BalanceListState extends State<BalanceList> {
+  var controllerr = new invoiceController();
   final _controllers = TextEditingController();
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
       : FirebaseFirestore.instance;
   @override
   void initState() {
-    OrderList_data();
+    orderList(_number_select);
     super.initState();
   }
 
@@ -69,63 +72,25 @@ class _BalanceListState extends State<BalanceList> {
   var tableColum = {};
   var headerName = {};
 
-///////////////////////// Order List Data fetch fn ++++++++++++++++++++++++++++
-
-  List OrderList = [];
-  List finalOrderList = [];
-
-  OrderList_data({filter: ''}) async {
-    OrderList = [];
-    setState(() {
-      progressWidget = true;
-    });
-
-    Map<dynamic, dynamic> w = {
-      'table': "order",
-      'orderBy': "-date_at",
-    };
-    var temp;
-    if (filter == 'date_filter') {
-      //var newDate = todayTimeStamp_for_query();
-      var dateFrom = themeCustomeDate(startDate_controller.text);
-      var dateTo = themeCustomeDate(toDate_controller.text);
-
-      // TODO Query
-      var query;
-      if (!kIsWeb && Platform.isWindows) {
-        query = await Firestore.instance
-            .collection('order')
-            .where("date_at", isGreaterThan: dateFrom)
-            .where("date_at", isLessThan: dateTo);
-      } else {
-        query = await FirebaseFirestore.instance
-            .collection('order')
-            .where("date_at", isGreaterThan: dateFrom)
-            .where("date_at", isLessThan: dateTo);
-      }
-
-      temp = await dbRawQuery(query);
-    } else {
-      temp = await dbFindDynamic(db, w);
-    }
+  orderList(limit, {filter: ''}) async {
+    Map temp = await controllerr.OrderListData(limit);
     setState(() {
       temp.forEach((k, v) {
         v['date'] = formatDate(v['date_at'], formate: "dd/MM/yyyy");
         v['statusIs'] =
             (v['status'] != null && v['status']) ? 'Active' : 'InActive';
-        OrderList.add(v);
+        controllerr.OrderList.add(v);
       });
-      finalOrderList = OrderList;
+      controllerr.finalOrderList = controllerr.OrderList;
 
       progressWidget = false;
     });
 
     SearchFn(selectedFilter, filter: 'filter');
   }
-////////////////////////////////////////========================================
 
   ///////// PDF  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+/////========================================================================
   Future<void> savePdfFile(
       String fileName, Uint8List byteList, PriceDetail) async {
     if (kIsWeb) {
@@ -164,7 +129,7 @@ class _BalanceListState extends State<BalanceList> {
                 builder: (_) => addInvoiceScreen(header_name: "Customer")));
 
     if (temp == 'updated') {
-      OrderList_data();
+      orderList(_number_select);
     }
   }
 
@@ -176,7 +141,7 @@ class _BalanceListState extends State<BalanceList> {
             builder: (_) => viewInvoiceScreen(
                 header_name: "View Invoice Details", data: data)));
     if (temp == 'updated') {
-      OrderList_data();
+      orderList(_number_select);
     }
   }
 
@@ -207,12 +172,13 @@ class _BalanceListState extends State<BalanceList> {
       // 4: 'Product',
       5: 'Buyer/Seller',
       6: 'Mobile',
-      7: 'Qnt.',
+      7: 'Product',
+      // 7: 'Qnt.',
       // 8: 'Unit',
       9: 'Price',
       10: 'Balance',
       11: 'Date',
-      // 12: 'Action',
+      12: 'Action',
     };
 
     return RawKeyboardListener(
@@ -258,7 +224,7 @@ class _BalanceListState extends State<BalanceList> {
                         children: [
                           IconButton(
                             onPressed: () {
-                              OrderList_data();
+                              orderList(_number_select);
                             },
                             icon: Icon(Icons.refresh, size: 35),
                             tooltip: 'Refresh',
@@ -287,9 +253,8 @@ class _BalanceListState extends State<BalanceList> {
   }
 
 //////// ///////////////////////////////// @1  List  of Order       ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+  var _number_select = 50;
   Widget listList(BuildContext context, itemList) {
-    var _number_select = 10;
     return Container(
       height: MediaQuery.of(context).size.height,
       // margin: EdgeInsets.all(10),
@@ -435,20 +400,71 @@ class _BalanceListState extends State<BalanceList> {
                     ],
                   ),
                 ),
-                for (var index = 0; index < OrderList.length; index++)
+                for (var index = 0;
+                    index < controllerr.OrderList.length;
+                    index++)
                   tableRowWidget(
                       "${index + 1}",
-                      OrderList[index]['customer_name'],
-                      OrderList[index]['mobile'],
-                      OrderList[index]['total'],
-                      OrderList[index]['balance'],
-                      OrderList[index]['status'],
-                      OrderList[index]['date_at'],
-                      OrderList[index],
-                      dbData: OrderList[index])
+                      controllerr.OrderList[index]['status'],
+                      controllerr.OrderList[index]['date_at'],
+                      controllerr.OrderList[index],
+                      dbData: controllerr.OrderList[index])
               ],
             ),
           ),
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Container(
+              height: 40,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              color: Colors.black,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Show",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: EdgeInsets.all(2),
+                    height: 20,
+                    color: Colors.white,
+                    child: DropdownButton<int>(
+                      dropdownColor: Colors.white,
+                      iconEnabledColor: Colors.black,
+                      hint: Text(
+                        "$_number_select",
+                        style: TextStyle(color: Colors.black, fontSize: 12),
+                      ),
+                      value: _number_select,
+                      items: <int>[50, 100, 150, 200].map((int value) {
+                        return DropdownMenuItem<int>(
+                          value: value,
+                          child: Text(
+                            "$value",
+                            style: TextStyle(color: Colors.black, fontSize: 12),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newVal) {
+                        _number_select = newVal!;
+                        orderList(newVal);
+                      },
+                      underline: SizedBox(),
+                    ),
+                  ),
+                  Text(
+                    "entries",
+                    style: themeTextStyle(
+                        fw: FontWeight.normal, color: Colors.white, size: 15),
+                  ),
+                ],
+              ),
+            )
+          ]),
+          SizedBox(height: 100)
         ],
       ),
     );
@@ -456,9 +472,7 @@ class _BalanceListState extends State<BalanceList> {
 
 ///////////////////////////////////////////////
 
-  tableRowWidget(String index, user, buyer_mobile, balance, _price, pro_status,
-      pay_date, edata,
-      {dbData: ''}) {
+  tableRowWidget(String index, pro_status, pay_date, edata, {dbData: ''}) {
     var statuss = statusOF(pro_status);
     var productTitle = edata['title'];
     final formattedDate =
@@ -501,50 +515,34 @@ class _BalanceListState extends State<BalanceList> {
             //     child: Container(child: Text("${type}", style: textStyle3)),
             //   ),
             // ),
-            // Container(
-            //   //verticalAlignment: TableCellVerticalAlignment.middle,
-            //   width: tableColum[4],
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(5.0),
-            //     child: Container(
-            //         child: Text("${productTitle}", style: textStyle3)),
-            //   ),
-            // ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Text('$user', style: textStyle3),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: (buyer_mobile != "")
-                    ? Text(buyer_mobile, style: textStyle3)
-                    : Text("--/--", style: textStyle3),
-              ),
-            ),
 
             Expanded(
-              child: Text(
-                  (edata['quantity'] != null) ? "${edata['quantity']}" : "-",
-                  style: textStyle3),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text('${edata['customer_name']}', style: textStyle3),
+              ),
             ),
-            // Container(
-            //   width: tableColum[6],
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(5.0),
-            //     child: Text('$buyer_mobile', style: textStyle3),
-            //   ),
-            // ),
-            // Container(
-            //   width: tableColum[8],
-            //   child: Text((edata['unit'] != null) ? "${edata['unit']}" : "-",
-            //       style: textStyle3),
-            // ),
             Expanded(
-              child:
-                  Text((_price != null) ? "$_price" : "-", style: textStyle3),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: (edata['mobile'] != "")
+                    ? Text(edata['mobile'], style: textStyle3)
+                    : Text("----", style: textStyle3),
+              ),
+            ),
+            Expanded(
+                child: Container(
+                    margin: EdgeInsets.only(right: 10),
+                    child: Text("${productTitle}",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 11.0,
+                            fontWeight: FontWeight.bold,
+                            overflow: TextOverflow.ellipsis)))),
+
+            Expanded(
+              child: Text((edata['total'] != null) ? "${edata['total']}" : "-",
+                  style: textStyle3),
             ),
             Expanded(
               child: Text(
@@ -553,6 +551,22 @@ class _BalanceListState extends State<BalanceList> {
             ),
             Expanded(
               child: Text("$formattedDate", style: textStyle3),
+            ),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IconButton(
+                      onPressed: () async {
+                        final data = await InvoiceService(
+                          PriceDetail: edata,
+                        ).createInvoice();
+                        // final data = await service.createInvoice();
+                        await savePdfFile("invoice", data, edata);
+                      },
+                      icon: Icon(Icons.visibility_outlined, size: 30))
+                ],
+              ),
             ),
           ]))
     ]);
@@ -576,16 +590,16 @@ class _BalanceListState extends State<BalanceList> {
       searchField = ['type'];
       query = (query == 'All') ? '' : query;
     }
-    OrderList = [];
+    controllerr.OrderList = [];
 
-    finalOrderList.forEach((e) {
+    controllerr.finalOrderList.forEach((e) {
       bool isFind = false;
       searchField.forEach((key) {
         var val = '${e['$key']}';
         if (!isFind &&
             e['$key'] != null &&
             val.toLowerCase().contains(query.toLowerCase())) {
-          OrderList.add(e);
+          controllerr.OrderList.add(e);
           isFind = true;
         }
       });
@@ -595,7 +609,7 @@ class _BalanceListState extends State<BalanceList> {
 
   // date filter ===================================================
   fnFilterController(filter) {
-    OrderList_data(filter: filter);
+    orderList(_number_select, filter: filter);
   }
 
   // change filter ===================================================
@@ -631,51 +645,16 @@ class _BalanceListState extends State<BalanceList> {
     }
   }
 
-  // table header ===================================================
-  Widget tableLable(context, i, label, tableColum) {
-    return Expanded(
-      // width: tableColum[i],
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Text('$label',
-            style: themeTextStyle(
-                size: 12.0, color: Colors.white, fw: FontWeight.bold)),
-      ),
-    );
-  }
-
-  Widget subTableLabel(context, i, label, tableColum) {
-    return Container(
-      width: tableColum[i],
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Text('$label',
-            style: themeTextStyle(size: 12.0, color: Colors.black)),
-      ),
-    );
-  }
-
-  // sub row =======================================================
-  Widget tableSubRow(context, k, data, tableColum) {
-    return Container(
-      decoration: BoxDecoration(
-          color: themeBG7,
-          border: Border(bottom: BorderSide(width: 3.0, color: Colors.white))),
-      child: Row(
-        children: [
-          subTableLabel(context, 1, '', tableColum),
-          subTableLabel(context, 2, '', tableColum),
-          subTableLabel(context, 3, '', tableColum),
-          subTableLabel(context, 4, data['name'], tableColum),
-          subTableLabel(context, 5, '', tableColum),
-          subTableLabel(context, 6, '', tableColum),
-          subTableLabel(context, 7, data['quantity'], tableColum),
-          subTableLabel(context, 8, data['unit'], tableColum),
-          subTableLabel(context, 9, data['price'], tableColum),
-        ],
-      ),
-    );
-  }
+  // Widget subTableLabel(context, i, label, tableColum) {
+  //   return Container(
+  //     width: tableColum[i],
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(5.0),
+  //       child: Text('$label',
+  //           style: themeTextStyle(size: 12.0, color: Colors.black)),
+  //     ),
+  //   );
+  // }
 
 /////////////////////////////////////////////=====================================================
 }

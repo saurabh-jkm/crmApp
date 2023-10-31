@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
               ChangeNotifierProvider(
                 create: (context) => MenuAppController(),
               ),
-            ], child: MainScreen(pageNo: 1) // MainScreen(),
+            ], child: MainScreen(pageNo: 1, stockvalue: 0) // MainScreen(),
                 ),
           );
         } else {

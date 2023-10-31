@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, division_optimization
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, division_optimization, camel_case_types, non_constant_identifier_names, unnecessary_new, prefer_collection_literals
 import 'dart:convert';
 import 'package:crm_demo/screens/Invoice/update_controller.dart';
 import 'package:crm_demo/themes/firebase_functions.dart';
@@ -12,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
+
+import '../../themes/function.dart';
 
 class invoiceController extends updateController {
   //var db = FirebaseFirestore.instance;
@@ -100,7 +102,8 @@ class invoiceController extends updateController {
   Map<int, TextEditingController> productLocationController = new Map();
   Map<int, TextEditingController> categoryController = new Map();
   List<String> ListCategory = [];
-
+  TextEditingController startDate_controller = new TextEditingController();
+  TextEditingController toDate_controller = new TextEditingController();
   // init Function for all =========================================
   //================================================================
   //================================================================
@@ -291,6 +294,48 @@ class invoiceController extends updateController {
       }
     }
   }
+
+///////////////////////// Order List Data fetch fn ++++++++++++++++++++++++++++
+
+  List OrderList = [];
+  List finalOrderList = [];
+
+  OrderListData(int limitData, {filter: ''}) async {
+    OrderList = [];
+
+    Map<dynamic, dynamic> w = {
+      'table': "order",
+      'orderBy': "-date_at",
+      "limit": limitData
+    };
+    var temp;
+    if (filter == 'date_filter') {
+      //var newDate = todayTimeStamp_for_query();
+      var dateFrom = themeCustomeDate(startDate_controller.text);
+      var dateTo = themeCustomeDate(toDate_controller.text);
+
+      // TODO Query
+      var query;
+      if (!kIsWeb && Platform.isWindows) {
+        query = await Firestore.instance
+            .collection('order')
+            .where("date_at", isGreaterThan: dateFrom)
+            .where("date_at", isLessThan: dateTo);
+      } else {
+        query = await FirebaseFirestore.instance
+            .collection('order')
+            .where("date_at", isGreaterThan: dateFrom)
+            .where("date_at", isLessThan: dateTo);
+      }
+
+      temp = await dbRawQuery(query);
+    } else {
+      temp = await dbFindDynamic(db, w);
+    }
+    return temp;
+  }
+////////////////////////////////////////========================================
+/////// add Category Data  =+++++++++++++++++++
 
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

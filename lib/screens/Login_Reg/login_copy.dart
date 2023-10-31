@@ -101,7 +101,7 @@ class _Login_CopyState extends State<Login_Copy> {
                   ChangeNotifierProvider(
                     create: (context) => MenuAppController(),
                   ),
-                ], child: MainScreen(pageNo: 1) // MainScreen(),
+                ], child: MainScreen(pageNo: 1, stockvalue: 0) // MainScreen(),
                     ),
               );
             });

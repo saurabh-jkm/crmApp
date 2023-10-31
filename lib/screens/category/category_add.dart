@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/screens/category/category_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ import '../../themes/base_controller.dart';
 import '../dashboard/components/header.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
-import 'package:intl/intl.dart';
+
 // import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class CategoryAdd extends StatefulWidget {
@@ -28,44 +29,39 @@ class CategoryAdd extends StatefulWidget {
 
 class _CategoryAddState extends State<CategoryAdd> {
   final _formKey = GlobalKey<FormState>();
-
-  var cate_name = "";
-  var slug__url = "";
-  var image_logo = "";
-
-  String? _dropDownValue;
-  String? _StatusValue;
-  String Date_at = DateFormat('dd-MM-yyyy').format(DateTime.now());
-
-  // Create a text controller and use it to retrieve the current value
-  // of the TextField.
-  final CategoryController = TextEditingController();
-  final SlugUrlController = TextEditingController();
-  bool Tranding = false;
-
-  bool progressWidget = true;
-  var db = (!kIsWeb && Platform.isWindows)
-      ? Firestore.instance
-      : FirebaseFirestore.instance;
-  @override
-  clearText() {
-    SlugUrlController.clear();
-    CategoryController.clear();
-    _dropDownValue = null;
-    _StatusValue = null;
-    clear_imageData();
-  }
-
+  var controllerr = new categoryController();
+  var baseController = new base_controller();
+  bool Add_Category = false;
 //////
-  String _PerentCate = '';
-  ///// File Picker ==========================================================
-  var url_img;
-  String? fileName;
-
-  void clear_imageData() {
-    fileName = "";
-    url_img = "";
+  int limitData = 50;
+  @override
+  void initState() {
+    CategoryData(limitData);
+    super.initState();
   }
+
+  CategoryData(limitData) async {
+    var temp = await controllerr.Comman_Cate_Data(limitData);
+    var tempImage = await controllerr.Image_data();
+    var tempDrop = await controllerr.CateData();
+    setState(() {
+      temp.forEach((k, v) {
+        controllerr.StoreDocs.add(v);
+      });
+      tempImage.forEach((k, v) {
+        controllerr.Storage_image_List.add(v["image_url"]);
+      });
+
+      tempDrop.forEach((k, v) {
+        if (v['category_name'] != '') {
+          controllerr.Cate_Name_list[v['category_name']] = v['category_name'];
+        }
+      });
+      controllerr.progressWidget = false;
+    });
+  }
+
+  ///// File Picker ==========================================================
 
   pickFile() async {
     if (!kIsWeb) {
@@ -82,9 +78,8 @@ class _CategoryAddState extends State<CategoryAdd> {
         // UploadFile(path!, fileName).then((value) {});
 
         setState(() async {
-          url_img = await uploadFile(path!, fileName, db);
-
-          Comman_Cate_Data();
+          controllerr.url_img = await uploadFile(path!, fileName, db);
+          await CategoryData(limitData);
           // image_addList(url_img);
           // downloadURL = await FirebaseStorage.instance
           //     .ref()
@@ -103,17 +98,18 @@ class _CategoryAddState extends State<CategoryAdd> {
       );
       if (results != null) {
         Uint8List? UploadImage = results.files.single.bytes;
-        fileName = results.files.single.name;
-        Reference reference = FirebaseStorage.instance.ref('media/$fileName');
+        controllerr.fileName = results.files.single.name;
+        Reference reference =
+            FirebaseStorage.instance.ref('media/${controllerr.fileName}');
         final UploadTask uploadTask = reference.putData(UploadImage!);
         uploadTask.whenComplete(() => print("selected image"));
         setState(() async {
-          downloadURL = await FirebaseStorage.instance
+          controllerr.downloadURL = await FirebaseStorage.instance
               .ref()
-              .child('media/$fileName')
+              .child('media/${controllerr.fileName}')
               .getDownloadURL();
           setState(() {
-            url_img = downloadURL.toString();
+            controllerr.url_img = controllerr.downloadURL.toString();
             // image_addList(url_img);
           });
 
@@ -126,141 +122,52 @@ class _CategoryAddState extends State<CategoryAdd> {
     }
   }
 
-/////////// firebase Storage +++++++++++++++++++
-  ///
-  String? downloadURL;
-  List<String> _Storage_image_List = [];
-  // Future listExample() async {
-  //   firebase_storage.ListResult result =
-  //       await firebase_storage.FirebaseStorage.instance.ref('media').listAll();
-  //   result.items.forEach((firebase_storage.Reference ref) async {
-  //     var uri = await downloadURLExample("${ref.fullPath}");
-  //     _Storage_image_List.add(uri);
-  //     // image_addList(uri);
-  //   });
-  //   return _Storage_image_List;
-  // }
-
-  // Future downloadURLExample(image_path) async {
-  //   downloadURL =
-  //       await FirebaseStorage.instance.ref().child(image_path).getDownloadURL();
-  //   return downloadURL.toString();
-  // }
-
-///////////  firebase property Database access  +++++++++++++++++++++++++++
-
 ////////
-
-/////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
-
-  List StoreDocs = [];
-
-  Comman_Cate_Data() async {
-    var temp2 = [];
-    StoreDocs = [];
-    Map<dynamic, dynamic> w = {
-      'table': "category",
-      //'status': "$_StatusValue",
-    };
-    var temp = (!kIsWeb && Platform.isWindows)
-        ? await All_dbFindDynamic(db, w)
-        : await dbFindDynamic(db, w);
-
-    setState(() {
-      temp.forEach((k, v) {
-        StoreDocs.add(v);
-      });
-
-      // print("${temp2}  ++++++++++++++");
-      progressWidget = false;
-    });
-    Windows_Image_data();
-  }
-
-/////////////  Media Image Call   +++++++++++++++++++++++++++++++++++++++++++++
-
-  Future Windows_Image_data() async {
-    var temp2 = [];
-    _Storage_image_List = [];
-    Map<dynamic, dynamic> w = {
-      'table': "window_image",
-      //'status': "$_StatusValue",
-    };
-    var temp = (!kIsWeb && Platform.isWindows)
-        ? await All_dbFindDynamic(db, w)
-        : await dbFindDynamic(db, w);
-
-    setState(() {
-      temp.forEach((k, v) {
-        _Storage_image_List.add(v["image_url"]);
-      });
-      progressWidget = false;
-    });
-  }
-
-/////// add Category Data  =+++++++++++++++++++
 
   Future<void> addList() {
     CollectionReference _category =
         FirebaseFirestore.instance.collection('category');
     return _category.add({
-      'category_name': "$cate_name",
-      'slug_url': "$slug__url",
-      'parent_cate': "$_PerentCate",
-      'status': (_StatusValue == "Active")
+      'category_name': "${controllerr.cate_name}",
+      'slug_url': "${controllerr.slug__url}",
+      'parent_cate': "${controllerr.PerentCate}",
+      'status': (controllerr.StatusValue == "Active")
           ? "1"
-          : (_StatusValue == "Inactive")
+          : (controllerr.StatusValue == "Inactive")
               ? "2"
               : "0",
-      'image': "$url_img",
-      "date_at": "$Date_at"
+      'image': "${controllerr.url_img}",
+      "update_at": "",
+      "date_at": "${controllerr.Date_at}"
     }).then((value) {
-      setState(() {
-        themeAlert(context, "Submitted Successfully ");
-        Comman_Cate_Data();
-      });
+      themeAlert(context, "Submitted Successfully ");
+      CategoryData(limitData);
     }).catchError(
         (error) => themeAlert(context, 'Failed to Submit', type: "error"));
   }
 
 //////////
 
-////////// delete Category Data ++++++++++++++++++
-
-  Future<void> deleteUser(id) {
-    CollectionReference _category =
-        FirebaseFirestore.instance.collection('category');
-    return _category.doc(id).delete().then((value) {
-      setState(() {
-        themeAlert(context, "Deleted Successfully ");
-        Comman_Cate_Data();
-      });
-    }).catchError(
-        (error) => themeAlert(context, 'Not find Data', type: "error"));
-  }
-
-/////  Update Catego
-
-  var slugUrl;
-  var image;
-
-  var Catename;
+  var slugUrl = "";
+  var image = "";
+  var Catename = "";
 //////
-  Map<String, dynamic>? data;
+  Map data = {};
   Future _Update_initial(id) async {
     Map<dynamic, dynamic> w = {'table': "category", 'id': id};
     data = await dbFind(w);
     if (data != null) {
       setState(() {
-        _PerentCate = data!['parent_cate'];
-        slugUrl = data!['slug_url'];
-        image = data!["image"];
-        _StatusValue = (data!['status'] == "1")
+        print("$data  +++++++++");
+        Catename = data['category_name'];
+        controllerr.PerentCate = data['parent_cate'];
+        slugUrl = data['slug_url'];
+        image = data["image"];
+        controllerr.StatusValue = (data['status'] == "1")
             ? "Active"
-            : (data!['status'] == "2")
+            : (data['status'] == "2")
                 ? "Inactive"
                 : "Select";
-        Catename = data!['category_name'];
       });
     }
   }
@@ -280,114 +187,41 @@ class _CategoryAddState extends State<CategoryAdd> {
               ? "2"
               : "0",
       "image": "$image",
-      "date_at": "$Date_at"
+      "update_at": "${controllerr.Date_at}"
     };
 
     w['id'] = update_id;
-    if (!kIsWeb && Platform.isWindows) {
-      await All_dbUpdate(
-        db,
-        w,
-      );
-    } else {
-      await dbUpdate(db, w);
-    }
-    themeAlert(context, "Successfully Updated !!");
+
+    var msg = await dbUpdate(db, w);
+    themeAlert(context, "$msg");
     setState(() {
-      clearText();
+      controllerr.clearText();
+      CategoryData(limitData);
       updateWidget = false;
-      Comman_Cate_Data();
     });
   }
 
   //////
 
-///////////    Creating SLug Url Function +++++++++++++++++++++++++++++++++++++++
-
-  Slug_gen(String text) {
-    var listtt = [];
-    var slus_string;
-    String slug = SlugIT().makeSlug(text);
-    setState(() {
-      for (var index = 0; index < StoreDocs.length; index++) {
-        listtt.add("${StoreDocs[index]['slug_url']}");
-      }
-      slus_string = slug;
-      if (listtt.contains("$slus_string")) {
-        SlugUrlController.text = "$slus_string${listtt.length}";
-      } else {
-        SlugUrlController.text = slus_string;
-      }
-    });
-  }
-/////
-
-  bool Add_Category = false;
-  //var baseController = new baseController();
-  var baseController = new base_controller();
-
-  @override
-  void initState() {
-    Comman_Cate_Data();
-    _CateData();
-    super.initState();
-  }
-
-///////////  Calling Category data +++++++++++++++++++++++++++
-  Map<int, String> v_status = {0: "Select", 1: 'Active', 2: 'Inactive'};
-  Map<String, String> Cate_Name_list = {'Select': ''};
-  _CateData() async {
-    Map<dynamic, dynamic> w = {
-      'table': 'category',
-      //'status':'1',
-    };
-
-    // var dbData = await dbFindDynamic(db, w);
-    var dbData = (!kIsWeb && Platform.isWindows)
-        ? await All_dbFindDynamic(db, w)
-        : await dbFindDynamic(db, w);
-    dbData.forEach((k, v) {
-      if (v['category_name'] != '') {
-        Cate_Name_list[v['category_name']] = v['category_name'];
-      }
-    });
-  }
-  ///////============================================================
-////////// delete Category Data ++++++++++++++++++
-
-  Future<void> All_deleteUser(id) async {
-    var _category = await Firestore.instance.collection('category');
-    return _category.document(id).delete().then((value) {
-      setState(() {
-        themeAlert(context, "Deleted Successfully ");
-        Comman_Cate_Data();
-      });
-    }).catchError(
-        (error) => themeAlert(context, 'Not find Data', type: "error"));
-  }
-
-  ////////////
-
-/////// add Category Data  =+++++++++++++++++++
-
   Future<void> All_addList() async {
     // print("$url_img  +++++++++++++");
     var _category = await Firestore.instance.collection('category');
     return _category.add({
-      'category_name': "$cate_name",
-      'slug_url': "$slug__url",
-      'parent_cate': "$_PerentCate",
-      'status': (_StatusValue == "Active")
+      'category_name': "${controllerr.cate_name}",
+      'slug_url': "${controllerr.slug__url}",
+      'parent_cate': "${controllerr.PerentCate}",
+      'status': (controllerr.StatusValue == "Active")
           ? "1"
-          : (_StatusValue == "Inactive")
+          : (controllerr.StatusValue == "Inactive")
               ? "2"
               : "0",
-      "image": (url_img != null && url_img.isNotEmpty) ? "$url_img" : "",
-      "date_at": "$Date_at"
+      "image": (controllerr.url_img != "") ? "${controllerr.url_img}" : "",
+      "update_at": "",
+      "date_at": "${controllerr.Date_at}"
     }).then((value) {
       setState(() {
         themeAlert(context, "Submitted Successfully ");
-        Comman_Cate_Data();
+        CategoryData(limitData);
         Add_Category = false;
       });
     }).catchError(
@@ -402,7 +236,7 @@ class _CategoryAddState extends State<CategoryAdd> {
   var update_id;
   @override
   Widget build(BuildContext context) {
-    return (progressWidget == true)
+    return (controllerr.progressWidget == true)
         ? Center(child: pleaseWait(context))
         : Scaffold(
             body: Container(
@@ -443,7 +277,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                   onTap: () {
                     setState(() {
                       Add_Category = false;
-                      clearText();
+                      controllerr.clearText();
                     });
                   },
                   child: Row(
@@ -505,8 +339,11 @@ class _CategoryAddState extends State<CategoryAdd> {
                                           color: Colors.black,
                                           size: 15,
                                           fw: FontWeight.bold)),
-                                  Text_field(context, CategoryController,
-                                      "Category Name", "Enter Category Name"),
+                                  Text_field(
+                                      context,
+                                      controllerr.CategoryController,
+                                      "Category Name",
+                                      "Enter Category Name"),
                                 ],
                               )),
                               SizedBox(height: defaultPadding),
@@ -522,8 +359,11 @@ class _CategoryAddState extends State<CategoryAdd> {
                                             color: Colors.black,
                                             size: 15,
                                             fw: FontWeight.bold)),
-                                    Text_field(context, SlugUrlController,
-                                        "Slug Url", "Enter Slug Url"),
+                                    Text_field(
+                                        context,
+                                        controllerr.SlugUrlController,
+                                        "Slug Url",
+                                        "Enter Slug Url"),
                                   ],
                                 )),
                             ],
@@ -543,8 +383,11 @@ class _CategoryAddState extends State<CategoryAdd> {
                                         color: Colors.black,
                                         size: 15,
                                         fw: FontWeight.bold)),
-                                Text_field(context, SlugUrlController,
-                                    "Slug Url", "Enter Slug Url"),
+                                Text_field(
+                                    context,
+                                    controllerr.SlugUrlController,
+                                    "Slug Url",
+                                    "Enter Slug Url"),
                               ],
                             )),
                           ),
@@ -581,14 +424,14 @@ class _CategoryAddState extends State<CategoryAdd> {
                                         EdgeInsets.only(left: 10, right: 10),
                                     child: DropdownButton(
                                       dropdownColor: Colors.white,
-                                      hint: _StatusValue == null
+                                      hint: controllerr.StatusValue == null
                                           ? Text(
                                               'Select',
                                               style: TextStyle(
                                                   color: Colors.black),
                                             )
                                           : Text(
-                                              _StatusValue!,
+                                              controllerr.StatusValue!,
                                               style: TextStyle(
                                                   color: Color.fromARGB(
                                                       255, 1, 0, 0)),
@@ -614,7 +457,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                       onChanged: (val) {
                                         setState(
                                           () {
-                                            _StatusValue = val!;
+                                            controllerr.StatusValue = val!;
                                           },
                                         );
                                       },
@@ -633,7 +476,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                   children: [
                                     Container(
                                         child: Text(
-                                            "Parent Category ${_PerentCate}",
+                                            "Parent Category ${controllerr.PerentCate}",
                                             style: themeTextStyle(
                                                 color: Colors.black,
                                                 size: 15,
@@ -650,9 +493,10 @@ class _CategoryAddState extends State<CategoryAdd> {
                                           EdgeInsets.only(left: 10, right: 10),
                                       child: DropdownButton(
                                         dropdownColor: Colors.white,
-                                        value: Cate_Name_list.containsKey(
-                                                _PerentCate)
-                                            ? _PerentCate
+                                        value: controllerr.Cate_Name_list
+                                                .containsKey(
+                                                    controllerr.PerentCate)
+                                            ? controllerr.PerentCate
                                             : '',
                                         underline: Container(),
                                         isExpanded: true,
@@ -666,7 +510,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                                                 Color.fromARGB(255, 5, 8, 10)),
                                         items: [
                                           for (MapEntry<String, String> e
-                                              in Cate_Name_list.entries)
+                                              in controllerr
+                                                  .Cate_Name_list.entries)
                                             DropdownMenuItem(
                                               value: e.value,
                                               child: Text(e.key),
@@ -675,7 +520,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                         onChanged: (val) {
                                           setState(
                                             () {
-                                              _PerentCate = val!;
+                                              controllerr.PerentCate = val!;
                                             },
                                           );
                                         },
@@ -715,7 +560,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                         EdgeInsets.only(left: 10, right: 10),
                                     child: DropdownButton(
                                       dropdownColor: Colors.white,
-                                      value: _PerentCate,
+                                      value: controllerr.PerentCate,
                                       underline: Container(),
                                       isExpanded: true,
                                       icon: Icon(
@@ -727,7 +572,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                                           color: Color.fromARGB(255, 5, 8, 10)),
                                       items: [
                                         for (MapEntry<String, String> e
-                                            in Cate_Name_list.entries)
+                                            in controllerr
+                                                .Cate_Name_list.entries)
                                           DropdownMenuItem(
                                             value: e.value,
                                             child: Text(e.key),
@@ -736,7 +582,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                       onChanged: (val) {
                                         setState(
                                           () {
-                                            _PerentCate = val!;
+                                            controllerr.PerentCate = val!;
                                           },
                                         );
                                       },
@@ -771,7 +617,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      Comman_Cate_Data();
+                                      CategoryData(limitData);
                                       _ImageSelect_Alert(context);
                                     },
                                     child: Container(
@@ -791,7 +637,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  (url_img == null || url_img.isEmpty)
+                                  (controllerr.url_img == "")
                                       ? Row(
                                           children: [
                                             SizedBox(
@@ -837,9 +683,9 @@ class _CategoryAddState extends State<CategoryAdd> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      (url_img != null && url_img.isNotEmpty)
+                      (controllerr.url_img != "")
                           ? Image.network(
-                              url_img,
+                              controllerr.url_img,
                               height: 100,
                               width: 100,
                               fit: BoxFit.contain,
@@ -853,16 +699,18 @@ class _CategoryAddState extends State<CategoryAdd> {
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     themeButton3(context, () {
                       if (_formKey.currentState!.validate() &&
-                          url_img != null) {
+                          controllerr.url_img != null) {
                         setState(() async {
-                          cate_name = CategoryController.text;
-                          slug__url = SlugUrlController.text;
+                          controllerr.cate_name =
+                              controllerr.CategoryController.text;
+                          controllerr.slug__url =
+                              controllerr.SlugUrlController.text;
                           if (!kIsWeb && Platform.isWindows) {
                             await All_addList();
                           } else {
                             await addList();
                           }
-                          clearText();
+                          controllerr.clearText();
                         });
                       } else {
                         themeAlert(context, 'Image value required!',
@@ -874,7 +722,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                     ),
                     themeButton3(context, () {
                       setState(() {
-                        clearText();
+                        controllerr.clearText();
                       });
                     }, label: "Reset", buttonColor: Colors.black),
                     SizedBox(width: 20.0),
@@ -888,7 +736,7 @@ class _CategoryAddState extends State<CategoryAdd> {
   }
 
 ////////////////////////////// List ++++++++++++++++++++++++++++++++++++++++++++
-  var _number_select = 10;
+  var _number_select = 50;
   Widget listList(BuildContext context, sub_text) {
     return Container(
       height: MediaQuery.of(context).size.height,
@@ -912,89 +760,6 @@ class _CategoryAddState extends State<CategoryAdd> {
             ),
             child: Column(
               children: [
-                Container(
-                    padding: EdgeInsets.all(10),
-                    color: Theme.of(context).secondaryHeaderColor,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Category List",
-                              style: themeTextStyle(
-                                  fw: FontWeight.bold,
-                                  color: Colors.white,
-                                  size: 15),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "Show",
-                                  style: themeTextStyle(
-                                      fw: FontWeight.normal,
-                                      color: Colors.white,
-                                      size: 15),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 5),
-                                  padding: EdgeInsets.all(2),
-                                  height: 20,
-                                  color: Colors.white,
-                                  child: DropdownButton<int>(
-                                    dropdownColor: Colors.white,
-                                    iconEnabledColor: Colors.black,
-                                    hint: Text(
-                                      "$_number_select",
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 12),
-                                    ),
-                                    value: _number_select,
-                                    items:
-                                        <int>[10, 25, 50, 100].map((int value) {
-                                      return new DropdownMenuItem<int>(
-                                        value: value,
-                                        child: new Text(
-                                          value.toString(),
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newVal) {
-                                      setState(() {
-                                        _number_select = newVal!;
-                                      });
-                                    },
-                                    underline: SizedBox(),
-                                  ),
-                                ),
-                                Text(
-                                  "entries",
-                                  style: themeTextStyle(
-                                      fw: FontWeight.normal,
-                                      color: Colors.white,
-                                      size: 15),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                        Container(
-                            margin: EdgeInsets.symmetric(horizontal: 10),
-                            height: MediaQuery.of(context).size.height * 0.05,
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            child: SearchField())
-                      ],
-                    )),
-                SizedBox(
-                  height: 5,
-                ),
                 Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   border: TableBorder(
@@ -1082,42 +847,98 @@ class _CategoryAddState extends State<CategoryAdd> {
                                           fontWeight: FontWeight.bold)),
                                 ),
                               ]),
-                    for (var index = 0; index < StoreDocs.length; index++)
+                    for (var index = 0;
+                        index < controllerr.StoreDocs.length;
+                        index++)
                       (Responsive.isMobile(context))
                           ? tableRowWidget_mobile(
-                              "${StoreDocs[index]["image"]}",
-                              "${StoreDocs[index]["category_name"]}",
-                              "${StoreDocs[index]["parent_cate"]}",
-                              (StoreDocs[index]["status"] == "1")
+                              "${controllerr.StoreDocs[index]["image"]}",
+                              "${controllerr.StoreDocs[index]["category_name"]}",
+                              "${controllerr.StoreDocs[index]["parent_cate"]}",
+                              (controllerr.StoreDocs[index]["status"] == "1")
                                   ? "Active"
-                                  : (StoreDocs[index]["status"] == "2")
+                                  : (controllerr.StoreDocs[index]["status"] ==
+                                          "2")
                                       ? "Inactive"
                                       : "Select",
-                              "${StoreDocs[index]["date_at"]}",
-                              "${StoreDocs[index]["id"]}")
+                              "${controllerr.StoreDocs[index]["date_at"]}",
+                              "${controllerr.StoreDocs[index]["id"]}")
                           : tableRowWidget(
-                              "${index + 1}",
-                              "${StoreDocs[index]["image"]}",
-                              "${StoreDocs[index]["category_name"]}",
-                              "${StoreDocs[index]["parent_cate"]}",
-                              (StoreDocs[index]["status"] == "1")
-                                  ? "Active"
-                                  : (StoreDocs[index]["status"] == "2")
-                                      ? "Inactive"
-                                      : "Select",
-                              "${StoreDocs[index]["date_at"]}",
-                              "${StoreDocs[index]["id"]}"),
+                              "${index + 1}", controllerr.StoreDocs[index]),
                   ],
                 ),
               ],
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                color: Colors.black,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Show",
+                      style: themeTextStyle(
+                          fw: FontWeight.normal, color: Colors.white, size: 15),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10.0),
+                      padding: EdgeInsets.all(2),
+                      height: 20,
+                      color: Colors.white,
+                      child: DropdownButton<int>(
+                        dropdownColor: Colors.white,
+                        iconEnabledColor: Colors.black,
+                        hint: Text(
+                          "$_number_select",
+                          style: TextStyle(color: Colors.black, fontSize: 12),
+                        ),
+                        value: _number_select,
+                        items: <int>[50, 100, 150, 200].map((int value) {
+                          return DropdownMenuItem<int>(
+                            value: value,
+                            child: Text(
+                              "$value",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 12),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (newVal) {
+                          _number_select = newVal!;
+                          CategoryData(newVal);
+                        },
+                        underline: SizedBox(),
+                      ),
+                    ),
+                    Text(
+                      "entries",
+                      style: themeTextStyle(
+                          fw: FontWeight.normal, color: Colors.white, size: 15),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 100),
         ],
       ),
     );
   }
 
-  TableRow tableRowWidget(sno, Iimage, name, pName, status, date, iid) {
+  TableRow tableRowWidget(sno, data) {
+    var status = (data["status"] == "1")
+        ? "Active"
+        : (data["status"] == "2")
+            ? "Inactive"
+            : "Select";
+
     return TableRow(children: [
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -1138,13 +959,17 @@ class _CategoryAddState extends State<CategoryAdd> {
               height: 60,
               width: 60,
               child: Image(
-                  image: (Iimage != "null" && Iimage.isNotEmpty)
+                  image: (data["image"] != null)
                       ? NetworkImage(
-                          Iimage,
+                          data["image"],
                         )
-                      : NetworkImage(
-                          "https://shopnguyenlieumypham.com/wp-content/uploads/no-image/product-456x456.jpg",
-                        ),
+                      : (data["image"] == "")
+                          ? NetworkImage(
+                              "https://shopnguyenlieumypham.com/wp-content/uploads/no-image/product-456x456.jpg",
+                            )
+                          : NetworkImage(
+                              "https://shopnguyenlieumypham.com/wp-content/uploads/no-image/product-456x456.jpg",
+                            ),
                   fit: BoxFit.contain),
             )),
       ),
@@ -1152,26 +977,28 @@ class _CategoryAddState extends State<CategoryAdd> {
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text("$name",
+          child: Text("${data["category_name"]}",
               style: GoogleFonts.alike(
                   fontWeight: FontWeight.normal, fontSize: 11)),
         ),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$pName",
+        child: Text("${data["parent_cate"]}",
             style:
                 GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
         child: Text("$status",
-            style:
-                GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
+            style: GoogleFonts.alike(
+                fontWeight: FontWeight.normal,
+                fontSize: 11,
+                color: (status == "Active") ? Colors.green : Colors.red)),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text("$date",
+        child: Text("${data["date_at"]}",
             style:
                 GoogleFonts.alike(fontWeight: FontWeight.normal, fontSize: 11)),
       ),
@@ -1191,9 +1018,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                       onPressed: () {
                         setState(() {
                           updateWidget = true;
-                          update_id = iid;
-
-                          _Update_initial(iid);
+                          update_id = data["id"];
+                          _Update_initial(data["id"]);
                         });
                       },
                       icon: Icon(
@@ -1307,25 +1133,6 @@ class _CategoryAddState extends State<CategoryAdd> {
                                 color: Colors.blue,
                               )) ////
                           ),
-                      SizedBox(width: 10),
-                      Container(
-                          height: 30,
-                          width: 30,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
-                          ),
-                          child: IconButton(
-                              onPressed: () {
-                                showExitPopup(iid);
-                              },
-                              icon: Icon(
-                                Icons.delete_outline_outlined,
-                                size: 15,
-                                color: Colors.red,
-                              ))),
                     ],
                   )
                 ],
@@ -1364,7 +1171,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                   onTap: () {
                     setState(() {
                       updateWidget = false;
-                      clearText();
+                      controllerr.clearText();
                     });
                   },
                   child: Row(
@@ -1454,45 +1261,45 @@ class _CategoryAddState extends State<CategoryAdd> {
                                           ),
                                         ),
                                       )),
-                                  SizedBox(height: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    SizedBox(width: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    Container(
-                                        height: 40,
-                                        margin: EdgeInsets.only(
-                                            top: 10, bottom: 10, right: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: TextFormField(
-                                          initialValue: slugUrl,
-                                          autofocus: false,
-                                          onChanged: (value) => slugUrl = value,
-                                          // controller: ctr_name,
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Enter Slug Url";
-                                            }
-                                            return null;
-                                          },
-                                          style: TextStyle(color: Colors.black),
-                                          decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 15),
-                                            hintText: "Slug Url",
-                                            hintStyle: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 16,
-                                            ),
-                                          ),
-                                        )),
+                                  // SizedBox(height: defaultPadding),
+                                  // if (Responsive.isMobile(context))
+                                  //   SizedBox(width: defaultPadding),
+                                  // if (Responsive.isMobile(context))
+                                  //   Container(
+                                  //       height: 40,
+                                  //       margin: EdgeInsets.only(
+                                  //           top: 10, bottom: 10, right: 10),
+                                  //       decoration: BoxDecoration(
+                                  //         color: Colors.white,
+                                  //         borderRadius:
+                                  //             BorderRadius.circular(10),
+                                  //       ),
+                                  //       child: TextFormField(
+                                  //         initialValue: slugUrl,
+                                  //         autofocus: false,
+                                  //         onChanged: (value) => slugUrl = value,
+                                  //         // controller: ctr_name,
+                                  //         validator: (value) {
+                                  //           if (value == null ||
+                                  //               value.isEmpty) {
+                                  //             return "Enter Slug Url";
+                                  //           }
+                                  //           return null;
+                                  //         },
+                                  //         style: TextStyle(color: Colors.black),
+                                  //         decoration: InputDecoration(
+                                  //           border: InputBorder.none,
+                                  //           contentPadding:
+                                  //               EdgeInsets.symmetric(
+                                  //                   horizontal: 20,
+                                  //                   vertical: 15),
+                                  //           hintText: "Slug Url",
+                                  //           hintStyle: TextStyle(
+                                  //             color: Colors.grey,
+                                  //             fontSize: 16,
+                                  //           ),
+                                  //         ),
+                                  //       )),
                                 ],
                               ),
                             ),
@@ -1583,14 +1390,15 @@ class _CategoryAddState extends State<CategoryAdd> {
                                               left: 10, right: 10),
                                           child: DropdownButton(
                                             dropdownColor: Colors.white,
-                                            hint: _StatusValue == null
+                                            hint: controllerr.StatusValue ==
+                                                    null
                                                 ? Text(
                                                     'Select',
                                                     style: TextStyle(
                                                         color: Colors.black),
                                                   )
                                                 : Text(
-                                                    _StatusValue!,
+                                                    controllerr.StatusValue!,
                                                     style: TextStyle(
                                                         color: Colors.black),
                                                   ),
@@ -1619,7 +1427,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                                             onChanged: (val) {
                                               setState(
                                                 () {
-                                                  _StatusValue = val!;
+                                                  controllerr.StatusValue =
+                                                      val!;
                                                 },
                                               );
                                             },
@@ -1630,85 +1439,85 @@ class _CategoryAddState extends State<CategoryAdd> {
                                   ),
 
                                   // Text_field(context,"category_name","Category Name","Enter Category Name"),
-                                  SizedBox(height: defaultPadding),
-                                  if (Responsive.isMobile(context))
-                                    SizedBox(width: defaultPadding),
-                                  if (Responsive.isMobile(context))
+                                  // SizedBox(height: defaultPadding),
+                                  // if (Responsive.isMobile(context))
+                                  //   SizedBox(width: defaultPadding),
+                                  // if (Responsive.isMobile(context))
 
-                                    //   Text_field(context,"slug_url","Slug Url","Enter Slug Url"),
+                                  //   Text_field(context,"slug_url","Slug Url","Enter Slug Url"),
 
-                                    // Container(
-                                    //   child: Column(
-                                    //     crossAxisAlignment:
-                                    //         CrossAxisAlignment.start,
-                                    //     children: [
-                                    //       Container(
-                                    //           child: Text("Parent Category",
-                                    //               style: themeTextStyle(
-                                    //                   color: Colors.black,
-                                    //                   size: 15,
-                                    //                   fw: FontWeight.bold))),
-                                    //       Container(
-                                    //         height: 40,
-                                    //         margin: EdgeInsets.only(
-                                    //             top: 10, bottom: 10, right: 10),
-                                    //         decoration: BoxDecoration(
-                                    //           color: Colors.white,
-                                    //           borderRadius:
-                                    //               BorderRadius.circular(10),
-                                    //         ),
-                                    //         padding: EdgeInsets.only(
-                                    //             left: 10, right: 10),
-                                    //         child: DropdownButton(
-                                    //           dropdownColor: Colors.white,
-                                    //           hint: _dropDownValue == null
-                                    //               ? Text(
-                                    //                   'select',
-                                    //                   style: TextStyle(
-                                    //                       color: Colors.black),
-                                    //                 )
-                                    //               : Text(
-                                    //                   _dropDownValue!,
-                                    //                   style: TextStyle(
-                                    //                       color: Colors.black),
-                                    //                 ),
-                                    //           underline: Container(),
-                                    //           isExpanded: true,
-                                    //           icon: Icon(
-                                    //             Icons.arrow_drop_down,
-                                    //             color: Colors.black,
-                                    //           ),
-                                    //           iconSize: 35,
-                                    //           style: TextStyle(
-                                    //               color: Color.fromARGB(
-                                    //                   255, 1, 1, 2)),
-                                    //           items: [
-                                    //             'Select',
-                                    //             'One',
-                                    //             'Two',
-                                    //             'Three'
-                                    //           ].map(
-                                    //             (val) {
-                                    //               return DropdownMenuItem<
-                                    //                   String>(
-                                    //                 value: val,
-                                    //                 child: Text(val),
-                                    //               );
-                                    //             },
-                                    //           ).toList(),
-                                    //           onChanged: (val) {
-                                    //             setState(
-                                    //               () {
-                                    //                 _dropDownValue = val!;
-                                    //               },
-                                    //             );
-                                    //           },
-                                    //         ),
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // )
-                                    SizedBox()
+                                  // Container(
+                                  //   child: Column(
+                                  //     crossAxisAlignment:
+                                  //         CrossAxisAlignment.start,
+                                  //     children: [
+                                  //       Container(
+                                  //           child: Text("Parent Category",
+                                  //               style: themeTextStyle(
+                                  //                   color: Colors.black,
+                                  //                   size: 15,
+                                  //                   fw: FontWeight.bold))),
+                                  //       Container(
+                                  //         height: 40,
+                                  //         margin: EdgeInsets.only(
+                                  //             top: 10, bottom: 10, right: 10),
+                                  //         decoration: BoxDecoration(
+                                  //           color: Colors.white,
+                                  //           borderRadius:
+                                  //               BorderRadius.circular(10),
+                                  //         ),
+                                  //         padding: EdgeInsets.only(
+                                  //             left: 10, right: 10),
+                                  //         child: DropdownButton(
+                                  //           dropdownColor: Colors.white,
+                                  //           hint: _dropDownValue == null
+                                  //               ? Text(
+                                  //                   'select',
+                                  //                   style: TextStyle(
+                                  //                       color: Colors.black),
+                                  //                 )
+                                  //               : Text(
+                                  //                   _dropDownValue!,
+                                  //                   style: TextStyle(
+                                  //                       color: Colors.black),
+                                  //                 ),
+                                  //           underline: Container(),
+                                  //           isExpanded: true,
+                                  //           icon: Icon(
+                                  //             Icons.arrow_drop_down,
+                                  //             color: Colors.black,
+                                  //           ),
+                                  //           iconSize: 35,
+                                  //           style: TextStyle(
+                                  //               color: Color.fromARGB(
+                                  //                   255, 1, 1, 2)),
+                                  //           items: [
+                                  //             'Select',
+                                  //             'One',
+                                  //             'Two',
+                                  //             'Three'
+                                  //           ].map(
+                                  //             (val) {
+                                  //               return DropdownMenuItem<
+                                  //                   String>(
+                                  //                 value: val,
+                                  //                 child: Text(val),
+                                  //               );
+                                  //             },
+                                  //           ).toList(),
+                                  //           onChanged: (val) {
+                                  //             setState(
+                                  //               () {
+                                  //                 _dropDownValue = val!;
+                                  //               },
+                                  //             );
+                                  //           },
+                                  //         ),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // )
+                                  SizedBox()
                                 ],
                               ),
                             ),
@@ -1742,9 +1551,10 @@ class _CategoryAddState extends State<CategoryAdd> {
                                               left: 10, right: 10),
                                           child: DropdownButton(
                                             dropdownColor: Colors.white,
-                                            value: Cate_Name_list.containsKey(
-                                                    _PerentCate)
-                                                ? _PerentCate
+                                            value: controllerr.Cate_Name_list
+                                                    .containsKey(
+                                                        controllerr.PerentCate)
+                                                ? controllerr.PerentCate
                                                 : '',
                                             underline: Container(),
                                             isExpanded: true,
@@ -1758,7 +1568,8 @@ class _CategoryAddState extends State<CategoryAdd> {
                                                     255, 5, 8, 10)),
                                             items: [
                                               for (MapEntry<String, String> e
-                                                  in Cate_Name_list.entries)
+                                                  in controllerr
+                                                      .Cate_Name_list.entries)
                                                 DropdownMenuItem(
                                                   value: e.value,
                                                   child: Text(e.key),
@@ -1767,7 +1578,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                             onChanged: (val) {
                                               setState(
                                                 () {
-                                                  _PerentCate = val!;
+                                                  controllerr.PerentCate = val!;
                                                 },
                                               );
                                             },
@@ -1778,7 +1589,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                   )),
                           ],
                         ),
-                        (url_img == null && image == "null")
+                        (controllerr.url_img == "" && image == "null")
                             ? SizedBox()
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -1789,14 +1600,14 @@ class _CategoryAddState extends State<CategoryAdd> {
                                       width: 100,
                                       child: Column(
                                         children: [
-                                          (url_img == null || url_img.isEmpty)
+                                          (controllerr.url_img == "")
                                               ? Image.network(
                                                   "$image",
                                                   height: 100,
                                                   fit: BoxFit.contain,
                                                 )
                                               : Image.network(
-                                                  url_img,
+                                                  controllerr.url_img,
                                                   height: 100,
                                                   fit: BoxFit.contain,
                                                 ),
@@ -1850,7 +1661,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                       children: [
                                         GestureDetector(
                                           onTap: () {
-                                            Comman_Cate_Data();
+                                            CategoryData(limitData);
                                             _ImageSelect_Alert(context);
                                           },
                                           child: Container(
@@ -1869,7 +1680,7 @@ class _CategoryAddState extends State<CategoryAdd> {
                                         SizedBox(
                                           height: 10,
                                         ),
-                                        (url_img == null || url_img.isEmpty)
+                                        (controllerr.url_img == "")
                                             ? Row(
                                                 children: [
                                                   SizedBox(
@@ -1927,11 +1738,11 @@ class _CategoryAddState extends State<CategoryAdd> {
                                       id,
                                       Catename,
                                       slugUrl,
-                                      _StatusValue,
-                                      _PerentCate,
-                                      (url_img == null || url_img.isEmpty)
+                                      controllerr.StatusValue,
+                                      controllerr.PerentCate,
+                                      (controllerr.url_img == "")
                                           ? image
-                                          : url_img);
+                                          : controllerr.url_img);
                                 });
                               }, buttonColor: Colors.blue, label: "Update"),
                               SizedBox(height: 20.0),
@@ -2043,13 +1854,13 @@ class _CategoryAddState extends State<CategoryAdd> {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
         ),
-        itemCount: _Storage_image_List.length,
+        itemCount: controllerr.Storage_image_List.length,
         itemBuilder: (_, index) => Container(
             margin: EdgeInsets.all(10),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               image: DecorationImage(
-                image: NetworkImage('${_Storage_image_List[index]}'),
+                image: NetworkImage('${controllerr.Storage_image_List[index]}'),
                 fit: BoxFit.contain,
               ),
             ),
@@ -2058,24 +1869,28 @@ class _CategoryAddState extends State<CategoryAdd> {
               checkColor: Colors.white,
               activeColor: Colors.green,
               side: BorderSide(width: 2, color: Colors.red),
-              value: _selectedOptions.contains(_Storage_image_List[index]),
+              value: _selectedOptions
+                  .contains(controllerr.Storage_image_List[index]),
               onChanged: (value) {
                 setState(() {
                   if (value != null && _selectedOptions.isEmpty) {
                     setState(() {
-                      _selectedOptions.add(_Storage_image_List[index]);
-                      url_img = _selectedOptions[0];
+                      _selectedOptions
+                          .add(controllerr.Storage_image_List[index]);
+                      controllerr.url_img = _selectedOptions[0];
                       Navigator.pop(context);
                     });
                   } else if (_selectedOptions != null &&
                       _selectedOptions.isNotEmpty) {
                     setState(() {
-                      _selectedOptions[0] = "${_Storage_image_List[index]}";
-                      url_img = _selectedOptions[0];
+                      _selectedOptions[0] =
+                          "${controllerr.Storage_image_List[index]}";
+                      controllerr.url_img = _selectedOptions[0];
                       Navigator.pop(context);
                     });
                   } else {
-                    _selectedOptions.remove(_Storage_image_List[index]);
+                    _selectedOptions
+                        .remove(controllerr.Storage_image_List[index]);
                   }
                 });
               },
@@ -2094,13 +1909,13 @@ class _CategoryAddState extends State<CategoryAdd> {
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
         ),
-        itemCount: _Storage_image_List.length, // <-- required
+        itemCount: controllerr.Storage_image_List.length, // <-- required
         itemBuilder: (_, index) => Container(
             margin: EdgeInsets.all(10),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               image: DecorationImage(
-                image: NetworkImage('${_Storage_image_List[index]}'),
+                image: NetworkImage('${controllerr.Storage_image_List[index]}'),
                 fit: BoxFit.contain,
               ),
             ),
@@ -2108,24 +1923,28 @@ class _CategoryAddState extends State<CategoryAdd> {
               checkColor: Colors.white,
               activeColor: Colors.green,
               side: BorderSide(width: 2, color: Colors.red),
-              value: _selectedOptions.contains(_Storage_image_List[index]),
+              value: _selectedOptions
+                  .contains(controllerr.Storage_image_List[index]),
               onChanged: (value) {
                 setState(() {
                   if (value != null && _selectedOptions.isEmpty) {
                     setState(() {
-                      _selectedOptions.add(_Storage_image_List[index]);
-                      url_img = _selectedOptions[0];
+                      _selectedOptions
+                          .add(controllerr.Storage_image_List[index]);
+                      controllerr.url_img = _selectedOptions[0];
                       Navigator.pop(context);
                     });
                   } else if (_selectedOptions != null &&
                       _selectedOptions.isNotEmpty) {
                     setState(() {
-                      _selectedOptions[0] = "${_Storage_image_List[index]}";
-                      url_img = _selectedOptions[0];
+                      _selectedOptions[0] =
+                          "${controllerr.Storage_image_List[index]}";
+                      controllerr.url_img = _selectedOptions[0];
                       Navigator.pop(context);
                     });
                   } else {
-                    _selectedOptions.remove(_Storage_image_List[index]);
+                    _selectedOptions
+                        .remove(controllerr.Storage_image_List[index]);
                   }
                 });
               },
@@ -2135,8 +1954,29 @@ class _CategoryAddState extends State<CategoryAdd> {
   }
 //////////
 
-///////  Text_field 22 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  ///
+  //////////
+  Slug_gen(String text) {
+    var listtt = [];
+    var slus_string = "";
+    String slug = SlugIT().makeSlug(text);
+
+    for (var index = 0; index < controllerr.StoreDocs.length; index++) {
+      listtt.add("${controllerr.StoreDocs[index]['slug_url']}");
+    }
+
+    slus_string = slug;
+    if (listtt.contains("$slus_string")) {
+      setState(() {
+        controllerr.SlugUrlController.text = "$slus_string${listtt.length}";
+      });
+    } else {
+      setState(() {
+        controllerr.SlugUrlController.text = slus_string;
+      });
+    }
+  }
+
+/////
   Widget Text_field(BuildContext context, ctr_name, lebel, hint) {
     return Container(
         height: 40,
@@ -2147,7 +1987,7 @@ class _CategoryAddState extends State<CategoryAdd> {
         ),
         child: TextFormField(
           controller: ctr_name,
-          onChanged: (ctr_name == CategoryController)
+          onChanged: (ctr_name == controllerr.CategoryController)
               ? (value) {
                   Slug_gen("$value");
                 }
@@ -2170,96 +2010,8 @@ class _CategoryAddState extends State<CategoryAdd> {
           ),
         ));
   }
-///////////
 
-  Future<bool> showExitPopup(iid_delete) async {
-    return await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: Colors.white,
-            title: Row(
-              children: [
-                Icon(
-                  Icons.delete_forever_outlined,
-                  color: Colors.red,
-                  size: 35,
-                ),
-                SizedBox(
-                  width: 10.0,
-                ),
-                Text(
-                  'CRM App says',
-                  style: themeTextStyle(
-                      size: 20.0,
-                      ftFamily: 'ms',
-                      fw: FontWeight.bold,
-                      color: themeBG2),
-                ),
-              ],
-            ),
-            content: Text(
-              'Are you sure to delete this Categorys ?',
-              style: themeTextStyle(
-                  size: 16.0,
-                  ftFamily: 'ms',
-                  fw: FontWeight.normal,
-                  color: Colors.black87),
-            ),
-            actions: [
-              Container(
-                height: 30,
-                width: 60,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                child: TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(
-                    'No',
-                    style: themeTextStyle(
-                        size: 16.0,
-                        ftFamily: 'ms',
-                        fw: FontWeight.normal,
-                        color: Colors.red),
-                  ),
-                ),
-              ),
-              Container(
-                height: 30,
-                width: 60,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                child: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      if (kIsWeb) {
-                        deleteUser(iid_delete);
-                      } else if (!kIsWeb) {
-                        All_deleteUser(iid_delete);
-                      }
-                      Navigator.of(context).pop(false);
-                    });
-                  },
-                  child: Text(
-                    'Yes',
-                    style: themeTextStyle(
-                        size: 16.0,
-                        ftFamily: 'ms',
-                        fw: FontWeight.normal,
-                        color: themeBG4),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ) ??
-        false; //if showDialouge had returned null, then return false
-  }
+  ///
 }
 
 /// Class CLose

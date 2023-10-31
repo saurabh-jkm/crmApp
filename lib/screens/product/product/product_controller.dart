@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps, non_constant_identifier_names
+// ignore_for_file: unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps, non_constant_identifier_names, unused_local_variable
 
 import 'package:crm_demo/screens/product/product/add_product_screen.dart';
 
@@ -81,6 +81,24 @@ class ProductController {
 
   int totalLocation = 1;
   int totalProduct = 1;
+
+///////// Product List   ++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
+  bool progressWidget = true;
+  List finalProductList = [];
+  List productList = [];
+  Pro_Data(int limitData) async {
+    productList = [];
+    Map<dynamic, dynamic> w = {
+      'table': "product",
+      "orderBy": "-date_at",
+      "limit": limitData
+    };
+    var temp = await dbFindDynamic(db, w);
+    return temp;
+  }
+
+  ///  ===========================================================================
 
   //init controller ==========================================
   init_functions({data: ''}) async {
