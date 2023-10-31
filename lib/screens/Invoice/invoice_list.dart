@@ -467,17 +467,17 @@ class _Invoice_ListState extends State<Invoice_List> {
   }
 
 ///////////////////////////////////////////////
+  // int countCommas(String input) {
+  //   List<String> commaList = input.split(',');
+  //   print("${commaList.length}   +++++++++++++++++++++");
+  //   return commaList.length - 1;
+  // }
 
   tableRowWidget(String index, edata, {dbData: ''}) {
-    // controllerr.OrderList[index]['id'],
-    //                   controllerr.OrderList[index]['customer_name'],
-    //                   controllerr.OrderList[index]['mobile'],
-    //                   controllerr.OrderList[index]['total'],
-    //                   controllerr.OrderList[index]['status'],
-    //                   controllerr.OrderList[index]['date_at'],
-
     var statuss = statusOF(edata['status']);
     var productTitle = edata['title'];
+    // countCommas(productTitle);
+
     final formattedDate =
         (edata['invoice_date'] != null && edata['invoice_date'] != '')
             ? edata['invoice_date']
@@ -498,122 +498,146 @@ class _Invoice_ListState extends State<Invoice_List> {
     var subList = {};
     if (productList.length > 1) {
       subList = productList;
+
+      // print("${subList}   ++++++++++++++++++ ");
     }
+
 //////////////////// ++++++++++++++++++++++++++++++++++++++++++++++
     return Column(children: [
       //for
-      Container(
-          decoration: BoxDecoration(
-              color: (matchString(type, 'Buy')) ? themeBG6 : themeBG5,
-              border:
-                  Border(bottom: BorderSide(width: 3.0, color: Colors.white))),
-          child: Row(children: [
-            Container(
-              width: tableColum[1],
-              child: Text(index, style: textStyle3),
-            ),
-            Container(
-              width: tableColum[2],
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
+
+      GestureDetector(
+        onTap: () {
+          setState(() {
+            if (subProduct["$index"] == true) {
+              subProduct["$index"] = false;
+            } else {
+              subProduct["$index"] = true;
+            }
+          });
+        },
+        child: Container(
+            decoration: BoxDecoration(
+                color: (matchString(type, 'Buy')) ? themeBG6 : themeBG5,
+                border: Border(
+                    bottom: BorderSide(width: 3.0, color: Colors.white))),
+            child: Row(children: [
+              Container(
+                width: tableColum[1],
+                child: Text(index, style: textStyle3),
+              ),
+              Container(
+                width: tableColum[2],
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text(
+                      "${edata['sr_no'] == null ? edata["id"] : edata['sr_no']}",
+                      style: textStyle3),
+                ),
+              ),
+              Container(
+                width: tableColum[3],
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Container(child: Text("${type}", style: textStyle3)),
+                ),
+              ),
+              Container(
+                //verticalAlignment: TableCellVerticalAlignment.middle,
+                width: tableColum[4],
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Container(
+                      child: Text(
+                    "${productTitle}",
+                    style: textStyle3,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  )),
+                ),
+              ),
+              Container(
+                width: tableColum[5],
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text('${edata["customer_name"]}', style: textStyle3),
+                ),
+              ),
+              Container(
+                width: tableColum[6],
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text('${edata["mobile"]}', style: textStyle3),
+                ),
+              ),
+              Container(
+                width: tableColum[7],
                 child: Text(
-                    "${edata['sr_no'] == null ? edata["id"] : edata['sr_no']}",
+                    (edata['quantity'] != null) ? "${edata['quantity']}" : "-",
                     style: textStyle3),
               ),
-            ),
-            Container(
-              width: tableColum[3],
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Container(child: Text("${type}", style: textStyle3)),
+              Container(
+                width: tableColum[8],
+                child: Text((edata['unit'] != null) ? "${edata['unit']}" : "-",
+                    style: textStyle3),
               ),
-            ),
-            Container(
-              //verticalAlignment: TableCellVerticalAlignment.middle,
-              width: tableColum[4],
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Container(
-                    child: Text("${productTitle}", style: textStyle3)),
+              Container(
+                width: tableColum[9],
+                child: Text(
+                    (edata['total'] != null) ? "${edata['total']}" : "-",
+                    style: textStyle3),
               ),
-            ),
-            Container(
-              width: tableColum[5],
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Text('${edata["customer_name"]}', style: textStyle3),
+              Container(
+                width: tableColum[9],
+                child: Text(
+                    (edata['balance'] != null) ? "${edata['balance']}" : "-",
+                    style: textStyle3),
               ),
-            ),
-            Container(
-              width: tableColum[6],
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Text('${edata["mobile"]}', style: textStyle3),
+              // Container(
+              //   width: tableColum[10],
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(10.0),
+              //     child: Container(
+              //         margin: EdgeInsets.only(right: 20),
+              //         height: 25,
+              //         alignment: Alignment.center,
+              //         child: Text("$statuss",
+              //             style: GoogleFonts.alike(
+              //                 color: (statuss == "Active")
+              //                     ? Color.fromARGB(255, 10, 103, 139)
+              //                     : const Color.fromARGB(255, 141, 28, 20),
+              //                 fontSize: 12.5))),
+              //   ),
+              // ),
+              Container(
+                width: tableColum[11],
+                child: Text("$formattedDate", style: textStyle3),
               ),
-            ),
-            Container(
-              width: tableColum[7],
-              child: Text(
-                  (edata['quantity'] != null) ? "${edata['quantity']}" : "-",
-                  style: textStyle3),
-            ),
-            Container(
-              width: tableColum[8],
-              child: Text((edata['unit'] != null) ? "${edata['unit']}" : "-",
-                  style: textStyle3),
-            ),
-            Container(
-              width: tableColum[9],
-              child: Text((edata['total'] != null) ? "${edata['total']}" : "-",
-                  style: textStyle3),
-            ),
-            Container(
-              width: tableColum[9],
-              child: Text(
-                  (edata['balance'] != null) ? "${edata['balance']}" : "-",
-                  style: textStyle3),
-            ),
-            // Container(
-            //   width: tableColum[10],
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(10.0),
-            //     child: Container(
-            //         margin: EdgeInsets.only(right: 20),
-            //         height: 25,
-            //         alignment: Alignment.center,
-            //         child: Text("$statuss",
-            //             style: GoogleFonts.alike(
-            //                 color: (statuss == "Active")
-            //                     ? Color.fromARGB(255, 10, 103, 139)
-            //                     : const Color.fromARGB(255, 141, 28, 20),
-            //                 fontSize: 12.5))),
-            //   ),
-            // ),
-            Container(
-              width: tableColum[11],
-              child: Text("$formattedDate", style: textStyle3),
-            ),
-            Container(
-              width: tableColum[12],
-              child: RowFor_Mobile_web(context, () async {
-                final data = await InvoiceService(
-                  PriceDetail: edata,
-                ).createInvoice();
-                // final data = await service.createInvoice();
-                await savePdfFile("invoice", data, edata);
-              }, () {
-                setState(() {
-                  viewInvoice(edata);
-                });
-              }, dbData: dbData),
-            ),
-          ])),
+              Container(
+                width: tableColum[12],
+                child: RowFor_Mobile_web(context, () async {
+                  final data = await InvoiceService(
+                    PriceDetail: edata,
+                  ).createInvoice();
+                  // final data = await service.createInvoice();
+                  await savePdfFile("invoice", data, edata);
+                }, () {
+                  setState(() {
+                    viewInvoice(edata);
+                  });
+                }, dbData: dbData),
+              ),
+            ])),
+      ),
 
       for (var k in subList.keys)
-        tableSubRow(context, k, subList[k], tableColum)
+        (subProduct["$index"] == true)
+            ? tableSubRow(context, k, subList[k], tableColum)
+            : SizedBox()
     ]);
   }
 
+  var subProduct = {};
 /////////////////////////////////////  Row GOt Action Button  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   ///
 
