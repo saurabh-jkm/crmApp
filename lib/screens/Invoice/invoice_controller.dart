@@ -529,7 +529,7 @@ class invoiceController extends updateController {
 
   // update product quantity
   var oldSubProduct = {};
-  fn_update_product_qnt(docId, i, liveData, instData) async {
+  fn_sales_update_product_qnt(docId, i, liveData, instData) async {
     var k = i - 1;
     i = (liveData['list_item_id'] != null) ? liveData['list_item_id'] : i;
     var NewLog = {};
@@ -700,7 +700,7 @@ class invoiceController extends updateController {
 // ***************************************************************
 // ***************************************************************
 
-  insertInvoiceDetails(context, {docId: ''}) async {
+  insertInvoiceDetails(context, {docId: '', updateType: ''}) async {
     var alert = '';
     if (Customer_nameController.text.length < 4) {
       alert = "Valid Customer Name  Required !!";
@@ -817,10 +817,10 @@ class invoiceController extends updateController {
 
     //product quntity calculate with product table ==============
 
-    Future<void> callUpdateFn() async {
+    Future<void> sales_callUpdateProductFn() async {
       for (var k in productDBdata.keys) {
-        var Newlog =
-            await fn_update_product_qnt(docId, k, productDBdata[k], products);
+        var Newlog = await fn_sales_update_product_qnt(
+            docId, k, productDBdata[k], products);
 
         if (Newlog.isNotEmpty) {
           var tempTotalInnerItem =
@@ -838,11 +838,17 @@ class invoiceController extends updateController {
     // update stok functions
 
     if (dbArr['type'] == 'Sale') {
-      await callUpdateFn();
+      if (docId != '') {
+        await SalesStockEdit(products, productEditOldData, productDBdata,
+            editId: docId);
+      } else {
+        await SalesStockEdit(products, productEditOldData, productDBdata);
+      }
     } else {
       // this is for Supplier Log manage ====================
       if (docId != '') {
         await supplierStockEdit(products, productEditOldData, productDBdata);
+
         // when edit
         // var tempProduct = products;
         // tempProduct.forEach((k, v) {
@@ -1444,4 +1450,150 @@ class invoiceController extends updateController {
       i++;
     }
   }
+
+  // Sales stock & Edit update check ================================
+  SalesStockEdit(products, oldData, inputDataDbData, {editId: ''}) async {
+    var i = 1;
+    for (var k in products.keys) {
+      var product = products[k];
+      await comanQntCalculate(product, oldData);
+      i++;
+    }
+
+    // for edit =======================================================
+    // check if delete some product
+    if (editId != '') {
+      var deletedArr = {};
+      oldData.forEach((k, v) {
+        deletedArr[k] = v;
+      });
+
+      // product foreach
+      products.forEach((k, v) {
+        if (deletedArr[v['id']] != null) {
+          var tempDel = deletedArr[v['id']];
+          tempDel.remove(v['list_item_id']);
+          deletedArr[v['id']] = tempDel;
+        }
+      });
+
+      for (var key in deletedArr.keys) {
+        var val = deletedArr[key];
+
+        if (val.isNotEmpty) {
+          for (var ke in val.keys) {
+            var tempVal = val[ke];
+            var tempArr = {
+              'name': '${tempVal['name']}',
+              'unit': '${tempVal['unit']}',
+              'total': '${tempVal['total']}',
+              'quantity': '0',
+              'price': '${tempVal['price']}',
+              'subtotal': '${tempVal['subtotal']}',
+              'list_item_id': '${tempVal['list_item_id']}',
+              'gst_per': '${tempVal['gst_per']}',
+              'discount': '${tempVal['discount']}',
+              'gst': '${tempVal['gst']}',
+              'id': '${tempVal['id']}',
+            };
+
+            await comanQntCalculate(tempArr, oldData);
+          }
+        }
+      }
+    } // end if condiiton
+  }
+
+  // comman quantity calculate
+  comanQntCalculate(product, oldData) async {
+    // check if the product exist in stock
+    if (product['id'] == null || product['id'] == '') {
+      // call insert function new product ===============================
+      // var updateProduct = {k: product};
+      // await updateStock(updateProduct);
+
+      // TODO for sales
+      // check if product is not in old data ============================
+    } else if (oldData[product['id']] == null ||
+        oldData[product['id']]['${product['list_item_id']}'] == null) {
+      // already added product ad new in this invoice ===============
+      var li = product['list_item_id'];
+      var dbProduct = await dbFind({'table': 'product', 'id': product['id']});
+      var listProduct = dbProduct['item_list'];
+      var subProduct = listProduct['$li'];
+      var oldSubProductQ;
+      var dbSubQnt =
+          oldSubProductQ = int.parse(subProduct['quantity'].toString());
+      //var dbSubUnit = int.parse(subProduct['totalUnit'].toString());
+      var dbMainQnt = int.parse(dbProduct['quantity'].toString());
+
+      // then increase db data
+      var qnt = int.parse(product['quantity'].toString());
+      dbSubQnt -= qnt;
+      dbMainQnt -= qnt;
+
+      // update quantity
+      subProduct['quantity'] = dbSubQnt;
+      dbProduct['quantity'] = dbMainQnt;
+      listProduct['$li'] = subProduct;
+      dbProduct['item_list'] = listProduct;
+
+      // update stock db
+      dbProduct['table'] = 'product';
+      dbProduct['id'] = product['id'];
+      await dbUpdate(db, dbProduct);
+
+      await updateProductLog(
+          product['id'], dbProduct, listProduct, oldSubProductQ, li, dbProduct,
+          logType:
+              " - Update Supplier - ${Customer_nameController.text} - Invoice");
+    } else {
+      var li = product['list_item_id'];
+      // old order calculate quantity & units
+      var dbProduct = await dbFind({'table': 'product', 'id': product['id']});
+      var oldVar = oldData[product['id']]['${product['list_item_id']}'];
+
+      var listProduct = dbProduct['item_list'];
+      var oldSubProductQ;
+      var subProduct = listProduct['$li'];
+      var dbSubQnt =
+          oldSubProductQ = int.parse(subProduct['quantity'].toString());
+      //var dbSubUnit = int.parse(subProduct['totalUnit'].toString());
+      var dbMainQnt = int.parse(dbProduct['quantity'].toString());
+
+      if (oldVar['quantity'] != product['quantity']) {
+        if (int.parse(oldVar['quantity'].toString()) >
+            int.parse(product['quantity'].toString())) {
+          // return some data
+          var qnt = int.parse(oldVar['quantity'].toString()) -
+              int.parse(product['quantity'].toString());
+          dbSubQnt += qnt;
+          dbMainQnt += qnt;
+        } else {
+          // add some data
+          var qnt = int.parse(product['quantity'].toString()) -
+              int.parse(oldVar['quantity'].toString());
+          print("uyess===================>$dbMainQnt + $qnt ");
+          dbSubQnt -= qnt;
+          dbMainQnt -= qnt;
+        }
+
+        // update quantity
+        subProduct['quantity'] = dbSubQnt;
+        dbProduct['quantity'] = dbMainQnt;
+        listProduct['$li'] = subProduct;
+        dbProduct['item_list'] = listProduct;
+
+        // update stock db
+        dbProduct['table'] = 'product';
+        dbProduct['id'] = product['id'];
+        await dbUpdate(db, dbProduct);
+
+        await updateProductLog(product['id'], dbProduct, listProduct,
+            oldSubProductQ, li, dbProduct,
+            logType: "Sale Invoice ${Customer_nameController.text}");
+      }
+    }
+    return true;
+  } // end fn
 }
