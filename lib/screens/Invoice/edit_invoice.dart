@@ -400,7 +400,8 @@ class _editInvoiceState extends State<editInvoice> {
                                         onPressed: () async {
                                           controller.insertInvoiceDetails(
                                               context,
-                                              docId: widget.data['id']);
+                                              docId: widget.data['id'],
+                                              updateType: 'sale_invoice');
                                           //setState(() {});
                                         },
                                         child: Text('Update')),

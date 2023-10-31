@@ -55,9 +55,7 @@ dependencies:
 # Invoice pdf generator ==========================
   pdf: ^3.8.2
   path_provider: ^2.0.5
-
   url_strategy: ^0.2.0
-
   photo_view: ^0.14.0
   
   
