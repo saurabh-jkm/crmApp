@@ -696,27 +696,27 @@ class ProductController {
         Navigator.pop(context, 'updated');
       }
 
-      if (e.isKeyPressed(LogicalKeyboardKey.keyD) ||
-          e.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-        Keys.add(key);
-      }
-      // ctr + D OR C => addnewproduct
-      if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
-          (Keys.contains(LogicalKeyboardKey.keyD) ||
-              Keys.contains(LogicalKeyboardKey.keyC))) {
-        fnAddNewProduct(context);
+      // if (e.isKeyPressed(LogicalKeyboardKey.keyD) ||
+      //     e.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
+      //   Keys.add(key);
+      // }
+      // // ctr + D OR C => addnewproduct
+      // if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
+      //     (Keys.contains(LogicalKeyboardKey.keyD) ||
+      //         Keys.contains(LogicalKeyboardKey.keyC))) {
+      //   fnAddNewProduct(context);
 
-        Keys = [];
-        return true;
-      }
-      // ctr + R OR X => RemoveProduct
-      if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
-          (Keys.contains(LogicalKeyboardKey.keyR) ||
-              Keys.contains(LogicalKeyboardKey.keyX))) {
-        fnRemoveProduct(context);
-        Keys = [];
-        return true;
-      }
+      //   Keys = [];
+      //   return true;
+      // }
+      // // ctr + R OR X => RemoveProduct
+      // if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
+      //     (Keys.contains(LogicalKeyboardKey.keyR) ||
+      //         Keys.contains(LogicalKeyboardKey.keyX))) {
+      //   fnRemoveProduct(context);
+      //   Keys = [];
+      //   return true;
+      // }
     } else {
       Keys.remove(key);
     }
