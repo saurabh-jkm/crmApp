@@ -562,7 +562,7 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                                         padding: EdgeInsets.all(2),
                                         width: 180,
                                         alignment: Alignment.center,
-                                        child: Text("Blance",
+                                        child: Text("Balance",
                                             style: TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold,
