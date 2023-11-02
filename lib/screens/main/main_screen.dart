@@ -284,7 +284,7 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(color: Colors.white),
             ),
           ),
-          (user["user_type"] == "admin")
+          (user["user_type"] == "Admin")
               ? ListTile(
                   tileColor: (sidemenu == 8)
                       ? const Color.fromARGB(127, 33, 149, 243)
@@ -335,7 +335,7 @@ class _MainScreenState extends State<MainScreen> {
                                           width: 10,
                                         ),
                                         Text(
-                                          "Saller Info",
+                                          "Seller Info",
                                           style: TextStyle(color: Colors.black),
                                         ),
                                       ],
@@ -406,7 +406,7 @@ class _MainScreenState extends State<MainScreen> {
           //   ),
           // ),
 
-          (user["user_type"] == "admin")
+          (user["user_type"] == "Admin")
               ? ListTile(
                   tileColor: (sidemenu == 10)
                       ? const Color.fromARGB(127, 33, 149, 243)

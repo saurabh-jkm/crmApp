@@ -90,7 +90,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
       child: Scaffold(
         body: Container(
           color: Colors.white,
-          child: Column(
+          child: ListView(
             children: [
               //header ======================
               themeHeader2(context, "${widget.header_name} Invoice ",
@@ -236,19 +236,33 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                       Container(
                                         height:
                                             MediaQuery.of(context).size.height -
-                                                420,
+                                                400,
                                         child: ListView(
                                           children: [
                                             for (var i = 1;
                                                 i <= controller.totalProduct;
                                                 i++)
                                               Container(
-                                                color: Color.fromARGB(
-                                                    106, 211, 234, 255),
+                                                decoration: BoxDecoration(
+                                                    color: Color.fromARGB(
+                                                        106, 211, 234, 255),
+                                                    border: Border.all(
+                                                        color: Colors.black12)),
                                                 margin: EdgeInsets.only(
                                                     right: 8.0, bottom: 10.0),
                                                 child: Column(
                                                   children: [
+                                                    Container(
+                                                        color: Colors.purple,
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                                "Product No. $i")
+                                                          ],
+                                                        )),
                                                     Row(
                                                       children: [
                                                         // product Name
@@ -612,9 +626,12 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                           ),
                         ],
                       ),
-                    )
+                    ),
 
               // end form ====================================
+              SizedBox(
+                height: 200,
+              )
             ],
           ),
         ),

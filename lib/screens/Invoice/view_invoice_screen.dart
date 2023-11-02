@@ -124,34 +124,20 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
   }
 
 ////////////////// @2 Detaials View ++++++++++++++++++++++++++++++++++++++++++++
-  var tempList = [];
-  var Price = 0.0;
-  var Qty = 0;
+  // var tempList = [];
+  // var Price = 0.0;
+  // var Qty = 0;
   Widget Details_view(BuildContext context, OrderData, pageWidth) {
-    Qty = 0;
-    Price = 0;
-    tempList = [];
+    // Qty = 0;
+    // Price = 0;
+    // tempList = [];
 
-    var ffff = OrderData["products"] as Map;
-    var ff = new Map();
-    // if (ffff.isNotEmpty) {
-    //   ffff.forEach((k, v) {
-    //     setState(() {
-    //       tempList.add(v["name"]);
+    // var ffff = OrderData["products"] as Map;
+    // var ff = new Map();OrderData["total"]
+    int intbalance = int.parse(OrderData["balance"]);
 
-    //       if (Qty == 0) {
-    //         Qty = Qty + int.parse(v["quantity"]);
-    //       } else {
-    //         Qty = Qty + int.parse(v["quantity"]);
-    //       }
-    //       if (Price == 0) {
-    //         Price = Price + double.parse(v["price"]);
-    //       } else {
-    //         Price = Price + double.parse(v["price"]);
-    //       }
-    //     });
-    //   });
-    // }
+    String Balance = NumberFormat('#,##,###').format(intbalance);
+    String Total = NumberFormat('#,##,###').format(OrderData["total"]);
 
     return Container(
       child: Column(
@@ -500,7 +486,7 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                                           border: Border.all(color: themeBG2)),
                                       padding: EdgeInsets.only(right: 10),
                                       alignment: Alignment.centerRight,
-                                      child: Text("${OrderData["total"]} Rs /-",
+                                      child: Text("$Total Rs /-",
                                           style: TextStyle(
                                               fontSize: 12,
                                               fontWeight: FontWeight.bold,
@@ -537,8 +523,7 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                                                     color: themeBG2)),
                                             padding: EdgeInsets.only(right: 10),
                                             alignment: Alignment.centerRight,
-                                            child: Text(
-                                                "${OrderData["payment"]} Rs /-",
+                                            child: Text("$Total Rs /-",
                                                 style: TextStyle(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.bold,
@@ -574,8 +559,7 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
                                                     color: themeBG2)),
                                             padding: EdgeInsets.only(right: 10),
                                             alignment: Alignment.centerRight,
-                                            child: Text(
-                                                "${OrderData["balance"]} Rs /-",
+                                            child: Text("$Balance Rs /-",
                                                 style: TextStyle(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.bold,
@@ -592,6 +576,7 @@ class _viewInvoiceScreenState extends State<viewInvoiceScreen> {
               ),
             ],
           ),
+          SizedBox(height: 100)
         ],
       ),
     );

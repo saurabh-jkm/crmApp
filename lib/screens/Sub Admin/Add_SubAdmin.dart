@@ -64,6 +64,7 @@ class _SubAdminState extends State<SubAdmin> {
 //////// Attribute data  ++++++++++++++++++++++++++++++++++++++++++++++++++++++=
   ///=============================================================================
   _SubAdmin_ListData(limitData) async {
+    controllerr.StoreDocs = [];
     var temp = await controllerr.SubAdminData(limitData);
     var tempCate = await controllerr.CateData();
     setState(() {
@@ -146,19 +147,16 @@ class _SubAdminState extends State<SubAdmin> {
       if (controllerr.UserIDcheck.contains(email) != true) {
         if (!kIsWeb && Platform.isWindows) {
           await win_dbSave(db, w);
+          await _SubAdmin_ListData(_number_select);
         } else {
-          dbSave(db, w);
+          await dbSave(db, w);
+          await _SubAdmin_ListData(_number_select);
         }
 
         themeAlert(context, "Successfully Submitted");
+
         setState(() {
           controllerr.clearText();
-          // if (!kIsWeb && Platform.isWindows) {
-          //   Win_SubAdmin_ListData();
-          // } else {
-          //   _SubAdmin_ListData();
-          // }
-          _SubAdmin_ListData(_number_select);
           Add_Category = false;
         });
       } else {

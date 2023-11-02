@@ -70,7 +70,7 @@ class _SalemanListState extends State<SalemanList> {
       focusNode: FocusNode(),
       onKey: (e) {
         var rData =
-            baseController.KeyPressFun(e, context, backtype: 'dashboard');
+            baseController.KeyPressFun(e, context, backtype: "dashbord");
         if (rData != null && rData) {
           setState(() {});
         }

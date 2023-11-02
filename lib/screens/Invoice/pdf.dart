@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 import 'package:crm_demo/themes/style.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:path_provider/path_provider.dart';
@@ -77,7 +78,12 @@ class _Invoice_pdf extends State<Invoice_pdf> {
       // ),
     );
   }
+
 ///////   Pdf  Print++++++++++++++++++++++++++++++++++++++++
+  pricewithcommas(int number) {
+    String Balance = NumberFormat('#,##,###').format(number);
+    return Balance;
+  }
 
   Future<Uint8List> _generatePdf(PdfPageFormat format, PriceDetail) async {
     final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
@@ -499,7 +505,8 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                                       pw.Border.all(color: PdfColors.black)),
                               padding: pw.EdgeInsets.only(right: 10),
                               alignment: pw.Alignment.centerRight,
-                              child: pw.Text("${PriceDetail["total"]} Rs /-",
+                              child: pw.Text(
+                                  "${pricewithcommas(PriceDetail["total"])} Rs /-",
                                   style: pw.TextStyle(
                                       fontSize: 12,
                                       fontWeight: pw.FontWeight.bold,
@@ -508,7 +515,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                   ),
                 ),
 
-                ///////////  =============================================================================================
+                ///////////  =============================================================================
               ],
             )
           ]);

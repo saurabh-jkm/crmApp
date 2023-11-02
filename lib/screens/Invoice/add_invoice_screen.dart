@@ -89,7 +89,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
       child: Scaffold(
         body: Container(
           color: Colors.white,
-          child: Column(
+          child: ListView(
             children: [
               //header ======================
               themeHeader2(context, "${widget.header_name} Invoice ",
@@ -519,8 +519,9 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                           ),
                         ],
                       ),
-                    )
+                    ),
 
+              SizedBox(height: 200)
               // end form ====================================
             ],
           ),
