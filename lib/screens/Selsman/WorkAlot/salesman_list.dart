@@ -430,6 +430,8 @@ class _SalemanListState extends State<SalemanList> {
     dataList.add('${data['customer_type']}');
     dataList.add('${data['next_follow_up']}');
     dataList.add('${data['next_follow_up_date']}');
+    dataList.add(
+        '${(data['update_tsmp'] != null) ? formatDate(data['update_tsmp'], formate: "dd-MM-yyyy h:mm a") : "--/--"}');
     dataList.add('${status}');
     dataList.add('action');
 

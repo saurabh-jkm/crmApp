@@ -12,6 +12,8 @@ class base_controller {
       if (e.isKeyPressed(LogicalKeyboardKey.escape)) {
         if (backtype == 'dashboard') {
           Navigator.popAndPushNamed(context, '/dashboard');
+        } else if (backtype == 'seller') {
+          Navigator.popAndPushNamed(context, '/seller');
         } else {
           Navigator.pop(context);
         }

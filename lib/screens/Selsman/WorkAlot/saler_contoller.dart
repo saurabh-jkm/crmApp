@@ -48,6 +48,7 @@ class SellerController {
     'Type',
     'Meeting Reason',
     'Meeting Date',
+    'Complete Date',
     'Status',
     'Action'
   ];
