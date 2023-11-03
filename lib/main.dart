@@ -71,7 +71,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // final Future<FirebaseApp> _initialization =  Firebase.initializeApp();
-////
+//// ///
   bool loginIs = false;
   bool isWait = true;
   Map<dynamic, dynamic> user = new Map();
