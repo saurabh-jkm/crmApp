@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unnecessary_new
 
 import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
 import 'package:crm_demo/screens/Invoice/invoice_list.dart';
