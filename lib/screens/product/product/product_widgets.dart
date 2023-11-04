@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, unnecessary_brace_in_string_interps
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/themes/function.dart';
 import 'package:crm_demo/themes/style.dart';
@@ -210,7 +210,7 @@ addNewAttrbute(context, controller, addNewAttFn) async {
 }
 
 // single product  list ==========================
-Widget productRow(context, key, data) {
+Widget productRow(context, key, data, {color: Colors.black}) {
   if (key == 'item_list') {
     return SizedBox();
   } else {
@@ -233,8 +233,7 @@ Widget productRow(context, key, data) {
                     fontSize: 11.0)),
           ),
           SizedBox(width: 20.0),
-          Text(": ${val}",
-              style: TextStyle(fontSize: 12.0, color: Colors.black)),
+          Text(": ${val}", style: TextStyle(fontSize: 12.0, color: color)),
         ],
       ),
     );

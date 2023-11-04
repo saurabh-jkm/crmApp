@@ -55,27 +55,16 @@ class _MeetingViewState extends State<MeetingView> {
                           Icons.arrow_back,
                           color: Colors.black,
                           size: 30.0,
-                        ))
+                        )),
+                    SizedBox(width: 10),
+                    GoogleText(
+                        text: "Meeting Details",
+                        fsize: 20.0,
+                        color: Colors.black,
+                        fweight: FontWeight.bold)
                   ],
                 ),
               ),
-
-              //  Row(
-              //   mainAxisAlignment: MainAxisAlignment.start,
-              //   children: [
-              //     Icon(
-              //       Icons.location_history_rounded,
-              //       color: Colors.green,
-              //       size: 30,
-              //     ),
-              //     SizedBox(width: 5.0),
-              //     Text(
-              //       "Meeting Details",
-              //       style: GoogleFonts.alike(
-              //           fontSize: 20, fontWeight: FontWeight.bold),
-              //     )
-              //   ],
-              // ),
             ),
             // formField =======================
             Container(
@@ -94,71 +83,186 @@ class _MeetingViewState extends State<MeetingView> {
   }
 
   Widget Details_view(BuildContext context, priceData) {
-    var date;
+    var date_at;
+    var update_at;
     var status;
-    date = formatDate(priceData["date_at"]);
-    status = statusOF(priceData["status"]);
+
+    date_at =
+        '${(priceData['date_at'] != null) ? formatDate(priceData['date_at']) : "--/--"}';
+
+    update_at =
+        '${(priceData['update_tsmp'] != null) ? formatDate(priceData['update_tsmp']) : "--/--"}';
+
+    status = MeetingStatusOF(priceData["status"]);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5.0),
         color: const Color.fromARGB(31, 128, 128, 128),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        (priceData["image"] == '')
-            ? SizedBox()
-            : Row(
-                children: [
-                  for (var i in priceData["image"].keys)
-                    GestureDetector(
-                      onTap: () {
-                        var url =
-                            "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg";
-                        if (priceData["image"][i] != null &&
-                            priceData["image"][i] != '') {
-                          url = priceData["image"][i];
-                        }
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // SizedBox(height: 20.0),
+            // for (var key in priceData.keys)
+            //   rowFollowp(context, key, "${priceData[key]}"),
+            // productRow(context, "Meeting Id", "${priceData["id"]}"),
+            Row(
+              children: [
+                Expanded(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        child: GoogleText(
+                            text: "Assign Meeting Details",
+                            fweight: FontWeight.bold,
+                            color: Colors.blue)),
+                  ],
+                )),
+                Expanded(
+                  child: Container(
+                      margin: EdgeInsets.only(left: 20),
+                      child: GoogleText(
+                          text: "Seller Reply",
+                          fweight: FontWeight.bold,
+                          color: Colors.blue)),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Container(
+                      margin: EdgeInsets.only(right: 20),
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(boxShadow: themeBox),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          productRow(context, "Customer Name",
+                              "${priceData["customer_name"]}"),
+                          productRow(context, "Customer Type",
+                              "${priceData["customer_type"]}"),
+                          productRow(
+                              context, "Mobile No.", "${priceData["mobile"]}"),
+                          productRow(
+                              context, "Email ID", "${priceData["email"]}"),
+                          productRow(
+                              context, "Address", "${priceData["address"]}"),
+                          productRow(
+                              context, "Pin Code", "${priceData["pin_code"]}"),
+                          productRow(context, "Date At", "$date_at"),
+                          GoogleText(
+                              text: "Meeting Message :",
+                              fweight: FontWeight.bold,
+                              fsize: 13.0),
+                          Container(
+                              width: 300,
+                              margin: EdgeInsets.only(top: 5),
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  boxShadow: themeBox,
+                                  border: Border.all(
+                                      color: Colors.blue, width: 1.2)),
+                              child: GoogleText(
+                                  text: "${priceData["next_follow_up"]}  ",
+                                  fsize: 12.0,
+                                  fweight: FontWeight.normal))
+                        ],
+                      )),
+                ),
+                Expanded(
+                  child: Container(
+                      margin: EdgeInsets.only(left: 20),
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(boxShadow: themeBox),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          (priceData["image"] == '')
+                              ? SizedBox()
+                              : Row(
+                                  children: [
+                                    for (var i in priceData["image"].keys)
+                                      GestureDetector(
+                                        onTap: () {
+                                          var url =
+                                              "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg";
+                                          if (priceData["image"][i] != null &&
+                                              priceData["image"][i] != '') {
+                                            url = priceData["image"][i];
+                                          }
 
-                        Modal_zoomImg(context, url);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(right: 10.0),
-                        height: 100,
-                        width: 100,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.0),
-                            image: DecorationImage(
-                                image: (priceData["image"][i] != null &&
-                                        priceData["image"][i] != '')
-                                    ? NetworkImage("${priceData["image"][i]}")
-                                    : NetworkImage(
-                                        "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
-                                fit: BoxFit.cover)),
-                      ),
-                    ),
-                ],
-              ),
+                                          Modal_zoomImg(context, url);
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.all(10.0),
+                                          height: 100,
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                              image: DecorationImage(
+                                                  image: (priceData["image"]
+                                                                  [i] !=
+                                                              null &&
+                                                          priceData["image"]
+                                                                  [i] !=
+                                                              '')
+                                                      ? NetworkImage(
+                                                          "${priceData["image"][i]}")
+                                                      : NetworkImage(
+                                                          "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
+                                                  fit: BoxFit.cover)),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                          // productRow(context, "Customer Name",
+                          //     "${priceData["customer_name"]}"),
+                          // productRow(
+                          //     context, "Mobile No.", "${priceData["mobile"]}"),
+                          // productRow(
+                          //     context, "Email ID", "${priceData["email"]}"),
+                          // productRow(
+                          //     context, "Address", "${priceData["address"]}"),
+                          productRow(context, "Status", status,
+                              color: (status == "Pending")
+                                  ? Colors.green
+                                  : Colors.red),
+                          productRow(context, "Update At", '$update_at'),
+                          GoogleText(
+                              text: "Reply Message :",
+                              fweight: FontWeight.bold,
+                              fsize: 13.0),
+                          Container(
+                              width: 300,
+                              margin: EdgeInsets.only(top: 5),
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  boxShadow: themeBox,
+                                  border: Border.all(
+                                      color: Colors.green, width: 1.2)),
+                              child: GoogleText(
+                                  text: "${priceData["meeting_conversation"]} ",
+                                  fsize: 12.0,
+                                  fweight: FontWeight.normal))
+                        ],
+                      )),
+                ),
+              ],
+            )
 
-        SizedBox(height: 20.0),
-        for (var key in priceData.keys)
-          rowFollowp(context, key, "${priceData[key]}"),
-
-        // productRow(context, "Meeting Id", "${priceData["id"]}"),
-        // productRow(context, "Customer Name", "${priceData["customer_name"]}"),
-        // productRow(context, "Mobile No.", "${priceData["mobile"]}"),
-        // productRow(context, "Email ID", "${priceData["email"]}"),
-        // productRow(context, "Address", "${priceData["address"]}"),
-        // productRow(context, "Status", status),
-        // productRow(context, "Date At", date),
-        Divider(thickness: 1.5),
-        rowFollowp(
-            context, "Meeting Comment", priceData["meeting_conversation"],
-            color: themeBG6),
-        Divider(thickness: 1.5),
-        rowFollowp(context, "Next Follow Up", priceData["next_follow_up"],
-            color: themeBG6),
-      ]),
+            // productRow(context, "Date At", date),
+          ]),
     );
   }
 }

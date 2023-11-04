@@ -46,9 +46,9 @@ class SellerController {
     '#',
     'Customer Name',
     'Type',
-    'Meeting Reason',
-    'Meeting Date',
-    'Complete Date',
+    'Meeting Message',
+    'Assign Date',
+    'Closing Date',
     'Status',
     'Action'
   ];
