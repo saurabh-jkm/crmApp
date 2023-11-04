@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, division_optimization, camel_case_types, non_constant_identifier_names, unnecessary_new, prefer_collection_literals
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, division_optimization, camel_case_types, non_constant_identifier_names, unnecessary_new, prefer_collection_literals, prefer_is_empty, deprecated_colon_for_default_value
 import 'dart:convert';
 import 'package:crm_demo/screens/Invoice/update_controller.dart';
 import 'package:crm_demo/themes/firebase_functions.dart';
@@ -52,7 +52,7 @@ class invoiceController extends updateController {
   final priceController = TextEditingController();
   final brandController = TextEditingController();
   final invoiceDateController = TextEditingController();
-
+  final paymentDateController = TextEditingController();
   // for new attribute
   final newAttributeController = TextEditingController();
 
@@ -130,7 +130,7 @@ class invoiceController extends updateController {
     String dateIs = DateFormat('dd/MM/yyyy').format(DateNow);
 
     invoiceDateController.text = dateIs;
-
+    paymentDateController.text = dateIs;
     // locationControllers['1'] = TextEditingController();
     // locationQuntControllers['1'] = TextEditingController();
 
@@ -781,6 +781,7 @@ class invoiceController extends updateController {
       // "quantity": quantityController.text,
       "total": totalPrice,
       "invoice_date": invoiceDateController.text,
+      "payment_date": paymentDateController.text,
       "payment": c_payment_controller.text,
       "balance": c_balance_controller.text,
       "status": true

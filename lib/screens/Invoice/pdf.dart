@@ -388,7 +388,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                           width: 180,
                           decoration: pw.BoxDecoration(
                               border: pw.Border.all(color: PdfColors.black)),
-                          alignment: pw.Alignment.topCenter,
+                          alignment: pw.Alignment.topLeft,
                           child: pw.Column(children: [
                             for (var i = 0; i < tt.length; i++)
                               pw.Text("${tt["$i"]["name"]} ",

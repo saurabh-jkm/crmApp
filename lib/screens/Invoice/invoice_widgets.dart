@@ -51,7 +51,7 @@ Widget invoiceItemRow(context, key, productList,
         Container(
             padding: EdgeInsets.all(2),
             width: 180,
-            alignment: Alignment.topCenter,
+            alignment: Alignment.topLeft,
             child: Text("${data["name"]} ",
                 style: TextStyle(
                     fontSize: 10,

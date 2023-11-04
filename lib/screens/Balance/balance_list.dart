@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
 import 'package:crm_demo/screens/Invoice/edit_invoice.dart';
 import 'package:crm_demo/screens/Invoice/pdf.dart';
-import 'package:crm_demo/screens/Invoice/view_invoice_screen.dart';
+import 'package:crm_demo/screens/Invoice/view_invoice_screen-backup.dart';
 import 'package:crm_demo/themes/base_controller.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -30,6 +30,7 @@ import '../../themes/theme_widgets.dart';
 import '../Invoice/add_invoice_screen.dart';
 import '../Invoice/invoice_controller.dart';
 import '../Invoice/invoice_serv.dart';
+import '../Invoice/view_invoice_details.dart';
 import '../dashboard/components/header.dart';
 import '../dashboard/components/my_fields.dart';
 import '../dashboard/components/recent_files.dart';
@@ -61,6 +62,17 @@ class _BalanceListState extends State<BalanceList> {
   void initState() {
     orderList(_number_select);
     super.initState();
+  }
+
+  viewInvoice(data) async {
+    final temp = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => viewInvoiceScreenn(
+                header_name: "View Invoice Details", data: data)));
+    if (temp == 'updated') {
+      orderList(_number_select);
+    }
   }
 
 ////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
@@ -133,18 +145,6 @@ class _BalanceListState extends State<BalanceList> {
     }
   }
 
-/////////////////////////  View Invoice Details  +++++++++++++++++++++++++++++
-  viewInvoice(data) async {
-    final temp = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => viewInvoiceScreen(
-                header_name: "View Invoice Details", data: data)));
-    if (temp == 'updated') {
-      orderList(_number_select);
-    }
-  }
-
 /////////////////////////=======================================================
   var baseController = new base_controller();
   @override
@@ -162,6 +162,7 @@ class _BalanceListState extends State<BalanceList> {
       9: 60.0,
       10: 80.0,
       11: fw * 0.08,
+
       // 12: 120.0,
     };
 
@@ -175,10 +176,11 @@ class _BalanceListState extends State<BalanceList> {
       7: 'Product',
       // 7: 'Qnt.',
       // 8: 'Unit',
-      9: 'Price',
-      10: 'Balance',
-      11: 'Date',
-      12: 'Action',
+      9: 'Bill Amount',
+      10: 'Outstanding',
+      11: 'Payment Date',
+      12: 'Date',
+      13: 'Action',
     };
 
     return RawKeyboardListener(
@@ -479,6 +481,8 @@ class _BalanceListState extends State<BalanceList> {
         (edata['invoice_date'] != null && edata['invoice_date'] != '')
             ? edata['invoice_date']
             : formatDate(pay_date, formate: 'dd/MM/yyyy');
+    final PayDate =
+        (edata['payment_date'] != null) ? edata['payment_date'] : "--/--";
     var type =
         (edata['invoice_for'] == 'Customer' || edata['invoice_for'] == '')
             ? (edata['is_sale'] != null && edata['is_sale'] == 'Estimate')
@@ -550,6 +554,9 @@ class _BalanceListState extends State<BalanceList> {
                   style: textStyle3),
             ),
             Expanded(
+              child: Text("$PayDate", style: textStyle3),
+            ),
+            Expanded(
               child: Text("$formattedDate", style: textStyle3),
             ),
             Expanded(
@@ -558,11 +565,14 @@ class _BalanceListState extends State<BalanceList> {
                 children: [
                   IconButton(
                       onPressed: () async {
-                        final data = await InvoiceService(
-                          PriceDetail: edata,
-                        ).createInvoice();
-                        // final data = await service.createInvoice();
-                        await savePdfFile("invoice", data, edata);
+                        await viewInvoice(edata);
+/////////////////////////  View Invoice Details  +++++++++++++++++++++++++++++
+
+                        // final data = await InvoiceService(
+                        //   PriceDetail: edata,
+                        // ).createInvoice();
+                        // // final data = await service.createInvoice();
+                        // await savePdfFile("invoice", data, edata);
                       },
                       icon: Icon(Icons.visibility_outlined, size: 30))
                 ],

@@ -556,6 +556,17 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
                                           children: [
+                                            //////  Payment date
+                                            Container(
+                                              width: 180.0,
+                                              height: 60.0,
+                                              child: formInput(
+                                                  context,
+                                                  "Payment Date",
+                                                  controller
+                                                      .paymentDateController,
+                                                  padding: 8.0),
+                                            ),
                                             // paid ammount
                                             Container(
                                               width: 180.0,

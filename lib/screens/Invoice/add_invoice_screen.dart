@@ -434,7 +434,17 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      // paid ammount
+                                      ////  payment Date    ====
+                                      Container(
+                                        width: 180.0,
+                                        height: 60.0,
+                                        child: formInput(
+                                            context,
+                                            "Payment Date",
+                                            controller.paymentDateController,
+                                            padding: 8.0),
+                                      ),
+                                      // paid ammount  ====
                                       Container(
                                         width: 180.0,
                                         height: 60.0,

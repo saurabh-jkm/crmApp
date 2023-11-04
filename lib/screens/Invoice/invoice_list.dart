@@ -9,7 +9,8 @@ import 'package:crm_demo/screens/Invoice/edit_supplier_invoice.dart';
 import 'package:crm_demo/screens/Invoice/edit_invoice.dart';
 import 'package:crm_demo/screens/Invoice/invoice_controller.dart';
 import 'package:crm_demo/screens/Invoice/pdf.dart';
-import 'package:crm_demo/screens/Invoice/view_invoice_screen.dart';
+import 'package:crm_demo/screens/Invoice/view_invoice_details.dart';
+
 import 'package:crm_demo/themes/base_controller.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -139,7 +140,7 @@ class _Invoice_ListState extends State<Invoice_List> {
     final temp = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => viewInvoiceScreen(
+            builder: (_) => viewInvoiceScreenn(
                 header_name: "View Invoice Details", data: data)));
     if (temp == 'updated') {
       orderList(_number_select);
@@ -154,17 +155,19 @@ class _Invoice_ListState extends State<Invoice_List> {
 
     tableColum = {
       1: 50.0,
-      2: 70.0,
-      3: 70.0,
-      4: (fw < 1300) ? fw * 0.12 : fw * 0.17,
+      2: 50.0,
+      3: 50.0,
+      4: 130.0,
       5: (fw < 1300) ? fw * 0.05 : fw * 0.07,
       6: 90.0,
       7: 40.0,
-      8: 60.0,
-      9: 60.0,
-      10: 80.0,
+      8: 50.0,
+      9: 100.0,
+      10: 100.0,
       11: fw * 0.08,
       12: 120.0,
+      13: 120.0,
+      14: 120.0,
     };
 
     headerName = {
@@ -176,10 +179,11 @@ class _Invoice_ListState extends State<Invoice_List> {
       6: 'Mobile',
       7: 'Qnt',
       8: 'Unit',
-      9: 'Price',
-      10: 'Balance',
-      11: 'Date',
-      12: 'Action',
+      9: 'Bill Amount',
+      10: 'Outstanding',
+      12: 'Payment Date',
+      13: 'Date',
+      14: 'Action',
     };
 
     return RawKeyboardListener(
@@ -256,6 +260,7 @@ class _Invoice_ListState extends State<Invoice_List> {
 //////// ///////////////////////////////// @1  List  of Order       ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   var _number_select = 50;
   Widget listList(BuildContext context, itemList) {
+    // print("${controllerr.OrderList}  ++++++++++++++++");
     return Container(
       height: MediaQuery.of(context).size.height,
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -482,6 +487,12 @@ class _Invoice_ListState extends State<Invoice_List> {
         (edata['invoice_date'] != null && edata['invoice_date'] != '')
             ? edata['invoice_date']
             : formatDate(edata['date_at'], formate: 'dd/MM/yyyy');
+
+    final payDate =
+        (edata['payment_date'] == null || edata['payment_date'] == '')
+            ? "--/--"
+            : edata['payment_date'];
+
     var type =
         (edata['invoice_for'] == 'Customer' || edata['invoice_for'] == '')
             ? (edata['is_sale'] != null && edata['is_sale'] == 'Estimate')
@@ -610,11 +621,15 @@ class _Invoice_ListState extends State<Invoice_List> {
               //   ),
               // ),
               Container(
+                width: tableColum[10],
+                child: Text("$payDate", style: textStyle3),
+              ),
+              Container(
                 width: tableColum[11],
                 child: Text("$formattedDate", style: textStyle3),
               ),
               Container(
-                width: tableColum[12],
+                // width: tableColum[12],
                 child: RowFor_Mobile_web(context, () async {
                   final data = await InvoiceService(
                     PriceDetail: edata,
