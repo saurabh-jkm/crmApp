@@ -162,18 +162,18 @@ class _Invoice_ListState extends State<Invoice_List> {
       6: 90.0,
       7: 40.0,
       8: 50.0,
-      9: 100.0,
-      10: 100.0,
-      11: fw * 0.08,
-      12: 120.0,
-      13: 120.0,
-      14: 120.0,
+      9: 80.0,
+      10: 80.0,
+      11: 80.0,
+      12: 80.0,
+      13: 80.0,
+      14: 100.0,
     };
 
     headerName = {
       1: '#',
       2: 'Order Id',
-      3: 'Type',
+      // 3: 'Type',
       4: 'Product',
       5: 'Buyer/Seller',
       6: 'Mobile',
@@ -181,6 +181,7 @@ class _Invoice_ListState extends State<Invoice_List> {
       8: 'Unit',
       9: 'Bill Amount',
       10: 'Outstanding',
+      11: 'Payment',
       12: 'Payment Date',
       13: 'Date',
       14: 'Action',
@@ -260,7 +261,7 @@ class _Invoice_ListState extends State<Invoice_List> {
 //////// ///////////////////////////////// @1  List  of Order       ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   var _number_select = 50;
   Widget listList(BuildContext context, itemList) {
-    // print("${controllerr.OrderList}  ++++++++++++++++");
+    /// print("${controllerr.OrderList}  ++++++++++++++++");
     return Container(
       height: MediaQuery.of(context).size.height,
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -546,13 +547,13 @@ class _Invoice_ListState extends State<Invoice_List> {
                       style: textStyle3),
                 ),
               ),
-              Container(
-                width: tableColum[3],
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Container(child: Text("${type}", style: textStyle3)),
-                ),
-              ),
+              // Container(
+              //   width: tableColum[3],
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(5.0),
+              //     child: Container(child: Text("${type}", style: textStyle3)),
+              //   ),
+              // ),
               Container(
                 //verticalAlignment: TableCellVerticalAlignment.middle,
                 width: tableColum[4],
@@ -602,6 +603,12 @@ class _Invoice_ListState extends State<Invoice_List> {
                 width: tableColum[9],
                 child: Text(
                     (edata['balance'] != null) ? "${edata['balance']}" : "-",
+                    style: textStyle3),
+              ),
+              Container(
+                width: tableColum[11],
+                child: Text(
+                    (edata['payment'] != null) ? "${edata['payment']}" : "-",
                     style: textStyle3),
               ),
               // Container(
@@ -749,7 +756,6 @@ class _Invoice_ListState extends State<Invoice_List> {
       query = (query == 'All') ? '' : query;
     }
     controllerr.OrderList = [];
-
     controllerr.finalOrderList.forEach((e) {
       bool isFind = false;
       searchField.forEach((key) {
@@ -774,6 +780,7 @@ class _Invoice_ListState extends State<Invoice_List> {
   changeFilter(val) {
     setState(() {
       selectedFilter = val;
+
       SearchFn(val, filter: 'filter');
     });
   }

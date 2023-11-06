@@ -243,6 +243,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.bold,
                                         color: PdfColors.black)),
+
                                 pw.Text("Dated",
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.bold,

@@ -259,7 +259,7 @@ class _MainScreenState extends State<MainScreen> {
                   horizontalTitleGap: 0.0,
                   leading: Icon(Icons.balance, color: Colors.white),
                   title: Text(
-                    "Balance",
+                    "All Outstanding",
                     style: TextStyle(color: Colors.white),
                   ),
                 )

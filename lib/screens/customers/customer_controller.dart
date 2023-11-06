@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, avoid_function_literals_in_foreach_calls
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, deprecated_colon_for_default_value
 
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'dart:io';
@@ -6,6 +6,8 @@ import 'package:firedart/firestore/firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
+
+import '../Invoice/pdf.dart';
 
 class customerController {
   var db = (!kIsWeb && Platform.isWindows)
@@ -43,7 +45,7 @@ class customerController {
 
   // reset controller
   resetController() {}
-
+  var selectedFilter = 'Customer';
   // get all Customer List =============================
   customerList(int limitData) async {
     listCustomerName = [];
@@ -60,23 +62,50 @@ class customerController {
         i++;
       }
     });
+    ctr_fn_search(filter: selectedFilter);
+    // print("$listCustomer   ++++++++++++++++++++++");
   }
 
   // seach function -----------------------
-  ctr_fn_search() {
+  ctr_fn_search({filter: ""}) {
     var search = searchTextController.text;
     listCustomer = {};
-    for (String key in listCustomerAllDataArr.keys) {
-      if (listCustomerAllDataArr[key]['name']
-              .toLowerCase()
-              .contains(search.toLowerCase()) ||
-          listCustomerAllDataArr[key]['mobile']
-              .toLowerCase()
-              .contains(search.toLowerCase()) ||
-          listCustomerAllDataArr[key]['email']
-              .toLowerCase()
-              .contains(search.toLowerCase())) {
-        listCustomer[key] = listCustomerAllDataArr[key];
+    if (filter == "Customer") {
+      for (String key in listCustomerAllDataArr.keys) {
+        if (listCustomerAllDataArr[key]['type']
+            .toLowerCase()
+            .contains(filter.toLowerCase())) {
+          listCustomer[key] = listCustomerAllDataArr[key];
+        }
+      }
+    } else if (filter == "Supplier") {
+      for (String key in listCustomerAllDataArr.keys) {
+        if (listCustomerAllDataArr[key]['type']
+            .toLowerCase()
+            .contains(filter.toLowerCase())) {
+          listCustomer[key] = listCustomerAllDataArr[key];
+        }
+      }
+    } else if (filter == "Other") {
+      for (String key in listCustomerAllDataArr.keys) {
+        if (listCustomerAllDataArr[key]['type'].toLowerCase() != "customer" &&
+            listCustomerAllDataArr[key]['type'].toLowerCase() != "supplier") {
+          listCustomer[key] = listCustomerAllDataArr[key];
+        }
+      }
+    } else {
+      for (String key in listCustomerAllDataArr.keys) {
+        if (listCustomerAllDataArr[key]['name']
+                .toLowerCase()
+                .contains(search.toLowerCase()) ||
+            listCustomerAllDataArr[key]['mobile']
+                .toLowerCase()
+                .contains(search.toLowerCase()) ||
+            listCustomerAllDataArr[key]['email']
+                .toLowerCase()
+                .contains(search.toLowerCase())) {
+          listCustomer[key] = listCustomerAllDataArr[key];
+        }
       }
     }
     return 1;

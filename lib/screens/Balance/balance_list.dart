@@ -178,9 +178,10 @@ class _BalanceListState extends State<BalanceList> {
       // 8: 'Unit',
       9: 'Bill Amount',
       10: 'Outstanding',
-      11: 'Payment Date',
-      12: 'Date',
-      13: 'Action',
+      11: 'Payment',
+      12: 'Payment Date',
+      13: 'Date',
+      14: 'Action',
     };
 
     return RawKeyboardListener(
@@ -551,6 +552,11 @@ class _BalanceListState extends State<BalanceList> {
             Expanded(
               child: Text(
                   (edata['balance'] != null) ? "${edata['balance']}" : "-",
+                  style: textStyle3),
+            ),
+            Expanded(
+              child: Text(
+                  (edata['payment'] != null) ? "${edata['payment']}" : "-",
                   style: textStyle3),
             ),
             Expanded(

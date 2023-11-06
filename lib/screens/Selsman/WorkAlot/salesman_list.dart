@@ -54,6 +54,62 @@ class _SalemanListState extends State<SalemanList> {
     });
   }
 
+  // date picker function =================================
+  datePick(type) async {
+    FocusScope.of(context).requestFocus(FocusNode());
+    final pickedDate = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2101));
+
+    if (pickedDate != null) {
+      //print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+      setState(() {
+        if (type == 'fromDate') {
+          controller.startDate_controller.text = formattedDate;
+        } else if (type == 'toDate') {
+          controller.toDate_controller.text = formattedDate;
+        }
+      });
+      FocusScope.of(context).requestFocus(FocusNode());
+    } else {
+      print("Date is not selected");
+    }
+  }
+
+  // date filter ===================================================
+  fnFilterController(filter) {
+    initFunctions(_number_select);
+  }
+
+//  // get all Customer List =============================
+  sellerList(int limitData) async {
+    // listCustomerName = [];
+    // listCustomer = {};
+    // Map dbData = await dbFindDynamic(
+    //     db, {'table': 'users', 'user_type': 'Sales Man', "limit": limitData});
+
+    // var i = 1;
+
+    // if (dbData != null) {
+    //   for (var key in dbData.keys) {
+    //     Map<dynamic, dynamic> data = dbData[key];
+    //     // var datar = await dbFind({'table': 'users', 'id': data['client_id']});
+    //     var notify = await Meeting_done_Notifications(data["id"]);
+    //     String name = "${data["first_name"]} ${data["last_name"]}";
+    //     data["name"] = name;
+    //     data["date_at"] = data["date_at"];
+    //     data["id"] = data["id"];
+    //     data["notification"] = notify;
+    //     data[""] = listCustomer['$i'] = data;
+    //     listCustomerAllDataArr['$i'] = data;
+    //     listCustomerName.add("$data");
+    //     i++;
+    //   }
+    // }
+  }
   @override
   void initState() {
     initFunctions(_number_select);
@@ -79,7 +135,7 @@ class _SalemanListState extends State<SalemanList> {
         body: (controller.secondScreen && controller.selectedSellerId != null)
             ? Container(
                 color: Colors.white,
-                child: Column(children: [
+                child: ListView(children: [
                   _ImageSelect_Alert(context, controller.selectedSellerId,
                       controller.MeetingMap, controller.selectedSeller),
                 ]),
@@ -329,6 +385,64 @@ class _SalemanListState extends State<SalemanList> {
                     SizedBox(
                       height: 10,
                     ),
+                    Container(
+                        padding: EdgeInsets.all(10),
+                        color: themeBG4,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 4.0),
+                                  color: Color.fromARGB(255, 200, 247, 242),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          padding: EdgeInsets.only(top: 14),
+                                          height: 35,
+                                          width: 140.0,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                              color: Colors.white),
+                                          child: formTimeInput(context,
+                                              controller.startDate_controller,
+                                              label: 'Date From',
+                                              method: datePick,
+                                              arg: 'fromDate')),
+                                      Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          padding: EdgeInsets.only(top: 14),
+                                          height: 35,
+                                          width: 140.0,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
+                                              color: Colors.white),
+                                          child: formTimeInput(context,
+                                              controller.toDate_controller,
+                                              label: 'Date To',
+                                              method: datePick,
+                                              arg: 'toDate')),
+                                      themeButton3(context, fnFilterController,
+                                          arg: 'date_filter',
+                                          label: 'Filter',
+                                          radius: 2.0,
+                                          borderColor: Colors.transparent,
+                                          buttonColor: Color.fromARGB(
+                                              255, 12, 121, 194)),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ), // end date filter container
+                          ],
+                        )),
                     TableHeading(context, controller.MeetingheadList,
                         rowColor: Color.fromARGB(255, 94, 86, 204),
                         textColor: Colors.white),

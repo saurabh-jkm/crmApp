@@ -79,6 +79,18 @@ Widget invoiceItemRow(context, key, productList,
 
                 // for (var i = 1; i <= eedata.length; i++)
                 )),
+        Expanded(
+            child: Container(
+                padding: EdgeInsets.all(2),
+                alignment: Alignment.topCenter,
+                child: Text((data['unit'] != null) ? "${data['unit']}" : "-",
+                    style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.normal,
+                        color: themeBG2))
+
+                // for (var i = 1; i <= eedata.length; i++)
+                )),
         (isDiscountColum)
             ? Expanded(
                 child: Container(

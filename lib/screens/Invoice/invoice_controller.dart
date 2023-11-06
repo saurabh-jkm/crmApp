@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, division_optimization, camel_case_types, non_constant_identifier_names, unnecessary_new, prefer_collection_literals, prefer_is_empty, deprecated_colon_for_default_value
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, division_optimization, camel_case_types, non_constant_identifier_names, unnecessary_new, prefer_collection_literals, prefer_is_empty, deprecated_colon_for_default_value, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, await_only_futures, avoid_print
 import 'dart:convert';
 import 'package:crm_demo/screens/Invoice/update_controller.dart';
 import 'package:crm_demo/themes/firebase_functions.dart';
@@ -373,6 +373,7 @@ class invoiceController extends updateController {
           data['item_list'].forEach((i, vl) {
             var tempName = '${data['name']}';
             if (vl.isNotEmpty) {
+              //  print("$vl  ++++++++++rddd+++++++");
               vl.forEach((k, v) {
                 if (v == '' ||
                     v == null ||
@@ -382,9 +383,12 @@ class invoiceController extends updateController {
                     k == 'totalUnit' ||
                     k == 'location') {
                 } else {
-                  tempName = '$tempName - ${v}';
+                  if (k != 'location' && k != 'floor') {
+                    tempName = '$tempName - ${v}';
+                  }
                 }
               });
+              // print("$tempName  ++++++++++rddd+++++++");
               ListName.add(tempName);
               vl['id'] = data['id'];
               vl['list_item_id'] = i;
@@ -403,7 +407,6 @@ class invoiceController extends updateController {
     ListCustomer = [];
     var dbData = await dbFindDynamic(db,
         {'table': 'customer', 'type': (isSupplier) ? 'Supplier' : 'Customer'});
-
     dbData.forEach((k, data) {
       if (data['name'] != null) {
         ListCustomer.add(data['name']);

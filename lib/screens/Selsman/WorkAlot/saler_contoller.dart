@@ -66,7 +66,8 @@ class SellerController {
 ////////  changes add My Nitin Sir++++++++++++++
   final Customer_pincodeController = TextEditingController();
   final Customer_shopNoController = TextEditingController();
-
+  TextEditingController startDate_controller = new TextEditingController();
+  TextEditingController toDate_controller = new TextEditingController();
   var customerId = "";
 /////
   String Next_date = "";

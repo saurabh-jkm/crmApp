@@ -99,87 +99,31 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
     }
   }
 
+  var controller = new invoiceController();
   @override
   Widget build(BuildContext context) {
     //var OrderData = widget.data;
     double pageWidth = MediaQuery.of(context).size.width / 1.8;
 
-    return Scaffold(
-      body: Container(
-        color: Colors.white,
-        child: ListView(
-          children: [
-            //header ======================
-            themeHeader2(context, "${widget.header_name}"),
-            // formField =======================
-            // Container(
-            //   margin: EdgeInsets.all(20),
-            //   width: pageWidth,
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.end,
-            //     children: [
-            //       ElevatedButton(
-            //           style: ElevatedButton.styleFrom(
-            //             primary: themeBG,
-            //             onPrimary: Colors.white,
-            //             shadowColor: Colors.greenAccent,
-            //             elevation: 3,
-            //             minimumSize: Size(100, 40), //////// HERE
-            //           ),
-            //           onPressed: () async {
-            //             final data = await InvoiceService(
-            //               PriceDetail: OrderData,
-            //             ).createInvoice();
-            //             // final data = await service.createInvoice();
-            //             await savePdfFile("invoice", data, OrderData);
-            //           },
-            //           child: Row(
-            //             children: [
-            //               Text("Download"),
-            //               SizedBox(width: 10.0),
-            //               Icon(Icons.download)
-            //             ],
-            //           )),
-            //       SizedBox(width: 20.0),
-            //       ElevatedButton(
-            //           onPressed: () async {
-            //             final temp = await Navigator.push(
-            //                 context,
-            //                 MaterialPageRoute(
-            //                     builder: (_) => editInvoice(
-            //                           data: OrderData,
-            //                           header_name: "Edit Invoice",
-            //                         )));
-
-            //             if (temp == "updated") {
-            //               Navigator.pop(context, 'updated');
-            //             }
-            //           },
-            //           style: ElevatedButton.styleFrom(
-            //             primary: themeBG2,
-            //             onPrimary: Colors.white,
-            //             shadowColor: Colors.greenAccent,
-            //             elevation: 3,
-            //             minimumSize: Size(100, 40), //////// HERE
-            //           ),
-            //           child: Row(
-            //             children: [
-            //               Text("Edit"),
-            //               SizedBox(width: 10.0),
-            //               Icon(Icons.edit)
-            //             ],
-            //           ))
-            //     ],
-            //   ),
-            // ),
-
-            (isWait) ? pleaseWait(context) : Details_vieww(context, OrderData)
-
-            // end form ====================================
-
-            // Details_view(context, OrderData, pageWidth),
-            // end form ====================================
-          ],
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKey: (e) {
+        var rData = controller.cntrKeyPressFun(e, context);
+        if (rData != null && rData) {
+          setState(() {});
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          color: Colors.white,
+          child: ListView(
+            children: [
+              //header ======================
+              themeHeader2(context, "${widget.header_name}"),
+              (isWait) ? pleaseWait(context) : Details_vieww(context, OrderData)
+            ],
+          ),
         ),
       ),
     );
@@ -188,6 +132,10 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
 ////////////////// @2 Detaials View ++++++++++++++++++++++++++++++++++++++++++++
   Widget Details_vieww(BuildContext context, Odata) {
     // print("$Odata");
+    final payDate =
+        (Odata['payment_date'] == null || Odata['payment_date'] == '')
+            ? "--/--"
+            : Odata['payment_date'];
     int intbalance = int.parse(OrderData["balance"]);
     String Balance = NumberFormat('#,##,###').format(intbalance);
     String Total = NumberFormat('#,##,###').format(OrderData["total"]);
@@ -258,10 +206,11 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
                             context, "Email Id", "${OrderData["email"]}"),
                         productRow(
                             context, "Address", "${OrderData["address"]}"),
-                        productRow(context, "Bill Amount", "${Total}"),
-                        productRow(context, "Outstanding", "${Balance}"),
-                        productRow(context, "Payment Date",
-                            "${OrderData["payment_date"]}"),
+                        productRow(context, "Bill Amount", "${Total} Rs"),
+                        productRow(context, "Outstanding", "${Balance} Rs"),
+                        productRow(context, "Payment",
+                            "${(Odata['payment'] != null || Odata['payment'] != "") ? "${Odata['payment']}" : "----"} Rs"),
+                        productRow(context, "Payment Date", "$payDate"),
                         productRow(context, "Invoice Id", "${OrderData["id"]}"),
                         productRow(
                             context, "Invoice Type", "${OrderData["type"]}"),
@@ -320,6 +269,11 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
                                   child: Container(
                                       alignment: Alignment.center,
                                       child: Text("Qty.",
+                                          style: textStyleHeading1))),
+                              Expanded(
+                                  child: Container(
+                                      alignment: Alignment.center,
+                                      child: Text("Unit",
                                           style: textStyleHeading1))),
                               (isDiscountColum)
                                   ? Expanded(

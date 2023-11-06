@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations
 
 import 'package:crm_demo/screens/Invoice/view_invoice_screen-backup.dart';
 import 'package:crm_demo/screens/customers/customer_all_order_list.dart';
@@ -77,76 +77,6 @@ Widget CustomerTableRow(context, data, srNo, orderList,
                                     //   context,orderTempData
                                     // );
                                   }
-                                },
-                                icon: Icon(
-                                  Icons.remove_red_eye_outlined,
-                                  color: Color.fromARGB(255, 49, 36, 163),
-                                ),
-                                tooltip: 'View')
-                          ])
-                        : Text("${dataList[i]}",
-                            style: TextStyle(
-                                fontSize: 12.0,
-                                color: (textColor == '')
-                                    ? Color.fromARGB(255, 201, 201, 201)
-                                    : textColor)),
-                  ),
-                ),
-      ],
-    ),
-  );
-}
-
-// Order Table Row ==========================
-Widget orderTableRow(context, data, srNo,
-    {rowColor: '', textColor: '', controller: ''}) {
-  List<dynamic> dataList = [];
-  srNo++;
-
-  dataList.add('');
-
-  dataList.add('${(data['id'] == null) ? '-' : data['id']}');
-  dataList.add('${(data['title'] == null) ? '-' : data['title']}');
-  dataList.add('${(data['discount'] == null) ? '-' : data['discount']}');
-  dataList.add('${(data['subtotal'] == null) ? '-' : data['subtotal']}');
-  dataList.add('${(data['gst'] == null) ? '-' : data['gst']}');
-  dataList.add('${(data['total'] == null) ? '-' : data['total']}');
-  dataList.add(
-      '${(data['date_at'] == null) ? '-' : formatDate(data['date_at'], formate: 'dd/MM/yyyy')}');
-  dataList.add('action');
-
-  return Container(
-    margin: EdgeInsets.only(bottom: 1.0),
-    padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-    decoration: BoxDecoration(color: (rowColor == '') ? themeBG2 : rowColor),
-    child: Row(
-      children: [
-        for (var i = 0; i < dataList.length; i++)
-          (i == 0)
-              ? Container(
-                  width: 40.0,
-                  child: Container(
-                    child: Text("${srNo}",
-                        style: TextStyle(
-                            fontSize: 12.0,
-                            color: (textColor == '')
-                                ? Color.fromARGB(255, 201, 201, 201)
-                                : textColor)),
-                  ),
-                )
-              : Expanded(
-                  child: Container(
-                    child: (dataList[i] == 'action')
-                        ? Row(children: [
-                            IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => viewInvoiceScreen(
-                                              header_name:
-                                                  "View Invoice Details",
-                                              data: data)));
                                 },
                                 icon: Icon(
                                   Icons.remove_red_eye_outlined,

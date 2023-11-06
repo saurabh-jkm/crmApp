@@ -253,7 +253,6 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                         controller.ListName,
                                                         "Products Name",
                                                         controller
-                                                            // .Customer_nameController,
                                                             .ProductNameControllers[i],
                                                         padding: 8.0,
                                                         method:
