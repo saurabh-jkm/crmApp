@@ -16,6 +16,7 @@ import '../../../../themes/theme_widgets.dart';
 
 import 'package:intl/intl.dart';
 
+import '../../Invoice/invoice_controller.dart';
 import '../../product/product/product_widgets.dart';
 
 import 'package:photo_view/photo_view.dart';
@@ -35,48 +36,59 @@ class _MeetingViewState extends State<MeetingView> {
     super.initState();
   }
 
+  var controller = new invoiceController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: const Color.fromARGB(255, 255, 255, 255),
-        child: ListView(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 20, left: 10),
-              child: Container(
-                child: Row(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(
-                          Icons.arrow_back,
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKey: (e) {
+        var rData = controller.cntrKeyPressFun(e, context);
+        if (rData != null && rData) {
+          setState(() {});
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          color: const Color.fromARGB(255, 255, 255, 255),
+          child: ListView(
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 20, left: 10),
+                child: Container(
+                  child: Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Colors.black,
+                            size: 30.0,
+                          )),
+                      SizedBox(width: 10),
+                      GoogleText(
+                          text: "Meeting Details",
+                          fsize: 20.0,
                           color: Colors.black,
-                          size: 30.0,
-                        )),
-                    SizedBox(width: 10),
-                    GoogleText(
-                        text: "Meeting Details",
-                        fsize: 20.0,
-                        color: Colors.black,
-                        fweight: FontWeight.bold)
-                  ],
+                          fweight: FontWeight.bold)
+                    ],
+                  ),
                 ),
               ),
-            ),
-            // formField =======================
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                color: Colors.black,
-                thickness: 1.5,
+              // formField =======================
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                child: Divider(
+                  color: Colors.black,
+                  thickness: 1.5,
+                ),
               ),
-            ),
-            Details_view(context, widget.MapData)
-            // end form ====================================
-          ],
+              Details_view(context, widget.MapData)
+              // end form ====================================
+            ],
+          ),
         ),
       ),
     );

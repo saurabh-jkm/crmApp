@@ -20,6 +20,7 @@ import '../../../responsive.dart';
 import '../../../themes/firebase_functions.dart';
 import '../../../themes/style.dart';
 import '../../../themes/theme_widgets.dart';
+import '../../Invoice/invoice_controller.dart';
 import '../../customers/customer_widgets.dart';
 import '../../dashboard/components/header.dart';
 import 'view_page.dart';
@@ -119,14 +120,14 @@ class _SalemanListState extends State<SalemanList> {
 
 /////////////=====================================================================
 
+  var controllerr = new invoiceController();
   @override
   Widget build(BuildContext context) {
     return RawKeyboardListener(
       autofocus: true,
       focusNode: FocusNode(),
       onKey: (e) {
-        var rData =
-            baseController.KeyPressFun(e, context, backtype: "dashbord");
+        var rData = controllerr.cntrKeyPressFun(e, context);
         if (rData != null && rData) {
           setState(() {});
         }

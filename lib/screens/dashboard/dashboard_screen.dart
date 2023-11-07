@@ -48,6 +48,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int Out_of_Stock_No = 0;
   int no_of_year_sale = 0;
   int BalanceCount = 0;
+  int totallbuy = 0;
+  int todaybuy = 0;
+  int no_of_year_buy = 0;
+  int todaysell = 0;
+  int totalsell = 0;
   var tempMap = {};
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -60,11 +65,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
       StockNo = await controller.stock_Data_count();
       UserNo = await controller.User_Data_count();
       Out_of_Stock_No = await controller.OutofStock_Data_count();
+      totallbuy = await controller.totallBuy();
+      todaybuy = await controller.todayBuy();
+      no_of_year_buy = await controller.yearBuy();
 
       // todaySale
-      await todaySale();
-      await yearSale();
+      totalsell = await controller.totalSale();
+      todaysell = await controller.todaySale();
+      no_of_year_sale = await controller.yearSale();
       await appSetting();
+
       BalanceCount = await controller.Balance_count();
     }
 
@@ -96,57 +106,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       });
     }
   }
-
-  ///
-
-  todaySale() async {
-    List StoreDocs = [];
-    var newDate = todayTimeStamp_for_query();
-    var rData;
-
-    if (!kIsWeb && Platform.isWindows) {
-      var query = await Firestore.instance
-          .collection('order')
-          .where("date_at", isGreaterThan: newDate);
-      rData = await dbRawQuery(query);
-      //print("-----${rData}");
-    } else {
-      var query = await FirebaseFirestore.instance
-          .collection('order')
-          .where("date_at", isGreaterThan: newDate);
-      rData = await dbRawQuery(query);
-    }
-
-    setState(() {
-      no_todaySale = rData.length;
-    });
-  }
-
-  yearSale() async {
-    List StoreDocs = [];
-    var newDate = todayTimeStamp_for_query();
-    var yearStartDate = yearStamp_for_query();
-    var rData;
-
-    if (!kIsWeb && Platform.isWindows) {
-      var query = await Firestore.instance
-          .collection('order')
-          .where("date_at", isGreaterThan: yearStartDate);
-      rData = await dbRawQuery(query);
-      //print("-----${rData}");
-    } else {
-      var query = await FirebaseFirestore.instance
-          .collection('order')
-          .where("date_at", isGreaterThan: yearStartDate);
-      rData = await dbRawQuery(query);
-    }
-
-    setState(() {
-      no_of_year_sale = rData.length;
-    });
-  }
-
-// ////////////////
 
 //   final List<BarChartModel> data = [
 //     BarChartModel(
@@ -216,22 +175,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     // dashborad list init
     List demoMyFiles = [
       CloudStorageInfo(
-        title: "Total Invoice",
-        numOfFiles: invoiceNo,
-        svgSrc: Icons.shopping_cart,
-        // svgSrc: "assets/icons/shoping.svg",
-        color: primaryColor,
-        PageNo: 5,
-      ),
-      CloudStorageInfo(
-        title: "Total Stocks",
-        numOfFiles: StockNo,
-        svgSrc: Icons.wallet_giftcard,
-        // svgSrc: "assets/icons/google_drive.svg",
-        color: Color(0xFFFFA113),
-        PageNo: 4,
-      ),
-      CloudStorageInfo(
         title: "Total User",
         numOfFiles: UserNo,
         svgSrc: Icons.person,
@@ -241,19 +184,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
         PageNo: 10,
       ),
       CloudStorageInfo(
+        title: "Total Stocks",
+        numOfFiles: StockNo,
+        svgSrc: Icons.shopping_cart,
+        // svgSrc: "assets/icons/google_drive.svg",
+        color: Color(0xFFFFA113),
+        PageNo: 4,
+      ),
+      CloudStorageInfo(
         title: "Out of stock",
         numOfFiles: Out_of_Stock_No,
         svgSrc: Icons.production_quantity_limits_outlined,
 
         // svgSrc: "assets/icons/drop_box.svg",
-        color: Color.fromARGB(255, 119, 143, 31),
+        color: Colors.red,
 
         PageNo: 4,
       ),
       CloudStorageInfo(
+        title: "Total Invoice",
+        numOfFiles: invoiceNo,
+        svgSrc: Icons.inventory_outlined,
+        // svgSrc: "assets/icons/shoping.svg",
+        color: primaryColor,
+        PageNo: 5,
+      ),
+      CloudStorageInfo(
         title: "Today Sales",
-        numOfFiles: no_todaySale,
+        numOfFiles: todaysell,
         svgSrc: Icons.auto_graph_rounded,
+        // svgSrc: "assets/icons/drop_box.svg",
+        color: Color.fromARGB(255, 235, 202, 16),
+
+        PageNo: 5,
+      ),
+      CloudStorageInfo(
+        title: "Total Sales",
+        numOfFiles: totalsell,
+        svgSrc: Icons.sync_alt_rounded,
         // svgSrc: "assets/icons/drop_box.svg",
         color: Color.fromARGB(255, 235, 202, 16),
 
@@ -265,19 +233,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
         svgSrc: Icons.sync_alt_rounded,
         // svgSrc: "assets/icons/drop_box.svg",
         color: Color.fromARGB(255, 235, 202, 16),
+        PageNo: 5,
+      ),
+      CloudStorageInfo(
+        title: "Today Buys",
+        numOfFiles: todaybuy,
+        svgSrc: Icons.sell,
+        // svgSrc: "assets/icons/drop_box.svg",
+        color: Color.fromARGB(255, 78, 235, 16),
 
         PageNo: 5,
       ),
       CloudStorageInfo(
-        title: "Totall Balance",
+        title: "Total Buys",
+        numOfFiles: totallbuy,
+        svgSrc: Icons.sell_outlined,
+        // svgSrc: "assets/icons/drop_box.svg",
+        color: Color.fromARGB(255, 78, 235, 16),
+
+        PageNo: 5,
+      ),
+      CloudStorageInfo(
+        title: "Yearly Buys",
+        numOfFiles: no_of_year_buy,
+        svgSrc: Icons.sell_outlined,
+        // svgSrc: "assets/icons/drop_box.svg",
+        color: Color.fromARGB(255, 78, 235, 16),
+
+        PageNo: 5,
+      ),
+      CloudStorageInfo(
+        title: "Total Outstanding",
         numOfFiles: BalanceCount,
         svgSrc: Icons.account_balance_outlined,
         // svgSrc: "assets/icons/drop_box.svg",
         color: Color.fromARGB(255, 241, 123, 123),
-
         PageNo: 12,
       ),
     ];
+    //totallbuy
     return (user.isEmpty)
         ? Center(child: pleaseWait(context))
         : Scaffold(

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../../themes/function.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
+import '../Invoice/invoice_controller.dart';
 import '../Invoice/invoice_serv.dart';
 import '../Invoice/pdf.dart';
 
@@ -60,21 +61,32 @@ class _CustomerAllOrderListState extends State<CustomerAllOrderList> {
     }
   }
 
+  var controller = new invoiceController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("${widget.title}"),
-        backgroundColor: themeBG2,
-      ),
-      body: (isWait)
-          ? pleaseWait(context)
-          : Container(
-              color: themeBG2,
-              child: Column(
-                children: [CustomerList(context, controllerr)],
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKey: (e) {
+        var rData = controller.cntrKeyPressFun(e, context);
+        if (rData != null && rData) {
+          setState(() {});
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("${widget.title}"),
+          backgroundColor: themeBG2,
+        ),
+        body: (isWait)
+            ? pleaseWait(context)
+            : Container(
+                color: themeBG2,
+                child: Column(
+                  children: [CustomerList(context, controllerr)],
+                ),
               ),
-            ),
+      ),
     );
   }
 

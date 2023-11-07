@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_new
+// ignore_for_file: prefer_const_constructors, unnecessary_new, await_only_futures, prefer_collection_literals, avoid_unnecessary_containers
 
 import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
 import 'package:crm_demo/screens/Invoice/invoice_list.dart';
@@ -25,8 +25,8 @@ import 'constants.dart';
 import 'controllers/MenuAppController.dart';
 //import 'screens/Login_Reg/Login_user.dart';
 import 'screens/Login_Reg/login_screen.dart';
+import 'screens/Selsman/WorkAlot/salesman_list.dart';
 import 'screens/main/main_screen.dart';
-import 'package:url_strategy/url_strategy.dart';
 
 ///////
 void main() async {
@@ -60,8 +60,7 @@ void main() async {
 
 // 2nd My app Start =========================================
 // ==========================================================
-// ==========================================================
-// ==========================================================
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -90,7 +89,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    // TODO: implement initState
     _getUser();
     super.initState();
   }
@@ -131,6 +129,7 @@ class _MyAppState extends State<MyApp> {
         '/stock_list': (context) => ProductAdd(),
         '/privacy-policy': (context) => privacyPolicy(),
         '/invoice': (context) => Invoice_List(),
+        '/salesman': (context) => SalemanList(),
         '/dashboard': (context) => MainScreen(pageNo: 1, stockvalue: 0),
         '/new_invoice': (context) => addInvoiceScreen(
               header_name: "Customer",

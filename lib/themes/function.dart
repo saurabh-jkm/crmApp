@@ -89,6 +89,13 @@ yearStamp_for_query() {
   return newDate;
 }
 
+monthStamp_for_query() {
+  final date = DateTime.now();
+  var newDate = DateTime(date.year, 01, 00, 24);
+
+  return newDate;
+}
+
 themeCustomeDate(str) {
   final date = DateTime.now();
   if (str == '') {

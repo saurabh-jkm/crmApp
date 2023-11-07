@@ -1,6 +1,5 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations
+// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, non_constant_identifier_names, deprecated_colon_for_default_value, prefer_typing_uninitialized_variables
 
-import 'package:crm_demo/screens/Invoice/view_invoice_screen-backup.dart';
 import 'package:crm_demo/screens/customers/customer_all_order_list.dart';
 import 'package:crm_demo/themes/function.dart';
 import 'package:crm_demo/themes/style.dart';
@@ -47,10 +46,10 @@ Widget CustomerTableRow(context, data, srNo, orderList,
       children: [
         for (var i = 0; i < dataList.length; i++)
           (i == 0)
-              ? Container(
+              ? SizedBox(
                   width: 40.0,
-                  child: Container(
-                    child: Text("${srNo}",
+                  child: SizedBox(
+                    child: Text("$srNo",
                         style: TextStyle(
                             fontSize: 12.0,
                             color: (textColor == '')

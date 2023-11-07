@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, await_only_futures, unnecessary_string_interpolations
+// ignore_for_file: non_constant_identifier_names, await_only_futures, unnecessary_string_interpolations, camel_case_types
 
 import 'dart:io';
 
@@ -7,8 +7,6 @@ import 'package:firedart/firedart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pdf/widgets.dart';
-
 import '../../themes/firebase_functions.dart';
 import '../../themes/style.dart';
 
