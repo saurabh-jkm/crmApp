@@ -229,7 +229,28 @@ class DashboardController {
     List tempList = [];
     var newDate = await todayTimeStamp_for_query();
     var tempCount = 0;
+
+    var query;
     if (!kIsWeb && Platform.isWindows) {
+        query = await Firestore.instance
+            .collection('order')
+            .where("date_at", isGreaterThan: newDate);
+      } else {
+        query = await FirebaseFirestore.instance
+            .collection('order')
+            .where("date_at", isGreaterThan: newDate);
+            //.where("date_at", isLessThan: dateTo);
+      }
+
+      var temp = await dbRawQuery(query);
+      tempCount = temp.length;
+
+      return tempCount;
+
+
+
+
+    /*if (!kIsWeb && Platform.isWindows) {
       var query = await Firestore.instance
           .collection('order')
           //.where("type", isEqualTo: "Buy")
@@ -267,7 +288,7 @@ class DashboardController {
       tempCount = query;
     }
 
-    return tempCount;
+    return tempCount;*/
   }
 
   ///
