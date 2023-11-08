@@ -88,10 +88,15 @@ class _Invoice_pdf extends State<Invoice_pdf> {
   Future<Uint8List> _generatePdf(PdfPageFormat format, PriceDetail) async {
     int intbalance = int.parse(PriceDetail["balance"]);
     int intpayment = int.parse(
-        "${(PriceDetail['payment'] != null || PriceDetail['payment'] != "") ? "${PriceDetail['payment']}" : "0"}");
+        "${(PriceDetail['payment'] != "") ? "${PriceDetail['payment']}" : "0"}");
+
     String Balance = NumberFormat('#,##,###').format(intbalance);
     String Total = NumberFormat('#,##,###').format(PriceDetail["total"]);
     String Payment = NumberFormat('#,##,###').format(intpayment);
+    final payDate = (PriceDetail['payment_date'] == null ||
+            PriceDetail['payment_date'] == '')
+        ? "--/--"
+        : PriceDetail['payment_date'];
     final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
     Map tt = PriceDetail["products"];
     pdf.addPage(
@@ -287,7 +292,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                                         fontSize: 11,
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
-                                pw.Text("${PriceDetail["payment_date"]}",
+                                pw.Text("$payDate",
                                     style: pw.TextStyle(
                                         fontSize: 11,
                                         fontWeight: pw.FontWeight.normal,
