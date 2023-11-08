@@ -82,10 +82,8 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
 
         // UploadFile(path!, fileName).then((value) {});
 
-        setState(() async {
-          url_img = await uploadFile(path!, fileName, db);
-          _getUser();
-        });
+        url_img = uploadFile(path!, fileName, db);
+        _getUser();
       } else {
         themeAlert(context, 'Not find selected', type: "error");
       }

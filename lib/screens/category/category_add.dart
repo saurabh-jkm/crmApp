@@ -158,7 +158,7 @@ class _CategoryAddState extends State<CategoryAdd> {
     data = await dbFind(w);
     if (data != null) {
       setState(() {
-        print("$data  +++++++++");
+        // print("$data  +++++++++");
         Catename = data['category_name'];
         controllerr.PerentCate = data['parent_cate'];
         slugUrl = data['slug_url'];
