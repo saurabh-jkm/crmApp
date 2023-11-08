@@ -161,34 +161,25 @@ class DashboardController {
     var yearStartDate = yearStamp_for_query();
     var rData;
 
+
+
     if (!kIsWeb && Platform.isWindows) {
       var query = await Firestore.instance
           .collection('order')
           .where("date_at", isGreaterThan: yearStartDate)
           .get()
-          .then((QuerySnapshot querySnapshot) {
-            querySnapshot.docs.forEach((doc) {
-              if (doc["type"] == "Buy") {
-                tempList.add(doc.data());
-              }
-            });
-
-            return tempList.length;
-          } as FutureOr Function(List<Document> value));
+          .then((value) {
+        return value.length;
+      });
       tempCount = query;
     } else {
       var query = await FirebaseFirestore.instance
           .collection('order')
           .where("date_at", isGreaterThan: yearStartDate)
+          .count()
           .get()
-          .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          if (doc["type"] == "Buy") {
-            tempList.add(doc.data());
-          }
-        });
-
-        return tempList.length;
+          .then((value) {
+        return value.count;
       });
       tempCount = query;
     }
@@ -300,37 +291,53 @@ class DashboardController {
     var yearStartDate = yearStamp_for_query();
     var rData;
 
-    if (!kIsWeb && Platform.isWindows) {
-      var query = await Firestore.instance
-          .collection('order')
-          .where("date_at", isGreaterThan: yearStartDate)
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-            querySnapshot.docs.forEach((doc) {
-              if (doc["type"] == "Sale") {
-                tempList.add(doc.data());
-              }
-            });
+    var query;
+     if (!kIsWeb && Platform.isWindows) {
+        query = await Firestore.instance
+            .collection('order')
+            .where("date_at", isGreaterThan: yearStartDate)
+            .where("type", isEqualTo: "Sale");
+      } else {
+        query = await FirebaseFirestore.instance
+            .collection('order')
+            .where("date_at", isGreaterThan: yearStartDate)
+            .where("type", isEqualTo: "Sale");
+            //.where("date_at", isLessThan: dateTo);
+      }
 
-            return tempList.length;
-          } as FutureOr Function(List<Document> value));
-      tempCount = query;
-    } else {
-      var query = await FirebaseFirestore.instance
-          .collection('order')
-          .where("date_at", isGreaterThan: yearStartDate)
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          if (doc["type"] == "Sale") {
-            tempList.add(doc.data());
-          }
-        });
+      var temp = await dbRawQuery(query);
+      tempCount = temp.length;
 
-        return tempList.length;
-      });
-      tempCount = query;
-    }
+
+
+    // if (!kIsWeb && Platform.isWindows) {
+    //   var query = await Firestore.instance
+    //       .collection('order')
+    //       .where("date_at", isGreaterThan: yearStartDate)
+    //       .get()
+    //       .then((value) {
+    //     return value.length;
+    //   });
+    //   tempCount = query;
+    // } else {
+    //   var query = await FirebaseFirestore.instance
+    //       .collection('order')
+    //       .where("date_at", isGreaterThan: yearStartDate),
+    //       .where("type", isGreaterThan: "Sale"),
+    //       .count()
+    //       .get()
+    //       .then((value) {
+    //     return value.count;
+    //   });
+    //   tempCount = query;
+    // }
+
+    // if (doc["type"] == "Sale") {
+    //             tempList.add(doc.data());
+    //           }
+   
+
+    
     return tempCount;
   }
 
@@ -339,26 +346,22 @@ class DashboardController {
 
   totalSale() async {
     var tempCount = 0;
-    if (!kIsWeb && Platform.isWindows) {
-      var query = await Firestore.instance
-          .collection('order')
-          .where("type", isEqualTo: "Sale")
-          .get()
-          .then((value) {
-        return value.length;
-      });
-      tempCount = query;
-    } else {
-      var query = await FirebaseFirestore.instance
-          .collection('order')
-          .where("type", isEqualTo: "Sale")
-          .count()
-          .get()
-          .then((value) {
-        return value.count;
-      });
-      tempCount = query;
-    }
+  
+     var query;
+     if (!kIsWeb && Platform.isWindows) {
+        query = await Firestore.instance
+            .collection('order')
+            .where("type", isEqualTo: "Sale");
+      } else {
+        query = await FirebaseFirestore.instance
+            .collection('order')
+            .where("type", isEqualTo: "Sale");
+            //.where("date_at", isLessThan: dateTo);
+      }
+
+      var temp = await dbRawQuery(query);
+      tempCount = temp.length;
+    
     return tempCount;
   }
 
@@ -368,43 +371,22 @@ class DashboardController {
     List tempList = [];
     var newDate = await todayTimeStamp_for_query();
     var tempCount = 0;
-    if (!kIsWeb && Platform.isWindows) {
-      var query = await Firestore.instance
-          .collection('order')
-          //.where("type", isEqualTo: "Buy")
-          .where("date_at", isGreaterThan: newDate)
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-            querySnapshot.docs.forEach((doc) {
-              if (doc["type"] == "Sale") {
-                tempList.add(doc.data());
-              }
-            });
-            return tempList.length;
-          } as FutureOr Function(List<Document> value));
-      tempCount = query;
-    } else {
-      var query = await FirebaseFirestore.instance
-          .collection('order')
-          // .where("type", isEqualTo: "Buy")
-          .where("date_at", isGreaterThan: newDate)
-          //  .count()
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          if (doc["type"] == "Sale") {
-            tempList.add(doc.data());
-          }
-        });
 
-        return tempList.length;
-      });
+     var query;
+     if (!kIsWeb && Platform.isWindows) {
+        query = await Firestore.instance
+            .collection('order')
+            .where("date_at", isGreaterThan: newDate);
+      } else {
+        query = await FirebaseFirestore.instance
+            .collection('order')
+            .where("date_at", isGreaterThan: newDate);
+            //.where("date_at", isLessThan: dateTo);
+      }
 
-      //     .then((value) {
-      //   return value.count;
-      // });
-      tempCount = query;
-    }
+      var temp = await dbRawQuery(query);
+      tempCount = temp.length;
+    
 
     return tempCount;
   }
