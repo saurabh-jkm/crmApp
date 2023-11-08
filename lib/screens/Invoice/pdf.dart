@@ -321,6 +321,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                           child: pw.Text("Item Description",
                               style: pw.TextStyle(
                                   fontWeight: pw.FontWeight.bold,
+                                  /////
                                   color: PdfColors.black))),
                       pw.Expanded(
                           child: pw.Container(
