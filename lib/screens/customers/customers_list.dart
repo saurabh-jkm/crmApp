@@ -117,16 +117,16 @@ class _CustomerListState extends State<CustomerList> {
                           : const Color.fromARGB(0, 110, 110, 110)),
                   SizedBox(width: 10.0),
 
-                  themeButton3(context, changeFilter,
-                      arg: 'Other',
-                      label: 'Other',
-                      radius: 2.0,
-                      borderColor: (controller.selectedFilter == 'Other')
-                          ? Colors.green
-                          : Colors.white,
-                      buttonColor: (controller.selectedFilter == 'Other')
-                          ? Color.fromARGB(255, 4, 141, 134)
-                          : const Color.fromARGB(0, 110, 110, 110)),
+                  // themeButton3(context, changeFilter,
+                  //     arg: 'Other',
+                  //     label: 'Other',
+                  //     radius: 2.0,
+                  //     borderColor: (controller.selectedFilter == 'Other')
+                  //         ? Colors.green
+                  //         : Colors.white,
+                  //     buttonColor: (controller.selectedFilter == 'Other')
+                  //         ? Color.fromARGB(255, 4, 141, 134)
+                  //         : const Color.fromARGB(0, 110, 110, 110)),
                   ////// filer  controller  ++++++++++++++++++++++++++++++++++
                   Container(
                     margin: EdgeInsets.all(10),
