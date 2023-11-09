@@ -175,7 +175,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                   pw.Expanded(
                       child: pw.Container(
                           padding: pw.EdgeInsets.all(4),
-                          height: 60,
+                          height: 45,
                           decoration: pw.BoxDecoration(
                               border: pw.Border.all(
                                   color: PdfColors.black, width: 1)),
@@ -207,7 +207,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                               ]))),
                   pw.Expanded(
                       child: pw.Container(
-                          height: 60,
+                          height: 45,
                           padding: pw.EdgeInsets.all(4),
                           decoration: pw.BoxDecoration(
                             border:
@@ -245,7 +245,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                   pw.Expanded(
                       child: pw.Container(
                           padding: pw.EdgeInsets.all(4),
-                          height: 80,
+                          height: 60,
                           decoration: pw.BoxDecoration(
                               border: pw.Border.all(
                                   color: PdfColors.black, width: 1)),
@@ -278,7 +278,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                   pw.Expanded(
                     child: pw.Container(
                         padding: pw.EdgeInsets.all(4),
-                        height: 80,
+                        height: 60,
                         decoration: pw.BoxDecoration(
                             border: pw.Border.all(
                                 color: PdfColors.black, width: 1)),
