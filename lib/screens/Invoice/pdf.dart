@@ -175,68 +175,6 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                   pw.Expanded(
                       child: pw.Container(
                           padding: pw.EdgeInsets.all(4),
-                          height: 80,
-                          decoration: pw.BoxDecoration(
-                              border: pw.Border.all(
-                                  color: PdfColors.black, width: 1)),
-                          child: pw.Column(
-                              mainAxisAlignment:
-                                  pw.MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              children: [
-                                pw.Text("Customer Name",
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
-                                        color: PdfColors.black)),
-                                pw.Text("Mobile No.",
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
-                                        color: PdfColors.black)),
-                                pw.Text("Email Id",
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
-                                        color: PdfColors.black)),
-                                pw.Text("Address",
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
-                                        color: PdfColors.black)),
-                              ]))),
-                  pw.Expanded(
-                    child: pw.Container(
-                        padding: pw.EdgeInsets.all(4),
-                        height: 80,
-                        decoration: pw.BoxDecoration(
-                            border: pw.Border.all(
-                                color: PdfColors.black, width: 1)),
-                        child: pw.Column(
-                            mainAxisAlignment:
-                                pw.MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: pw.CrossAxisAlignment.start,
-                            children: [
-                              pw.Text("${PriceDetail["customer_name"]}",
-                                  style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.normal,
-                                      color: PdfColors.black)),
-                              pw.Text("${PriceDetail["mobile"]}",
-                                  style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.normal,
-                                      color: PdfColors.black)),
-                              pw.Text("${PriceDetail["email"]}",
-                                  style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.normal,
-                                      color: PdfColors.black)),
-                              pw.Text("${PriceDetail["address"]}",
-                                  style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.normal,
-                                      color: PdfColors.black)),
-                            ])),
-                  )
-                ])),
-                pw.Container(
-                    child: pw.Row(children: [
-                  pw.Expanded(
-                      child: pw.Container(
-                          padding: pw.EdgeInsets.all(4),
                           height: 60,
                           decoration: pw.BoxDecoration(
                               border: pw.Border.all(
@@ -299,6 +237,69 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                                         color: PdfColors.black)),
                               ])))
                 ])),
+                pw.Container(
+                    child: pw.Row(children: [
+                  pw.Expanded(
+                      child: pw.Container(
+                          padding: pw.EdgeInsets.all(4),
+                          height: 80,
+                          decoration: pw.BoxDecoration(
+                              border: pw.Border.all(
+                                  color: PdfColors.black, width: 1)),
+                          child: pw.Column(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                pw.Text("Customer Name",
+                                    style: pw.TextStyle(
+                                        fontWeight: pw.FontWeight.bold,
+                                        color: PdfColors.black)),
+                                pw.Text("Mobile No.",
+                                    style: pw.TextStyle(
+                                        fontWeight: pw.FontWeight.bold,
+                                        color: PdfColors.black)),
+                                pw.Text("Email Id",
+                                    style: pw.TextStyle(
+                                        fontWeight: pw.FontWeight.bold,
+                                        color: PdfColors.black)),
+                                pw.Text("Address",
+                                    style: pw.TextStyle(
+                                        fontWeight: pw.FontWeight.bold,
+                                        color: PdfColors.black)),
+                              ]))),
+                  pw.Expanded(
+                    child: pw.Container(
+                        padding: pw.EdgeInsets.all(4),
+                        height: 80,
+                        decoration: pw.BoxDecoration(
+                            border: pw.Border.all(
+                                color: PdfColors.black, width: 1)),
+                        child: pw.Column(
+                            mainAxisAlignment:
+                                pw.MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text("${PriceDetail["customer_name"]}",
+                                  style: pw.TextStyle(
+                                      fontWeight: pw.FontWeight.normal,
+                                      color: PdfColors.black)),
+                              pw.Text("${PriceDetail["mobile"]}",
+                                  style: pw.TextStyle(
+                                      fontWeight: pw.FontWeight.normal,
+                                      color: PdfColors.black)),
+                              pw.Text("${PriceDetail["email"]}",
+                                  style: pw.TextStyle(
+                                      fontWeight: pw.FontWeight.normal,
+                                      color: PdfColors.black)),
+                              pw.Text("${PriceDetail["address"]}",
+                                  style: pw.TextStyle(
+                                      fontWeight: pw.FontWeight.normal,
+                                      color: PdfColors.black)),
+                            ])),
+                  )
+                ])),
+
                 pw.SizedBox(height: 20),
                 pw.Container(
                   decoration: pw.BoxDecoration(
