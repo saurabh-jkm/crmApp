@@ -571,16 +571,25 @@ class _BalanceListState extends State<BalanceList> {
                 children: [
                   IconButton(
                       onPressed: () async {
-                        await viewInvoice(edata);
-/////////////////////////  View Invoice Details  +++++++++++++++++++++++++++++
-
-                        // final data = await InvoiceService(
-                        //   PriceDetail: edata,
-                        // ).createInvoice();
-                        // // final data = await service.createInvoice();
-                        // await savePdfFile("invoice", data, edata);
+                        final data = await InvoiceService(
+                          PriceDetail: edata,
+                        ).createInvoice();
+                        // final data = await service.createInvoice();
+                        await savePdfFile("invoice", data, edata);
                       },
-                      icon: Icon(Icons.visibility_outlined, size: 30))
+                      icon: Icon(
+                        Icons.download,
+                        size: 30,
+                        color: Colors.green,
+                      )),
+                  IconButton(
+                      onPressed: () async {
+                        await viewInvoice(edata);
+                      },
+                      icon: Icon(
+                        Icons.visibility_outlined,
+                        size: 30,
+                      )),
                 ],
               ),
             ),
