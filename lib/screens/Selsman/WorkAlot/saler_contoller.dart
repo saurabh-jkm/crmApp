@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unnecessary_null_comparison, unused_local_variable, avoid_print, prefer_const_declarations
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unnecessary_null_comparison, unused_local_variable, avoid_print, prefer_const_declarations, prefer_typing_uninitialized_variables
 
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'dart:io';
@@ -196,10 +196,13 @@ class SellerController {
     var alert = '';
     if (Customer_nameController.text.length < 4) {
       alert = "Valid Customer Name  Required !!";
-    } else if (Customer_MobileController.text == '' &&
-        Customer_MobileController.text.length < 10) {
-      alert = "Valid Mobile Number Required !!";
-    } else if (Customer_pincodeController.text == '') {
+    }
+    // else if (Customer_MobileController.text == '' &&
+    //     Customer_MobileController.text.length < 10) {
+    //   alert = "Valid Mobile Number Required !!";
+    // }
+
+    else if (Customer_pincodeController.text == '') {
       alert = "Valid  Pincode Required !!";
     } else if (Next_date == '') {
       alert = "Meeting Date Required !!";
@@ -326,6 +329,7 @@ class SellerController {
     Customer_TypeController.clear();
 ////////  changes add My Nitin Sir++++++++++++++
     Customer_pincodeController.clear();
+    Customer_shopNoController.clear();
     Next_date = "";
     sellerId = "";
   }
@@ -407,4 +411,4 @@ class SellerController {
       print('Error sending notification  =========');
     }
   }
-}/////   closs class
+} /////   closs class

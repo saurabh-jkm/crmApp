@@ -336,52 +336,67 @@ class _SalemanListState extends State<SalemanList> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
+                    Container(
+                      margin:
+                          EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              IconButton(
+                                  onPressed: () async {
+                                    await controller.sellerList(_number_select);
+                                    // todo
+                                    setState(() {
+                                      controller.selectedSeller = {};
+                                      controller.selectedSellerId = '';
+                                      controller.secondScreen = false;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    Icons.arrow_back,
+                                    color: Colors.black,
+                                    size: 35,
+                                  )),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                '${(controller.selectedSeller != null) ? controller.selectedSeller['name'] : ''}',
+                                style: themeTextStyle(
+                                    color: Colors.blue,
+                                    fw: FontWeight.bold,
+                                    size: 20),
+                              ),
+                            ],
+                          ),
+                          Row(children: [
                             IconButton(
                                 onPressed: () async {
-                                  await controller.sellerList(_number_select);
-                                  // todo
-                                  setState(() {
-                                    controller.selectedSeller = {};
-                                    controller.selectedSellerId = '';
-                                    controller.secondScreen = false;
-                                  });
-                                },
-                                icon: Icon(
-                                  Icons.arrow_back,
-                                  color: Colors.black,
-                                )),
-                            Text(
-                              '${(controller.selectedSeller != null) ? controller.selectedSeller['name'] : ''}',
-                              style: themeTextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                        Row(children: [
-                          IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  controller.OrderList_data(
+                                  await controller.OrderList_data(
                                       controller.selectedSellerId,
                                       _number_select_meeting);
-                                });
-                              },
-                              icon: Icon(
-                                Icons.refresh,
-                                color: Colors.black,
-                              )),
-                          SizedBox(width: 20.0),
-                          themeButton3(context, () {
-                            setState(() {
-                              controller.ListShow = false;
-                            });
-                          }, label: "+ New Meeting Asign", radius: 5.0),
-                        ]),
-                      ],
+                                  setState(() {});
+                                },
+                                icon: Icon(
+                                  Icons.refresh,
+                                  color: Colors.green,
+                                  size: 35,
+                                )),
+                            SizedBox(width: 20.0),
+                            themeButton3(context, () {
+                              setState(() {
+                                controller.ListShow = false;
+                              });
+                            },
+                                label: "+ New Meeting Asign",
+                                fontSize: 20.0,
+                                btnHeightSize: 50.0,
+                                radius: 5.0),
+                          ]),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 10,
@@ -531,8 +546,15 @@ class _SalemanListState extends State<SalemanList> {
                           ),
                         ])),
                   ])
-            : addNewMeet_widget(context, controller, fnFetchCutomerDetails,
-                selectDate, controller.ListShow, fn_change_state, fn_setstate));
+            : addNewMeet_widget(
+                context,
+                controller,
+                fnFetchCutomerDetails,
+                selectDate,
+                controller.ListShow,
+                fn_change_state,
+                fn_setstate,
+              ));
   }
 
 // Table Heading ==========================
@@ -598,11 +620,15 @@ class _SalemanListState extends State<SalemanList> {
                                           "id": "${data["id"]}"
                                         });
 
-                                        setState(() {
-                                          controller.OrderList_data(
-                                              "${data['id']}",
-                                              _number_select_meeting);
-                                        });
+                                        //  await   controller.OrderList_data(
+                                        //         "${data['id']}",
+                                        //         _number_select_meeting);
+
+                                        await controller.OrderList_data(
+                                            controller.selectedSellerId,
+                                            _number_select_meeting);
+
+                                        setState(() {});
                                       },
                                       icon: Icon(
                                         Icons.delete_outline_outlined,
