@@ -1147,27 +1147,27 @@ class invoiceController extends updateController {
         Navigator.pop(context, 'updated');
       }
 
-      // if (e.isKeyPressed(LogicalKeyboardKey.keyD) ||
-      //     e.isKeyPressed(LogicalKeyboardKey.controlLeft)) {
-      //   Keys.add(key);
-      // }
-      // // ctr + D OR X => addnewproduct
-      // if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
-      //     (Keys.contains(LogicalKeyboardKey.keyD) ||
-      //         Keys.contains(LogicalKeyboardKey.keyX))) {
-      //   ctrNewRow();
+      if (e.isKeyPressed(LogicalKeyboardKey.keyD) ||
+          e.isKeyPressed(LogicalKeyboardKey.altLeft) || e.isKeyPressed(LogicalKeyboardKey.altRight) ) {
+        Keys.add(key);
+      }
+      // ctr + D OR X => addnewproduct
+      if ((Keys.contains(LogicalKeyboardKey.altLeft) || e.isKeyPressed(LogicalKeyboardKey.altRight)) &&
+          (Keys.contains(LogicalKeyboardKey.keyD) ||
+              Keys.contains(LogicalKeyboardKey.keyX))) {
+        ctrNewRow();
 
-      //   Keys = [];
-      //   return true;
-      // }
-      // // ctr + R OR Z => RemoveProduct
-      // if (Keys.contains(LogicalKeyboardKey.controlLeft) &&
-      //     (Keys.contains(LogicalKeyboardKey.keyR) ||
-      //         Keys.contains(LogicalKeyboardKey.keyZ))) {
-      //   ctrRemoveRow(context);
-      //   Keys = [];
-      //   return true;
-      // }
+        Keys = [];
+        return true;
+      }
+      // ctr + R OR Z => RemoveProduct
+      if ((Keys.contains(LogicalKeyboardKey.altLeft) || e.isKeyPressed(LogicalKeyboardKey.altRight)) &&
+          (Keys.contains(LogicalKeyboardKey.keyR) ||
+              Keys.contains(LogicalKeyboardKey.keyZ))) {
+        ctrRemoveRow(context);
+        Keys = [];
+        return true;
+      }
     } else {
       Keys.remove(key);
     }
