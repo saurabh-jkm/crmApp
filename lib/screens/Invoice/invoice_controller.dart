@@ -1355,14 +1355,19 @@ class invoiceController extends updateController {
 
   // update product log ==========================================
   updateProductLog(docId, dbArr, oldSubProductList, oldQnt, list_id, ins_data,
-      {logType: 'Sale Invoice'}) async {
+      {logType: 'Sale Invoice',oldSubProductTUnit:''}) async {
     var temp = oldSubProductList[list_id];
     Map<dynamic, dynamic> oldMap = new Map();
     oldMap['quantity'] = oldQnt;
+    if(oldSubProductTUnit != ''){
+      oldMap['totalUnit'] = oldSubProductTUnit;
+    }
+
+    
     oldMap['price'] = (temp['price'] != null) ? temp['price'] : '';
     oldMap['unit'] = (temp['unit'] != null) ? temp['unit'] : '';
     oldMap['location'] = (temp['location'] != null) ? temp['location'] : '';
-    oldMap['totalUnit'] = (temp['totalUnit'] != null) ? temp['totalUnit'] : '';
+    //oldMap['totalUnit'] = (temp['totalUnit'] != null) ? temp['totalUnit'] : '';
     var oldSub = {list_id: oldMap};
 
     // only updated row
@@ -1503,21 +1508,24 @@ class invoiceController extends updateController {
   // Sales stock & Edit update check ================================
   SalesStockEdit(products, oldData, inputDataDbData, {editId: ''}) async {
     var i = 1;
-    for (var k in products.keys) {
-      var product = products[k];
-      await comanQntCalculate(product, oldData);
-      i++;
-    }
+    
 
     // for edit =======================================================
     // check if delete some product
     if (editId != '') {
+       
       var deletedArr = {};
       oldData.forEach((k, v) {
         deletedArr[k] = v;
       });
 
-      // product foreach
+      for (var k in products.keys) {
+          var product = products[k];
+          await comanQntCalculate(product, oldData);
+          i++;
+        }
+
+      // this is for delete product if deleted product foreach
       products.forEach((k, v) {
         if (deletedArr[v['id']] != null) {
           var tempDel = deletedArr[v['id']];
@@ -1525,11 +1533,13 @@ class invoiceController extends updateController {
           deletedArr[v['id']] = tempDel;
         }
       });
+       
 
       for (var key in deletedArr.keys) {
         var val = deletedArr[key];
-
+         
         if (val.isNotEmpty) {
+         
           for (var ke in val.keys) {
             var tempVal = val[ke];
             var tempArr = {
@@ -1545,43 +1555,78 @@ class invoiceController extends updateController {
               'gst': '${tempVal['gst']}',
               'id': '${tempVal['id']}',
             };
+            
 
             await comanQntCalculate(tempArr, oldData);
           }
         }
       }
-    } // end if condiiton
+    }else{
+      for (var k in products.keys) {
+          var product = products[k];
+          await comanQntCalculate(product, oldData);
+          i++;
+        }
+    }
   }
 
   // comman quantity calculate
   comanQntCalculate(product, oldData) async {
     // check if the product exist in stock
     if (product['id'] == null || product['id'] == '') {
+      print("update_qnt===========1");
       // call insert function new product ===============================
       // var updateProduct = {k: product};
       // await updateStock(updateProduct);
 
-      // TODO for sales
+    
       // check if product is not in old data ============================
     } else if (oldData[product['id']] == null ||
         oldData[product['id']]['${product['list_item_id']}'] == null) {
+          print("update_qnt===========2");
       // already added product ad new in this invoice ===============
       var li = product['list_item_id'];
       var dbProduct = await dbFind({'table': 'product', 'id': product['id']});
       var listProduct = dbProduct['item_list'];
       var subProduct = listProduct['$li'];
       var oldSubProductQ;
+      var oldSubProductTUnit;
+
+
       var dbSubQnt =
           oldSubProductQ = int.parse(subProduct['quantity'].toString());
-      //var dbSubUnit = int.parse(subProduct['totalUnit'].toString());
+
+      var dbUnit = int.parse(subProduct['unit'].toString());
+      var dbSubTUnit =
+          oldSubProductTUnit = int.parse(subProduct['totalUnit'].toString());
+
+
       var dbMainQnt = int.parse(dbProduct['quantity'].toString());
 
       // then increase db data
       var qnt = int.parse(product['quantity'].toString());
-      dbSubQnt -= qnt;
-      dbMainQnt -= qnt;
+      var unit = int.parse(product['unit'].toString());
+    
+
+      if(dbUnit == 0){
+        dbSubQnt -= qnt;
+        dbMainQnt -= qnt;
+      }else if( (unit == '' || unit == 0 ) && dbUnit != 0 ) {
+        unit = qnt*dbUnit;
+        dbSubQnt -= qnt;
+        dbMainQnt -= qnt;
+        dbSubTUnit -= unit;
+      }else{
+        dbSubTUnit -= unit;
+        qnt = qnt+(unit/dbUnit).toInt();
+        dbSubQnt -= qnt;
+        dbMainQnt -= qnt;
+      }
+
+
 
       // update quantity
+      subProduct['totalUnit'] = dbSubTUnit;
       subProduct['quantity'] = dbSubQnt;
       dbProduct['quantity'] = dbMainQnt;
       listProduct['$li'] = subProduct;
@@ -1592,42 +1637,106 @@ class invoiceController extends updateController {
       dbProduct['id'] = product['id'];
       await dbUpdate(db, dbProduct);
 
+      
+
       await updateProductLog(
           product['id'], dbProduct, listProduct, oldSubProductQ, li, dbProduct,
           logType:
-              " - Update Supplier - ${Customer_nameController.text} - Invoice");
+              " - Update Supplier - ${Customer_nameController.text} - Invoice",oldSubProductTUnit:oldSubProductTUnit);
     } else {
+      print("---else");
+      // ---------------------------------------------------------------------------------
+      // ---------------------------------------------------------------------------------
+      // Update old order calculate quantity & units
+      // ---------------------------------------------------------------------------------
+      // ---------------------------------------------------------------------------------
+      
       var li = product['list_item_id'];
-      // old order calculate quantity & units
+      
       var dbProduct = await dbFind({'table': 'product', 'id': product['id']});
       var oldVar = oldData[product['id']]['${product['list_item_id']}'];
 
       var listProduct = dbProduct['item_list'];
       var oldSubProductQ;
+      var oldSubProductTUnit;
       var subProduct = listProduct['$li'];
       var dbSubQnt =
           oldSubProductQ = int.parse(subProduct['quantity'].toString());
       //var dbSubUnit = int.parse(subProduct['totalUnit'].toString());
       var dbMainQnt = int.parse(dbProduct['quantity'].toString());
 
-      if (oldVar['quantity'] != product['quantity']) {
-        if (int.parse(oldVar['quantity'].toString()) >
-            int.parse(product['quantity'].toString())) {
+
+      var dbUnit = int.parse(subProduct['unit'].toString());
+      var dbSubTUnit =
+          oldSubProductTUnit = int.parse(subProduct['totalUnit'].toString());
+
+
+
+
+      if ((oldVar['quantity'] != product['quantity'])  || (oldVar['unit'] != product['unit'])) {
+    
+        if ( (int.parse(oldVar['quantity'].toString()) >
+            int.parse(product['quantity'].toString()))  || (int.parse(oldVar['unit'].toString()) >
+            int.parse(product['unit'].toString())))  {
           // return some data
           var qnt = int.parse(oldVar['quantity'].toString()) -
               int.parse(product['quantity'].toString());
-          dbSubQnt += qnt;
-          dbMainQnt += qnt;
+
+          var unit = int.parse(oldVar['unit'].toString()) -
+              int.parse(product['unit'].toString());   
+
+              print(unit) ;
+
+          // dbSubQnt += qnt;
+          // dbMainQnt += qnt;
+          
+
+          if(dbUnit == 0){
+            dbSubQnt += qnt;
+            dbMainQnt += qnt;
+          }else if( (unit == '' || unit == 0 ) && dbUnit != 0 ) {
+            unit = qnt*dbUnit;
+            dbSubQnt += qnt;
+            dbMainQnt += qnt;
+            dbSubTUnit += unit;
+          }else{
+            dbSubTUnit += unit;
+            qnt = (unit/dbUnit).toInt();
+            dbSubQnt += qnt;
+            dbMainQnt += qnt;
+          }
+
+
+
         } else {
+           
           // add some data
           var qnt = int.parse(product['quantity'].toString()) -
               int.parse(oldVar['quantity'].toString());
-          print("uyess===================>$dbMainQnt + $qnt ");
-          dbSubQnt -= qnt;
-          dbMainQnt -= qnt;
+
+          var unit = int.parse(product['unit'].toString()) -
+              int.parse(oldVar['unit'].toString());  
+
+           
+          
+          if(dbUnit == 0){
+            dbSubQnt -= qnt;
+            dbMainQnt -= qnt;
+          }else if( (unit == '' || unit == 0 ) && dbUnit != 0 ) {
+            unit = qnt*dbUnit;
+            dbSubQnt -= qnt;
+            dbMainQnt -= qnt;
+            dbSubTUnit -= unit;
+          }else{
+            dbSubTUnit -= unit;
+            qnt = qnt+(unit/dbUnit).toInt();
+            dbSubQnt -= qnt;
+            dbMainQnt -= qnt;
+          }
         }
 
         // update quantity
+        subProduct['totalUnit'] = dbSubTUnit;
         subProduct['quantity'] = dbSubQnt;
         dbProduct['quantity'] = dbMainQnt;
         listProduct['$li'] = subProduct;
@@ -1640,7 +1749,7 @@ class invoiceController extends updateController {
 
         await updateProductLog(product['id'], dbProduct, listProduct,
             oldSubProductQ, li, dbProduct,
-            logType: "Sale Invoice ${Customer_nameController.text}");
+            logType: "Sale Invoice ${Customer_nameController.text}",oldSubProductTUnit: oldSubProductTUnit);
       }
     }
     return true;
