@@ -78,7 +78,7 @@ class customerController {
           listCustomer[key] = listCustomerAllDataArr[key];
         }
       }
-    } else if (filter == "Supplier") {
+    } else{ //if (filter == "Supplier") {
       for (String key in listCustomerAllDataArr.keys) {
         if (listCustomerAllDataArr[key]['type']
             .toLowerCase()
@@ -86,28 +86,23 @@ class customerController {
           listCustomer[key] = listCustomerAllDataArr[key];
         }
       }
-    } else if (filter == "Other") {
-      for (String key in listCustomerAllDataArr.keys) {
-        if (listCustomerAllDataArr[key]['type'].toLowerCase() != "customer" &&
-            listCustomerAllDataArr[key]['type'].toLowerCase() != "supplier") {
-          listCustomer[key] = listCustomerAllDataArr[key];
-        }
-      }
-    } else {
-      for (String key in listCustomerAllDataArr.keys) {
-        if (listCustomerAllDataArr[key]['name']
-                .toLowerCase()
-                .contains(search.toLowerCase()) ||
-            listCustomerAllDataArr[key]['mobile']
-                .toLowerCase()
-                .contains(search.toLowerCase()) ||
-            listCustomerAllDataArr[key]['email']
-                .toLowerCase()
-                .contains(search.toLowerCase())) {
-          listCustomer[key] = listCustomerAllDataArr[key];
-        }
-      }
-    }
+    }  
+    
+    // else {
+    //   for (String key in listCustomerAllDataArr.keys) {
+    //     if (listCustomerAllDataArr[key]['name']
+    //             .toLowerCase()
+    //             .contains(search.toLowerCase()) ||
+    //         listCustomerAllDataArr[key]['mobile']
+    //             .toLowerCase()
+    //             .contains(search.toLowerCase()) ||
+    //         listCustomerAllDataArr[key]['email']
+    //             .toLowerCase()
+    //             .contains(search.toLowerCase())) {
+    //       listCustomer[key] = listCustomerAllDataArr[key];
+    //     }
+    //   }
+    // }
     return 1;
   }
 
