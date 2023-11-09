@@ -88,10 +88,15 @@ class _Invoice_pdf extends State<Invoice_pdf> {
   Future<Uint8List> _generatePdf(PdfPageFormat format, PriceDetail) async {
     int intbalance = int.parse(PriceDetail["balance"]);
     int intpayment = int.parse(
-        "${(PriceDetail['payment'] != null || PriceDetail['payment'] != "") ? "${PriceDetail['payment']}" : "0"}");
+        "${(PriceDetail['payment'] != "") ? "${PriceDetail['payment']}" : "0"}");
+
     String Balance = NumberFormat('#,##,###').format(intbalance);
     String Total = NumberFormat('#,##,###').format(PriceDetail["total"]);
     String Payment = NumberFormat('#,##,###').format(intpayment);
+    final payDate = (PriceDetail['payment_date'] == null ||
+            PriceDetail['payment_date'] == '')
+        ? "--/--"
+        : PriceDetail['payment_date'];
     final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
     Map tt = PriceDetail["products"];
     pdf.addPage(
@@ -155,7 +160,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                           ]),
                       /////// Invoice Data fetch  ++++++++
                       pw.BarcodeWidget(
-                          data: "https://insaaf99.com/",
+                          data: "https://electronic.jkmsoftsolutions.com/",
                           barcode: pw.Barcode.qrCode(),
                           width: 80,
                           height: 80),
@@ -232,7 +237,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                   pw.Expanded(
                       child: pw.Container(
                           padding: pw.EdgeInsets.all(4),
-                          height: 40,
+                          height: 60,
                           decoration: pw.BoxDecoration(
                               border: pw.Border.all(
                                   color: PdfColors.black, width: 1)),
@@ -245,7 +250,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                                 //     style: TextStyle(
                                 //         fontWeight: FontWeight.bold,
                                 //         color: PdfColors.black)),
-                                pw.Text("Invoice Id",
+                                pw.Text("Invoice No.",
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.bold,
                                         color: PdfColors.black)),
@@ -254,10 +259,14 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.bold,
                                         color: PdfColors.black)),
+                                pw.Text("Paymen Date",
+                                    style: pw.TextStyle(
+                                        fontWeight: pw.FontWeight.bold,
+                                        color: PdfColors.black)),
                               ]))),
                   pw.Expanded(
                       child: pw.Container(
-                          height: 40,
+                          height: 60,
                           padding: pw.EdgeInsets.all(4),
                           decoration: pw.BoxDecoration(
                             border:
@@ -273,12 +282,17 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                                 //         fontSize: 11,
                                 //         fontWeight: FontWeight.normal,
                                 //         color: PdfColors.black)),
-                                pw.Text("${PriceDetail["id"]}",
+                                pw.Text("JKM${PriceDetail["sr_no"]}",
                                     style: pw.TextStyle(
                                         fontSize: 11,
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                                 pw.Text("${PriceDetail["invoice_date"]}",
+                                    style: pw.TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: pw.FontWeight.normal,
+                                        color: PdfColors.black)),
+                                pw.Text("$payDate",
                                     style: pw.TextStyle(
                                         fontSize: 11,
                                         fontWeight: pw.FontWeight.normal,
@@ -312,6 +326,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                           child: pw.Text("Item Description",
                               style: pw.TextStyle(
                                   fontWeight: pw.FontWeight.bold,
+                                  /////
                                   color: PdfColors.black))),
                       pw.Expanded(
                           child: pw.Container(
@@ -366,131 +381,133 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                     ],
                   ),
                 ),
-                pw.Container(
-                  decoration: pw.BoxDecoration(
-                      border:
-                          pw.Border.all(color: PdfColors.black, width: 1.0)),
-                  height: 100,
-                  child: pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.start,
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Container(
-                          width: 40,
-                          padding: pw.EdgeInsets.all(2),
-                          decoration: pw.BoxDecoration(
-                              border: pw.Border.all(
-                                  color: PdfColors.black, width: 1.0)),
-                          alignment: pw.Alignment.topCenter,
-                          child: pw.Column(children: [
-                            for (var i = 0; i < tt.length; i++)
+
+                for (var i = 0; i < tt.length; i++)
+                  pw.Container(
+                    decoration: pw.BoxDecoration(
+                        border:
+                            pw.Border.all(color: PdfColors.black, width: 1.0)),
+                    child: pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.start,
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Container(
+                            width: 40,
+                            padding: pw.EdgeInsets.all(2),
+                            decoration: pw.BoxDecoration(
+                                border: pw.Border.all(
+                                    color: PdfColors.black, width: 1.0)),
+                            alignment: pw.Alignment.topCenter,
+                            child: pw.Column(children: [
+                              // for (var i = 0; i < tt.length; i++)
                               pw.Text("${i + 1}",
                                   style: pw.TextStyle(
                                       fontSize: 10,
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black))
-                          ])),
-                      pw.Container(
-                          padding: pw.EdgeInsets.all(2),
-                          width: 180,
-                          decoration: pw.BoxDecoration(
-                              border: pw.Border.all(color: PdfColors.black)),
-                          child: pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              children: [
-                                for (var i = 0; i < tt.length; i++)
+                            ])),
+                        pw.Container(
+                            padding: pw.EdgeInsets.all(2),
+                            width: 180,
+                            //    decoration: pw.BoxDecoration(
+                            // border: pw.Border.all(color: PdfColors.black)),
+                            child: pw.Column(
+                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                children: [
+                                  // for (var i = 0; i < tt.length; i++)
                                   pw.Text("${tt["$i"]["name"]} ",
+                                      maxLines: 1,
                                       style: pw.TextStyle(
-                                          fontSize: 10,
+                                          fontSize: 8.0,
                                           fontWeight: pw.FontWeight.normal,
                                           color: PdfColors.black))
-                              ])),
-                      pw.Expanded(
-                          child: pw.Container(
-                              padding: pw.EdgeInsets.all(2),
-                              decoration: pw.BoxDecoration(
-                                  border:
-                                      pw.Border.all(color: PdfColors.black)),
-                              alignment: pw.Alignment.topCenter,
-                              child: pw.Column(children: [
-                                for (var i = 0; i < tt.length; i++)
+                                ])),
+                        pw.Expanded(
+                            child: pw.Container(
+                                padding: pw.EdgeInsets.all(2),
+                                decoration: pw.BoxDecoration(
+                                    border:
+                                        pw.Border.all(color: PdfColors.black)),
+                                alignment: pw.Alignment.topCenter,
+                                child: pw.Column(children: [
+                                  // for (var i = 0; i < tt.length; i++)
                                   pw.Text("${tt["$i"]["price"]} ",
                                       style: pw.TextStyle(
                                           fontSize: 10,
                                           fontWeight: pw.FontWeight.normal,
                                           color: PdfColors.black))
-                              ]))),
-                      pw.Expanded(
-                          child: pw.Container(
-                              padding: pw.EdgeInsets.all(2),
-                              decoration: pw.BoxDecoration(
-                                  border:
-                                      pw.Border.all(color: PdfColors.black)),
-                              alignment: pw.Alignment.topCenter,
-                              child: pw.Column(children: [
-                                for (var i = 0; i < tt.length; i++)
+                                ]))),
+                        pw.Expanded(
+                            child: pw.Container(
+                                padding: pw.EdgeInsets.all(2),
+                                decoration: pw.BoxDecoration(
+                                    border:
+                                        pw.Border.all(color: PdfColors.black)),
+                                alignment: pw.Alignment.topCenter,
+                                child: pw.Column(children: [
+                                  // for (var i = 0; i < tt.length; i++)
                                   pw.Text("${tt["$i"]["quantity"]} ",
                                       style: pw.TextStyle(
                                           fontSize: 10,
                                           fontWeight: pw.FontWeight.normal,
                                           color: PdfColors.black))
-                              ])
-                              // for (var i = 1; i <= eedata.length; i++)
-                              )),
-                      pw.Expanded(
-                          child: pw.Container(
-                              padding: pw.EdgeInsets.all(2),
-                              decoration: pw.BoxDecoration(
-                                  border:
-                                      pw.Border.all(color: PdfColors.black)),
-                              alignment: pw.Alignment.topCenter,
-                              child: pw.Column(children: [
-                                for (var i = 0; i < tt.length; i++)
+                                ])
+                                // for (var i = 1; i <= eedata.length; i++)
+                                )),
+                        pw.Expanded(
+                            child: pw.Container(
+                                padding: pw.EdgeInsets.all(2),
+                                decoration: pw.BoxDecoration(
+                                    border:
+                                        pw.Border.all(color: PdfColors.black)),
+                                alignment: pw.Alignment.topCenter,
+                                child: pw.Column(children: [
+                                  // for (var i = 0; i < tt.length; i++)
                                   pw.Text("${tt["$i"]["discount"]}",
                                       style: pw.TextStyle(
                                           fontSize: 10,
                                           fontWeight: pw.FontWeight.normal,
                                           color: PdfColors.black))
-                              ]))),
-                      pw.Expanded(
-                          child: pw.Container(
-                              padding: pw.EdgeInsets.all(2),
-                              decoration: pw.BoxDecoration(
-                                  border:
-                                      pw.Border.all(color: PdfColors.black)),
-                              alignment: pw.Alignment.topCenter,
-                              child: pw.Column(children: [
-                                for (var i = 0; i < tt.length; i++)
+                                ]))),
+                        pw.Expanded(
+                            child: pw.Container(
+                                padding: pw.EdgeInsets.all(2),
+                                decoration: pw.BoxDecoration(
+                                    border:
+                                        pw.Border.all(color: PdfColors.black)),
+                                alignment: pw.Alignment.topCenter,
+                                child: pw.Column(children: [
+                                  // for (var i = 0; i < tt.length; i++)
                                   pw.Text("${tt["$i"]["gst_per"]} %",
                                       style: pw.TextStyle(
                                           fontSize: 10,
                                           fontWeight: pw.FontWeight.normal,
                                           color: PdfColors.black))
-                              ]))),
-                      pw.Expanded(
-                          child: pw.Container(
-                              padding: pw.EdgeInsets.all(2),
-                              decoration: pw.BoxDecoration(
-                                  border:
-                                      pw.Border.all(color: PdfColors.black)),
-                              alignment: pw.Alignment.topCenter,
-                              child: pw.Column(children: [
-                                for (var i = 0; i < tt.length; i++)
+                                ]))),
+                        pw.Expanded(
+                            child: pw.Container(
+                                padding: pw.EdgeInsets.all(2),
+                                decoration: pw.BoxDecoration(
+                                    border:
+                                        pw.Border.all(color: PdfColors.black)),
+                                alignment: pw.Alignment.topCenter,
+                                child: pw.Column(children: [
+                                  // for (var i = 0; i < tt.length; i++)
                                   pw.Text("${tt["$i"]["total"]} /-",
                                       style: pw.TextStyle(
                                           fontSize: 10,
                                           fontWeight: pw.FontWeight.normal,
                                           color: PdfColors.black))
-                              ])))
-                    ],
+                                ])))
+                      ],
+                    ),
                   ),
-                ),
-
+                // pw.SizedBox(height: 10),
                 pw.Container(
                   decoration: pw.BoxDecoration(
                       border:
                           pw.Border.all(color: PdfColors.black, width: 1.0)),
-                  height: 35,
+                  height: 30,
                   child: pw.Row(
                     children: [
                       // pw.SizedBox(width: 40),
@@ -512,8 +529,8 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                               decoration: pw.BoxDecoration(
                                   border:
                                       pw.Border.all(color: PdfColors.black)),
-                              padding: pw.EdgeInsets.only(left: 10),
-                              alignment: pw.Alignment.centerLeft,
+                              padding: pw.EdgeInsets.only(right: 10),
+                              alignment: pw.Alignment.centerRight,
                               child: pw.Text(
                                   "${pricewithcommas(PriceDetail["total"])} Rs/-",
                                   style: pw.TextStyle(
@@ -527,7 +544,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                   decoration: pw.BoxDecoration(
                       border:
                           pw.Border.all(color: PdfColors.black, width: 1.0)),
-                  height: 35,
+                  height: 30,
                   child: pw.Row(
                     children: [
                       // pw.SizedBox(width: 40),
@@ -549,8 +566,8 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                               decoration: pw.BoxDecoration(
                                   border:
                                       pw.Border.all(color: PdfColors.black)),
-                              padding: pw.EdgeInsets.only(left: 10),
-                              alignment: pw.Alignment.centerLeft,
+                              padding: pw.EdgeInsets.only(right: 10),
+                              alignment: pw.Alignment.centerRight,
                               child: pw.Text("${Balance} Rs/-",
                                   style: pw.TextStyle(
                                       fontSize: 12,
@@ -559,11 +576,12 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                     ],
                   ),
                 ),
+
                 pw.Container(
                   decoration: pw.BoxDecoration(
                       border:
                           pw.Border.all(color: PdfColors.black, width: 1.0)),
-                  height: 35,
+                  height: 30,
                   child: pw.Row(
                     children: [
                       // pw.SizedBox(width: 40),
@@ -585,8 +603,8 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                               decoration: pw.BoxDecoration(
                                   border:
                                       pw.Border.all(color: PdfColors.black)),
-                              padding: pw.EdgeInsets.only(left: 10),
-                              alignment: pw.Alignment.centerLeft,
+                              padding: pw.EdgeInsets.only(right: 10),
+                              alignment: pw.Alignment.centerRight,
                               child: pw.Text("$Payment Rs/-",
                                   style: pw.TextStyle(
                                       fontSize: 12,

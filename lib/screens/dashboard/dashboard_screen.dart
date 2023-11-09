@@ -77,8 +77,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       BalanceCount = await controller.Balance_count();
     }
-
-    setState(() {});
   }
 
   @override

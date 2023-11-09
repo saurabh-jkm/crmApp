@@ -121,7 +121,7 @@ class _MyAppState extends State<MyApp> {
       //         ? MainScreen(pageNo: 1)
       //         : Container(child: Center(child: pleaseWait(context))))),
 
-      // All Routs =========================================
+      // All Routs ====================//=====================
       routes: {
         '/add_stock': (context) => addStockScreen(
               header_name: "Add New Stock",
