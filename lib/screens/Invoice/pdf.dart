@@ -190,16 +190,19 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                                 //         color: PdfColors.black)),
                                 pw.Text("Invoice No.",
                                     style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
 
                                 pw.Text("Invoice Date",
                                     style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                                 pw.Text("Payment Date",
                                     style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                               ]))),
                   pw.Expanded(
@@ -222,17 +225,17 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                                 //         color: PdfColors.black)),
                                 pw.Text("JKM${PriceDetail["sr_no"]}",
                                     style: pw.TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 10,
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                                 pw.Text("${PriceDetail["invoice_date"]}",
                                     style: pw.TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 10,
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                                 pw.Text("$payDate",
                                     style: pw.TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 10,
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                               ])))
@@ -253,19 +256,23 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                               children: [
                                 pw.Text("Customer Name",
                                     style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                                 pw.Text("Mobile No.",
                                     style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                                 pw.Text("Email Id",
                                     style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                                 pw.Text("Address",
                                     style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                               ]))),
                   pw.Expanded(
@@ -282,18 +289,22 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                             children: [
                               pw.Text("${PriceDetail["customer_name"]}",
                                   style: pw.TextStyle(
+                                      fontSize: 10,
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black)),
                               pw.Text("${PriceDetail["mobile"]}",
                                   style: pw.TextStyle(
+                                      fontSize: 10,
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black)),
                               pw.Text("${PriceDetail["email"]}",
                                   style: pw.TextStyle(
+                                      fontSize: 10,
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black)),
                               pw.Text("${PriceDetail["address"]}",
                                   style: pw.TextStyle(
+                                      fontSize: 10,
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black)),
                             ])),
