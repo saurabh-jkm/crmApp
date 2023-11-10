@@ -57,7 +57,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic userData = (prefs.getString('user'));
-    setState(() {});
+
     if (userData != null) {
       user = await jsonDecode(userData) as Map<dynamic, dynamic>;
 
@@ -73,7 +73,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       totalsell = await controller.totalSale();
       todaysell = await controller.todaySale();
       no_of_year_sale = await controller.yearSale();
-      await appSetting();
+
+      if (kIsWeb) {
+        await appSetting();
+      }
 
       BalanceCount = await controller.Balance_count();
     }
@@ -83,7 +86,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     _getUser();
-
     super.initState();
   }
 
