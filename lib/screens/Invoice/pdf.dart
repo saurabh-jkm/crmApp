@@ -160,7 +160,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                           ]),
                       /////// Invoice Data fetch  ++++++++
                       pw.BarcodeWidget(
-                          data: "https://electronic.jkmsoftsolutions.com/",
+                          data: "https://crm.jkmsoftsolutions.com/",
                           barcode: pw.Barcode.qrCode(),
                           width: 80,
                           height: 80),
