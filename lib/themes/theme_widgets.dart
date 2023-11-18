@@ -617,7 +617,16 @@ Widget formInput(BuildContext context, label, controller,
               decoration: inputStyle(label),
               onChanged: (value) {
                 currentController.text = value;
+                // call method if have
+                if (method != '') {
+                  if (methodArg != '') {
+                    method(methodArg);
+                  } else {
+                    method();
+                  }
+                }
               },
+              
             ));
 }
 
@@ -627,33 +636,43 @@ Widget themeSpaceVertical(height) {
 }
 
 // auto complete =================================
-autoCompleteFormInput(suggationList, label, myController,
-    {padding: 10.0,
+ autoCompleteFormInput(suggationList, label, myController,
+    {
+    padding: 10.0,
     myFocusNode: '',
     method: '',
     methodArg: '',
     strinFilter: '',
+    autoUpdateCtr:true, //
     isPreloadInput: false}) {
   return Autocomplete(
     fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
-      controller.text = myController.text;
+      if(autoUpdateCtr){
+        controller.text = myController.text;  
+      }else{
+        
+      }
+      
+     // controller.text ='424';
+      
+      
       return formInput(context, "$label", controller,
           editComplete: onEditingComplete,
           focusNode: (myFocusNode == '') ? focusNode : myFocusNode,
           currentController: myController,
           padding: padding,
-          isPreloadInput: isPreloadInput);
+          isPreloadInput: isPreloadInput,method: method,methodArg: methodArg);
     },
     optionsBuilder: (TextEditingValue textEditingValue) {
       if (textEditingValue.text == '') {
         return const Iterable<String>.empty();
       } else {
-        List<String> matches = <String>[];
+         List<String> matches = <String>[];
         matches.addAll(suggationList);
         matches.retainWhere((s) {
           return s.toLowerCase().contains(textEditingValue.text.toLowerCase());
         });
-        return matches;
+         return matches;
       }
     },
     onSelected: (String selection) {

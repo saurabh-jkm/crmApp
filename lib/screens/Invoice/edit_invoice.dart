@@ -656,8 +656,8 @@ class _editInvoiceState extends State<editInvoice> {
                   ? '0'
                   : controller.ProductDiscountControllers[controllerId]!.text;
         });
-        fnTotalPrice(controllerId);
       }
+      fnTotalPrice(controllerId);
     }
   }
 

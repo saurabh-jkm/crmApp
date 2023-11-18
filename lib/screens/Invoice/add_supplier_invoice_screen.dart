@@ -705,7 +705,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                   : controller.ProductDiscountControllers[controllerId]!.text;
         });
 
-        await fnTotalPrice(controllerId, rData: rData);
+        
         // attributes =============================================
         Future.delayed(const Duration(milliseconds: 200), () {
           controller.fnGetProductDetails(controllerId, rData);
@@ -714,6 +714,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
           });
         });
       }
+      await fnTotalPrice(controllerId, rData: rData);
     }
   }
 

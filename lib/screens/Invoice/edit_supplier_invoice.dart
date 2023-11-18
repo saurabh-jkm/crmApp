@@ -811,7 +811,7 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
                   : controller.ProductDiscountControllers[controllerId]!.text;
         });
 
-        await fnTotalPrice(controllerId, rData: rData);
+        
         // attributes =============================================
         Future.delayed(const Duration(milliseconds: 200), () {
           controller.fnGetProductDetails(controllerId, rData);
@@ -820,6 +820,8 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
           });
         });
       }
+
+      await fnTotalPrice(controllerId, rData: rData);
     }
   }
 
