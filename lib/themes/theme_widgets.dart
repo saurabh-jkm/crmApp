@@ -636,24 +636,24 @@ Widget themeSpaceVertical(height) {
 }
 
 // auto complete =================================
- autoCompleteFormInput(suggationList, label, myController,
+autoCompleteFormInput(suggationList, label, myController,
     {
     padding: 10.0,
     myFocusNode: '',
     method: '',
     methodArg: '',
     strinFilter: '',
-    autoUpdateCtr:true, //
+    autoUpdateCtr:true,
     isPreloadInput: false}) {
   return Autocomplete(
     fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
-      if(autoUpdateCtr){
+     // controller.text ='424';
+
+     if(autoUpdateCtr){
         controller.text = myController.text;  
       }else{
-        
+
       }
-      
-     // controller.text ='424';
       
       
       return formInput(context, "$label", controller,

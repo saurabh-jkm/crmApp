@@ -68,12 +68,12 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
     });
 
     // key listner
-    window.onKeyData = (final keyData) {
-      if (keyData.character == 'D') {
-        addNewProduct(context);
-      }
-      return false;
-    };
+    // window.onKeyData = (final keyData) {
+    //   if (keyData.character == 'D') {
+    //     addNewProduct(context);
+    //   }
+    //   return false;
+    // };
 
     super.initState();
   }

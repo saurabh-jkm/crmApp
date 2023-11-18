@@ -1102,7 +1102,7 @@ class invoiceController extends updateController {
         ProductQuntControllers[controllerId]!.text != '0') {
       tempQnt = ProductQuntControllers[controllerId]!.text;
     }
-
+ 
     double qunt = double.parse(tempQnt);
     double price = double.parse(
         (ProductPriceControllers[controllerId]!.text == '')
@@ -1112,6 +1112,7 @@ class invoiceController extends updateController {
     productDBdata[controllerId] = (productDBdata[controllerId] != null)
         ? productDBdata[controllerId]
         : {};
+        
     // calculate
     int subTotal = int.parse(((price * qunt) - discount).round().toString());
     int totalGst = int.parse((((subTotal * gst) / 100).round()).toString());
@@ -1217,32 +1218,46 @@ class invoiceController extends updateController {
         Navigator.pop(context, 'updated');
       }
 
-      if (e.isKeyPressed(LogicalKeyboardKey.keyD) ||
-          e.isKeyPressed(LogicalKeyboardKey.altLeft) ||
-          e.isKeyPressed(LogicalKeyboardKey.altRight)) {
-        Keys.add(key);
-      }else{
-        Keys = [];
-      }
-      // ctr + D OR X => addnewproduct
-      if ((Keys.contains(LogicalKeyboardKey.altLeft) ||
-              e.isKeyPressed(LogicalKeyboardKey.altRight)) &&
-          (Keys.contains(LogicalKeyboardKey.keyD) ||
-              Keys.contains(LogicalKeyboardKey.keyX))) {
+      // if (e.isKeyPressed(LogicalKeyboardKey.keyD) ||
+      //     e.isKeyPressed(LogicalKeyboardKey.altLeft) ||
+      //     e.isKeyPressed(LogicalKeyboardKey.altRight)) {
+      //   Keys.add(key);
+      // }else{
+      //   Keys = [];
+      // }
+      
+      // F2 for add new product
+      if (e.isKeyPressed(LogicalKeyboardKey.f2)) {
         ctrNewRow();
+        Keys = [];
+        return true;
+      }
 
+      // F4 for remove product
+      if (e.isKeyPressed(LogicalKeyboardKey.f4)) {
+         ctrRemoveRow(context);
         Keys = [];
         return true;
       }
-      // ctr + R OR Z => RemoveProduct
-      if ((Keys.contains(LogicalKeyboardKey.altLeft) ||
-              e.isKeyPressed(LogicalKeyboardKey.altRight)) &&
-          (Keys.contains(LogicalKeyboardKey.keyR) ||
-              Keys.contains(LogicalKeyboardKey.keyZ))) {
-        ctrRemoveRow(context);
-        Keys = [];
-        return true;
-      }
+      // // ctr + D OR X => addnewproduct
+      // if ((Keys.contains(LogicalKeyboardKey.altLeft) ||
+      //         e.isKeyPressed(LogicalKeyboardKey.altRight)) &&
+      //     (Keys.contains(LogicalKeyboardKey.keyD) ||
+      //         Keys.contains(LogicalKeyboardKey.keyX))) {
+      //   ctrNewRow();
+
+      //   Keys = [];
+      //   return true;
+      // }
+      // // ctr + R OR Z => RemoveProduct
+      // if ((Keys.contains(LogicalKeyboardKey.altLeft) ||
+      //         e.isKeyPressed(LogicalKeyboardKey.altRight)) &&
+      //     (Keys.contains(LogicalKeyboardKey.keyR) ||
+      //         Keys.contains(LogicalKeyboardKey.keyZ))) {
+      //   ctrRemoveRow(context);
+      //   Keys = [];
+      //   return true;
+      // }
     } else {
       Keys.remove(key);
     }

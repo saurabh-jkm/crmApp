@@ -65,12 +65,12 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
     });
 
     // key listner
-    window.onKeyData = (final keyData) {
-      if (keyData.character == 'D') {
-        addNewProduct(context);
-      }
-      return false;
-    };
+    // window.onKeyData = (final keyData) {
+    //   if (keyData.character == 'D') {
+    //     addNewProduct(context);
+    //   }
+    //   return false;
+    // };
 
     super.initState();
   }
@@ -848,7 +848,7 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
     //if (rData != '') await controller.fnGetProductDetails(controllerId, rData);
 
     await controller.ctrTotalCalculate(controllerId);
-    setState(() {});
+    //setState(() {});
   }
 
   // grandTotal Calculate

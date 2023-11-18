@@ -64,12 +64,12 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
     });
 
     // key listner
-    window.onKeyData = (final keyData) {
-      if (keyData.character == 'D') {
-        addNewProduct(context);
-      }
-      return false;
-    };
+    // window.onKeyData = (final keyData) {
+    //   if (keyData.character == 'D') {
+    //     addNewProduct(context);
+    //   }
+    //   return false;
+    // };
 
     super.initState();
   }
@@ -277,9 +277,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                                               autoCompleteFormInput(
                                                             controller.ListName,
                                                             "Products Name",
-                                                            controller
-                                                                // .Customer_nameController,
-                                                                .ProductNameControllers[i],
+                                                            controller.ProductNameControllers[i],
                                                             padding: 8.0,
                                                             method:
                                                                 fnCalcualtePrice,
@@ -670,6 +668,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
   fnCalcualtePrice(controllerId) async {
     controller.readOnlyField.remove(controllerId);
     var productName = controller.ProductNameControllers[controllerId]!.text;
+    
     if (productName != '') {
       var rData = await controller.getProductDetails(productName);
       controller.productDBdata[controllerId] = rData;
@@ -682,15 +681,22 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
         } else {}
       }
 
+      
+
       if (rData.isNotEmpty) {
-        setState(() {
+        
           controller.totalIdentifire[controllerId] = true;
           controller.ProductPriceControllers[controllerId]!.text =
               (rData != null && rData['price'] != null) ? rData['price'] : 0;
+
+              
+
           controller.ProductGstControllers[controllerId]!.text =
               (controller.ProductGstControllers[controllerId]!.text == '')
                   ? '0'
                   : controller.ProductGstControllers[controllerId]!.text;
+
+                  
 
           controller.ProductQuntControllers[controllerId]!.text =
               (controller.ProductQuntControllers[controllerId]!.text == '' ||
@@ -703,7 +709,12 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
               (controller.ProductDiscountControllers[controllerId]!.text == '')
                   ? '0'
                   : controller.ProductDiscountControllers[controllerId]!.text;
-        });
+       
+    
+
+        
+
+    
 
         
         // attributes =============================================
@@ -739,9 +750,8 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
   // Total Price
   fnTotalPrice(controllerId, {rData: ''}) async {
     //if (rData != '') await controller.fnGetProductDetails(controllerId, rData);
-
     await controller.ctrTotalCalculate(controllerId);
-    setState(() {});
+    //setState(() {});
   }
 
   // grandTotal Calculate
