@@ -169,77 +169,82 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                   ],
                 ),
 
-                pw.SizedBox(height: 20),
-                pw.Container(
-                    child: pw.Row(children: [
-                  pw.Expanded(
-                      child: pw.Container(
-                          padding: pw.EdgeInsets.all(4),
-                          height: 45,
-                          decoration: pw.BoxDecoration(
-                              border: pw.Border.all(
-                                  color: PdfColors.black, width: 1)),
-                          child: pw.Column(
-                              mainAxisAlignment:
-                                  pw.MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              children: [
-                                // Text("Invoice No.",
-                                //     style: TextStyle(
-                                //         fontWeight: FontWeight.bold,
-                                //         color: PdfColors.black)),
-                                pw.Text("Invoice No.",
-                                    style: pw.TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: pw.FontWeight.normal,
-                                        color: PdfColors.black)),
+                pw.SizedBox(height: 10),
+                // pw.Container(
+                //     child: pw.Row(children: [
+                //   pw.Expanded(
+                //       child: pw.Container(
+                //           padding: pw.EdgeInsets.all(4),
+                //           height: 45,
+                //           decoration: pw.BoxDecoration(
+                //               border: pw.Border.all(
+                //                   color: PdfColors.black, width: 1)),
+                //           child: pw.Column(
+                //               mainAxisAlignment:
+                //                   pw.MainAxisAlignment.spaceBetween,
+                //               crossAxisAlignment: pw.CrossAxisAlignment.start,
+                //               children: [
+                //                 // Text("Invoice No.",
+                //                 //     style: TextStyle(
+                //                 //         fontWeight: FontWeight.bold,
+                //                 //         color: PdfColors.black)),
+                //                 pw.Text("Invoice No.",
+                //                     style: pw.TextStyle(
+                //                         fontSize: 10,
+                //                         fontWeight: pw.FontWeight.normal,
+                //                         color: PdfColors.black)),
 
-                                pw.Text("Invoice Date",
-                                    style: pw.TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: pw.FontWeight.normal,
-                                        color: PdfColors.black)),
-                                pw.Text("Payment Date",
-                                    style: pw.TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: pw.FontWeight.normal,
-                                        color: PdfColors.black)),
-                              ]))),
-                  pw.Expanded(
-                      child: pw.Container(
-                          height: 45,
-                          padding: pw.EdgeInsets.all(4),
-                          decoration: pw.BoxDecoration(
-                            border:
-                                pw.Border.all(color: PdfColors.black, width: 1),
-                          ),
-                          child: pw.Column(
-                              mainAxisAlignment:
-                                  pw.MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              children: [
-                                // Text("IN-120",
-                                //     style: TextStyle(
-                                //         fontSize: 11,
-                                //         fontWeight: FontWeight.normal,
-                                //         color: PdfColors.black)),
-                                pw.Text("JKM${PriceDetail["sr_no"]}",
-                                    style: pw.TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: pw.FontWeight.normal,
-                                        color: PdfColors.black)),
-                                pw.Text("${PriceDetail["invoice_date"]}",
-                                    style: pw.TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: pw.FontWeight.normal,
-                                        color: PdfColors.black)),
-                                pw.Text("$payDate",
-                                    style: pw.TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: pw.FontWeight.normal,
-                                        color: PdfColors.black)),
-                              ])))
-                ])),
+                //                 pw.Text("Invoice Date",
+                //                     style: pw.TextStyle(
+                //                         fontSize: 10,
+                //                         fontWeight: pw.FontWeight.normal,
+                //                         color: PdfColors.black)),
+                //               ]))),
+                //   pw.Expanded(
+                //       child: pw.Container(
+                //           height: 45,
+                //           padding: pw.EdgeInsets.all(4),
+                //           decoration: pw.BoxDecoration(
+                //             border:
+                //                 pw.Border.all(color: PdfColors.black, width: 1),
+                //           ),
+                //           child: pw.Column(
+                //               mainAxisAlignment:
+                //                   pw.MainAxisAlignment.spaceBetween,
+                //               crossAxisAlignment: pw.CrossAxisAlignment.start,
+                //               children: [
+                //                 // Text("IN-120",
+                //                 //     style: TextStyle(
+                //                 //         fontSize: 11,
+                //                 //         fontWeight: FontWeight.normal,
+                //                 //         color: PdfColors.black)),
+                //                 pw.Text("JKM${PriceDetail["sr_no"]}",
+                //                     style: pw.TextStyle(
+                //                         fontSize: 10,
+                //                         fontWeight: pw.FontWeight.normal,
+                //                         color: PdfColors.black)),
+                //                 pw.Text("   ${PriceDetail["invoice_date"]}",
+                //                     style: pw.TextStyle(
+                //                         fontSize: 10,
+                //                         fontWeight: pw.FontWeight.normal,
+                //                         color: PdfColors.black)),
+                //               ])))
+                // ])),
+                pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text("Invoice No : JKM-${PriceDetail["sr_no"]}",
+                          style: pw.TextStyle(
+                              fontSize: 8.0,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.black)),
+                      pw.Text("Invoice Date : ${PriceDetail["invoice_date"]}",
+                          style: pw.TextStyle(
+                              fontSize: 8.0,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColors.black)),
+                    ]),
+                pw.SizedBox(height: 10.0),
                 pw.Container(
                     child: pw.Row(children: [
                   pw.Expanded(
@@ -250,28 +255,28 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                               border: pw.Border.all(
                                   color: PdfColors.black, width: 1)),
                           child: pw.Column(
-                              mainAxisAlignment:
-                                  pw.MainAxisAlignment.spaceBetween,
+                              // mainAxisAlignment:
+                              //     pw.MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: pw.CrossAxisAlignment.start,
                               children: [
                                 pw.Text("Customer Name",
                                     style: pw.TextStyle(
-                                        fontSize: 10,
+                                        fontSize: 8.0,
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                                 pw.Text("Mobile No.",
                                     style: pw.TextStyle(
-                                        fontSize: 10,
+                                        fontSize: 8.0,
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                                 pw.Text("Email Id",
                                     style: pw.TextStyle(
-                                        fontSize: 10,
+                                        fontSize: 8.0,
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                                 pw.Text("Address",
                                     style: pw.TextStyle(
-                                        fontSize: 10,
+                                        fontSize: 8.0,
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)),
                               ]))),
@@ -283,28 +288,28 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                             border: pw.Border.all(
                                 color: PdfColors.black, width: 1)),
                         child: pw.Column(
-                            mainAxisAlignment:
-                                pw.MainAxisAlignment.spaceBetween,
+                            // mainAxisAlignment:
+                            //     pw.MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text("${PriceDetail["customer_name"]}",
                                   style: pw.TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 8.0,
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black)),
                               pw.Text("${PriceDetail["mobile"]}",
                                   style: pw.TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 8.0,
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black)),
                               pw.Text("${PriceDetail["email"]}",
                                   style: pw.TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 8.0,
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black)),
                               pw.Text("${PriceDetail["address"]}",
                                   style: pw.TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 8.0,
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black)),
                             ])),
@@ -585,42 +590,6 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                     ],
                   ),
                 ),
-                pw.Container(
-                  decoration: pw.BoxDecoration(
-                      border:
-                          pw.Border.all(color: PdfColors.black, width: 1.0)),
-                  height: 30,
-                  child: pw.Row(
-                    children: [
-                      // pw.SizedBox(width: 40),
-                      pw.Container(
-                          padding: pw.EdgeInsets.all(2),
-                          width: 180,
-                          // decoration: BoxDecoration(
-                          //     //   border: Border.all(color: PdfColors.black)
-                          //     ),
-                          alignment: pw.Alignment.centerLeft,
-                          child: pw.Text("Outstanding",
-                              style: pw.TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: pw.FontWeight.normal,
-                                  color: PdfColors.black))),
-                      pw.SizedBox(width: 40),
-                      pw.Expanded(
-                          child: pw.Container(
-                              decoration: pw.BoxDecoration(
-                                  border:
-                                      pw.Border.all(color: PdfColors.black)),
-                              padding: pw.EdgeInsets.only(right: 10),
-                              alignment: pw.Alignment.centerRight,
-                              child: pw.Text("${Balance} Rs/-",
-                                  style: pw.TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: pw.FontWeight.normal,
-                                      color: PdfColors.black)))),
-                    ],
-                  ),
-                ),
 
                 pw.Container(
                   decoration: pw.BoxDecoration(
@@ -658,15 +627,12 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                     ],
                   ),
                 ),
-                pw.SizedBox(height: 40),
-                ///////////  =============================================================================
-                ///
-                ///
+
                 pw.Container(
                   decoration: pw.BoxDecoration(
                       border:
                           pw.Border.all(color: PdfColors.black, width: 1.0)),
-                  height: 50,
+                  height: 30,
                   child: pw.Row(
                     children: [
                       // pw.SizedBox(width: 40),
@@ -676,37 +642,119 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                           // decoration: BoxDecoration(
                           //     //   border: Border.all(color: PdfColors.black)
                           //     ),
-                          alignment: pw.Alignment.bottomLeft,
-                          child: pw.Text("Seal :",
+                          alignment: pw.Alignment.centerLeft,
+                          child: pw.Text("Outstanding",
                               style: pw.TextStyle(
-                                  fontSize: 8.0,
+                                  fontSize: 10,
                                   fontWeight: pw.FontWeight.normal,
                                   color: PdfColors.black))),
-                      // pw.SizedBox(width: 40),
+                      pw.SizedBox(width: 40),
                       pw.Expanded(
                           child: pw.Container(
                               decoration: pw.BoxDecoration(
                                   border:
                                       pw.Border.all(color: PdfColors.black)),
-                              padding: pw.EdgeInsets.all(5.0),
-                              child: pw.Column(
-                                  mainAxisAlignment:
-                                      pw.MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment:
-                                      pw.CrossAxisAlignment.start,
-                                  children: [
-                                    pw.Text(
-                                        "For Geetanjali Electromart Private Limited",
-                                        style: pw.TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: pw.FontWeight.bold,
-                                            color: PdfColors.black)),
-                                    pw.Text("Autherized Signatory :",
-                                        style: pw.TextStyle(
-                                            fontSize: 8.0,
-                                            fontWeight: pw.FontWeight.normal,
-                                            color: PdfColors.black))
-                                  ]))),
+                              padding: pw.EdgeInsets.only(right: 10),
+                              alignment: pw.Alignment.centerRight,
+                              child: pw.Text("${Balance} Rs/-",
+                                  style: pw.TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: pw.FontWeight.normal,
+                                      color: PdfColors.black)))),
+                    ],
+                  ),
+                ),
+                pw.Container(
+                  decoration: pw.BoxDecoration(
+                      border:
+                          pw.Border.all(color: PdfColors.black, width: 1.0)),
+                  height: 30,
+                  child: pw.Row(
+                    children: [
+                      // pw.SizedBox(width: 40),
+                      pw.Container(
+                          padding: pw.EdgeInsets.all(2),
+                          width: 180,
+                          // decoration: BoxDecoration(
+                          //     //   border: Border.all(color: PdfColors.black)
+                          //     ),
+                          alignment: pw.Alignment.centerLeft,
+                          child: pw.Text("Payment Date",
+                              style: pw.TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColors.black))),
+                      pw.SizedBox(width: 40),
+                      pw.Expanded(
+                          child: pw.Container(
+                              decoration: pw.BoxDecoration(
+                                  border:
+                                      pw.Border.all(color: PdfColors.black)),
+                              padding: pw.EdgeInsets.only(right: 10),
+                              alignment: pw.Alignment.centerRight,
+                              child: pw.Text("$payDate",
+                                  style: pw.TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: pw.FontWeight.normal,
+                                      color: PdfColors.black)))),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 10),
+                ///////////  =============================================================================
+                ///
+                ///
+                pw.Container(
+                  // decoration: pw.BoxDecoration(
+                  //     border:
+                  //         pw.Border.all(color: PdfColors.black, width: 1.0)),
+                  // height: 50,
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      // pw.SizedBox(width: 40),
+                      pw.Container(
+                        padding: pw.EdgeInsets.all(2),
+                        width: 180,
+                        // decoration: BoxDecoration(
+                        //     //   border: Border.all(color: PdfColors.black)
+                        //     ),
+                        alignment: pw.Alignment.center,
+                        child: pw.Text("Seal :",
+                            style: pw.TextStyle(
+                                fontSize: 8.0,
+                                fontWeight: pw.FontWeight.normal,
+                                color: PdfColors.black)),
+                      ),
+                      // pw.SizedBox(width: 40),
+                      pw.Container(
+                          alignment: pw.Alignment.bottomRight,
+                          // decoration: pw.BoxDecoration(
+                          //     border:
+                          //         pw.Border.all(color: PdfColors.black)),
+                          // padding: pw.EdgeInsets.all(5.0),
+                          child: pw.Column(
+                              //           mainAxisAlignment:
+                              // pw.MainAxisAlignment.spaceBetween,
+                              // crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                pw.Text(
+                                    "For Geetanjali Electromart Private Limited",
+                                    style: pw.TextStyle(
+                                        fontSize: 8.0,
+                                        fontWeight: pw.FontWeight.bold,
+                                        color: PdfColors.black)),
+                                pw.SizedBox(height: 15.0),
+                                pw.Row(
+                                    mainAxisAlignment: pw.MainAxisAlignment.end,
+                                    children: [
+                                      pw.Text("Autherized Signatory",
+                                          style: pw.TextStyle(
+                                              fontSize: 8.0,
+                                              fontWeight: pw.FontWeight.normal,
+                                              color: PdfColors.black))
+                                    ])
+                              ]))
                     ],
                   ),
                 ),
