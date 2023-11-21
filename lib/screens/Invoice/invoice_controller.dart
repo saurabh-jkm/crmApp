@@ -970,7 +970,7 @@ class invoiceController extends updateController {
         }
         
 
-        //await SalesStockEdit(products, productEditOldData, productDBdata);
+        await SalesStockEdit(products, productEditOldData, productDBdata);
       }
     } else {
       var alert = '';
