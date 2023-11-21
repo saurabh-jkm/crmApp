@@ -44,10 +44,8 @@ class _CategoryAddState extends State<CategoryAdd> {
     var temp = await controllerr.Comman_Cate_Data(limitData);
     var tempImage = await controllerr.Image_data();
     var tempDrop = await controllerr.CateData();
-
     temp.forEach((k, v) {
       controllerr.StoreDocs.add(v);
-      setState(() {});
       tempImage.forEach((k, v) {
         controllerr.Storage_image_List.add(v["image_url"]);
       });

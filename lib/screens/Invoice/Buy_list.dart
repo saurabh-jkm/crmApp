@@ -44,15 +44,14 @@ import '../order/syncPdf.dart';
 import 'add_invoice_screen.dart';
 import 'invoice_serv.dart';
 
-// ignore: camel_case_types
-class Invoice_List extends StatefulWidget {
-  const Invoice_List({super.key});
+class Buy_List extends StatefulWidget {
+  const Buy_List({super.key});
 
   @override
-  State<Invoice_List> createState() => _Invoice_ListState();
+  State<Buy_List> createState() => _Buy_ListState();
 }
 
-class _Invoice_ListState extends State<Invoice_List> {
+class _Buy_ListState extends State<Buy_List> {
   final _controllers = TextEditingController();
   var controllerr = new invoiceController();
   var db = (!kIsWeb && Platform.isWindows)
@@ -62,7 +61,9 @@ class _Invoice_ListState extends State<Invoice_List> {
   @override
   void initState() {
     // OrderList_data();
+
     orderList(_number_select);
+
     super.initState();
   }
 
@@ -86,8 +87,7 @@ class _Invoice_ListState extends State<Invoice_List> {
 ////////////  Product data fetch  ++++++++++++++++++++++++++++++++++++++++++++
   bool progressWidget = true;
   List<String> itemList = ['All', 'Sale', 'Buy'];
-  var selectedFilter = 'Sale';
-
+  var selectedFilter = "Buy";
   var tableColum = {};
   var headerName = {};
 
@@ -341,29 +341,29 @@ class _Invoice_ListState extends State<Invoice_List> {
 
                             //SizedBox(width: 10.0),
 
-                            themeButton3(context, changeFilter,
-                                arg: 'Sale',
-                                label: 'Sale',
-                                radius: 2.0,
-                                borderColor: (selectedFilter == 'Sale')
-                                    ? Colors.white
-                                    : Colors.white,
-                                buttonColor: (selectedFilter == 'Sale')
-                                    ? Color.fromARGB(255, 4, 141, 134)
-                                    : const Color.fromARGB(0, 110, 110, 110)),
+                            // themeButton3(context, changeFilter,
+                            //     arg: 'Sale',
+                            //     label: 'Sale',
+                            //     radius: 2.0,
+                            //     borderColor: (selectedFilter == 'Sale')
+                            //         ? Colors.white
+                            //         : Colors.white,
+                            //     buttonColor: (selectedFilter == 'Sale')
+                            //         ? Color.fromARGB(255, 4, 141, 134)
+                            //         : const Color.fromARGB(0, 110, 110, 110)),
 
-                            SizedBox(width: 10.0),
+                            // SizedBox(width: 10.0),
 
-                            themeButton3(context, changeFilter,
-                                arg: 'Buy',
-                                label: 'Buy',
-                                radius: 2.0,
-                                borderColor: (selectedFilter == 'Buy')
-                                    ? Colors.green
-                                    : Colors.white,
-                                buttonColor: (selectedFilter == 'Buy')
-                                    ? Color.fromARGB(255, 4, 141, 134)
-                                    : const Color.fromARGB(0, 110, 110, 110)),
+                            // themeButton3(context, changeFilter,
+                            //     arg: 'Buy',
+                            //     label: 'Buy',
+                            //     radius: 2.0,
+                            //     borderColor: (selectedFilter == 'Buy')
+                            //         ? Colors.green
+                            //         : Colors.white,
+                            //     buttonColor: (selectedFilter == 'Buy')
+                            //         ? Color.fromARGB(255, 4, 141, 134)
+                            //         : const Color.fromARGB(0, 110, 110, 110)),
 
                             // Container(
                             //   height: 30,

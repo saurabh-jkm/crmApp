@@ -234,8 +234,8 @@ class _ProductAddState extends State<ProductAdd> {
                                   tooltip: 'Refresh',
                                 ),
                                 SizedBox(width: 20.0),
-                                themeButton3(context, addNewStock,
-                                    label: 'Add New', radius: 5.0),
+                                // themeButton3(context, addNewStock,
+                                //     label: 'Add New', radius: 5.0),
                               ],
                             ),
                           )
@@ -641,35 +641,35 @@ class _ProductAddState extends State<ProductAdd> {
                               size: 15,
                               color: Colors.green,
                             ))),
-                    SizedBox(width: 10),
-                    Container(
-                        height: 30,
-                        width: 30,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 10, 103, 139),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: IconButton(
-                            onPressed: () async {
-                              final temp = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => editStockScreen(
-                                            data: data,
-                                            header_name: "Edit product details",
-                                          )));
-                              if (temp == 'updated') {
-                                Pro_Data_list(_number_select);
-                              }
-                            },
-                            icon: Icon(
-                              Icons.edit,
-                              size: 15,
-                              color: Colors.blue,
-                            )) ////
-                        ),
+                    // SizedBox(width: 10),
+                    // Container(
+                    //     height: 30,
+                    //     width: 30,
+                    //     alignment: Alignment.center,
+                    //     decoration: BoxDecoration(
+                    //       color: Color.fromARGB(255, 10, 103, 139),
+                    //       borderRadius:
+                    //           const BorderRadius.all(Radius.circular(10)),
+                    //     ),
+                    //     child: IconButton(
+                    //         onPressed: () async {
+                    //           final temp = await Navigator.push(
+                    //               context,
+                    //               MaterialPageRoute(
+                    //                   builder: (_) => editStockScreen(
+                    //                         data: data,
+                    //                         header_name: "Edit product details",
+                    //                       )));
+                    //           if (temp == 'updated') {
+                    //             Pro_Data_list(_number_select);
+                    //           }
+                    //         },
+                    //         icon: Icon(
+                    //           Icons.edit,
+                    //           size: 15,
+                    //           color: Colors.blue,
+                    //         )) ////
+                    //     ),
                     SizedBox(width: 10),
                     Container(
                         height: 30,

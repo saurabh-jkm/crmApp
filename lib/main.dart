@@ -1,8 +1,7 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_new, await_only_futures, prefer_collection_literals, avoid_unnecessary_containers
 
 import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
-import 'package:crm_demo/screens/Invoice/invoice_list.dart';
-//import 'package:crm_demo/screens/dashboard/dashboard_screen.dart';
+
 import 'package:crm_demo/screens/privacy_policy/privacy_policy.dart';
 import 'package:crm_demo/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +27,7 @@ import 'screens/Login_Reg/login_screen.dart';
 import 'screens/Selsman/WorkAlot/salesman_list.dart';
 import 'screens/main/main_screen.dart';
 
-///////
+//////////////
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
@@ -128,7 +127,7 @@ class _MyAppState extends State<MyApp> {
             ),
         '/stock_list': (context) => ProductAdd(),
         '/privacy-policy': (context) => privacyPolicy(),
-        '/invoice': (context) => Invoice_List(),
+        //  '/invoice': (context) => Invoice_List(),
         '/salesman': (context) => SalemanList(),
         '/dashboard': (context) => MainScreen(pageNo: 1, stockvalue: 0),
         '/new_invoice': (context) => addInvoiceScreen(
