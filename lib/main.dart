@@ -28,7 +28,7 @@ import 'screens/Login_Reg/login_screen.dart';
 import 'screens/Selsman/WorkAlot/salesman_list.dart';
 import 'screens/main/main_screen.dart';
 
-///////
+////////////
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
