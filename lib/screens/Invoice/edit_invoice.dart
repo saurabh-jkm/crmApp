@@ -682,7 +682,7 @@ class _editInvoiceState extends State<editInvoice> {
   // Total Price
   fnTotalPrice(controllerId) async {
     await controller.ctrTotalCalculate(controllerId);
-    setState(() {});
+    //setState(() {});
   }
 
   // function invoice update
