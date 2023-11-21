@@ -1,5 +1,4 @@
 import 'package:crm_demo/themes/style.dart';
-import 'package:crm_demo/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
 
 Widget totalWidgets(context, label, value) {

@@ -41,7 +41,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Map<dynamic, dynamic> user = new Map();
   int no_todaySale = 0;
   bool isNewUpdate = false;
-
   int invoiceNo = 0;
   int StockNo = 0;
   int UserNo = 0;
@@ -77,7 +76,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (kIsWeb) {
         await appSetting();
       }
-
       BalanceCount = await controller.Balance_count();
     }
     setState(() {});

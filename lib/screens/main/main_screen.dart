@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, use_key_in_widget_constructors, annotate_overrides, prefer_typing_uninitialized_variables, unused_element, unnecessary_new, prefer_collection_literals
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, use_key_in_widget_constructors, annotate_overrides, prefer_typing_uninitialized_variables, unused_element, unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps
 
 import 'dart:convert';
 
@@ -11,7 +11,8 @@ import '../../responsive.dart';
 import '../../themes/theme_widgets.dart';
 import '../Attributes/attribute_add.dart';
 import '../Balance/balance_list.dart';
-import '../Invoice/invoice_list.dart';
+import '../Invoice/Buy_list.dart';
+import '../Invoice/sell_list.dart';
 import '../Profile/profile_details.dart';
 import '../Selsman/WorkAlot/salesman_list.dart';
 import '../Sub Admin/Add_SubAdmin.dart';
@@ -97,8 +98,14 @@ class _MainScreenState extends State<MainScreen> {
             else if (sidemenu == 5)
               Expanded(
                 flex: 5,
-                child: Invoice_List(),
+                child: Buy_List(),
               ) //BalanceList
+            else if (sidemenu == 14)
+              Expanded(
+                flex: 5,
+                child: Sell_list(),
+              ) //BalanceList
+
             else if (sidemenu == 12)
               Expanded(
                 flex: 5,
@@ -238,7 +245,26 @@ class _MainScreenState extends State<MainScreen> {
             horizontalTitleGap: 0.0,
             leading: Icon(Icons.bar_chart, color: Colors.white),
             title: Text(
-              "Buy/Sales",
+              "Buy",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          ListTile(
+            tileColor: (sidemenu == 14)
+                ? const Color.fromARGB(127, 33, 149, 243)
+                : const Color.fromARGB(0, 255, 255, 255),
+            onTap: () {
+              setState(() {
+                sidemenu = 14;
+                if (Responsive.isMobile(context)) {
+                  Navigator.of(context).pop();
+                }
+              });
+            },
+            horizontalTitleGap: 0.0,
+            leading: Icon(Icons.sell, color: Colors.white),
+            title: Text(
+              "Sale",
               style: TextStyle(color: Colors.white),
             ),
           ),
