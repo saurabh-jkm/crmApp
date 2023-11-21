@@ -672,9 +672,10 @@ class _addStockScreenState extends State<addStockScreen> {
   fnCheckProductExist({checkExist: ''}) async {
     controller.productId = '';
     isSupplierForm = false;
-    setState(() {
-      isWait = true;
-    });
+
+    // setState(() {
+    //   //isWait = true;
+    // });
     var productName = controller.nameController.text;
     var productData = controller.productDbData[productName];
     if (checkExist != '') {
@@ -691,9 +692,17 @@ class _addStockScreenState extends State<addStockScreen> {
       isSupplierForm = true;
     }
 
-    setState(() {
-      isWait = false;
-    });
+    
+    //return false;
+
+    // setState(() {
+    //   isWait = false;
+    // });
+
+
+    // setState(() {
+    // });
+
   }
 
   // Fetch all detials

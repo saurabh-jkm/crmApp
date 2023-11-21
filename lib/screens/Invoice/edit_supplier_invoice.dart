@@ -65,12 +65,12 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
     });
 
     // key listner
-    window.onKeyData = (final keyData) {
-      if (keyData.character == 'D') {
-        addNewProduct(context);
-      }
-      return false;
-    };
+    // window.onKeyData = (final keyData) {
+    //   if (keyData.character == 'D') {
+    //     addNewProduct(context);
+    //   }
+    //   return false;
+    // };
 
     super.initState();
   }
@@ -811,7 +811,7 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
                   : controller.ProductDiscountControllers[controllerId]!.text;
         });
 
-        await fnTotalPrice(controllerId, rData: rData);
+        
         // attributes =============================================
         Future.delayed(const Duration(milliseconds: 200), () {
           controller.fnGetProductDetails(controllerId, rData);
@@ -820,6 +820,8 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
           });
         });
       }
+
+      await fnTotalPrice(controllerId, rData: rData);
     }
   }
 
@@ -846,7 +848,7 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
     //if (rData != '') await controller.fnGetProductDetails(controllerId, rData);
 
     await controller.ctrTotalCalculate(controllerId);
-    setState(() {});
+    //setState(() {});
   }
 
   // grandTotal Calculate

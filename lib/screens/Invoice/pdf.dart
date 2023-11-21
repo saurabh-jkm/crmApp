@@ -735,8 +735,8 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                           // padding: pw.EdgeInsets.all(5.0),
                           child: pw.Column(
                               //           mainAxisAlignment:
-                              // pw.MainAxisAlignment.spaceBetween,
-                              // crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              //pw.MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: pw.CrossAxisAlignment.end,
                               children: [
                                 pw.Text(
                                     "For Geetanjali Electromart Private Limited",
@@ -748,7 +748,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                                 pw.Row(
                                     mainAxisAlignment: pw.MainAxisAlignment.end,
                                     children: [
-                                      pw.Text("Autherized Signatory",
+                                      pw.Text("Authorized Signatory",
                                           style: pw.TextStyle(
                                               fontSize: 8.0,
                                               fontWeight: pw.FontWeight.normal,

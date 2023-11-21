@@ -64,12 +64,12 @@ class _editInvoiceState extends State<editInvoice> {
     });
 
     // key listner
-    window.onKeyData = (final keyData) {
-      if (keyData.character == 'D') {
-        addNewProduct(context);
-      }
-      return false;
-    };
+    // window.onKeyData = (final keyData) {
+    //   if (keyData.character == 'D') {
+    //     addNewProduct(context);
+    //   }
+    //   return false;
+    // };
 
     super.initState();
   }
@@ -656,8 +656,8 @@ class _editInvoiceState extends State<editInvoice> {
                   ? '0'
                   : controller.ProductDiscountControllers[controllerId]!.text;
         });
-        fnTotalPrice(controllerId);
       }
+      fnTotalPrice(controllerId);
     }
   }
 

@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
+import 'modal-sale-new-product.dart';
 
 import '../../themes/function.dart';
 
@@ -70,6 +71,20 @@ class invoiceController extends updateController {
   Map<int, TextEditingController> ProductGstControllers = new Map();
   Map<int, TextEditingController> ProductDiscountControllers = new Map();
 
+  // sales new product controller ========================================
+  var SaleProductRowId = {};
+  Map<int, TextEditingController> SaleProductNameControllers = new Map();
+  Map<int, TextEditingController> SaleCategoryController = new Map();
+  Map<int, TextEditingController> SaleProductLocationController = new Map();
+  Map<int, TextEditingController> SaleProductQuntControllers = new Map();
+  Map<int, TextEditingController> SaleProductUnitControllers = new Map();
+  Map<int, TextEditingController> SaleProductPriceControllers = new Map();
+  Map<int, TextEditingController> SaleProductTotalControllers = new Map();
+  Map<int, TextEditingController> SaleProductDiscountControllers = new Map();
+  Map<int, TextEditingController> saleProductStockDate = new Map();
+
+  var saleTotalProduct = 1;
+
   // Suggation List =====================================
   List<String> ListName = [];
   Map<String, dynamic> productArr = {};
@@ -114,10 +129,11 @@ class invoiceController extends updateController {
       isSupplier = true;
       InvoiceType = 'Supplier';
       SaleType = 'Sale';
-      await getAttributeList();
-      await getRackList();
-      await getCategoryList();
     }
+
+    await getRackList();
+    await getAttributeList();
+    await getCategoryList();
 
     await _getUser();
     await getProductNameList();
@@ -394,6 +410,10 @@ class invoiceController extends updateController {
               vl['list_item_id'] = i;
               vl['category'] = data['category'];
               allProductList[tempName] = vl;
+
+              //
+              data['nameKey'] = tempName;
+              allProductList_byId[data['id']] = data;
             }
           });
         }
@@ -748,7 +768,13 @@ class invoiceController extends updateController {
 // ***************************************************************
 // ***************************************************************
 
-  insertInvoiceDetails(context, {docId: '', updateType: ''}) async {
+  insertInvoiceDetails(context,
+      {docId: '',
+      updateType: '',
+      controller: '',
+      refresh: '',
+      fn: '',
+      arg: ''}) async {
     var alert = '';
     if (Customer_nameController.text.length < 4) {
       alert = "Valid Customer Name  Required !!";
@@ -761,6 +787,8 @@ class invoiceController extends updateController {
         Customer_GstNoController.text.length != 15) {
       alert = "Please Enter Valid GST Number ";
     }
+
+    
 
     if (alert != '') {
       themeAlert(context, "$alert", type: 'error');
@@ -834,9 +862,9 @@ class invoiceController extends updateController {
       temp['gst'] = (productDBdata[i] != null) ? productDBdata[i]['gst'] : '0';
       temp['total'] = ProductTotalControllers[i]!.text;
 
-      totalGst += (productDBdata[i] != null)
-          ? int.parse(productDBdata[i]['gst'].toString())
-          : 0;
+      totalGst += (productDBdata[i] == null || productDBdata[i]['gst'] == null)
+          ? 0
+          : int.parse(productDBdata[i]['gst'].toString());
 
       intTotalQuntity += int.parse(temp['quantity'].toString());
       intTotalUnit +=
@@ -891,45 +919,86 @@ class invoiceController extends updateController {
         await SalesStockEdit(products, productEditOldData, productDBdata,
             editId: docId);
       } else {
+        saleTotalProduct = 0;
+        // print(ListCategory);
+        // print(products);
+        // print("------------------------------------------------");
+        // print(productEditOldData);
+        // print(productDBdata);
+
+        DateTime DateNow = DateTime.now();
+        String dateIs = DateFormat('dd/MM/yyyy').format(DateNow);
+
+        SaleProductRowId = {};
+        for (var key in products.keys) {
+          var tPDAta = products[key];
+          var t = int.parse((key.toString())) + 1;
+          var tDDAta = productDBdata[t];
+
+          if (tDDAta.isNotEmpty && tDDAta['quantity'] == null) {
+            saleTotalProduct++;
+
+            SaleProductNameControllers[saleTotalProduct] =
+                TextEditingController();
+            SaleProductPriceControllers[saleTotalProduct] =
+                TextEditingController();
+            SaleProductQuntControllers[saleTotalProduct] =
+                TextEditingController();
+            SaleProductUnitControllers[saleTotalProduct] =
+                TextEditingController();
+            productLocationController[saleTotalProduct] =
+                TextEditingController();
+            SaleCategoryController[saleTotalProduct] = TextEditingController();
+            SaleProductLocationController[saleTotalProduct] =
+                TextEditingController();
+            saleProductStockDate[saleTotalProduct] = TextEditingController();
+            SaleProductRowId[saleTotalProduct] = t;
+
+            SaleProductNameControllers[saleTotalProduct]!.text = tPDAta['name'];
+            SaleProductPriceControllers[saleTotalProduct]!.text =
+                tPDAta['price'];
+            SaleProductQuntControllers[saleTotalProduct]!.text =
+                tPDAta['quantity'];
+            SaleProductUnitControllers[saleTotalProduct]!.text = tPDAta['unit'];
+            saleProductStockDate[saleTotalProduct]!.text = dateIs;
+          }
+        }
+
+        if (controller != '' && saleTotalProduct >= 1) {
+          modalAddInStock(context, controller, savFun: fn);
+          return false;
+        }
+        
+
         await SalesStockEdit(products, productEditOldData, productDBdata);
       }
     } else {
+      var alert = '';
+      for(var ctrId in productLocationController.keys){
+         if(productLocationController[ctrId]!.text.length < 1 ){
+          alert = 'Product No. $ctrId : Location is required !!';
+         }else if(categoryController[ctrId]!.text.length < 1 ){
+          alert = 'Product No. $ctrId : Category is required !!';
+         }
+      }
+      if(alert != ''){
+        themeAlert(context, alert,type: 'error');
+        return false;
+      }
+
+ 
       // this is for Supplier Log manage ====================
       if (docId != '') {
         await supplierStockEdit(products, productEditOldData, productDBdata);
-
-        // when edit
-        // var tempProduct = products;
-        // tempProduct.forEach((k, v) {
-        //   int z = int.parse(k.toString()) + 1;
-
-        //   if (editProductQnt['$z'] != null) {
-        //     var tempTotalInnerItem =
-        //         (products['${k}'] != null) ? products['${k}'] : {};
-        //     var tempLog = (tempTotalInnerItem['returnLog'] != null)
-        //         ? tempTotalInnerItem['returnLog']
-        //         : [];
-        //     var qnt = int.parse(editProductQnt['$z']['quantity'].toString()) -
-        //         int.parse(v['quantity'].toString());
-
-        //     var NewLog = {
-        //       'type': '${(qnt >= 1) ? 'return' : 'add_more'}',
-        //       'quantity': '${int.parse(qnt.toString())}',
-        //       'date_at': DateTime.now()
-        //     };
-        //     tempLog.add(NewLog);
-        //     tempTotalInnerItem['returnLog'] = tempLog;
-        //     if (qnt != 0) {
-        //       products['${k}'] = tempTotalInnerItem;
-        //     }
-        //   }
-        // });
+        
       } else {
         // insert Stock =======================================
         await updateStock(products);
       }
       // End this is for Supplier Log manage ====================
     }
+
+    
 
     dbArr['gst'] = totalGst;
     dbArr['subtotal'] = totalPrice - totalGst;
@@ -1033,24 +1102,26 @@ class invoiceController extends updateController {
         ProductQuntControllers[controllerId]!.text != '0') {
       tempQnt = ProductQuntControllers[controllerId]!.text;
     }
-
+ 
     double qunt = double.parse(tempQnt);
     double price = double.parse(
         (ProductPriceControllers[controllerId]!.text == '')
             ? 0.toString()
             : ProductPriceControllers[controllerId]!.text.toString());
-    if (pName != '' && price != '' && qunt != '') {
-      productDBdata[controllerId] = (productDBdata[controllerId] != null)
-          ? productDBdata[controllerId]
-          : {};
-      // calculate
-      int subTotal = int.parse(((price * qunt) - discount).round().toString());
-      int totalGst = int.parse((((subTotal * gst) / 100).round()).toString());
-      productDBdata[controllerId]['gst'] = "$totalGst";
-      productDBdata[controllerId]['subTotal'] = "$subTotal";
-      int total = int.parse((subTotal + totalGst).toString());
-      ProductTotalControllers[controllerId]!.text = total.toString();
-    }
+    //if (pName != '' && price != '' && qunt != '') {
+    productDBdata[controllerId] = (productDBdata[controllerId] != null)
+        ? productDBdata[controllerId]
+        : {};
+        
+    // calculate
+    int subTotal = int.parse(((price * qunt) - discount).round().toString());
+    int totalGst = int.parse((((subTotal * gst) / 100).round()).toString());
+    productDBdata[controllerId]['gst'] = "$totalGst";
+    productDBdata[controllerId]['subTotal'] = "$subTotal";
+    int total = int.parse((subTotal + totalGst).toString());
+    ProductTotalControllers[controllerId]!.text = total.toString();
+
+    // }
 
     ctrGrandTotal();
   }
@@ -1147,27 +1218,46 @@ class invoiceController extends updateController {
         Navigator.pop(context, 'updated');
       }
 
-      if (e.isKeyPressed(LogicalKeyboardKey.keyD) ||
-          e.isKeyPressed(LogicalKeyboardKey.altLeft) || e.isKeyPressed(LogicalKeyboardKey.altRight) ) {
-        Keys.add(key);
-      }
-      // ctr + D OR X => addnewproduct
-      if ((Keys.contains(LogicalKeyboardKey.altLeft) || e.isKeyPressed(LogicalKeyboardKey.altRight)) &&
-          (Keys.contains(LogicalKeyboardKey.keyD) ||
-              Keys.contains(LogicalKeyboardKey.keyX))) {
+      // if (e.isKeyPressed(LogicalKeyboardKey.keyD) ||
+      //     e.isKeyPressed(LogicalKeyboardKey.altLeft) ||
+      //     e.isKeyPressed(LogicalKeyboardKey.altRight)) {
+      //   Keys.add(key);
+      // }else{
+      //   Keys = [];
+      // }
+      
+      // F2 for add new product
+      if (e.isKeyPressed(LogicalKeyboardKey.f2)) {
         ctrNewRow();
+        Keys = [];
+        return true;
+      }
 
+      // F4 for remove product
+      if (e.isKeyPressed(LogicalKeyboardKey.f4)) {
+         ctrRemoveRow(context);
         Keys = [];
         return true;
       }
-      // ctr + R OR Z => RemoveProduct
-      if ((Keys.contains(LogicalKeyboardKey.altLeft) || e.isKeyPressed(LogicalKeyboardKey.altRight)) &&
-          (Keys.contains(LogicalKeyboardKey.keyR) ||
-              Keys.contains(LogicalKeyboardKey.keyZ))) {
-        ctrRemoveRow(context);
-        Keys = [];
-        return true;
-      }
+      // // ctr + D OR X => addnewproduct
+      // if ((Keys.contains(LogicalKeyboardKey.altLeft) ||
+      //         e.isKeyPressed(LogicalKeyboardKey.altRight)) &&
+      //     (Keys.contains(LogicalKeyboardKey.keyD) ||
+      //         Keys.contains(LogicalKeyboardKey.keyX))) {
+      //   ctrNewRow();
+
+      //   Keys = [];
+      //   return true;
+      // }
+      // // ctr + R OR Z => RemoveProduct
+      // if ((Keys.contains(LogicalKeyboardKey.altLeft) ||
+      //         e.isKeyPressed(LogicalKeyboardKey.altRight)) &&
+      //     (Keys.contains(LogicalKeyboardKey.keyR) ||
+      //         Keys.contains(LogicalKeyboardKey.keyZ))) {
+      //   ctrRemoveRow(context);
+      //   Keys = [];
+      //   return true;
+      // }
     } else {
       Keys.remove(key);
     }
@@ -1355,15 +1445,14 @@ class invoiceController extends updateController {
 
   // update product log ==========================================
   updateProductLog(docId, dbArr, oldSubProductList, oldQnt, list_id, ins_data,
-      {logType: 'Sale Invoice',oldSubProductTUnit:''}) async {
+      {logType: 'Sale Invoice', oldSubProductTUnit: ''}) async {
     var temp = oldSubProductList[list_id];
     Map<dynamic, dynamic> oldMap = new Map();
     oldMap['quantity'] = oldQnt;
-    if(oldSubProductTUnit != ''){
+    if (oldSubProductTUnit != '') {
       oldMap['totalUnit'] = oldSubProductTUnit;
     }
 
-    
     oldMap['price'] = (temp['price'] != null) ? temp['price'] : '';
     oldMap['unit'] = (temp['unit'] != null) ? temp['unit'] : '';
     oldMap['location'] = (temp['location'] != null) ? temp['location'] : '';
@@ -1508,22 +1597,20 @@ class invoiceController extends updateController {
   // Sales stock & Edit update check ================================
   SalesStockEdit(products, oldData, inputDataDbData, {editId: ''}) async {
     var i = 1;
-    
 
     // for edit =======================================================
     // check if delete some product
     if (editId != '') {
-       
       var deletedArr = {};
       oldData.forEach((k, v) {
         deletedArr[k] = v;
       });
 
       for (var k in products.keys) {
-          var product = products[k];
-          await comanQntCalculate(product, oldData);
-          i++;
-        }
+        var product = products[k];
+        await comanQntCalculate(product, oldData);
+        i++;
+      }
 
       // this is for delete product if deleted product foreach
       products.forEach((k, v) {
@@ -1533,13 +1620,11 @@ class invoiceController extends updateController {
           deletedArr[v['id']] = tempDel;
         }
       });
-       
 
       for (var key in deletedArr.keys) {
         var val = deletedArr[key];
-         
+
         if (val.isNotEmpty) {
-         
           for (var ke in val.keys) {
             var tempVal = val[ke];
             var tempArr = {
@@ -1555,18 +1640,17 @@ class invoiceController extends updateController {
               'gst': '${tempVal['gst']}',
               'id': '${tempVal['id']}',
             };
-            
 
             await comanQntCalculate(tempArr, oldData);
           }
         }
       }
-    }else{
+    } else {
       for (var k in products.keys) {
-          var product = products[k];
-          await comanQntCalculate(product, oldData);
-          i++;
-        }
+        var product = products[k];
+        await comanQntCalculate(product, oldData);
+        i++;
+      }
     }
   }
 
@@ -1579,11 +1663,10 @@ class invoiceController extends updateController {
       // var updateProduct = {k: product};
       // await updateStock(updateProduct);
 
-    
       // check if product is not in old data ============================
     } else if (oldData[product['id']] == null ||
         oldData[product['id']]['${product['list_item_id']}'] == null) {
-          print("update_qnt===========2");
+      print("update_qnt===========2");
       // already added product ad new in this invoice ===============
       var li = product['list_item_id'];
       var dbProduct = await dbFind({'table': 'product', 'id': product['id']});
@@ -1592,7 +1675,6 @@ class invoiceController extends updateController {
       var oldSubProductQ;
       var oldSubProductTUnit;
 
-
       var dbSubQnt =
           oldSubProductQ = int.parse(subProduct['quantity'].toString());
 
@@ -1600,30 +1682,26 @@ class invoiceController extends updateController {
       var dbSubTUnit =
           oldSubProductTUnit = int.parse(subProduct['totalUnit'].toString());
 
-
       var dbMainQnt = int.parse(dbProduct['quantity'].toString());
 
       // then increase db data
       var qnt = int.parse(product['quantity'].toString());
       var unit = int.parse(product['unit'].toString());
-    
 
-      if(dbUnit == 0){
+      if (dbUnit == 0) {
         dbSubQnt -= qnt;
         dbMainQnt -= qnt;
-      }else if( (unit == '' || unit == 0 ) && dbUnit != 0 ) {
-        unit = qnt*dbUnit;
+      } else if ((unit == '' || unit == 0) && dbUnit != 0) {
+        unit = qnt * dbUnit;
         dbSubQnt -= qnt;
         dbMainQnt -= qnt;
         dbSubTUnit -= unit;
-      }else{
+      } else {
         dbSubTUnit -= unit;
-        qnt = qnt+(unit/dbUnit).toInt();
+        qnt = qnt + (unit / dbUnit).toInt();
         dbSubQnt -= qnt;
         dbMainQnt -= qnt;
       }
-
-
 
       // update quantity
       subProduct['totalUnit'] = dbSubTUnit;
@@ -1637,12 +1715,11 @@ class invoiceController extends updateController {
       dbProduct['id'] = product['id'];
       await dbUpdate(db, dbProduct);
 
-      
-
       await updateProductLog(
           product['id'], dbProduct, listProduct, oldSubProductQ, li, dbProduct,
           logType:
-              " - Update Supplier - ${Customer_nameController.text} - Invoice",oldSubProductTUnit:oldSubProductTUnit);
+              " - Update Supplier - ${Customer_nameController.text} - Invoice",
+          oldSubProductTUnit: oldSubProductTUnit);
     } else {
       print("---else");
       // ---------------------------------------------------------------------------------
@@ -1650,9 +1727,9 @@ class invoiceController extends updateController {
       // Update old order calculate quantity & units
       // ---------------------------------------------------------------------------------
       // ---------------------------------------------------------------------------------
-      
+
       var li = product['list_item_id'];
-      
+
       var dbProduct = await dbFind({'table': 'product', 'id': product['id']});
       var oldVar = oldData[product['id']]['${product['list_item_id']}'];
 
@@ -1665,71 +1742,61 @@ class invoiceController extends updateController {
       //var dbSubUnit = int.parse(subProduct['totalUnit'].toString());
       var dbMainQnt = int.parse(dbProduct['quantity'].toString());
 
-
       var dbUnit = int.parse(subProduct['unit'].toString());
       var dbSubTUnit =
           oldSubProductTUnit = int.parse(subProduct['totalUnit'].toString());
 
-
-
-
-      if ((oldVar['quantity'] != product['quantity'])  || (oldVar['unit'] != product['unit'])) {
-    
-        if ( (int.parse(oldVar['quantity'].toString()) >
-            int.parse(product['quantity'].toString()))  || (int.parse(oldVar['unit'].toString()) >
-            int.parse(product['unit'].toString())))  {
+      if ((oldVar['quantity'] != product['quantity']) ||
+          (oldVar['unit'] != product['unit'])) {
+        if ((int.parse(oldVar['quantity'].toString()) >
+                int.parse(product['quantity'].toString())) ||
+            (int.parse(oldVar['unit'].toString()) >
+                int.parse(product['unit'].toString()))) {
           // return some data
           var qnt = int.parse(oldVar['quantity'].toString()) -
               int.parse(product['quantity'].toString());
 
           var unit = int.parse(oldVar['unit'].toString()) -
-              int.parse(product['unit'].toString());   
+              int.parse(product['unit'].toString());
 
-              print(unit) ;
+          print(unit);
 
           // dbSubQnt += qnt;
           // dbMainQnt += qnt;
-          
 
-          if(dbUnit == 0){
+          if (dbUnit == 0) {
             dbSubQnt += qnt;
             dbMainQnt += qnt;
-          }else if( (unit == '' || unit == 0 ) && dbUnit != 0 ) {
-            unit = qnt*dbUnit;
+          } else if ((unit == '' || unit == 0) && dbUnit != 0) {
+            unit = qnt * dbUnit;
             dbSubQnt += qnt;
             dbMainQnt += qnt;
             dbSubTUnit += unit;
-          }else{
+          } else {
             dbSubTUnit += unit;
-            qnt = (unit/dbUnit).toInt();
+            qnt = (unit / dbUnit).toInt();
             dbSubQnt += qnt;
             dbMainQnt += qnt;
           }
-
-
-
         } else {
-           
           // add some data
           var qnt = int.parse(product['quantity'].toString()) -
               int.parse(oldVar['quantity'].toString());
 
           var unit = int.parse(product['unit'].toString()) -
-              int.parse(oldVar['unit'].toString());  
+              int.parse(oldVar['unit'].toString());
 
-           
-          
-          if(dbUnit == 0){
+          if (dbUnit == 0) {
             dbSubQnt -= qnt;
             dbMainQnt -= qnt;
-          }else if( (unit == '' || unit == 0 ) && dbUnit != 0 ) {
-            unit = qnt*dbUnit;
+          } else if ((unit == '' || unit == 0) && dbUnit != 0) {
+            unit = qnt * dbUnit;
             dbSubQnt -= qnt;
             dbMainQnt -= qnt;
             dbSubTUnit -= unit;
-          }else{
+          } else {
             dbSubTUnit -= unit;
-            qnt = qnt+(unit/dbUnit).toInt();
+            qnt = qnt + (unit / dbUnit).toInt();
             dbSubQnt -= qnt;
             dbMainQnt -= qnt;
           }
@@ -1749,9 +1816,71 @@ class invoiceController extends updateController {
 
         await updateProductLog(product['id'], dbProduct, listProduct,
             oldSubProductQ, li, dbProduct,
-            logType: "Sale Invoice ${Customer_nameController.text}",oldSubProductTUnit: oldSubProductTUnit);
+            logType: "Sale Invoice ${Customer_nameController.text}",
+            oldSubProductTUnit: oldSubProductTUnit);
       }
     }
     return true;
   } // end fn
+
+  // fn insert sale product ==========================================================================
+  ctrFnSaveSaleStock(context)async {
+    
+
+    var rData = {};
+    for (var ctrId in SaleProductRowId.keys){
+      var t = SaleProductRowId[ctrId];
+      var tCurrentData = {};
+      tCurrentData['name'] = SaleProductNameControllers[ctrId]!.text;
+      tCurrentData['price'] =
+          SaleProductPriceControllers[ctrId]!.text;
+      tCurrentData['quantity'] =
+          SaleProductQuntControllers[ctrId]!.text;
+      tCurrentData['unit'] = SaleProductUnitControllers[ctrId]!.text;
+
+      var cat = SaleCategoryController[ctrId]!.text;
+      var location = productLocationController[ctrId]!.text;
+      var stockDate = saleProductStockDate[ctrId]!.text;
+      var alert = "";
+      if(cat.length < 2){
+        alert = "On New Stock Row No. $ctrId - Category is required";
+      }else if(tCurrentData['name'].length < 2){
+        alert = "On New Stock Row No. $ctrId - Product Name is required";
+      }else if(tCurrentData['price'].length < 1){
+        alert = "On New Stock Row No. $ctrId - Price is required";
+      }else if(tCurrentData['quantity'].length < 1){
+        alert = "On New Stock Row No. $ctrId - quantity is required";
+      }else if(location.length < 1){
+        alert = "On New Stock Row No. $ctrId - Location is required";
+      }
+
+      if(alert != ''){
+        themeAlert(context, alert,type: 'error');
+        Navigator.of(context).pop();
+        return 'error';
+      }
+
+      
+
+      // save 
+      var proId =  await stock_insert(tCurrentData, dynamicControllers['$ctrId'], cat, location, stockDate);
+      tCurrentData['productId'] = proId;
+      rData[t] =  tCurrentData;
+    }
+
+    await getProductNameList();
+
+    if(rData.isNotEmpty){
+      for(var i in rData.keys){
+        var tData = rData[i];
+          // check & update
+          if(tData['productId'] != null &&  allProductList_byId[tData['productId']] != null){
+             ProductNameControllers[i]!.text = allProductList_byId[tData['productId']]['nameKey'];
+            //await fnCalcualtePrice(i);
+          }
+      }
+    }
+
+    return rData;
+  }
 }

@@ -7,6 +7,7 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Invoice/invoice_widgets.dart';
+import 'package:crm_demo/screens/Invoice/modal-sale-new-product.dart';
 import 'package:crm_demo/screens/product/product/product_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
@@ -54,6 +55,10 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
     });
   }
 
+  refreshState(){
+    setState(() {});
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -63,12 +68,12 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
     });
 
     // key listner
-    window.onKeyData = (final keyData) {
-      if (keyData.character == 'D') {
-        addNewProduct(context);
-      }
-      return false;
-    };
+    // window.onKeyData = (final keyData) {
+    //   if (keyData.character == 'D') {
+    //     addNewProduct(context);
+    //   }
+    //   return false;
+    // };
 
     super.initState();
   }
@@ -95,6 +100,8 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
               themeHeader2(context, "${widget.header_name} Invoice ",
                   widthBack: 'updated'),
               // formField =======================
+
+            
               (isWait)
                   ? pleaseWait(context)
                   : Form(
@@ -258,6 +265,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                                         method:
                                                             fnCalcualtePrice,
                                                         methodArg: i,
+                                                        autoUpdateCtr:false
                                                       ),
                                                     ),
                                                     // Price
@@ -420,7 +428,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                               });
                                               await controller
                                                   .insertInvoiceDetails(
-                                                      context);
+                                                      context,controller: controller,fn: fnInsertNewProSale);
                                               setState(() {
                                                 buttonHide = false;
                                               });
@@ -530,8 +538,26 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                       ),
                     ),
 
-              SizedBox(height: 200)
+
+              //         Stack(
+              //   children: [
+              //     Positioned(
+              //       left: 10.0,
+              //       top: 10.0,
+              //       child: Container(
+              //         width: 300.0,
+              //         height: 300.0,
+              //         color: Colors.red,
+              //         child: Text("hello"),
+              //       ),
+              //     ),
+              //   ],
+              // ),
+
+              SizedBox(height: 200),
               // end form ====================================
+              
+              
             ],
           ),
         ),
@@ -558,6 +584,7 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
 
   // get price & calculate
   fnCalcualtePrice(controllerId) async {
+    
     controller.readOnlyField.remove(controllerId);
     var productName = controller.ProductNameControllers[controllerId]!.text;
     if (productName != '') {
@@ -593,10 +620,13 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                   ? '0'
                   : controller.ProductDiscountControllers[controllerId]!.text;
         });
-        fnTotalPrice(controllerId);
       }
+      fnTotalPrice(controllerId);
     }
   }
+
+
+
 
   // Fetch all detials
   fnFetchCutomerDetails() {
@@ -640,6 +670,31 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
     setState(() {
       controller.SaleType = val;
     });
+  }
+
+  // update sale ====================================
+  fnInsertNewProSale()async {
+    var rData = await controller.ctrFnSaveSaleStock(context);
+    if(rData == 'error'){
+      return false;
+    }
+    
+    if(rData.isNotEmpty){
+      for(var i in rData.keys){
+        var tData = rData[i];
+          // check & update
+          if(tData['productId'] != null &&  controller.allProductList_byId[tData['productId']] != null){
+            await fnCalcualtePrice(i);
+          }
+      }
+      setState(() {});
+      Navigator.of(context).pop();
+      await controller
+          .insertInvoiceDetails(context);
+    }
+
+    
+    
   }
 }
 
