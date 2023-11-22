@@ -215,7 +215,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         // svgSrc: "assets/icons/drop_box.svg",
         color: Color.fromARGB(255, 235, 202, 16),
 
-        PageNo: 5,
+        PageNo: 14,
       ),
       CloudStorageInfo(
         title: "Total Sales",
@@ -224,7 +224,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         // svgSrc: "assets/icons/drop_box.svg",
         color: Color.fromARGB(255, 235, 202, 16),
 
-        PageNo: 5,
+        PageNo: 14,
       ),
       CloudStorageInfo(
         title: "Yearly Sales",
@@ -232,7 +232,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         svgSrc: Icons.sync_alt_rounded,
         // svgSrc: "assets/icons/drop_box.svg",
         color: Color.fromARGB(255, 235, 202, 16),
-        PageNo: 5,
+        PageNo: 14,
       ),
       CloudStorageInfo(
         title: "Today Buys",

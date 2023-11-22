@@ -451,9 +451,8 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                                 children: [
                                   // for (var i = 0; i < tt.length; i++)
                                   pw.Text("${tt["$i"]["name"]} ",
-                                      maxLines: 1,
                                       style: pw.TextStyle(
-                                          fontSize: 8.0,
+                                          fontSize: 5.0,
                                           fontWeight: pw.FontWeight.normal,
                                           color: PdfColors.black))
                                 ])),

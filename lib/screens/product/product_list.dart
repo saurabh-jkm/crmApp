@@ -35,6 +35,7 @@ import 'package:intl/intl.dart';
 
 import '../dashboard/dashboard_controller.dart';
 import 'product/detail_product_screen.dart';
+import 'test_list.dart';
 
 class ProductAdd extends StatefulWidget {
   const ProductAdd({super.key, required this.OutStock});
@@ -199,6 +200,11 @@ class _ProductAddState extends State<ProductAdd> {
                 color: Colors.white,
                 child: ListView(
                   children: [
+                    TextButton(
+                        onPressed: () {
+                          nextScreen(context, PaginationScreen());
+                        },
+                        child: Text("Test List")),
                     //header ======================
                     Container(
                       padding: EdgeInsets.symmetric(
