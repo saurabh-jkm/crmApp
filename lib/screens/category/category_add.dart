@@ -57,6 +57,7 @@ class _CategoryAddState extends State<CategoryAdd> {
       });
       controllerr.progressWidget = false;
     });
+    setState(() {});
   }
 
   ///// File Picker ==========================================================

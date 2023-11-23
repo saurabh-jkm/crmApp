@@ -77,8 +77,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         await appSetting();
       }
       BalanceCount = await controller.Balance_count();
+      setState(() {});
     }
-    setState(() {});
   }
 
   @override
@@ -264,7 +264,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       CloudStorageInfo(
         title: "Total Outstanding",
         numOfFiles: BalanceCount,
-        svgSrc: Icons.account_balance_outlined,
+        svgSrc: Icons.balance,
         // svgSrc: "assets/icons/drop_box.svg",
         color: Color.fromARGB(255, 241, 123, 123),
         PageNo: 12,

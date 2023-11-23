@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations
 
-import 'package:crm_demo/screens/category/category_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../themes/style.dart';

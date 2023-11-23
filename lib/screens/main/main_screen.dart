@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, use_key_in_widget_constructors, annotate_overrides, prefer_typing_uninitialized_variables, unused_element, unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, use_key_in_widget_constructors, annotate_overrides, prefer_typing_uninitialized_variables, unused_element, unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps, unused_import
 
 import 'dart:convert';
 
