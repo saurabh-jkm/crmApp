@@ -144,6 +144,11 @@ class DashboardController {
           .count()
           .get()
           .then((value) {
+        // value.docs.forEach((doc) {
+        //   // Access data in each document
+        //   print(
+        //       'Document ID: ${doc.id}, Data: ${doc["balance"]}   +++++++sss++++++++++');
+        // });
         return value.count;
       });
       tempCount = query;

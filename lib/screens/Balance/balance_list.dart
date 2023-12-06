@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals, unused_local_variable, deprecated_member_use, unused_element, camel_case_types, deprecated_colon_for_default_value
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals, unused_local_variable, deprecated_member_use, unused_element, camel_case_types, deprecated_colon_for_default_value, duplicate_ignore
 
 import 'dart:convert';
 import 'dart:io' show Platform;
@@ -93,6 +93,13 @@ class _BalanceListState extends State<BalanceList> {
             (v['status'] != null && v['status']) ? 'Active' : 'InActive';
         controllerr.OrderList.add(v);
       });
+
+      for (var i = 0; i < controllerr.OrderList.length; i++) {
+        // if (controllerr.OrderList[i]["balance"] == "0") {
+        print(" ${controllerr.OrderList[i]["balance"]}  +++++++++++++");
+        // }
+      }
+
       controllerr.finalOrderList = controllerr.OrderList;
 
       progressWidget = false;
@@ -406,12 +413,13 @@ class _BalanceListState extends State<BalanceList> {
                 for (var index = 0;
                     index < controllerr.OrderList.length;
                     index++)
-                  tableRowWidget(
-                      "${index + 1}",
-                      controllerr.OrderList[index]['status'],
-                      controllerr.OrderList[index]['date_at'],
-                      controllerr.OrderList[index],
-                      dbData: controllerr.OrderList[index])
+                  if (controllerr.OrderList[index]['balance'] != "0")
+                    tableRowWidget(
+                        "${index + 1}",
+                        controllerr.OrderList[index]['status'],
+                        controllerr.OrderList[index]['date_at'],
+                        controllerr.OrderList[index],
+                        dbData: controllerr.OrderList[index])
               ],
             ),
           ),

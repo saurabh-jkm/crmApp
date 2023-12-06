@@ -626,7 +626,6 @@ Widget formInput(BuildContext context, label, controller,
                   }
                 }
               },
-              
             ));
 }
 
@@ -637,42 +636,40 @@ Widget themeSpaceVertical(height) {
 
 // auto complete =================================
 autoCompleteFormInput(suggationList, label, myController,
-    {
-    padding: 10.0,
+    {padding: 10.0,
     myFocusNode: '',
     method: '',
     methodArg: '',
     strinFilter: '',
-    autoUpdateCtr:true,
+    autoUpdateCtr: true,
     isPreloadInput: false}) {
   return Autocomplete(
     fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
-     // controller.text ='424';
+      // controller.text ='424';
 
-     if(autoUpdateCtr){
-        controller.text = myController.text;  
-      }else{
+      if (autoUpdateCtr) {
+        controller.text = myController.text;
+      } else {}
 
-      }
-      
-      
       return formInput(context, "$label", controller,
           editComplete: onEditingComplete,
           focusNode: (myFocusNode == '') ? focusNode : myFocusNode,
           currentController: myController,
           padding: padding,
-          isPreloadInput: isPreloadInput,method: method,methodArg: methodArg);
+          isPreloadInput: isPreloadInput,
+          method: method,
+          methodArg: methodArg);
     },
     optionsBuilder: (TextEditingValue textEditingValue) {
       if (textEditingValue.text == '') {
         return const Iterable<String>.empty();
       } else {
-         List<String> matches = <String>[];
+        List<String> matches = <String>[];
         matches.addAll(suggationList);
         matches.retainWhere((s) {
           return s.toLowerCase().contains(textEditingValue.text.toLowerCase());
         });
-         return matches;
+        return matches;
       }
     },
     onSelected: (String selection) {
@@ -965,8 +962,10 @@ Widget GoogleText(
     color = Colors.black,
     fsize = 15.0,
     fweight = FontWeight.normal,
-    fstyle = FontStyle.normal}) {
+    fstyle = FontStyle.normal,
+    maxline = 3}) {
   return Text("$text",
+      maxLines: maxline,
       style: GoogleFonts.alike(
           color: color,
           fontSize: fsize,

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, use_key_in_widget_constructors, annotate_overrides, prefer_typing_uninitialized_variables, unused_element, unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, use_key_in_widget_constructors, annotate_overrides, prefer_typing_uninitialized_variables, unused_element, unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps, unused_import
 
 import 'dart:convert';
 
@@ -12,7 +12,7 @@ import '../../themes/theme_widgets.dart';
 import '../Attributes/attribute_add.dart';
 import '../Balance/balance_list.dart';
 import '../Invoice/Buy_list.dart';
-import '../Invoice/sell_list.dart';
+import '../Invoice/Sell_list.dart';
 import '../Profile/profile_details.dart';
 import '../Selsman/WorkAlot/salesman_list.dart';
 import '../Sub Admin/Add_SubAdmin.dart';
@@ -41,6 +41,8 @@ class _MainScreenState extends State<MainScreen> {
     if (userData != null) {
       setState(() {
         user = jsonDecode(userData) as Map<dynamic, dynamic>;
+
+        // print("$user ++++++++++++++++++++");
       });
     }
   }
@@ -262,7 +264,7 @@ class _MainScreenState extends State<MainScreen> {
               });
             },
             horizontalTitleGap: 0.0,
-            leading: Icon(Icons.sell, color: Colors.white),
+            leading: Icon(Icons.sell_outlined, color: Colors.white),
             title: Text(
               "Sale",
               style: TextStyle(color: Colors.white),

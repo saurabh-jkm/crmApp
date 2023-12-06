@@ -1,9 +1,9 @@
-import 'package:crm_demo/screens/Invoice/invoice_controller.dart';
+// ignore_for_file: file_names, deprecated_colon_for_default_value
+
 import 'package:crm_demo/themes/function.dart';
 import 'package:crm_demo/themes/style.dart';
 import 'package:crm_demo/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 // modal
 modalAddInStock(context, controller, {savFun: ''}) async {
@@ -141,7 +141,8 @@ modalAddInStock(context, controller, {savFun: ''}) async {
                                           child: formInput(
                                               context,
                                               "Invoice Date",
-                                              controller.saleProductStockDate[i],
+                                              controller
+                                                  .saleProductStockDate[i],
                                               padding: 8.0),
                                         ),
 
@@ -197,10 +198,7 @@ modalAddInStock(context, controller, {savFun: ''}) async {
                                                       : false),
                                         ),
 
-                                        
-
                                         // Total
-                                        
                                       ],
                                     ),
                                   ),
