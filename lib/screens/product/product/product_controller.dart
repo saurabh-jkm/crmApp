@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps, non_constant_identifier_names, unused_local_variable
+// ignore_for_file: unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps, non_constant_identifier_names, unused_local_variable, deprecated_colon_for_default_value, unnecessary_string_interpolations
 
 import 'package:crm_demo/screens/product/product/add_product_screen.dart';
 
@@ -98,7 +98,7 @@ class ProductController {
     return temp;
   }
 
-  ///  ===========================================================================
+  ///  =======================================================
 
   //init controller ==========================================
   init_functions({data: ''}) async {
@@ -488,7 +488,7 @@ class ProductController {
       "table": "product",
       "name": nameController.text,
       "category": categoryController.text,
-      "quantity": quantityController.text,
+      "quantity": "${quantityController.text}",
       //"price": priceController.text,
       "date_at": DateTime.now(),
       "stock_date": stockDateController.text,

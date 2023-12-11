@@ -233,7 +233,7 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                 pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text("Invoice No : JKM-${PriceDetail["sr_no"]}",
+                      pw.Text("Invoice No : GE-0${PriceDetail["sr_no"]}",
                           style: pw.TextStyle(
                               fontSize: 8.0,
                               fontWeight: pw.FontWeight.bold,
@@ -711,21 +711,29 @@ class _Invoice_pdf extends State<Invoice_pdf> {
                   child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      // pw.SizedBox(width: 40),
                       pw.Container(
-                        padding: pw.EdgeInsets.all(2),
-                        width: 180,
-                        // decoration: BoxDecoration(
-                        //     //   border: Border.all(color: PdfColors.black)
-                        //     ),
-                        alignment: pw.Alignment.center,
-                        child: pw.Text("Seal :",
-                            style: pw.TextStyle(
-                                fontSize: 8.0,
-                                fontWeight: pw.FontWeight.normal,
-                                color: PdfColors.black)),
-                      ),
-                      // pw.SizedBox(width: 40),
+                          // padding: pw.EdgeInsets.all(2),
+                          width: 180,
+                          // decoration: BoxDecoration(
+                          //     //   border: Border.all(color: PdfColors.black)
+                          //     ),
+                          alignment: pw.Alignment.bottomCenter,
+                          child: pw.Column(
+                              // crossAxisAlignment: pw.CrossAxisAlignment.end,
+                              children: [
+                                pw.SizedBox(),
+                                pw.SizedBox(height: 15.0),
+                                pw.Row(
+                                    mainAxisAlignment:
+                                        pw.MainAxisAlignment.center,
+                                    children: [
+                                      pw.Text("Seal :",
+                                          style: pw.TextStyle(
+                                              fontSize: 8.0,
+                                              fontWeight: pw.FontWeight.normal,
+                                              color: PdfColors.black)),
+                                    ])
+                              ])),
                       pw.Container(
                           alignment: pw.Alignment.bottomRight,
                           // decoration: pw.BoxDecoration(

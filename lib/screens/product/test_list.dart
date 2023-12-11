@@ -12,6 +12,7 @@ import '../../themes/function.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 import 'product/detail_product_screen.dart';
+import 'test2.dart';
 
 class PaginationScreen extends StatefulWidget {
   @override
@@ -84,6 +85,11 @@ class _PaginationScreenState extends State<PaginationScreen> {
         margin: EdgeInsets.all(10),
         child: Column(
           children: [
+            TextButton(
+                onPressed: () {
+                  nextScreen(context, SearchScreen());
+                },
+                child: Text("Search")),
             Container(
               color: secondaryColor,
               height: 100,

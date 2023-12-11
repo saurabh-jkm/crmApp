@@ -734,8 +734,8 @@ class _ProductAddState extends State<ProductAdd> {
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(10)),
             margin: EdgeInsets.only(top: 20, right: 10, bottom: 10),
-            padding: EdgeInsets.all(8.0),
-            height: MediaQuery.of(context).size.height * 0.05,
+            padding: EdgeInsets.only(bottom: 10),
+            height: MediaQuery.of(context).size.height * 0.055,
             width: MediaQuery.of(context).size.width * 0.25,
             child: TextField(
               controller: _controllers,
@@ -744,7 +744,7 @@ class _ProductAddState extends State<ProductAdd> {
               }),
               style: TextStyle(color: Colors.black),
               decoration: InputDecoration(
-                  hintText: 'Search Product ,Category, Brand & Colors ....',
+                  hintText: 'Search Product, Category & Brand....',
                   hintStyle: TextStyle(
                     color: Colors.grey,
                     fontSize: 12,

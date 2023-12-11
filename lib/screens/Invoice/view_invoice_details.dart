@@ -211,7 +211,8 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
                         productRow(context, "Payment",
                             "${(Odata['payment'] != null || Odata['payment'] != "") ? "${Odata['payment']}" : "----"} Rs"),
                         productRow(context, "Payment Date", "$payDate"),
-                        productRow(context, "Invoice Id", "${OrderData["id"]}"),
+                        productRow(context, "Invoice No.",
+                            "GE-0${OrderData["sr_no"]}"),
                         productRow(
                             context, "Invoice Type", "${OrderData["type"]}"),
                         productRow(context, "Invoidate Date",
@@ -283,7 +284,7 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
                                               style: textStyleHeading1)))
                                   : SizedBox(),
                               Expanded(
-                                  child: Container(
+                                 child: Container(
                                       alignment: Alignment.center,
                                       child: Text("SubTotal(₹)",
                                           style: textStyleHeading1))),
