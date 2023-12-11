@@ -239,7 +239,10 @@ class DashboardController {
     var temp = await dbRawQuery(query);
     tempCount = temp.length;
 
+
     return tempCount;
+
+    
 
     /*if (!kIsWeb && Platform.isWindows) {
       var query = await Firestore.instance
