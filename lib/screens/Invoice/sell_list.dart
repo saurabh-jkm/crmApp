@@ -12,6 +12,8 @@ import 'package:crm_demo/screens/Invoice/pdf.dart';
 import 'package:crm_demo/screens/Invoice/view_invoice_details.dart';
 
 import 'package:crm_demo/themes/base_controller.dart';
+import 'package:crm_demo/themes/theme_footer.dart';
+import 'package:crm_demo/themes/theme_header.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
@@ -58,8 +60,14 @@ class _Sell_listState extends State<Sell_list> {
       ? Firestore.instance
       : FirebaseFirestore.instance;
 
+  var smallD = true;
   @override
   void initState() {
+     if(Platform.isAndroid || Platform.isIOS){
+      smallD = true;
+    }else{
+      smallD = false;
+    }
     orderList(_number_select);
 
     super.initState();
@@ -153,10 +161,10 @@ class _Sell_listState extends State<Sell_list> {
 
     tableColum = {
       1: 50.0,
-      2: 50.0,
+      2: 80.0,
       3: 50.0,
       4: 130.0,
-      5: (fw < 1300) ? fw * 0.05 : fw * 0.07,
+      5: 130.0,
       6: 90.0,
       7: 40.0,
       8: 50.0,
@@ -173,7 +181,7 @@ class _Sell_listState extends State<Sell_list> {
       2: 'Order Id',
       // 3: 'Type',
       4: 'Product',
-      5: 'Buyer/Seller',
+      5: 'Buyer',
       6: 'Mobile',
       7: 'Qnt',
       8: 'Unit',
@@ -196,12 +204,13 @@ class _Sell_listState extends State<Sell_list> {
         }
       },
       child: Scaffold(
+        bottomNavigationBar: (smallD)?theme_footer_android(context, 2):SizedBox(),
         body: Container(
           color: Colors.white,
           child: ListView(
             children: [
               //header ======================
-              Container(
+              (smallD)?themeHeader_android(context,title: "Sale"):Container(
                 padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
                 decoration: BoxDecoration(color: themeBG2),
                 child: Row(
@@ -281,7 +290,7 @@ class _Sell_listState extends State<Sell_list> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
+                      (smallD)?SizedBox():Row(
                           children: [
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -379,7 +388,7 @@ class _Sell_listState extends State<Sell_list> {
                                 margin: EdgeInsets.symmetric(horizontal: 10),
                                 padding: EdgeInsets.only(top: 14),
                                 height: 35,
-                                width: 270.0,
+                                width:(smallD)?MediaQuery.of(context).size.width-60 : 270.0,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
                                     color: Colors.white),
@@ -392,23 +401,57 @@ class _Sell_listState extends State<Sell_list> {
                 SizedBox(
                   height: 5,
                 ),
+
                 Container(
-                  decoration: BoxDecoration(
-                      color: themeBG4,
-                      border: Border(
-                          bottom: BorderSide(width: 3.0, color: Colors.white))),
-                  child: Row(
+                  width: MediaQuery.of(context).size.width,
+                  height: (controllerr.OrderList.length*60),
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
                     children: [
-                      for (int i in headerName.keys)
-                        tableLable(context, i, headerName[i], tableColum),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                color: themeBG4,
+                                border: Border(
+                                    bottom: BorderSide(width: 3.0, color: Colors.white))),
+                            child: Row(
+                              children: [
+                                for (int i in headerName.keys)
+                                  tableLable(context, i, headerName[i], tableColum),
+                              ],
+                            ),
+                          ),
+                       
+                        for (var index = 0;
+                            index < controllerr.OrderList.length;
+                            index++)
+                          tableRowWidget("${index + 1}", controllerr.OrderList[index],
+                              dbData: controllerr.OrderList[index])
+                       ],
+                      ),
                     ],
                   ),
                 ),
-                for (var index = 0;
-                    index < controllerr.OrderList.length;
-                    index++)
-                  tableRowWidget("${index + 1}", controllerr.OrderList[index],
-                      dbData: controllerr.OrderList[index])
+                // Container(
+                //   decoration: BoxDecoration(
+                //       color: themeBG4,
+                //       border: Border(
+                //           bottom: BorderSide(width: 3.0, color: Colors.white))),
+                //   child: Row(
+                //     children: [
+                //       for (int i in headerName.keys)
+                //         tableLable(context, i, headerName[i], tableColum),
+                //     ],
+                //   ),
+                // ),
+                // for (var index = 0;
+                //     index < controllerr.OrderList.length;
+                //     index++)
+                //   tableRowWidget("${index + 1}", controllerr.OrderList[index],
+                //       dbData: controllerr.OrderList[index])
               ],
             ),
           ),

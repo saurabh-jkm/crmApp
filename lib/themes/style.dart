@@ -52,14 +52,26 @@ final themeBox = [
   ), //BoxShadow
 ];
 
+
+theme_appbar(context,{title:'', isBack:false,shadow:false}){
+  return AppBar(
+        title: Text("$title",style: textStyle1),
+        backgroundColor: Colors.white,
+      );
+}
+
 final themeGradient1 = LinearGradient(
-  begin: Alignment.topRight,
-  end: Alignment.bottomLeft,
-  colors: [
-    Colors.blue,
-    Color.fromARGB(255, 3, 42, 73),
-  ],
-);
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [
+      themeBG5,
+      themeBG6,
+      themeBG7
+      // Color.fromARGB(255, 135, 175, 255),
+      // Color.fromARGB(255, 112, 112, 197),
+      // Color.fromARGB(255, 112, 112, 197),
+      // Color.fromARGB(255, 158, 158, 238)
+    ]);
 
 final themeChatConMe = BorderRadius.only(
     topLeft: Radius.circular(20.0),

@@ -33,6 +33,9 @@ class _Login_CopyState extends State<Login_Copy> {
   // ignore: unused_field
   bool _isLoading = false;
   bool isWait = true;
+  bool smallD = true;
+  
+  
 
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
@@ -139,6 +142,11 @@ class _Login_CopyState extends State<Login_Copy> {
   ///
   @override
   void initState() {
+    if(Platform.isAndroid || Platform.isIOS){
+      smallD = true;
+    }else{
+      smallD = false;
+    }
     User_Data();
     super.initState();
   }
@@ -157,7 +165,7 @@ class _Login_CopyState extends State<Login_Copy> {
                   )
                 : Row(
                     children: [
-                      Expanded(
+                      (smallD)?SizedBox():Expanded(
                         child: Image(
                             image: AssetImage("assets/images/loginn.png")),
                       ),

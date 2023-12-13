@@ -282,6 +282,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                                             method:
                                                                 fnCalcualtePrice,
                                                             methodArg: i,
+                                                            // autoUpdateCtr:false
                                                           ),
                                                         ),
                                                         // Price
@@ -522,7 +523,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                             ),
                                             onPressed: () async {
                                               setState(() {
-                                                buttonHide = true;
+                                               // buttonHide = true;
                                               });
                                               await controller
                                                   .insertInvoiceDetails(
