@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, unnecessary_brace_in_string_interps
+// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, sized_box_for_whitespace, deprecated_colon_for_default_value
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/themes/function.dart';
 import 'package:crm_demo/themes/style.dart';
@@ -243,7 +243,6 @@ Widget productRow(context, key, data, {color: Colors.black}) {
 // single product  list ==========================
 Widget productTableRow(context, key, data, headingList, {rowColor: ''}) {
   data = (data[key] == null) ? {} : data[key];
-
   return Container(
     margin: EdgeInsets.only(bottom: 1.0),
     padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),

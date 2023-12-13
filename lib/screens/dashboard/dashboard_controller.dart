@@ -116,6 +116,7 @@ class DashboardController {
           Out_of_stock_Data2[k] = temp;
           k++;
         }
+        // print("${Out_of_stock_Data2.length}     ++++");
         return Out_of_stock_Data2.length;
       });
       tempCount = query;
