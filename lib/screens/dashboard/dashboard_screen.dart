@@ -6,6 +6,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/themes/function.dart';
 import 'package:crm_demo/themes/style.dart';
+import 'package:crm_demo/themes/theme_footer.dart';
+import 'package:crm_demo/themes/theme_header.dart';
 import 'package:firedart/firestore/firestore.dart';
 
 import 'package:flutter/foundation.dart';
@@ -81,8 +83,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {});
   }
 
+  var smallD = true;
   @override
   void initState() {
+     if(Platform.isAndroid || Platform.isIOS){
+      smallD = true;
+    }else{
+      smallD = false;
+    }
+
     _getUser();
     super.initState();
   }
@@ -106,71 +115,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-//   final List<BarChartModel> data = [
-//     BarChartModel(
-//       year: "Jan",
-//       Sale: 200,
-//       Expenses: 100,
-//       Profit: 50,
-//       color: charts.ColorUtil.fromDartColor(Colors.green),
-//       color1: charts.ColorUtil.fromDartColor(Colors.red),
-//       color2: charts.ColorUtil.fromDartColor(Colors.yellow),
-//     ),
-//     BarChartModel(
-//       year: "Feb",
-//       Sale: 350,
-//       Expenses: 200,
-//       Profit: 100,
-//       color: charts.ColorUtil.fromDartColor(Colors.green),
-//       color1: charts.ColorUtil.fromDartColor(Colors.red),
-//       color2: charts.ColorUtil.fromDartColor(Colors.yellow),
-//     ),
-//     BarChartModel(
-//       year: "March",
-//       Sale: 450,
-//       Expenses: 200,
-//       Profit: 250,
-//       color: charts.ColorUtil.fromDartColor(Colors.green),
-//       color1: charts.ColorUtil.fromDartColor(Colors.red),
-//       color2: charts.ColorUtil.fromDartColor(Colors.yellow),
-//     ),
-//     BarChartModel(
-//       year: "April",
-//       Sale: 300,
-//       Expenses: 200,
-//       Profit: 100,
-//       color: charts.ColorUtil.fromDartColor(Colors.green),
-//       color1: charts.ColorUtil.fromDartColor(Colors.red),
-//       color2: charts.ColorUtil.fromDartColor(Colors.yellow),
-//     ),
-//   ];
 
 // ///////=======================================================================
   @override
   Widget build(BuildContext context) {
-    // List<charts.Series<BarChartModel, String>> series = [
-    //   charts.Series(
-    //     id: "Sale",
-    //     data: data,
-    //     domainFn: (BarChartModel series, _) => series.year,
-    //     measureFn: (BarChartModel series, _) => series.Sale,
-    //     colorFn: (BarChartModel series, _) => series.color,
-    //   ),
-    //   charts.Series(
-    //     id: "Expenses",
-    //     data: data,
-    //     domainFn: (BarChartModel series, _) => series.year,
-    //     measureFn: (BarChartModel series, _) => series.Expenses,
-    //     colorFn: (BarChartModel series, _) => series.color1,
-    //   ),
-    //   charts.Series(
-    //     id: "Profit",
-    //     data: data,
-    //     domainFn: (BarChartModel series, _) => series.year,
-    //     measureFn: (BarChartModel series, _) => series.Profit,
-    //     colorFn: (BarChartModel series, _) => series.color2,
-    //   ),
-    // ];
+    
     // dashborad list init
     List demoMyFiles = [
       CloudStorageInfo(
@@ -179,7 +128,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         svgSrc: Icons.person,
         // svgSrc: "assets/icons/one_drive.svg",
         color: Color(0xFFA4CDFF),
-
         PageNo: 10,
       ),
       CloudStorageInfo(
@@ -274,8 +222,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return (user.isEmpty)
         ? Center(child: pleaseWait(context))
         : Scaffold(
+            bottomNavigationBar: (smallD)? theme_footer_android(context, 0):SizedBox(),
             body: Container(
-              padding: EdgeInsets.all(defaultPadding),
+              padding: EdgeInsets.all((smallD)?0.0:defaultPadding),
               child: (isNewUpdate)
                   ? Container(
                       child: Center(
@@ -286,19 +235,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Text(
                               "New Update Available !!",
                               style: themeTextStyle(
-                                  size: 40.0, color: Colors.green),
+                                  size: (smallD)?20.0:40.0, color: Colors.green),
                             ),
                             Text(
                               "Please do Hard Refresh Browser",
                               style: themeTextStyle(
-                                  size: 24.0,
+                                  size: (smallD)?14.0:24.0,
                                   color: Color.fromARGB(255, 114, 173, 250)),
                             ),
                             SizedBox(height: 40.0),
                             Text(
                               "Press Ctr + Shift + R",
                               style:
-                                  themeTextStyle(size: 40.0, color: Colors.red),
+                                  themeTextStyle(size:(smallD)?13.0: 40.0, color: Colors.red),
                             )
                           ],
                         ),
@@ -306,7 +255,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     )
                   : ListView(
                       children: [
-                        Header(
+                        (smallD)?themeHeader_android(context,title: "Dashboard"):Header(
                           title: "Dashboard",
                         ),
                         SizedBox(height: defaultPadding),
@@ -316,6 +265,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Expanded(
                               flex: 5,
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   MyFiles(
                                     demoMyFiles: demoMyFiles,
@@ -325,110 +275,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                                   SizedBox(height: defaultPadding),
 
-                                  /*Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.all(defaultPadding),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                ),
-                                child: Column(children: [
-                                  SizedBox(
-                                      child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Icon(
-                                            Icons.business,
-                                            size: 30,
-                                            color: Colors.black,
-                                          ),
-                                          SizedBox(width: 10),
-                                          Text("Company Performance",
-                                              style: GoogleFonts.alike(
-                                                  fontSize: 15,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold)),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Icon(
-                                            Icons.currency_rupee_outlined,
-                                            size: 30,
-                                            color: Colors.black,
-                                          ),
-                                          SizedBox(width: 10),
-                                          Text(
-                                              "Sales , Expenses and Profit : 2017 - 2023",
-                                              style: GoogleFonts.alike(
-                                                  fontSize: 13,
-                                                  color: Colors.black45,
-                                                  fontStyle: FontStyle.italic,
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              demo_color(context, Colors.green,
-                                                  "Sale"),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              demo_color(context, Colors.red,
-                                                  "Expenses"),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              demo_color(context, Colors.yellow,
-                                                  "Profit")
-                                            ],
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  )),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 20),
-                                    width: double.infinity,
-                                    height: 500,
-                                    child: charts.BarChart(
-                                      series,
-                                      animate: true,
-                                    ),
-                                  )
-                                ]))*/
-
-                                  // ElevatedButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Back")),
-                                  // RecentFiles(),
-
-                                  // if (Responsive.isMobile(context))
-                                  //   SizedBox(height: defaultPadding),
-                                  // if (Responsive.isMobile(context))
-                                  // StarageDetails(),
+                              
                                 ],
                               ),
                             ),
-                            // if (!Responsive.isMobile(context))
-                            //   SizedBox(width: defaultPadding),
-                            // // On Mobile means if the screen is less than 850 we dont want to show it
-                            // if (!Responsive.isMobile(context))
-                            //   Expanded(
-                            //     flex: 2,
-                            //     child:
-                            //     StarageDetails(),
-                            //   ),
+                            
                           ],
                         ),
                       ],

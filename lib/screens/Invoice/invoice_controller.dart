@@ -589,7 +589,7 @@ class invoiceController extends updateController {
     ProductUnitControllers[productId]!.text =
         (data['unit'] == '') ? '0' : data['unit'];
     dynamicControllers['$productId'].forEach((key, value) {
-      if (data[key] != null) {
+      if (data[key] != null && key != '') {
         dynamicControllers['$productId'][key].text = data[key];
       }
     });

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'dart:io';
+
 import '../../../constants.dart';
 import '../../../controllers/MenuAppController.dart';
 import '../../../models/MyFiles.dart';
@@ -79,13 +81,13 @@ class FileInfoCard extends StatelessWidget {
                             child: Icon(
                               info.svgSrc,
                               color: info.color,
-                              size: MediaQuery.of(context).size.height * 0.06,
+                              size: (Platform.isAndroid || Platform.isIOS)?20.0: MediaQuery.of(context).size.height * 0.06,
                             )),
                       ],
                     ),
                     Text('${info.numOfFiles}',
                         style: themeTextStyle(
-                            size: 60.0,
+                            size: (Platform.isAndroid || Platform.isIOS)?40.0: 60.0,
                             color: const Color.fromARGB(255, 179, 179, 179)))
                   ],
                 ),
