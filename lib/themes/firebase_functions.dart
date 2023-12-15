@@ -100,6 +100,7 @@ All_dbUpdate(
 dbSave(db, where) async {
   // srno manage
   var rData = await dbFindDynamic(db, {'table': 'sr_no'});
+
   var sr_id = 0;
   Map<String, dynamic> w = {};
   if (rData.isNotEmpty) {
@@ -123,9 +124,12 @@ dbSave(db, where) async {
   if (!kIsWeb && Platform.isWindows) {
     // update sr No
     if (w.isNotEmpty) {
-      await db.collection('sr_no').document(rData[0]['id']).update(w);
+      await Firestore.instance
+          .collection('sr_no')
+          .document(rData[0]['id'])
+          .update(w);
     }
-    return await db.collection(table).add(where).then((value) {
+    return Firestore.instance.collection(table).add(where).then((value) {
       return value.id;
     });
   } else {

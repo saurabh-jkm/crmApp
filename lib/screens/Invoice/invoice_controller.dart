@@ -788,8 +788,6 @@ class invoiceController extends updateController {
       alert = "Please Enter Valid GST Number ";
     }
 
-    
-
     if (alert != '') {
       themeAlert(context, "$alert", type: 'error');
       return false;
@@ -968,37 +966,32 @@ class invoiceController extends updateController {
           modalAddInStock(context, controller, savFun: fn);
           return false;
         }
-        
 
         await SalesStockEdit(products, productEditOldData, productDBdata);
       }
     } else {
       var alert = '';
-      for(var ctrId in productLocationController.keys){
-         if(productLocationController[ctrId]!.text.length < 1 ){
+      for (var ctrId in productLocationController.keys) {
+        if (productLocationController[ctrId]!.text.length < 1) {
           alert = 'Product No. $ctrId : Location is required !!';
-         }else if(categoryController[ctrId]!.text.length < 1 ){
+        } else if (categoryController[ctrId]!.text.length < 1) {
           alert = 'Product No. $ctrId : Category is required !!';
-         }
+        }
       }
-      if(alert != ''){
-        themeAlert(context, alert,type: 'error');
+      if (alert != '') {
+        themeAlert(context, alert, type: 'error');
         return false;
       }
 
- 
       // this is for Supplier Log manage ====================
       if (docId != '') {
         await supplierStockEdit(products, productEditOldData, productDBdata);
-        
       } else {
         // insert Stock =======================================
         await updateStock(products);
       }
       // End this is for Supplier Log manage ====================
     }
-
-    
 
     dbArr['gst'] = totalGst;
     dbArr['subtotal'] = totalPrice - totalGst;
@@ -1102,7 +1095,7 @@ class invoiceController extends updateController {
         ProductQuntControllers[controllerId]!.text != '0') {
       tempQnt = ProductQuntControllers[controllerId]!.text;
     }
- 
+
     double qunt = double.parse(tempQnt);
     double price = double.parse(
         (ProductPriceControllers[controllerId]!.text == '')
@@ -1112,7 +1105,7 @@ class invoiceController extends updateController {
     productDBdata[controllerId] = (productDBdata[controllerId] != null)
         ? productDBdata[controllerId]
         : {};
-        
+
     // calculate
     int subTotal = int.parse(((price * qunt) - discount).round().toString());
     int totalGst = int.parse((((subTotal * gst) / 100).round()).toString());
@@ -1225,7 +1218,7 @@ class invoiceController extends updateController {
       // }else{
       //   Keys = [];
       // }
-      
+
       // F2 for add new product
       if (e.isKeyPressed(LogicalKeyboardKey.f2)) {
         ctrNewRow();
@@ -1235,7 +1228,7 @@ class invoiceController extends updateController {
 
       // F4 for remove product
       if (e.isKeyPressed(LogicalKeyboardKey.f4)) {
-         ctrRemoveRow(context);
+        ctrRemoveRow(context);
         Keys = [];
         return true;
       }
@@ -1824,60 +1817,57 @@ class invoiceController extends updateController {
   } // end fn
 
   // fn insert sale product ==========================================================================
-  ctrFnSaveSaleStock(context)async {
-    
-
+  ctrFnSaveSaleStock(context) async {
     var rData = {};
-    for (var ctrId in SaleProductRowId.keys){
+    for (var ctrId in SaleProductRowId.keys) {
       var t = SaleProductRowId[ctrId];
       var tCurrentData = {};
       tCurrentData['name'] = SaleProductNameControllers[ctrId]!.text;
-      tCurrentData['price'] =
-          SaleProductPriceControllers[ctrId]!.text;
-      tCurrentData['quantity'] =
-          SaleProductQuntControllers[ctrId]!.text;
+      tCurrentData['price'] = SaleProductPriceControllers[ctrId]!.text;
+      tCurrentData['quantity'] = SaleProductQuntControllers[ctrId]!.text;
       tCurrentData['unit'] = SaleProductUnitControllers[ctrId]!.text;
 
       var cat = SaleCategoryController[ctrId]!.text;
       var location = productLocationController[ctrId]!.text;
       var stockDate = saleProductStockDate[ctrId]!.text;
       var alert = "";
-      if(cat.length < 2){
+      if (cat.length < 2) {
         alert = "On New Stock Row No. $ctrId - Category is required";
-      }else if(tCurrentData['name'].length < 2){
+      } else if (tCurrentData['name'].length < 2) {
         alert = "On New Stock Row No. $ctrId - Product Name is required";
-      }else if(tCurrentData['price'].length < 1){
+      } else if (tCurrentData['price'].length < 1) {
         alert = "On New Stock Row No. $ctrId - Price is required";
-      }else if(tCurrentData['quantity'].length < 1){
+      } else if (tCurrentData['quantity'].length < 1) {
         alert = "On New Stock Row No. $ctrId - quantity is required";
-      }else if(location.length < 1){
+      } else if (location.length < 1) {
         alert = "On New Stock Row No. $ctrId - Location is required";
       }
 
-      if(alert != ''){
-        themeAlert(context, alert,type: 'error');
+      if (alert != '') {
+        themeAlert(context, alert, type: 'error');
         Navigator.of(context).pop();
         return 'error';
       }
 
-      
-
-      // save 
-      var proId =  await stock_insert(tCurrentData, dynamicControllers['$ctrId'], cat, location, stockDate);
+      // save
+      var proId = await stock_insert(
+          tCurrentData, dynamicControllers['$ctrId'], cat, location, stockDate);
       tCurrentData['productId'] = proId;
-      rData[t] =  tCurrentData;
+      rData[t] = tCurrentData;
     }
 
     await getProductNameList();
 
-    if(rData.isNotEmpty){
-      for(var i in rData.keys){
+    if (rData.isNotEmpty) {
+      for (var i in rData.keys) {
         var tData = rData[i];
-          // check & update
-          if(tData['productId'] != null &&  allProductList_byId[tData['productId']] != null){
-             ProductNameControllers[i]!.text = allProductList_byId[tData['productId']]['nameKey'];
-            //await fnCalcualtePrice(i);
-          }
+        // check & update
+        if (tData['productId'] != null &&
+            allProductList_byId[tData['productId']] != null) {
+          ProductNameControllers[i]!.text =
+              allProductList_byId[tData['productId']]['nameKey'];
+          //await fnCalcualtePrice(i);
+        }
       }
     }
 
