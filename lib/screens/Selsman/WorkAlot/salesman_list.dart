@@ -18,8 +18,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../responsive.dart';
 import '../../../themes/firebase_functions.dart';
+import '../../../themes/global.dart';
 import '../../../themes/style.dart';
+import '../../../themes/theme_footer.dart';
+import '../../../themes/theme_header.dart';
 import '../../../themes/theme_widgets.dart';
+import '../../Balance/balance_widget.dart';
 import '../../Invoice/invoice_controller.dart';
 import '../../customers/customer_widgets.dart';
 import '../../dashboard/components/header.dart';
@@ -85,36 +89,9 @@ class _SalemanListState extends State<SalemanList> {
     initFunctions(_number_select);
   }
 
-//  // get all Customer List =============================
-  sellerList(int limitData) async {
-    // listCustomerName = [];
-    // listCustomer = {};
-    // Map dbData = await dbFindDynamic(
-    //     db, {'table': 'users', 'user_type': 'Sales Man', "limit": limitData});
-
-    // var i = 1;
-
-    // if (dbData != null) {
-    //   for (var key in dbData.keys) {
-    //     Map<dynamic, dynamic> data = dbData[key];
-    //     // var datar = await dbFind({'table': 'users', 'id': data['client_id']});
-    //     var notify = await Meeting_done_Notifications(data["id"]);
-    //     String name = "${data["first_name"]} ${data["last_name"]}";
-    //     data["name"] = name;
-    //     data["date_at"] = data["date_at"];
-    //     data["id"] = data["id"];
-    //     data["notification"] = notify;
-    //     data[""] = listCustomer['$i'] = data;
-    //     listCustomerAllDataArr['$i'] = data;
-    //     listCustomerName.add("$data");
-    //     i++;
-    //   }
-    // }
-  }
   @override
   void initState() {
     initFunctions(_number_select);
-
     super.initState();
   }
 
@@ -133,45 +110,49 @@ class _SalemanListState extends State<SalemanList> {
         }
       },
       child: Scaffold(
-        body: (controller.secondScreen && controller.selectedSellerId != null)
-            ? Container(
-                color: Colors.white,
-                child: ListView(children: [
-                  _ImageSelect_Alert(context, controller.selectedSellerId,
-                      controller.MeetingMap, controller.selectedSeller),
-                ]),
-              )
-            : Container(
-                color: themeBG2,
-                child: Column(
-                  children: [
-                    Container(
-                        height: 70.0, child: Header(title: "Salesman List")),
-                    CustomerList(context)
-                  ],
-                ),
-              ),
-      ),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(0),
+            child: clientAppBar(),
+          ),
+          bottomNavigationBar:
+              (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
+          body: (controller.secondScreen && controller.selectedSellerId != null)
+              ? Container(
+                  color: Colors.white,
+                  child: ListView(children: [
+                    _ImageSelect_Alert(context, controller.selectedSellerId,
+                        controller.MeetingMap, controller.selectedSeller),
+                  ]),
+                )
+              : CustomerList(context, "Seller List")),
     );
   }
 
   var _number_select = 50;
   var _number_select_meeting = 50;
   // Body Part =================================================
-  Widget CustomerList(context) {
+  Widget CustomerList(context, headLine) {
     return Container(
       height: MediaQuery.of(context).size.height - 70,
       color: Colors.white,
       child: ListView(
         children: [
+          (is_mobile)
+              ? themeHeader_android(context, title: "$headLine")
+              : Container(height: 70.0, child: Header(title: "$headLine")),
           // search
           Container(
+            color: Color.fromARGB(255, 94, 86, 204),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
-                  height: 60.0,
-                  width: 220.0,
+                  margin: EdgeInsets.all(2),
+                  height: 45,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10)),
                   child: inputSearch(
                       context, controller.searchTextController, 'Search',
                       method: fnSearch),
@@ -291,22 +272,45 @@ class _SalemanListState extends State<SalemanList> {
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                  themeButton3(context, () async {
-                                    controller.MeetingMap =
-                                        await controller.OrderList_data(
-                                            "${data['id']}",
-                                            _number_select_meeting);
-                                    setState(() {
-                                      controller.selectedSellerId = data['id'];
-                                      controller.deviceId = data['DeviceId'];
-                                      controller.selectedSeller = data;
-                                      controller.secondScreen = true;
-                                    });
-                                  },
-                                      label: "Meetings Info",
-                                      radius: 10.0,
-                                      buttonColor: Colors.green,
-                                      btnHeightSize: 35.0),
+                                  (is_mobile)
+                                      ? IconButton(
+                                          onPressed: () async {
+                                            controller.MeetingMap =
+                                                await controller.OrderList_data(
+                                                    "${data['id']}",
+                                                    _number_select_meeting);
+                                            setState(() {
+                                              controller.selectedSellerId =
+                                                  data['id'];
+                                              controller.deviceId =
+                                                  data['DeviceId'];
+                                              controller.selectedSeller = data;
+                                              controller.secondScreen = true;
+                                            });
+                                          },
+                                          icon: Icon(
+                                            Icons.list,
+                                            color: Colors.white,
+                                            size: 40,
+                                          ))
+                                      : themeButton3(context, () async {
+                                          controller.MeetingMap =
+                                              await controller.OrderList_data(
+                                                  "${data['id']}",
+                                                  _number_select_meeting);
+                                          setState(() {
+                                            controller.selectedSellerId =
+                                                data['id'];
+                                            controller.deviceId =
+                                                data['DeviceId'];
+                                            controller.selectedSeller = data;
+                                            controller.secondScreen = true;
+                                          });
+                                        },
+                                          label: "Meetings Info",
+                                          radius: 10.0,
+                                          buttonColor: Colors.green,
+                                          btnHeightSize: 35.0),
                                 ])
                           : Text("${dataList[i]}",
                               style: TextStyle(
@@ -322,15 +326,32 @@ class _SalemanListState extends State<SalemanList> {
   }
 
   //////////////////   popup Box for Image selection ++++++++++++++++++++++++++++++++++++++
-
-  Widget _ImageSelect_Alert(BuildContext context, Mdata, MapMeeting, data) {
+  var headerName = {
+    1: '#',
+    2: 'Customer',
+    3: 'Type',
+    4: 'Message',
+    5: 'Assign At',
+    6: 'Closing At',
+    7: 'Status',
+    8: 'Action',
+  };
+  var tableColum = {
+    1: 40.0,
+    2: 120.0,
+    3: 70.0,
+    4: 150.0,
+    5: 80.0,
+    6: 80.0,
+    7: 60.0,
+    8: 100.0,
+  };
+  Widget _ImageSelect_Alert(BuildContext context, Mdata, Map MapMeeting, data) {
+    // print("$MapMeeting");
     return Container(
-        //height: MediaQuery.of(context).size.height,
-        //width: MediaQuery.of(context).size.width - 450,
         child: (controller.ListShow)
 
 ////////////////////////////////////////////     Listt Of Meeting ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,7 +359,7 @@ class _SalemanListState extends State<SalemanList> {
                 children: <Widget>[
                     Container(
                       margin:
-                          EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -360,41 +381,32 @@ class _SalemanListState extends State<SalemanList> {
                                     size: 35,
                                   )),
                               SizedBox(
-                                width: 10,
+                                width: 5,
                               ),
                               Text(
                                 '${(controller.selectedSeller != null) ? controller.selectedSeller['name'] : ''}',
                                 style: themeTextStyle(
-                                    color: Colors.blue,
-                                    fw: FontWeight.bold,
-                                    size: 20),
+                                  color: Colors.blue,
+                                  fw: FontWeight.bold,
+                                  size: is_mobile ? 15.0 : 20.0,
+                                ),
                               ),
                             ],
                           ),
-                          Row(children: [
-                            IconButton(
-                                onPressed: () async {
-                                  await controller.OrderList_data(
-                                      controller.selectedSellerId,
-                                      _number_select_meeting);
-                                  setState(() {});
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                themeButton3(context, () {
+                                  setState(() {
+                                    controller.ListShow = false;
+                                  });
                                 },
-                                icon: Icon(
-                                  Icons.refresh,
-                                  color: Colors.green,
-                                  size: 35,
-                                )),
-                            SizedBox(width: 20.0),
-                            themeButton3(context, () {
-                              setState(() {
-                                controller.ListShow = false;
-                              });
-                            },
-                                label: "+ New Meeting Asign",
-                                fontSize: 20.0,
-                                btnHeightSize: 50.0,
-                                radius: 5.0),
-                          ]),
+                                    label: "+ New Meeting",
+                                    buttonColor: Colors.green,
+                                    fontSize: is_mobile ? 15.0 : 20.0,
+                                    btnHeightSize: is_mobile ? 40.0 : 50.0,
+                                    radius: 10.0),
+                              ]),
                         ],
                       ),
                     ),
@@ -405,13 +417,13 @@ class _SalemanListState extends State<SalemanList> {
                         padding: EdgeInsets.all(10),
                         color: themeBG4,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Row(
                               children: [
                                 Container(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 10.0, vertical: 4.0),
+                                      horizontal: 5.0, vertical: 4.0),
                                   color: Color.fromARGB(255, 200, 247, 242),
                                   child: Row(
                                     children: [
@@ -420,7 +432,7 @@ class _SalemanListState extends State<SalemanList> {
                                               horizontal: 10),
                                           padding: EdgeInsets.only(top: 14),
                                           height: 35,
-                                          width: 140.0,
+                                          width: 120.0,
                                           decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(5.0),
@@ -435,7 +447,7 @@ class _SalemanListState extends State<SalemanList> {
                                               horizontal: 10),
                                           padding: EdgeInsets.only(top: 14),
                                           height: 35,
-                                          width: 140.0,
+                                          width: 120.0,
                                           decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(5.0),
@@ -445,13 +457,20 @@ class _SalemanListState extends State<SalemanList> {
                                               label: 'Date To',
                                               method: datePick,
                                               arg: 'toDate')),
-                                      themeButton3(context, fnFilterController,
-                                          arg: 'date_filter',
-                                          label: 'Filter',
-                                          radius: 2.0,
-                                          borderColor: Colors.transparent,
-                                          buttonColor: Color.fromARGB(
-                                              255, 12, 121, 194)),
+                                      (is_mobile)
+                                          ? Icon(
+                                              Icons.search,
+                                              color: Colors.blue,
+                                              size: 40,
+                                            )
+                                          : themeButton3(
+                                              context, fnFilterController,
+                                              arg: 'date_filter',
+                                              label: 'Filter',
+                                              radius: 5.0,
+                                              borderColor: Colors.transparent,
+                                              buttonColor: Color.fromARGB(
+                                                  255, 12, 121, 194)),
                                     ],
                                   ),
                                 ),
@@ -459,102 +478,157 @@ class _SalemanListState extends State<SalemanList> {
                             ), // end date filter container
                           ],
                         )),
-                    TableHeading(context, controller.MeetingheadList,
-                        rowColor: Color.fromARGB(255, 94, 86, 204),
-                        textColor: Colors.white),
+
                     Container(
-                        height: MediaQuery.of(context).size.height - 100,
-                        child: ListView(children: [
-                          for (int key in MapMeeting.keys)
-                            MeetingTableRow(context, MapMeeting[key], key,
-                                rowColor: Color.fromARGB(255, 217, 215, 239),
-                                textColor: const Color.fromARGB(255, 0, 0, 0),
-                                controllerr: controller),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                      width: MediaQuery.of(context).size.width,
+                      height: (MapMeeting.length * 70),
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                  height: 40,
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                  margin: EdgeInsets.symmetric(
-                                      vertical: 20, horizontal: 20),
-                                  color: Colors.black,
+                                  decoration: BoxDecoration(
+                                      color: themeBG4,
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              width: 3.0,
+                                              color: Colors.white))),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        "Show",
-                                        style: themeTextStyle(
-                                            fw: FontWeight.normal,
-                                            color: Colors.white,
-                                            size: 15),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 10.0),
-                                        padding: EdgeInsets.all(2),
-                                        height: 20,
-                                        color: Colors.white,
-                                        child: DropdownButton<int>(
-                                          dropdownColor: Colors.white,
-                                          iconEnabledColor: Colors.black,
-                                          hint: Text(
-                                            "$_number_select_meeting",
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 12),
-                                          ),
-                                          value: _number_select_meeting,
-                                          items: <int>[50, 100, 150, 200]
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child: Text(
-                                                "$value",
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12),
-                                              ),
-                                            );
-                                          }).toList(),
-                                          onChanged: (newVal) async {
-                                            setState(() {
-                                              _number_select_meeting = newVal!;
-                                            });
-
-                                            await controller.OrderList_data(
-                                                controller.selectedSellerId,
-                                                newVal);
-                                            setState(() {});
-                                          },
-                                          underline: SizedBox(),
-                                        ),
-                                      ),
-                                      Text(
-                                        "entries",
-                                        style: themeTextStyle(
-                                            fw: FontWeight.normal,
-                                            color: Colors.white,
-                                            size: 15),
-                                      ),
+                                      for (int i in headerName.keys)
+                                        tableLablee(context, i, headerName[i],
+                                            tableColum),
                                     ],
                                   ),
-                                )
-                              ]),
-                          SizedBox(
-                            height: 100,
+                                ),
+                                for (var i = 0; i < MapMeeting.length; i++)
+                                  MeetingViewList(
+                                    context,
+                                    MapMeeting[i],
+                                    i + 1,
+                                    rowColor:
+                                        Color.fromARGB(255, 217, 215, 239),
+                                  )
+                              ],
+                            ),
                           ),
-                        ])),
+                        ],
+                      ),
+                    ),
+                    // TableHeading(context, controller.MeetingheadList,
+                    //     rowColor: Color.fromARGB(255, 94, 86, 204),
+                    //     textColor: Colors.white),
+                    // Container(
+                    //     height: MediaQuery.of(context).size.height - 100,
+                    //     child: ListView(children: [
+                    //       // heading ==============================================================================
+                    //       Container(
+                    //         width: 400,
+                    //         height: (controllerr.OrderList.length * 60),
+                    //         child: ListView(
+                    //           scrollDirection: Axis.horizontal,
+                    //           shrinkWrap: true,
+                    //           children: [
+                    //             Container(
+                    //               child: Column(
+                    //                 crossAxisAlignment:
+                    //                     CrossAxisAlignment.start,
+                    //                 children: [
+                    //                   // for (var index = 0;
+                    //                   //     index < controllerr.OrderList.length;
+                    //                   //     index++)
+                    //                   //   tableRowWidget("${index + 1}",
+                    //                   //       controllerr.OrderList[index],
+                    //                   //       dbData: controllerr.OrderList[index])
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+
+                    //       // for (int key in MapMeeting.keys)
+                    //       //   MeetingTableRow(context, MapMeeting[key], key,
+                    // rowColor: Color.fromARGB(255, 217, 215, 239),
+                    // textColor: const Color.fromARGB(255, 0, 0, 0),
+                    //       //       controllerr: controller),
+
+                    //     ])),
+
+                    Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      Container(
+                        height: 40,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        margin:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        color: Colors.black,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Show",
+                              style: themeTextStyle(
+                                  fw: FontWeight.normal,
+                                  color: Colors.white,
+                                  size: 15),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 10.0),
+                              padding: EdgeInsets.all(2),
+                              height: 20,
+                              color: Colors.white,
+                              child: DropdownButton<int>(
+                                dropdownColor: Colors.white,
+                                iconEnabledColor: Colors.black,
+                                hint: Text(
+                                  "$_number_select_meeting",
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 12),
+                                ),
+                                value: _number_select_meeting,
+                                items:
+                                    <int>[50, 100, 150, 200].map((int value) {
+                                  return DropdownMenuItem<int>(
+                                    value: value,
+                                    child: Text(
+                                      "$value",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 12),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (newVal) async {
+                                  setState(() {
+                                    _number_select_meeting = newVal!;
+                                  });
+
+                                  await controller.OrderList_data(
+                                      controller.selectedSellerId, newVal);
+                                  setState(() {});
+                                },
+                                underline: SizedBox(),
+                              ),
+                            ),
+                            Text(
+                              "entries",
+                              style: themeTextStyle(
+                                  fw: FontWeight.normal,
+                                  color: Colors.white,
+                                  size: 15),
+                            ),
+                          ],
+                        ),
+                      )
+                    ]),
+                    SizedBox(
+                      height: 100,
+                    ),
                   ])
-            : addNewMeet_widget(
-                context,
-                controller,
-                fnFetchCutomerDetails,
-                selectDate,
-                controller.ListShow,
-                fn_change_state,
-                fn_setstate,
-              ));
+            : addNewMeet_widget(context, controller, fnFetchCutomerDetails,
+                selectDate, controller.ListShow, fn_change_state, fn_setstate));
   }
 
 // Table Heading ==========================
@@ -562,6 +636,7 @@ class _SalemanListState extends State<SalemanList> {
       {rowColor: '', textColor: '', controllerr: ''}) {
     List<dynamic> dataList = [];
     var status = MeetingStatusOF(data['status']);
+
     dataList.add('1');
     dataList.add('${data['customer_name']}');
     dataList.add('${data['customer_type']}');
@@ -676,6 +751,90 @@ class _SalemanListState extends State<SalemanList> {
     );
   }
 
+  Widget MeetingViewList(BuildContext context, data, index, {rowColor: ""}) {
+    var status = MeetingStatusOF(data['status']);
+    return Container(
+      margin: EdgeInsets.only(bottom: 2.0),
+      padding: EdgeInsets.symmetric(vertical: 6.0),
+      decoration: BoxDecoration(
+          border:
+              Border.all(color: (status == "Done") ? Colors.red : Colors.green),
+          color: (rowColor == '') ? themeBG2 : rowColor),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          tableDetails(context, index, " ${index}", tableColum[1]),
+          tableDetails(context, index, data["customer_name"], tableColum[2]),
+          tableDetails(context, index, data["customer_type"], tableColum[3]),
+          tableDetails(
+              context, index, data["meeting_conversation"], tableColum[4]),
+          tableDetails(
+              context, index, data["next_follow_up_date"], tableColum[5]),
+          tableDetails(context, index, data["update_at"], tableColum[6]),
+          tableDetails(context, index, status, tableColum[7]),
+          Container(
+              width: tableColum[8],
+              child: Row(children: [
+                Container(
+                    height: 40,
+                    width: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.2),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: IconButton(
+                        onPressed: () async {
+                          await win_dbDelete(context, controller.db,
+                              {"table": "follow_up", "id": "${data["id"]}"});
+
+                          //  await   controller.OrderList_data(
+                          //         "${data['id']}",
+                          //         _number_select_meeting);
+
+                          await controller.OrderList_data(
+                              controller.selectedSellerId,
+                              _number_select_meeting);
+
+                          setState(() {});
+                        },
+                        icon: Icon(
+                          Icons.delete_outline_outlined,
+                          color: Colors.red,
+                          size: 20,
+                        ))),
+                ///// view details Sub Admin+++++++++++++++++++
+                SizedBox(width: 10),
+                Container(
+                  height: 40,
+                  width: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.2),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: IconButton(
+                      onPressed: () {
+                        if (controller != '') {
+                          nextScreen(
+                              context,
+                              MeetingView(
+                                MapData: data,
+                              ));
+                        }
+                      },
+                      icon: Icon(
+                        Icons.remove_red_eye_outlined,
+                        color: Colors.green,
+                      ),
+                      tooltip: 'View'),
+                ),
+              ]))
+        ],
+      ),
+    );
+  }
+
 //////////////////////////////////////////==========
   // Fetch all detials
   fnFetchCutomerDetails() {
@@ -697,16 +856,16 @@ class _SalemanListState extends State<SalemanList> {
   ///
 
   selectDate(BuildContext context, setstate) async {
-    DateTime selectedDate = DateTime.now();
     final DateTime? picked = await showDatePicker(
         context: context,
-        initialDate: selectedDate,
+        initialDate: controller.selectedDate,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2100));
-    if (picked != null && picked != selectedDate) {
+    if (picked != null && picked != controller.selectedDate) {
       setState(() {
-        selectedDate = picked;
-        controller.Next_date = DateFormat('dd-MM-yyyy').format(selectedDate);
+        controller.selectedDate = picked;
+        controller.Next_date =
+            DateFormat('dd-MM-yyyy').format(controller.selectedDate);
       });
     }
   }

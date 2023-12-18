@@ -6,6 +6,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Profile/edit_profile.dart';
 import 'package:crm_demo/themes/base_controller.dart';
+import 'package:crm_demo/themes/global.dart';
+import 'package:crm_demo/themes/theme_footer.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,7 @@ import '../../responsive.dart';
 import '../../themes/firebase_functions.dart';
 import '../../themes/function.dart';
 import '../../themes/style.dart';
+import '../../themes/theme_header.dart';
 import '../../themes/theme_widgets.dart';
 import '../Invoice/invoice_serv.dart';
 import '../dashboard/components/header.dart';
@@ -85,11 +88,19 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         }
       },
       child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: clientAppBar(),
+        ),
+        bottomNavigationBar:
+            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
         body: ListView(
           children: [
-            Header(
-              title: "My Profile",
-            ),
+            (is_mobile)
+                ? themeHeader_android(context, title: "My Profile")
+                : Header(
+                    title: "My Profile",
+                  ),
             Show_info(context)
           ],
         ),
@@ -104,16 +115,16 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       child: Column(
         children: [
           SizedBox(
-            height: 40,
+            height: (!is_mobile) ? 40 : 10,
           ),
           profile_image(),
           SizedBox(
-            height: 10,
+            height: (!is_mobile) ? 10 : 5.0,
           ),
           Text(
             "${user["name"]} ",
             style: TextStyle(
-              fontSize: 20.0,
+              fontSize: (!is_mobile) ? 20 : 15,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
@@ -121,7 +132,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           Text(
             ' ${user["user_type"]}'.toUpperCase(),
             style: TextStyle(
-              fontSize: 15.0,
+              fontSize: (!is_mobile) ? 15 : 12.0,
               color: Colors.blue,
               fontWeight: FontWeight.normal,
               letterSpacing: 2.5,
@@ -155,15 +166,17 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             ),
           ),
           SizedBox(
-            height: 20.0,
+            height: (!is_mobile) ? 20 : 10,
             width: MediaQuery.of(context).size.width,
             child: Divider(
               color: Colors.black12,
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-            padding: EdgeInsets.all(defaultPadding),
+            margin: EdgeInsets.symmetric(
+                vertical: (!is_mobile) ? 20 : 10, horizontal: 10),
+            padding: EdgeInsets.all(
+                (!is_mobile) ? defaultPadding : defaultPadding / 2.5),
             decoration: BoxDecoration(
               color: const Color.fromARGB(73, 0, 0, 0),
               borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -171,8 +184,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             child: Column(
               children: [
                 Card(
-                  margin:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  margin: EdgeInsets.symmetric(
+                      vertical: (!is_mobile) ? 10.0 : 5.0,
+                      horizontal: (!is_mobile) ? 20.0 : 10.0),
                   child: ListTile(
                     leading: Icon(
                       Icons.person,
@@ -180,14 +194,16 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     ),
                     title: Text(
                       "${user["name"]}",
-                      style:
-                          GoogleFonts.alike(fontSize: 15, color: Colors.white),
+                      style: GoogleFonts.alike(
+                          fontSize: (!is_mobile) ? 15.0 : 12.0,
+                          color: Colors.white),
                     ),
                   ),
                 ),
                 Card(
-                  margin:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  margin: EdgeInsets.symmetric(
+                      vertical: (!is_mobile) ? 10.0 : 5.0,
+                      horizontal: (!is_mobile) ? 20.0 : 10.0),
                   child: ListTile(
                     leading: Icon(
                       Icons.email,
@@ -195,14 +211,16 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     ),
                     title: Text(
                       "${user["email"]}",
-                      style:
-                          GoogleFonts.alike(fontSize: 15, color: Colors.white),
+                      style: GoogleFonts.alike(
+                          fontSize: (!is_mobile) ? 15.0 : 12.0,
+                          color: Colors.white),
                     ),
                   ),
                 ),
                 Card(
-                  margin:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  margin: EdgeInsets.symmetric(
+                      vertical: (!is_mobile) ? 10.0 : 5.0,
+                      horizontal: (!is_mobile) ? 20.0 : 10.0),
                   child: ListTile(
                     leading: Icon(
                       Icons.mobile_screen_share_rounded,
@@ -212,14 +230,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       "${user["phone"]}",
                       style: TextStyle(
                           fontFamily: 'SourceSansPro',
-                          fontSize: 20,
+                          fontSize: (!is_mobile) ? 15.0 : 12.0,
                           color: Colors.white),
                     ),
                   ),
                 ),
                 Card(
-                  margin:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  margin: EdgeInsets.symmetric(
+                      vertical: (!is_mobile) ? 10.0 : 5.0,
+                      horizontal: (!is_mobile) ? 20.0 : 10.0),
                   child: ListTile(
                     leading: Icon(
                       Icons.update,
@@ -229,7 +248,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       (user["status"] == "1") ? "Active" : "Inactive",
                       style: TextStyle(
                           fontFamily: 'SourceSansPro',
-                          fontSize: 15,
+                          fontSize: (!is_mobile) ? 15.0 : 12.0,
                           color: (user["status"] == "1")
                               ? Colors.green
                               : Colors.red),
@@ -237,8 +256,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   ),
                 ),
                 Card(
-                  margin:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  margin: EdgeInsets.symmetric(
+                      vertical: (!is_mobile) ? 10.0 : 5.0,
+                      horizontal: (!is_mobile) ? 20.0 : 10.0),
                   child: ListTile(
                     leading: Icon(
                       Icons.calendar_month_outlined,
@@ -248,7 +268,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       "${user["date_at"]}",
                       style: TextStyle(
                           fontFamily: 'SourceSansPro',
-                          fontSize: 15,
+                          fontSize: (!is_mobile) ? 15.0 : 12.0,
                           color: Colors.white),
                     ),
                   ),
@@ -270,9 +290,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           shape: BoxShape.circle,
         ),
         child: Container(
-          //margin: EdgeInsets.all(10),
-          height: coverHeight / 1.5,
-          width: coverHeight / 1.5,
+          height: (!is_mobile) ? coverHeight / 1.5 : coverHeight / 2,
+          width: (!is_mobile) ? coverHeight / 1.5 : coverHeight / 2,
           decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(

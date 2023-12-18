@@ -35,13 +35,7 @@ class SellerController {
   var deviceId;
   Map<dynamic, dynamic> imgList = {"0": ''};
 
-  List<String> headintList = [
-    '#',
-    'Seller Name',
-    'Pending Meeting',
-    'date',
-    'Action'
-  ];
+  List<String> headintList = ['#', 'Seller', 'Pending', 'date', 'Action'];
   List<String> MeetingheadList = [
     '#',
     'Customer Name',
@@ -72,7 +66,7 @@ class SellerController {
 /////
   String Next_date = "";
   String sellerId = "";
-
+  DateTime selectedDate = DateTime.now();
   List<String> ListType = ['Customer', 'Supplier'];
 
   List<String> ListCustomer = [];

@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Selsman/WorkAlot/add_meet_widget.dart';
+import 'package:crm_demo/themes/global.dart';
 
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
@@ -128,20 +129,34 @@ class _MeetingViewState extends State<MeetingView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                        child: GoogleText(
-                            text: "Assign Meeting Details",
-                            fweight: FontWeight.bold,
-                            color: Colors.blue)),
+                        margin: EdgeInsets.only(top: 30, bottom: 10),
+                        child: Row(
+                          children: [
+                            Icon(Icons.circle, color: Colors.black, size: 20),
+                            SizedBox(width: 10),
+                            GoogleText(
+                                text: "Assign Meeting Details",
+                                fweight: FontWeight.bold,
+                                color: Colors.blue),
+                          ],
+                        ))
                   ],
                 )),
-                Expanded(
-                  child: Container(
-                      margin: EdgeInsets.only(left: 20),
-                      child: GoogleText(
-                          text: "Seller Reply",
-                          fweight: FontWeight.bold,
-                          color: Colors.blue)),
-                ),
+                if (!is_mobile)
+                  Expanded(
+                    child: Container(
+                        margin: EdgeInsets.only(top: 30, bottom: 10),
+                        child: Row(
+                          children: [
+                            Icon(Icons.circle, color: Colors.black, size: 20),
+                            SizedBox(width: 10),
+                            GoogleText(
+                                text: "Seller Reply",
+                                fweight: FontWeight.bold,
+                                color: Colors.blue),
+                          ],
+                        )),
+                  ),
               ],
             ),
             SizedBox(height: 10),
@@ -151,7 +166,9 @@ class _MeetingViewState extends State<MeetingView> {
               children: [
                 Expanded(
                   child: Container(
-                      margin: EdgeInsets.only(right: 20),
+                      margin: (!is_mobile)
+                          ? EdgeInsets.only(right: 20)
+                          : EdgeInsets.only(right: 1),
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(boxShadow: themeBox),
                       child: Column(
@@ -190,89 +207,181 @@ class _MeetingViewState extends State<MeetingView> {
                         ],
                       )),
                 ),
-                Expanded(
-                  child: Container(
-                      margin: EdgeInsets.only(left: 20),
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(boxShadow: themeBox),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          (priceData["image"] == '')
-                              ? SizedBox()
-                              : Row(
-                                  children: [
-                                    for (var i in priceData["image"].keys)
-                                      GestureDetector(
-                                        onTap: () {
-                                          var url =
-                                              "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg";
-                                          if (priceData["image"][i] != null &&
-                                              priceData["image"][i] != '') {
-                                            url = priceData["image"][i];
-                                          }
+                if (!is_mobile)
+                  Expanded(
+                    child: Container(
+                        margin: EdgeInsets.only(left: 20),
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(boxShadow: themeBox),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            (priceData["image"] == '')
+                                ? SizedBox()
+                                : Row(
+                                    children: [
+                                      for (var i in priceData["image"].keys)
+                                        GestureDetector(
+                                          onTap: () {
+                                            var url =
+                                                "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg";
+                                            if (priceData["image"][i] != null &&
+                                                priceData["image"][i] != '') {
+                                              url = priceData["image"][i];
+                                            }
 
-                                          Modal_zoomImg(context, url);
-                                        },
-                                        child: Container(
-                                          margin: EdgeInsets.all(10.0),
-                                          height: 100,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              image: DecorationImage(
-                                                  image: (priceData["image"]
-                                                                  [i] !=
-                                                              null &&
-                                                          priceData["image"]
-                                                                  [i] !=
-                                                              '')
-                                                      ? NetworkImage(
-                                                          "${priceData["image"][i]}")
-                                                      : NetworkImage(
-                                                          "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
-                                                  fit: BoxFit.cover)),
+                                            Modal_zoomImg(context, url);
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.all(10.0),
+                                            height: 100,
+                                            width: 100,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                                image: DecorationImage(
+                                                    image: (priceData["image"]
+                                                                    [i] !=
+                                                                null &&
+                                                            priceData["image"]
+                                                                    [i] !=
+                                                                '')
+                                                        ? NetworkImage(
+                                                            "${priceData["image"][i]}")
+                                                        : NetworkImage(
+                                                            "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
+                                                    fit: BoxFit.cover)),
+                                          ),
                                         ),
-                                      ),
-                                  ],
-                                ),
-                          // productRow(context, "Customer Name",
-                          //     "${priceData["customer_name"]}"),
-                          // productRow(
-                          //     context, "Mobile No.", "${priceData["mobile"]}"),
-                          // productRow(
-                          //     context, "Email ID", "${priceData["email"]}"),
-                          // productRow(
-                          //     context, "Address", "${priceData["address"]}"),
-                          productRow(context, "Status", status,
-                              color: (status == "Pending")
-                                  ? Colors.green
-                                  : Colors.red),
-                          productRow(context, "Update At", '$update_at'),
-                          GoogleText(
-                              text: "Reply Message :",
-                              fweight: FontWeight.bold,
-                              fsize: 13.0),
-                          Container(
-                              width: 300,
-                              margin: EdgeInsets.only(top: 5),
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  boxShadow: themeBox,
-                                  border: Border.all(
-                                      color: Colors.green, width: 1.2)),
-                              child: GoogleText(
-                                  text: "${priceData["meeting_conversation"]} ",
-                                  fsize: 12.0,
-                                  fweight: FontWeight.normal))
-                        ],
-                      )),
-                ),
+                                    ],
+                                  ),
+                            // productRow(context, "Customer Name",
+                            //     "${priceData["customer_name"]}"),
+                            // productRow(
+                            //     context, "Mobile No.", "${priceData["mobile"]}"),
+                            // productRow(
+                            //     context, "Email ID", "${priceData["email"]}"),
+                            // productRow(
+                            //     context, "Address", "${priceData["address"]}"),
+                            productRow(context, "Status", status,
+                                color: (status == "Pending")
+                                    ? Colors.green
+                                    : Colors.red),
+                            productRow(context, "Update At", '$update_at'),
+                            GoogleText(
+                                text: "Reply Message :",
+                                fweight: FontWeight.bold,
+                                fsize: 13.0),
+                            Container(
+                                width: 300,
+                                margin: EdgeInsets.only(top: 5),
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    boxShadow: themeBox,
+                                    border: Border.all(
+                                        color: Colors.green, width: 1.2)),
+                                child: GoogleText(
+                                    text:
+                                        "${priceData["meeting_conversation"]} ",
+                                    fsize: 12.0,
+                                    fweight: FontWeight.normal))
+                          ],
+                        )),
+                  ),
               ],
-            )
+            ),
 
+            if (is_mobile)
+              Container(
+                  margin: EdgeInsets.only(top: 30, bottom: 10),
+                  child: Row(
+                    children: [
+                      Icon(Icons.circle, color: Colors.black, size: 20),
+                      SizedBox(width: 10),
+                      GoogleText(
+                          text: "Seller Reply",
+                          fweight: FontWeight.bold,
+                          color: Colors.blue),
+                    ],
+                  )),
+
+            if (is_mobile)
+              Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(boxShadow: themeBox),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      (priceData["image"] == '')
+                          ? SizedBox()
+                          : Row(
+                              children: [
+                                for (var i in priceData["image"].keys)
+                                  GestureDetector(
+                                    onTap: () {
+                                      var url =
+                                          "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg";
+                                      if (priceData["image"][i] != null &&
+                                          priceData["image"][i] != '') {
+                                        url = priceData["image"][i];
+                                      }
+
+                                      Modal_zoomImg(context, url);
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.all(10.0),
+                                      height: 100,
+                                      width: 100,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          image: DecorationImage(
+                                              image: (priceData["image"][i] !=
+                                                          null &&
+                                                      priceData["image"][i] !=
+                                                          '')
+                                                  ? NetworkImage(
+                                                      "${priceData["image"][i]}")
+                                                  : NetworkImage(
+                                                      "https://i.pinimg.com/736x/ec/14/7c/ec147c4c53abfe86df2bc7e70c0181ff.jpg"),
+                                              fit: BoxFit.cover)),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                      // productRow(context, "Customer Name",
+                      //     "${priceData["customer_name"]}"),
+                      // productRow(
+                      //     context, "Mobile No.", "${priceData["mobile"]}"),
+                      // productRow(
+                      //     context, "Email ID", "${priceData["email"]}"),
+                      // productRow(
+                      //     context, "Address", "${priceData["address"]}"),
+                      productRow(context, "Status", status,
+                          color: (status == "Pending")
+                              ? Colors.green
+                              : Colors.red),
+                      productRow(context, "Update At", '$update_at'),
+                      GoogleText(
+                          text: "Reply Message :",
+                          fweight: FontWeight.bold,
+                          fsize: 13.0),
+                      Container(
+                          width: 300,
+                          margin: EdgeInsets.only(top: 5),
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: themeBox,
+                              border:
+                                  Border.all(color: Colors.green, width: 1.2)),
+                          child: GoogleText(
+                              text: "${priceData["meeting_conversation"]} ",
+                              fsize: 12.0,
+                              fweight: FontWeight.normal))
+                    ],
+                  ))
             // productRow(context, "Date At", date),
           ]),
     );

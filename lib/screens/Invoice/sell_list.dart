@@ -12,6 +12,7 @@ import 'package:crm_demo/screens/Invoice/pdf.dart';
 import 'package:crm_demo/screens/Invoice/view_invoice_details.dart';
 
 import 'package:crm_demo/themes/base_controller.dart';
+import 'package:crm_demo/themes/global.dart';
 import 'package:crm_demo/themes/theme_footer.dart';
 import 'package:crm_demo/themes/theme_header.dart';
 
@@ -60,14 +61,8 @@ class _Sell_listState extends State<Sell_list> {
       ? Firestore.instance
       : FirebaseFirestore.instance;
 
-  var smallD = true;
   @override
   void initState() {
-     if(Platform.isAndroid || Platform.isIOS){
-      smallD = true;
-    }else{
-      smallD = false;
-    }
     orderList(_number_select);
 
     super.initState();
@@ -204,56 +199,60 @@ class _Sell_listState extends State<Sell_list> {
         }
       },
       child: Scaffold(
-        bottomNavigationBar: (smallD)?theme_footer_android(context, 2):SizedBox(),
+        bottomNavigationBar:
+            (is_mobile) ? theme_footer_android(context, 2) : SizedBox(),
         body: Container(
           color: Colors.white,
           child: ListView(
             children: [
               //header ======================
-              (smallD)?themeHeader_android(context,title: "Sale"):Container(
-                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
-                decoration: BoxDecoration(color: themeBG2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
+              (is_mobile)
+                  ? themeHeader_android(context, title: "Sale")
+                  : Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 16.0, horizontal: 10.0),
+                      decoration: BoxDecoration(color: themeBG2),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          GestureDetector(
-                            onTap: () async {},
-                            child: Icon(
-                              Icons.view_list_sharp,
-                              size: 35,
-                              color: Colors.blue,
+                          Container(
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {},
+                                  child: Icon(
+                                    Icons.view_list_sharp,
+                                    size: 35,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                SizedBox(width: 20.0),
+                                Text("Invoice List", style: GoogleFonts.alike())
+                              ],
                             ),
                           ),
-                          SizedBox(width: 20.0),
-                          Text("Invoice List", style: GoogleFonts.alike())
+                          Container(
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    orderList(_number_select);
+                                  },
+                                  icon: Icon(Icons.refresh),
+                                  tooltip: 'Refresh',
+                                ),
+                                SizedBox(width: 20.0),
+                                themeButton3(context, addNewInvoice,
+                                    label: (selectedFilter == 'Buy')
+                                        ? "Buy Now"
+                                        : "Sale New",
+                                    radius: 5.0),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
-                    Container(
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              orderList(_number_select);
-                            },
-                            icon: Icon(Icons.refresh),
-                            tooltip: 'Refresh',
-                          ),
-                          SizedBox(width: 20.0),
-                          themeButton3(context, addNewInvoice,
-                              label: (selectedFilter == 'Buy')
-                                  ? "Buy Now"
-                                  : "Sale New",
-                              radius: 5.0),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
 
               (progressWidget == true)
                   ? Center(child: pleaseWait(context))
@@ -290,56 +289,61 @@ class _Sell_listState extends State<Sell_list> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                      (smallD)?SizedBox():Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 4.0),
-                              color: Color.fromARGB(255, 200, 247, 242),
-                              child: Row(
+                        (is_mobile)
+                            ? SizedBox()
+                            : Row(
                                 children: [
                                   Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 10),
-                                      padding: EdgeInsets.only(top: 14),
-                                      height: 35,
-                                      width: 140.0,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          color: Colors.white),
-                                      child: formTimeInput(context,
-                                          controllerr.startDate_controller,
-                                          label: 'Date From',
-                                          method: datePick,
-                                          arg: 'fromDate')),
-                                  Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 10),
-                                      padding: EdgeInsets.only(top: 14),
-                                      height: 35,
-                                      width: 140.0,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          color: Colors.white),
-                                      child: formTimeInput(context,
-                                          controllerr.toDate_controller,
-                                          label: 'Date To',
-                                          method: datePick,
-                                          arg: 'toDate')),
-                                  themeButton3(context, fnFilterController,
-                                      arg: 'date_filter',
-                                      label: 'Filter',
-                                      radius: 2.0,
-                                      borderColor: Colors.transparent,
-                                      buttonColor:
-                                          Color.fromARGB(255, 12, 121, 194)),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10.0, vertical: 4.0),
+                                    color: Color.fromARGB(255, 200, 247, 242),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                            padding: EdgeInsets.only(top: 14),
+                                            height: 35,
+                                            width: 140.0,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                                color: Colors.white),
+                                            child: formTimeInput(
+                                                context,
+                                                controllerr
+                                                    .startDate_controller,
+                                                label: 'Date From',
+                                                method: datePick,
+                                                arg: 'fromDate')),
+                                        Container(
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                            padding: EdgeInsets.only(top: 14),
+                                            height: 35,
+                                            width: 140.0,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5.0),
+                                                color: Colors.white),
+                                            child: formTimeInput(context,
+                                                controllerr.toDate_controller,
+                                                label: 'Date To',
+                                                method: datePick,
+                                                arg: 'toDate')),
+                                        themeButton3(
+                                            context, fnFilterController,
+                                            arg: 'date_filter',
+                                            label: 'Filter',
+                                            radius: 2.0,
+                                            borderColor: Colors.transparent,
+                                            buttonColor: Color.fromARGB(
+                                                255, 12, 121, 194)),
+                                      ],
+                                    ),
+                                  ),
                                 ],
-                              ),
-                            ),
-                          ],
-                        ), // end date filter container
+                              ), // end date filter container
 
                         // Right side buttons
                         Row(
@@ -388,7 +392,9 @@ class _Sell_listState extends State<Sell_list> {
                                 margin: EdgeInsets.symmetric(horizontal: 10),
                                 padding: EdgeInsets.only(top: 14),
                                 height: 35,
-                                width:(smallD)?MediaQuery.of(context).size.width-60 : 270.0,
+                                width: (is_mobile)
+                                    ? MediaQuery.of(context).size.width - 60
+                                    : 270.0,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
                                     color: Colors.white),
@@ -404,7 +410,7 @@ class _Sell_listState extends State<Sell_list> {
 
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  height: (controllerr.OrderList.length*60),
+                  height: (controllerr.OrderList.length * 60),
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
@@ -416,21 +422,23 @@ class _Sell_listState extends State<Sell_list> {
                             decoration: BoxDecoration(
                                 color: themeBG4,
                                 border: Border(
-                                    bottom: BorderSide(width: 3.0, color: Colors.white))),
+                                    bottom: BorderSide(
+                                        width: 3.0, color: Colors.white))),
                             child: Row(
                               children: [
                                 for (int i in headerName.keys)
-                                  tableLable(context, i, headerName[i], tableColum),
+                                  tableLable(
+                                      context, i, headerName[i], tableColum),
                               ],
                             ),
                           ),
-                       
-                        for (var index = 0;
-                            index < controllerr.OrderList.length;
-                            index++)
-                          tableRowWidget("${index + 1}", controllerr.OrderList[index],
-                              dbData: controllerr.OrderList[index])
-                       ],
+                          for (var index = 0;
+                              index < controllerr.OrderList.length;
+                              index++)
+                            tableRowWidget(
+                                "${index + 1}", controllerr.OrderList[index],
+                                dbData: controllerr.OrderList[index])
+                        ],
                       ),
                     ],
                   ),

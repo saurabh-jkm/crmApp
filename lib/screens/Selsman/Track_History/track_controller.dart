@@ -19,7 +19,7 @@ class trackController {
   Map<dynamic, dynamic> listOrder = new Map();
   TextEditingController searchTextController = new TextEditingController();
 
-  List<String> headintList = ['#', 'Seller Name', 'Distance', 'date', 'Action'];
+  List headintList = ['#', 'Seller', 'Distance', 'date', 'Action'];
   var selected_pro = {};
   /////// distance Calculate controller ++++++++++++++++++++++++++++++++++++++++
   var distance;

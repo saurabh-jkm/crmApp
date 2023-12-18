@@ -1,8 +1,9 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_new, await_only_futures, prefer_collection_literals, avoid_unnecessary_containers
+// ignore_for_file: prefer_const_constructors, unnecessary_new, await_only_futures, prefer_collection_literals, avoid_unnecessary_containers, unused_local_variable
 
 import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
 
 import 'package:crm_demo/screens/privacy_policy/privacy_policy.dart';
+import 'package:crm_demo/themes/global.dart';
 import 'package:crm_demo/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -83,8 +84,26 @@ class _MyAppState extends State<MyApp> {
       loginIs = true;
     }
     isWait = false;
-    setState(() {});
+    check_Device_plateform();
   }
+
+///////
+
+  check_Device_plateform() async {
+    try {
+      if (Platform.isAndroid || Platform.isIOS) {
+        setState(() {
+          is_mobile = true;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        is_mobile = false;
+      });
+    }
+  }
+
+  ///
 
   @override
   void initState() {

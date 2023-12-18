@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/themes/global.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -16,6 +17,7 @@ import '../../themes/firebase_Storage.dart';
 import '../../themes/firebase_functions.dart';
 import '../../themes/function.dart';
 import '../../themes/style.dart';
+import '../../themes/theme_footer.dart';
 import '../../themes/theme_widgets.dart';
 import '../Invoice/invoice_serv.dart';
 import '../dashboard/components/header.dart';
@@ -210,6 +212,12 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
     return (progressWidget == true)
         ? Center(child: progress())
         : Scaffold(
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(0),
+              child: clientAppBar(),
+            ),
+            bottomNavigationBar:
+                (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
             body: Container(
               color: Colors.white,
               child: ListView(children: [

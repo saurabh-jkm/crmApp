@@ -824,6 +824,20 @@ Widget formTimeInput(BuildContext context, controller,
   );
 }
 
+////////////  Null Appbar++++++++++++++++++++++++++++++
+
+Widget clientAppBar() {
+  return AppBar(
+    automaticallyImplyLeading: false,
+    backgroundColor: themeBG2,
+    elevation: 0,
+    centerTitle: false,
+    titleSpacing: 0,
+    title: Text("Insaaf99"),
+  );
+}
+
+////////
 // Table Heading ==========================
 Widget TableHeading(context, data, {rowColor: '', textColor: ''}) {
   return Container(
@@ -836,17 +850,16 @@ Widget TableHeading(context, data, {rowColor: '', textColor: ''}) {
           (k == '#')
               ? Container(
                   width: 40.0,
-                  child: Container(
-                    child: Text("${capitalize(k)}",
-                        style: TextStyle(
-                            fontSize: 12.0,
-                            color: (textColor == '')
-                                ? Color.fromARGB(255, 201, 201, 201)
-                                : textColor)),
-                  ),
+                  child: Text("${capitalize(k)}",
+                      style: TextStyle(
+                          fontSize: 12.0,
+                          color: (textColor == '')
+                              ? Color.fromARGB(255, 201, 201, 201)
+                              : textColor)),
                 )
               : Expanded(
                   child: Container(
+                    // margin: EdgeInsets.symmetric(horizontal: 10),
                     child: Text("${capitalize(k)}",
                         style: TextStyle(
                             fontSize: 12.0,

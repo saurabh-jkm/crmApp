@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use, prefer_const_constructors, no_leading_underscores_for_local_identifiers, use_key_in_widget_constructors, non_constant_identifier_names
 
+import 'package:crm_demo/themes/global.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
@@ -27,7 +28,7 @@ class _MyFilesState extends State<MyFiles> {
     final Size _size = MediaQuery.of(context).size;
     return Column(
       children: [
-         (Platform.isAndroid || Platform.isIOS)?SizedBox():SizedBox(height: defaultPadding + 50),
+        is_mobile ? SizedBox() : SizedBox(height: defaultPadding + 50),
         Responsive(
           mobile: FileInfoCardGridView(
             crossAxisCount: _size.width < 650 ? 2 : 4,

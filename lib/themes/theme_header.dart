@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names
+
 import 'package:crm_demo/themes/style.dart';
 import 'package:flutter/material.dart';
 
@@ -5,7 +7,7 @@ Widget themeHeader_android(
   context, {
   user = '',
   title = '',
-  isBack:false,
+  isBack: false,
 }) {
   return Container(
     child: Stack(
@@ -23,7 +25,7 @@ Widget themeHeader_android(
         ClipPath(
           clipper: TsClip2(),
           child: Container(
-            decoration: BoxDecoration(gradient: themeGradient2 ),
+            decoration: BoxDecoration(gradient: themeGradient2),
             //color: Color(0XFFe51273),
             //color: themeBG2,
             height: 110.0,
@@ -66,7 +68,8 @@ Widget themeHeader_android(
                                   ),
                             SizedBox(width: 8.0),
                             Text("$title",
-                                style: themeTextStyle(size: 20.0,color: Colors.white)),
+                                style: themeTextStyle(
+                                    size: 20.0, color: Colors.white)),
                           ],
                         ),
                       ),

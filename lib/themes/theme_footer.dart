@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:crm_demo/screens/Invoice/Buy_list.dart';
 import 'package:crm_demo/screens/Invoice/sell_list.dart';
 import 'package:crm_demo/screens/dashboard/dashboard_screen.dart';
@@ -14,8 +16,8 @@ Widget theme_footer_android(context, selectedPage) {
                 color: Color.fromARGB(255, 211, 217, 219), width: 2))),
     child: BottomNavigationBar(
       iconSize: 25,
-      selectedLabelStyle: TextStyle(fontSize: 11.0,color: Colors.blue),
-      unselectedLabelStyle:TextStyle(fontSize: 11.0,color: Colors.blue),
+      selectedLabelStyle: TextStyle(fontSize: 11.0, color: Colors.blue),
+      unselectedLabelStyle: TextStyle(fontSize: 11.0, color: Colors.blue),
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.dashboard),
@@ -49,15 +51,17 @@ Widget theme_footer_android(context, selectedPage) {
       selectedFontSize: 15.0,
       onTap: (index) {
         if (index == 0) {
-          Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context) => new DashboardScreen()));
+          Navigator.of(context).pushReplacement(new MaterialPageRoute(
+              builder: (context) => new DashboardScreen()));
         } else if (index == 1 && selectedPage != index) {
-           Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context) => new Buy_List())); 
-        }
-        else if (index == 2 && selectedPage != index) {
-          Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context) => new Sell_list ())); 
-        }
-        else if (index == 3 && selectedPage != index) {
-          Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (context) => new More_screen())); 
+          Navigator.of(context).pushReplacement(
+              new MaterialPageRoute(builder: (context) => new Buy_List()));
+        } else if (index == 2 && selectedPage != index) {
+          Navigator.of(context).pushReplacement(
+              new MaterialPageRoute(builder: (context) => new Sell_list()));
+        } else if (index == 3 && selectedPage != index) {
+          Navigator.of(context).pushReplacement(
+              new MaterialPageRoute(builder: (context) => new More_screen()));
         }
       },
     ),

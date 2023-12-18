@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, sized_box_for_whitespace, deprecated_colon_for_default_value
 
 import "package:crm_demo/themes/function.dart";
+import "package:crm_demo/themes/global.dart";
 import "package:crm_demo/themes/style.dart";
 import "package:crm_demo/themes/theme_widgets.dart";
 import "package:flutter/material.dart";
@@ -16,11 +17,12 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Container(
-          margin: EdgeInsets.symmetric(vertical: 20),
+          margin: EdgeInsets.symmetric(vertical: (!is_mobile) ? 20 : 10),
           child: Row(
             children: [
               IconButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await controller.resetController();
                     fn_change_state('ListShow', true);
                   },
                   icon: Icon(Icons.arrow_back_rounded,
@@ -30,21 +32,18 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
                   text: 'Meeting Assign for ',
                   fweight: FontWeight.normal,
                   color: Colors.black,
-                  fsize: 20.0),
+                  fsize: (is_mobile) ? 15.0 : 20.0),
               GoogleText(
                   text:
                       '${(controller.selectedSeller != null) ? controller.selectedSeller['name'] : ''}',
                   fweight: FontWeight.bold,
                   color: Colors.blue,
-                  fsize: 20.0),
+                  fsize: (is_mobile) ? 15.0 : 20.0),
             ],
           ),
         ),
-        SizedBox(
-          height: 10,
-        ),
         Container(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all((!is_mobile) ? 20 : 10),
           decoration: BoxDecoration(
               color: Color.fromARGB(15, 0, 0, 0),
               borderRadius: BorderRadius.circular(10)),
@@ -88,21 +87,34 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
                                 isNumber: true,
                               ),
                             ),
-                            Expanded(
-                              child: formInput(context, "Email Id",
-                                  controller.Customer_emailController,
-                                  padding: 8.0),
-                            ),
+                            if (!is_mobile)
+                              Expanded(
+                                child: formInput(context, "Email Id",
+                                    controller.Customer_emailController,
+                                    padding: 8.0),
+                              ),
                           ],
                         ),
-
-                        Row(
-                          children: [
+                        if (is_mobile)
+                          Row(children: [
+                            Expanded(
+                                child: formInput(context, "Email Id",
+                                    controller.Customer_emailController,
+                                    padding: 8.0)),
                             Expanded(
                               child: formInput(context, "Address *",
                                   controller.Customer_addressController,
                                   padding: 8.0),
                             ),
+                          ]),
+                        Row(
+                          children: [
+                            if (!is_mobile)
+                              Expanded(
+                                child: formInput(context, "Address *",
+                                    controller.Customer_addressController,
+                                    padding: 8.0),
+                              ),
                             Expanded(
                               child: formInput(context, "Pin Code *",
                                   controller.Customer_pincodeController,
@@ -126,9 +138,10 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
                                     controller.Customer_TypeController,
                                     method: fnFetchCutomerDetails)),
                             // fireld 2 ==========================
-                            Expanded(
-                              child: Text(""),
-                            ),
+                            if (!is_mobile)
+                              Expanded(
+                                child: Text(""),
+                              ),
                             Expanded(
                               child: Text(""),
                             ),
@@ -136,10 +149,13 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
                         ),
                         // 2nd row =============================================
                         // Header End ============================
+                        Divider(
+                          thickness: 2.0,
+                          color: Colors.black12,
+                        ),
 
-                        themeSpaceVertical(10.0),
                         Container(
-                          margin: EdgeInsets.only(top: 10, bottom: 10),
+                          margin: EdgeInsets.only(top: 5, bottom: 10),
                           child: Row(
                             children: [
                               Icon(Icons.meeting_room,
@@ -185,8 +201,8 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
                                                   SizedBox(width: 10),
                                                   Text(
                                                     (controller.Next_date == "")
-                                                        ? "     Select date *    "
-                                                        : controller.Next_date,
+                                                        ? "Select date * "
+                                                        : "${change_date_time("${controller.selectedDate}")}", // controller.Next_date,
                                                     style: GoogleFonts.alike(
                                                         fontSize: 13.0,
                                                         color: (controller
@@ -230,11 +246,6 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
                 // auto complete =================================
 
                 themeSpaceVertical(5.0),
-
-                Divider(
-                  thickness: 2.0,
-                  color: Colors.black12,
-                ),
               ],
             ),
           ),
@@ -245,8 +256,8 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
           children: [
             themeButton3(context,
                 label: "Submit",
-                btnHeightSize: 45.0,
-                btnWidthSize: 250.0,
+                // btnHeightSize: 45.0,
+                // btnWidthSize: 250.0,
                 buttonColor: Colors.green,
                 radius: 10.0,
                 fontSize: 20, () async {
@@ -258,11 +269,11 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
               }
               // Navigator.of(context).pop();
             }),
-            SizedBox(width: 10),
+            SizedBox(width: 20),
             themeButton3(context,
                 label: "Reset",
-                btnHeightSize: 45.0,
-                btnWidthSize: 250.0,
+                // btnHeightSize: 45.0,
+                // btnWidthSize: 250.0,
                 buttonColor: Colors.black,
                 radius: 10.0,
                 fontSize: 20, () async {
@@ -271,7 +282,7 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
             }),
           ],
         ),
-        themeSpaceVertical(10.0),
+        themeSpaceVertical(20.0),
       ],
     ),
   );
@@ -309,4 +320,30 @@ Widget rowFollowp(context, key, data, {color: ''}) {
       ),
     );
   }
+}
+
+Widget tableLablee(context, i, label, tableColum) {
+  return Container(
+    width: tableColum[i],
+    child: Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Text('$label',
+          style: themeTextStyle(
+              size: 12.0, color: Colors.white, fw: FontWeight.bold)),
+    ),
+  );
+}
+
+Widget tableDetails(context, i, label, tableColum) {
+  return Container(
+    width: tableColum,
+    child: Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Text('$label',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: themeTextStyle(
+              size: 12.0, color: Colors.black, fw: FontWeight.bold)),
+    ),
+  );
 }

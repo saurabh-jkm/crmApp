@@ -1,7 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, unused_import, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_this, non_constant_identifier_names, unnecessary_cast, avoid_print, prefer_typing_uninitialized_variables, avoid_function_literals_in_foreach_calls, prefer_final_fields, override_on_non_overriding_member, sized_box_for_whitespace, unnecessary_string_interpolations, unnecessary_null_comparison, unnecessary_brace_in_string_interps, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, body_might_complete_normally_nullable, sort_child_properties_last, depend_on_referenced_packages, avoid_types_as_parameter_names, unused_field, curly_braces_in_flow_control_structures, prefer_is_empty, unnecessary_new, prefer_collection_literals, unused_local_variable, deprecated_member_use, unused_element, camel_case_types, await_only_futures, deprecated_colon_for_default_value, prefer_if_null_operators
 
 import 'dart:convert';
-import 'dart:ffi';
+// import 'dart:ffi';
 import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,6 +31,7 @@ import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/firebase_Storage.dart';
 import '../../themes/firebase_functions.dart';
+import '../../themes/global.dart';
 import '../../themes/style.dart';
 import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
@@ -61,14 +62,8 @@ class _Buy_ListState extends State<Buy_List> {
       ? Firestore.instance
       : FirebaseFirestore.instance;
 
-  var smallD = true;
   @override
   void initState() {
-     if(Platform.isAndroid || Platform.isIOS){
-      smallD = true;
-    }else{
-      smallD = false;
-    }
     // OrderList_data();
 
     orderList(_number_select);
@@ -207,56 +202,62 @@ class _Buy_ListState extends State<Buy_List> {
         }
       },
       child: Scaffold(
-        bottomNavigationBar: (smallD)?theme_footer_android(context, 1):SizedBox(),
+        bottomNavigationBar:
+            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
         body: Container(
           color: Colors.white,
           child: ListView(
             children: [
               //header ======================
-              (smallD)?themeHeader_android(context,title: "Buy"):Container(
-                padding: (smallD)?EdgeInsets.all(0): EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
-                decoration: BoxDecoration(color: themeBG2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
+              (is_mobile)
+                  ? themeHeader_android(context, title: "Buy")
+                  : Container(
+                      padding: (is_mobile)
+                          ? EdgeInsets.all(0)
+                          : EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 10.0),
+                      decoration: BoxDecoration(color: themeBG2),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          GestureDetector(
-                            onTap: () async {},
-                            child: Icon(
-                              Icons.view_list_sharp,
-                              size: 35,
-                              color: Colors.blue,
+                          Container(
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {},
+                                  child: Icon(
+                                    Icons.view_list_sharp,
+                                    size: 35,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                SizedBox(width: 20.0),
+                                Text("Invoice List", style: GoogleFonts.alike())
+                              ],
                             ),
                           ),
-                          SizedBox(width: 20.0),
-                          Text("Invoice List", style: GoogleFonts.alike())
+                          Container(
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    orderList(_number_select);
+                                  },
+                                  icon: Icon(Icons.refresh),
+                                  tooltip: 'Refresh',
+                                ),
+                                SizedBox(width: 20.0),
+                                themeButton3(context, addNewInvoice,
+                                    label: (selectedFilter == 'Buy')
+                                        ? "Buy Now"
+                                        : "Sale New",
+                                    radius: 5.0),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
-                    Container(
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              orderList(_number_select);
-                            },
-                            icon: Icon(Icons.refresh),
-                            tooltip: 'Refresh',
-                          ),
-                          SizedBox(width: 20.0),
-                          themeButton3(context, addNewInvoice,
-                              label: (selectedFilter == 'Buy')
-                                  ? "Buy Now"
-                                  : "Sale New",
-                              radius: 5.0),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
 
               (progressWidget == true)
                   ? Center(child: pleaseWait(context))
@@ -295,56 +296,68 @@ class _Buy_ListState extends State<Buy_List> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                             (smallD)?SizedBox():Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10.0, vertical: 4.0),
-                                  color: Color.fromARGB(255, 200, 247, 242),
-                                  child: Row(
+                            (is_mobile)
+                                ? SizedBox()
+                                : Row(
                                     children: [
                                       Container(
-                                          margin:
-                                              EdgeInsets.symmetric(horizontal: 10),
-                                          padding: EdgeInsets.only(top: 14),
-                                          height: 35,
-                                          width: 140.0,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              color: Colors.white),
-                                          child: formTimeInput(context,
-                                              controllerr.startDate_controller,
-                                              label: 'Date From',
-                                              method: datePick,
-                                              arg: 'fromDate')),
-                                      Container(
-                                          margin:
-                                              EdgeInsets.symmetric(horizontal: 10),
-                                          padding: EdgeInsets.only(top: 14),
-                                          height: 35,
-                                          width: 140.0,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              color: Colors.white),
-                                          child: formTimeInput(context,
-                                              controllerr.toDate_controller,
-                                              label: 'Date To',
-                                              method: datePick,
-                                              arg: 'toDate')),
-                                      themeButton3(context, fnFilterController,
-                                          arg: 'date_filter',
-                                          label: 'Filter',
-                                          radius: 2.0,
-                                          borderColor: Colors.transparent,
-                                          buttonColor:
-                                              Color.fromARGB(255, 12, 121, 194)),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10.0, vertical: 4.0),
+                                        color:
+                                            Color.fromARGB(255, 200, 247, 242),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 10),
+                                                padding:
+                                                    EdgeInsets.only(top: 14),
+                                                height: 35,
+                                                width: 140.0,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0),
+                                                    color: Colors.white),
+                                                child: formTimeInput(
+                                                    context,
+                                                    controllerr
+                                                        .startDate_controller,
+                                                    label: 'Date From',
+                                                    method: datePick,
+                                                    arg: 'fromDate')),
+                                            Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 10),
+                                                padding:
+                                                    EdgeInsets.only(top: 14),
+                                                height: 35,
+                                                width: 140.0,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0),
+                                                    color: Colors.white),
+                                                child: formTimeInput(
+                                                    context,
+                                                    controllerr
+                                                        .toDate_controller,
+                                                    label: 'Date To',
+                                                    method: datePick,
+                                                    arg: 'toDate')),
+                                            themeButton3(
+                                                context, fnFilterController,
+                                                arg: 'date_filter',
+                                                label: 'Filter',
+                                                radius: 2.0,
+                                                borderColor: Colors.transparent,
+                                                buttonColor: Color.fromARGB(
+                                                    255, 12, 121, 194)),
+                                          ],
+                                        ),
+                                      ),
                                     ],
-                                  ),
-                                ),
-                              ],
-                            ), // end date filter container
+                                  ), // end date filter container
 
                             // Right side buttons
                             Row(
@@ -390,12 +403,16 @@ class _Buy_ListState extends State<Buy_List> {
                                 // ),
                                 // search
                                 Container(
-                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    margin:
+                                        EdgeInsets.symmetric(horizontal: 10),
                                     padding: EdgeInsets.only(top: 14),
                                     height: 35,
-                                    width: (smallD)?MediaQuery.of(context).size.width-60 :270.0,
+                                    width: (is_mobile)
+                                        ? MediaQuery.of(context).size.width - 60
+                                        : 270.0,
                                     decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.0),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
                                         color: Colors.white),
                                     child: SearchBox(context,
                                         label: "Search", searchFn: SearchFn))
@@ -411,7 +428,7 @@ class _Buy_ListState extends State<Buy_List> {
                 // heading ==============================================================================
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  height: (controllerr.OrderList.length*60),
+                  height: (controllerr.OrderList.length * 60),
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
@@ -423,21 +440,23 @@ class _Buy_ListState extends State<Buy_List> {
                             decoration: BoxDecoration(
                                 color: themeBG4,
                                 border: Border(
-                                    bottom: BorderSide(width: 3.0, color: Colors.white))),
+                                    bottom: BorderSide(
+                                        width: 3.0, color: Colors.white))),
                             child: Row(
                               children: [
                                 for (int i in headerName.keys)
-                                  tableLable(context, i, headerName[i], tableColum),
+                                  tableLable(
+                                      context, i, headerName[i], tableColum),
                               ],
                             ),
                           ),
-                       
-                        for (var index = 0;
-                            index < controllerr.OrderList.length;
-                            index++)
-                          tableRowWidget("${index + 1}", controllerr.OrderList[index],
-                              dbData: controllerr.OrderList[index])
-                       ],
+                          for (var index = 0;
+                              index < controllerr.OrderList.length;
+                              index++)
+                            tableRowWidget(
+                                "${index + 1}", controllerr.OrderList[index],
+                                dbData: controllerr.OrderList[index])
+                        ],
                       ),
                     ],
                   ),

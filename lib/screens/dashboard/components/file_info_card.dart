@@ -10,6 +10,7 @@ import 'dart:io';
 import '../../../constants.dart';
 import '../../../controllers/MenuAppController.dart';
 import '../../../models/MyFiles.dart';
+import '../../../themes/global.dart';
 import '../../../themes/theme_widgets.dart';
 import '../../main/main_screen.dart';
 import '../dashboard_controller.dart';
@@ -81,13 +82,15 @@ class FileInfoCard extends StatelessWidget {
                             child: Icon(
                               info.svgSrc,
                               color: info.color,
-                              size: (Platform.isAndroid || Platform.isIOS)?20.0: MediaQuery.of(context).size.height * 0.06,
+                              size: is_mobile
+                                  ? 20.0
+                                  : MediaQuery.of(context).size.height * 0.06,
                             )),
                       ],
                     ),
                     Text('${info.numOfFiles}',
                         style: themeTextStyle(
-                            size: (Platform.isAndroid || Platform.isIOS)?40.0: 60.0,
+                            size: is_mobile ? 40.0 : 60.0,
                             color: const Color.fromARGB(255, 179, 179, 179)))
                   ],
                 ),

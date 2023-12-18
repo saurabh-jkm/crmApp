@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
 
-
+import '../Selsman/WorkAlot/salesman_list.dart';
 
 class More_screen extends StatefulWidget {
   const More_screen({super.key});
@@ -24,54 +24,69 @@ class More_screen extends StatefulWidget {
 }
 
 class _More_screenState extends State<More_screen> {
-  var smallD = true;
   @override
   void initState() {
-     if(Platform.isAndroid || Platform.isIOS){
-      smallD = true;
-    }else{
-      smallD = false;
-    }
     super.initState();
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: theme_appbar(context,title: "Settings"),
+      appBar: theme_appbar(context, title: "Settings"),
       bottomNavigationBar: theme_footer_android(context, 3),
       backgroundColor: Colors.white,
       body: Container(
-       child: ListView(
-        children: [
-          menut_list(context,title: "Category",icon: Icons.category_outlined,route: (){ Navigator.push(context, MaterialPageRoute(builder: (_) => CategoryAdd())); }),
-          menut_list(context,title: "All Outstanding",icon: Icons.account_balance_wallet_outlined,route: (){ Navigator.push(context, MaterialPageRoute(builder: (_) => BalanceList())); }),
-          menut_list(context,title: "Sales Man Routs",icon: Icons.pin_drop_outlined,route: (){ Navigator.push(context, MaterialPageRoute(builder: (_) => TrackHistory())); }),
-          menut_list(context,title: "My Profile",icon: Icons.supervised_user_circle_sharp,route: (){ Navigator.push(context, MaterialPageRoute(builder: (_) => ProfileDetails())); }),
-        ],
-       ), 
+        child: ListView(
+          children: [
+            menut_list(context,
+                title: "Category", icon: Icons.category_outlined, route: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => CategoryAdd()));
+            }),
+            menut_list(context,
+                title: "All Outstanding",
+                icon: Icons.account_balance_wallet_outlined, route: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => BalanceList()));
+            }),
+            menut_list(context,
+                title: "Salesman Routs",
+                icon: Icons.pin_drop_outlined, route: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => TrackHistory()));
+            }),
+            menut_list(context,
+                title: "Salesman Meeting", icon: Icons.meeting_room, route: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => SalemanList()));
+            }),
+            menut_list(context,
+                title: "My Profile",
+                icon: Icons.supervised_user_circle_sharp, route: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => ProfileDetails()));
+            }),
+          ],
+        ),
       ),
     );
   }
 
-
   // ===============================================
-  Widget menut_list(context,{title,icon,route}){
+  Widget menut_list(context, {title, icon, route}) {
     return InkWell(
-            onTap: route,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 10.0,horizontal: 10.0),
-              child: Row(
-                children: [
-                  Icon(icon,color: themeBG3),
-                  SizedBox(width: 10.0),
-                  Text("$title",style: themeTextStyle(color: themeBG3))
-          
-                ],
-              ),
-            ),
-          );
+      onTap: route,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+        child: Row(
+          children: [
+            Icon(icon, color: themeBG3),
+            SizedBox(width: 10.0),
+            Text("$title", style: themeTextStyle(color: themeBG3))
+          ],
+        ),
+      ),
+    );
   }
 }
 /// Class CLose

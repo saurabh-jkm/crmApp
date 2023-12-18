@@ -8,11 +8,14 @@ import 'package:crm_demo/screens/Selsman/Track_History/view_location.dart';
 
 import 'package:crm_demo/themes/base_controller.dart';
 import 'package:crm_demo/themes/function.dart';
+import 'package:crm_demo/themes/global.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../../themes/style.dart';
+import '../../../themes/theme_footer.dart';
+import '../../../themes/theme_header.dart';
 import '../../../themes/theme_widgets.dart';
 import '../../customers/customer_widgets.dart';
 import '../../dashboard/components/header.dart';
@@ -100,16 +103,9 @@ class _TrackHistoryState extends State<TrackHistory> {
         }
       },
       child: Scaffold(
-        body: Container(
-          color: themeBG2,
-          child: Column(
-            children: [
-              Container(
-                  height: 70.0, child: Header(title: "Track History List")),
-              CustomerList(context)
-            ],
-          ),
-        ),
+        bottomNavigationBar:
+            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
+        body: Container(color: themeBG2, child: CustomerList(context)),
       ),
     );
   }
@@ -123,9 +119,14 @@ class _TrackHistoryState extends State<TrackHistory> {
       color: Colors.white,
       child: ListView(
         children: [
+          (is_mobile)
+              ? themeHeader_android(context, title: "Track History")
+              : Container(
+                  height: 70.0, child: Header(title: "Track History List")),
           // search
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
+            // margin: EdgeInsets.symmetric(horizontal: 10),
+            color: Color.fromARGB(255, 94, 86, 204),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -141,14 +142,18 @@ class _TrackHistoryState extends State<TrackHistory> {
                         });
                       },
                         label:
-                            "Delete selected items : ${controller.selected_pro.length}",
+                            "Delete History : ${controller.selected_pro.length}",
                         buttonColor: Colors.red,
                         radius: 10.0)
                     : SizedBox(),
 
                 Container(
-                  height: 60.0,
-                  width: 220.0,
+                  margin: EdgeInsets.all(2),
+                  height: 45,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10)),
                   child: inputSearch(
                       context, controller.searchTextController, 'Search',
                       method: fnSearch),
@@ -156,7 +161,9 @@ class _TrackHistoryState extends State<TrackHistory> {
               ],
             ),
           ),
+
           // table start
+
           TableHeading(context, controller.headintList,
               rowColor: Color.fromARGB(255, 94, 86, 204),
               textColor: Colors.white),
@@ -259,7 +266,7 @@ class _TrackHistoryState extends State<TrackHistory> {
           for (var i = 0; i < dataList.length; i++)
             (i == 0)
                 ? Container(
-                    width: 40.0,
+                    width: 50.0,
                     child: Row(
                       children: [
                         Text(
@@ -271,7 +278,7 @@ class _TrackHistoryState extends State<TrackHistory> {
                                   : textColor),
                         ),
                         Container(
-                          width: 30.0,
+                          width: 25.0,
                           child: CheckboxListTile(
                             checkColor: Colors.white,
                             activeColor: Colors.red,
@@ -316,6 +323,7 @@ class _TrackHistoryState extends State<TrackHistory> {
                                   tooltip: 'View')
                             ])
                           : Text("${dataList[i]}",
+                              maxLines: 2,
                               style: TextStyle(
                                   fontSize: 12.0,
                                   color: (textColor == '')

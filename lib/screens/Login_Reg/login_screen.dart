@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, use_build_context_synchronously, file_names, avoid_print, unnecessary_brace_in_string_interps, dead_code, camel_case_types, duplicate_ignore, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, use_build_context_synchronously, file_names, avoid_print, unnecessary_brace_in_string_interps, dead_code, camel_case_types, duplicate_ignore, prefer_typing_uninitialized_variables, avoid_unnecessary_containers
 
 import 'dart:convert';
 import 'dart:io';
@@ -13,7 +13,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../controllers/Base_Controller.dart';
 import '../../controllers/MenuAppController.dart';
+import '../../themes/global.dart';
 import '../../themes/theme_widgets.dart';
 import '../main/main_screen.dart';
 
@@ -26,6 +28,7 @@ class Login_Copy extends StatefulWidget {
 }
 
 class _Login_CopyState extends State<Login_Copy> {
+  var controller = new BaseController();
   final formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
@@ -33,9 +36,6 @@ class _Login_CopyState extends State<Login_Copy> {
   // ignore: unused_field
   bool _isLoading = false;
   bool isWait = true;
-  bool smallD = true;
-  
-  
 
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
@@ -140,13 +140,10 @@ class _Login_CopyState extends State<Login_Copy> {
   }
 
   ///
+
+  ///
   @override
   void initState() {
-    if(Platform.isAndroid || Platform.isIOS){
-      smallD = true;
-    }else{
-      smallD = false;
-    }
     User_Data();
     super.initState();
   }
@@ -163,172 +160,204 @@ class _Login_CopyState extends State<Login_Copy> {
                       child: pleaseWait(context),
                     ),
                   )
-                : Row(
+                : ListView(
                     children: [
-                      (smallD)?SizedBox():Expanded(
-                        child: Image(
-                            image: AssetImage("assets/images/loginn.png")),
-                      ),
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 60.0),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 1.0,
-                                  color: Color.fromARGB(255, 212, 212, 212))),
-                          child: Form(
-                              key: formKey,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Sign In",
-                                        style: GoogleFonts.akayaKanadaka(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 30,
-                                            color: Colors.black),
-                                      ),
-                                    ],
+                      Container(
+                        child: Row(
+                          children: [
+                            (is_mobile)
+                                ? SizedBox()
+                                : Expanded(
+                                    child: Image(
+                                        image: AssetImage(
+                                            "assets/images/loginn.png")),
                                   ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-
-                                  SizedBox(
-                                    height: 45,
-                                    child: TextFormField(
-                                      style: TextStyle(color: Colors.black),
-                                      decoration: textInputDecoration.copyWith(
-                                          labelText: "Email",
-                                          hoverColor: Colors.black,
-                                          prefixIcon: Icon(
-                                            Icons.email,
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                          )),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          email = val;
-                                        });
-                                      },
-
-                                      // check tha validation
-                                      validator: (val) {
-                                        return RegExp(
-                                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                                .hasMatch(val!)
-                                            ? null
-                                            : "Please enter a valid email";
-                                      },
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 20),
-                                  SizedBox(
-                                    height: 45,
-                                    child: TextFormField(
-                                      style: TextStyle(color: Colors.black),
-                                      obscureText: passwordVisible,
-                                      decoration: textInputDecoration.copyWith(
-                                          labelText: "Password",
-                                          prefixIcon: Icon(
-                                            Icons.lock,
-                                            color:
-                                                Theme.of(context).primaryColor,
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 30.0),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 1.0,
+                                        color: Color.fromARGB(
+                                            255, 212, 212, 212))),
+                                child: Form(
+                                    key: formKey,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        if (is_mobile)
+                                          Container(
+                                            child: Image(
+                                                image: AssetImage(
+                                                    "assets/images/loginn.png")),
                                           ),
-                                          suffixIcon: IconButton(
-                                            icon: Icon(
-                                              passwordVisible
-                                                  ? Icons.visibility
-                                                  : Icons.visibility_off,
-                                              color: Colors.blue,
-                                              size: 20,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Sign In",
+                                              style: GoogleFonts.akayaKanadaka(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 30,
+                                                  color: Colors.black),
                                             ),
-                                            onPressed: () {
-                                              setState(
-                                                () {
-                                                  passwordVisible =
-                                                      !passwordVisible;
-                                                },
-                                              );
-                                            },
-                                          )),
-                                      validator: (val) {
-                                        if (val!.length < 6) {
-                                          return "Password must be at least 6 characters";
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                      onChanged: (val) {
-                                        setState(() {
-                                          password = val;
-                                        });
-                                      },
-                                    ),
-                                  ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 30,
+                                        ),
 
-                                  // Text_field(context, EmailController,"Enter Your Email","Email",Icons.email_rounded,"1"),
-                                  // Text_field(context, PassController,"Enter Password","Password",Icons.lock_person_rounded,"2"),
-                                  SizedBox(
-                                    height: 20,
+                                        SizedBox(
+                                          height: 45,
+                                          child: TextFormField(
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                            decoration:
+                                                textInputDecoration.copyWith(
+                                                    labelText: "Email",
+                                                    hoverColor: Colors.black,
+                                                    prefixIcon: Icon(
+                                                      Icons.email,
+                                                      color: Theme.of(context)
+                                                          .primaryColor,
+                                                    )),
+                                            onChanged: (val) {
+                                              setState(() {
+                                                email = val;
+                                              });
+                                            },
+
+                                            // check tha validation
+                                            validator: (val) {
+                                              return RegExp(
+                                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                      .hasMatch(val!)
+                                                  ? null
+                                                  : "Please enter a valid email";
+                                            },
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 20),
+                                        SizedBox(
+                                          height: 45,
+                                          child: TextFormField(
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                            obscureText: passwordVisible,
+                                            decoration:
+                                                textInputDecoration.copyWith(
+                                                    labelText: "Password",
+                                                    prefixIcon: Icon(
+                                                      Icons.lock,
+                                                      color: Theme.of(context)
+                                                          .primaryColor,
+                                                    ),
+                                                    suffixIcon: IconButton(
+                                                      icon: Icon(
+                                                        passwordVisible
+                                                            ? Icons.visibility
+                                                            : Icons
+                                                                .visibility_off,
+                                                        color: Colors.blue,
+                                                        size: 20,
+                                                      ),
+                                                      onPressed: () {
+                                                        setState(
+                                                          () {
+                                                            passwordVisible =
+                                                                !passwordVisible;
+                                                          },
+                                                        );
+                                                      },
+                                                    )),
+                                            validator: (val) {
+                                              if (val!.length < 6) {
+                                                return "Password must be at least 6 characters";
+                                              } else {
+                                                return null;
+                                              }
+                                            },
+                                            onChanged: (val) {
+                                              setState(() {
+                                                password = val;
+                                              });
+                                            },
+                                          ),
+                                        ),
+
+                                        // Text_field(context, EmailController,"Enter Your Email","Email",Icons.email_rounded,"1"),
+                                        // Text_field(context, PassController,"Enter Password","Password",Icons.lock_person_rounded,"2"),
+                                        SizedBox(
+                                          height: 30,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            themeButton3(context, () {
+                                              login();
+                                              //                 nextScreenReplace(context,
+                                              //         MultiProvider(
+                                              //        providers: [
+                                              //        ChangeNotifierProvider(
+                                              //       create: (context) => MenuAppController(),
+                                              //     ),
+                                              //   ],
+                                              //   child: MainScreen() // MainScreen(),
+                                              // ),);
+                                            },
+                                                buttonColor: Colors.green,
+                                                btnWidthSize: 200.0,
+                                                radius: 10.0,
+                                                btnHeightSize: 45.0,
+                                                label: "Log In"),
+                                          ],
+                                        ),
+                                        /*SizedBox(
+                                    height: 10,
                                   ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      themeButton3(context, () {
-                                        login();
-                                        //                 nextScreenReplace(context,
-                                        //         MultiProvider(
-                                        //        providers: [
-                                        //        ChangeNotifierProvider(
-                                        //       create: (context) => MenuAppController(),
-                                        //     ),
-                                        //   ],
-                                        //   child: MainScreen() // MainScreen(),
-                                        // ),);
-                                      },
-                                          buttonColor: Colors.green,
-                                          label: "Log In"),
-                                    ],
-                                  ),
-                                  /*SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                    nextScreenReplace(
-                                      context,
-                                      MultiProvider(providers: [
-                                        ChangeNotifierProvider(
-                                          create: (context) =>
-                                              MenuAppController(),
+                                      TextButton(
+                                        onPressed: () {
+                                          nextScreenReplace(
+                                            context,
+                                            MultiProvider(providers: [
+                                              ChangeNotifierProvider(
+                                                create: (context) =>
+                                                    MenuAppController(),
+                                              ),
+                                            ], child: RegisterPage() // MainScreen(),
+                                                ),
+                                          );
+                                        },
+                                        child: Text(
+                                          'Create an account',
+                                          style: TextStyle(
+                                              fontSize: 12.5,
+                                              decoration: TextDecoration.underline,
+                                              color: Colors.blue),
                                         ),
-                                      ], child: RegisterPage() // MainScreen(),
-                                          ),
-                                    );
-                                  },
-                                  child: Text(
-                                    'Create an account',
-                                    style: TextStyle(
-                                        fontSize: 12.5,
-                                        decoration: TextDecoration.underline,
-                                        color: Colors.blue),
-                                  ),
-                                )
-                              ],
-                            ),*/
-                                ],
-                              )),
+                                      )
+                                    ],
+                                  ),*/
+                                      ],
+                                    )),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      if (is_mobile)
+                        SizedBox(
+                          height: 100,
+                        )
                     ],
                   )));
   }

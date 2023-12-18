@@ -233,7 +233,12 @@ Widget productRow(context, key, data, {color: Colors.black}) {
                     fontSize: 11.0)),
           ),
           SizedBox(width: 20.0),
-          Text(": ${val}", style: TextStyle(fontSize: 12.0, color: color)),
+          SizedBox(
+            width: 180,
+            child: Text(": ${val}",
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 12.0, color: color)),
+          ),
         ],
       ),
     );

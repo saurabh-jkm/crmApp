@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/controllers/Base_Controller.dart';
 import 'package:crm_demo/themes/function.dart';
+import 'package:crm_demo/themes/global.dart';
 import 'package:crm_demo/themes/style.dart';
 import 'package:crm_demo/themes/theme_footer.dart';
 import 'package:crm_demo/themes/theme_header.dart';
@@ -37,6 +39,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   var controller = new DashboardController();
+  var Basecontroller = new BaseController();
   //////Crosss file picker
   final GlobalKey exportKey = GlobalKey();
   /////// get user data  +++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -83,15 +86,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {});
   }
 
-  var smallD = true;
   @override
   void initState() {
-     if(Platform.isAndroid || Platform.isIOS){
-      smallD = true;
-    }else{
-      smallD = false;
-    }
-
     _getUser();
     super.initState();
   }
@@ -115,11 +111,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-
 // ///////=======================================================================
   @override
   Widget build(BuildContext context) {
-    
     // dashborad list init
     List demoMyFiles = [
       CloudStorageInfo(
@@ -222,9 +216,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return (user.isEmpty)
         ? Center(child: pleaseWait(context))
         : Scaffold(
-            bottomNavigationBar: (smallD)? theme_footer_android(context, 0):SizedBox(),
+            bottomNavigationBar:
+                (is_mobile) ? theme_footer_android(context, 0) : SizedBox(),
             body: Container(
-              padding: EdgeInsets.all((smallD)?0.0:defaultPadding),
+              padding: EdgeInsets.all((is_mobile) ? 0.0 : defaultPadding),
               child: (isNewUpdate)
                   ? Container(
                       child: Center(
@@ -235,19 +230,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Text(
                               "New Update Available !!",
                               style: themeTextStyle(
-                                  size: (smallD)?20.0:40.0, color: Colors.green),
+                                  size: (is_mobile) ? 20.0 : 40.0,
+                                  color: Colors.green),
                             ),
                             Text(
                               "Please do Hard Refresh Browser",
                               style: themeTextStyle(
-                                  size: (smallD)?14.0:24.0,
+                                  size: (is_mobile) ? 14.0 : 24.0,
                                   color: Color.fromARGB(255, 114, 173, 250)),
                             ),
                             SizedBox(height: 40.0),
                             Text(
                               "Press Ctr + Shift + R",
-                              style:
-                                  themeTextStyle(size:(smallD)?13.0: 40.0, color: Colors.red),
+                              style: themeTextStyle(
+                                  size: (is_mobile) ? 13.0 : 40.0,
+                                  color: Colors.red),
                             )
                           ],
                         ),
@@ -255,9 +252,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     )
                   : ListView(
                       children: [
-                        (smallD)?themeHeader_android(context,title: "Dashboard"):Header(
-                          title: "Dashboard",
-                        ),
+                        (is_mobile)
+                            ? themeHeader_android(context, title: "Dashboard")
+                            : Header(
+                                title: "Dashboard ",
+                              ),
                         SizedBox(height: defaultPadding),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,14 +271,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     quantity_no: 10,
                                     value: controller.tempCount,
                                   ),
-
                                   SizedBox(height: defaultPadding),
-
-                              
                                 ],
                               ),
                             ),
-                            
                           ],
                         ),
                       ],
