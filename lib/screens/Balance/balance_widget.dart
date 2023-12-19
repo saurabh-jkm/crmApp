@@ -10,7 +10,7 @@ Widget tableLable(context, i, label, tableColum) {
       padding: const EdgeInsets.all(5.0),
       child: Text('$label',
           style: themeTextStyle(
-              size: 12.0, color: Colors.white, fw: FontWeight.bold)),
+              size: 12.0, color: Colors.black, fw: FontWeight.bold)),
     ),
   );
 }

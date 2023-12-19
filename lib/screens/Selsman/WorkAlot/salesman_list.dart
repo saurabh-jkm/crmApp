@@ -458,11 +458,15 @@ class _SalemanListState extends State<SalemanList> {
                                               method: datePick,
                                               arg: 'toDate')),
                                       (is_mobile)
-                                          ? Icon(
-                                              Icons.search,
-                                              color: Colors.blue,
-                                              size: 40,
-                                            )
+                                          ? IconButton(
+                                              onPressed: () {
+                                                fnFilterController;
+                                              },
+                                              icon: Icon(
+                                                Icons.search,
+                                                color: Colors.blue,
+                                                size: 40,
+                                              ))
                                           : themeButton3(
                                               context, fnFilterController,
                                               arg: 'date_filter',

@@ -38,11 +38,11 @@ class _More_screenState extends State<More_screen> {
       body: Container(
         child: ListView(
           children: [
-            menut_list(context,
-                title: "Category", icon: Icons.category_outlined, route: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => CategoryAdd()));
-            }),
+            // menut_list(context,
+            //     title: "Category", icon: Icons.category_outlined, route: () {
+            //   Navigator.push(
+            //       context, MaterialPageRoute(builder: (_) => CategoryAdd()));
+            // }),
             menut_list(context,
                 title: "All Outstanding",
                 icon: Icons.account_balance_wallet_outlined, route: () {

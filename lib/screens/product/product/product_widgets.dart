@@ -236,6 +236,7 @@ Widget productRow(context, key, data, {color: Colors.black}) {
           SizedBox(
             width: 180,
             child: Text(": ${val}",
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 12.0, color: color)),
           ),

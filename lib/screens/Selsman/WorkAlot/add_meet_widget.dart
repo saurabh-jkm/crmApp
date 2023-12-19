@@ -68,31 +68,69 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
                         ),
 
                         themeSpaceVertical(4.0),
+                        (is_mobile)
+                            ? Row(
+                                children: [
+                                  Expanded(
+                                      child: autoCompleteFormInput(
+                                          controller.ListCustomer,
+                                          "Customer Name *",
+                                          controller.Customer_nameController,
+                                          method: fnFetchCutomerDetails)),
+                                ],
+                              )
+                            : Row(
+                                children: [
+                                  // fireld 1 ==========================
+                                  Expanded(
+                                      child: autoCompleteFormInput(
+                                          controller.ListCustomer,
+                                          "Customer Name *",
+                                          controller.Customer_nameController,
+                                          method: fnFetchCutomerDetails)),
+
+                                  Expanded(
+                                    child: formInput(
+                                      context,
+                                      "Mobile No.",
+                                      controller.Customer_MobileController,
+                                      padding: 8.0,
+                                      isNumber: true,
+                                    ),
+                                  ),
+                                  if (!is_mobile)
+                                    Expanded(
+                                      child: formInput(context, "Email Id",
+                                          controller.Customer_emailController,
+                                          padding: 8.0),
+                                    ),
+                                ],
+                              ),
+
                         Row(
                           children: [
                             // fireld 1 ==========================
                             Expanded(
                                 child: autoCompleteFormInput(
-                                    controller.ListCustomer,
-                                    "Customer Name *",
-                                    controller.Customer_nameController,
+                                    controller.ListType,
+                                    "Customer Type",
+                                    controller.Customer_TypeController,
                                     method: fnFetchCutomerDetails)),
-
-                            Expanded(
-                              child: formInput(
-                                context,
-                                "Mobile No.",
-                                controller.Customer_MobileController,
-                                padding: 8.0,
-                                isNumber: true,
-                              ),
-                            ),
+                            // fireld 2 ==========================
                             if (!is_mobile)
                               Expanded(
-                                child: formInput(context, "Email Id",
-                                    controller.Customer_emailController,
-                                    padding: 8.0),
+                                child: Text(""),
                               ),
+                            if (is_mobile)
+                              Expanded(
+                                child: formInput(
+                                  context,
+                                  "Mobile No.",
+                                  controller.Customer_MobileController,
+                                  padding: 8.0,
+                                  isNumber: true,
+                                ),
+                              )
                           ],
                         ),
                         if (is_mobile)
@@ -128,26 +166,6 @@ Widget addNewMeet_widget(context, controller, fnFetchCutomerDetails, selectDate,
                           ],
                         ),
 
-                        Row(
-                          children: [
-                            // fireld 1 ==========================
-                            Expanded(
-                                child: autoCompleteFormInput(
-                                    controller.ListType,
-                                    "Customer Type",
-                                    controller.Customer_TypeController,
-                                    method: fnFetchCutomerDetails)),
-                            // fireld 2 ==========================
-                            if (!is_mobile)
-                              Expanded(
-                                child: Text(""),
-                              ),
-                            Expanded(
-                              child: Text(""),
-                            ),
-                          ],
-                        ),
-                        // 2nd row =============================================
                         // Header End ============================
                         Divider(
                           thickness: 2.0,
