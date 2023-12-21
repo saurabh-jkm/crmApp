@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unused_local_variable
 
 import 'package:crm_demo/themes/firebase_functions.dart';
 import 'dart:io';
@@ -37,6 +37,7 @@ class trackController {
   resetController() {}
 
   // get all Customer List =============================
+  var name = "";
   customerList(int Limit) async {
     listCustomerName = [];
     listCustomer = {};
@@ -47,9 +48,8 @@ class trackController {
     dbData.forEach((k, data) async {
       if (data['client_id'] != null) {
         var datar = await dbFind({'table': 'users', 'id': data['client_id']});
-        String name = "${datar["first_name"]} ${datar["last_name"]}";
+        name = "${datar["first_name"]} ${datar["last_name"]}";
         var Loc_point = data["location_points"];
-
         data["location_points"] = Loc_point;
         data["name"] = name;
         listCustomer['$i'] = data;

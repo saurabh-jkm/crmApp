@@ -73,17 +73,20 @@ class _Buy_ListState extends State<Buy_List> {
 
   orderList(limit, {filter: ''}) async {
     Map temp = await controllerr.OrderListData(limit);
-    setState(() {
-      temp.forEach((k, v) {
-        v['date'] = formatDate(v['date_at'], formate: "dd/MM/yyyy");
-        v['statusIs'] =
-            (v['status'] != null && v['status']) ? 'Active' : 'InActive';
-        controllerr.OrderList.add(v);
-      });
-      controllerr.finalOrderList = controllerr.OrderList;
+    // setState(() {
+    temp.forEach((k, v) {
+      v['date'] = formatDate(v['date_at'], formate: "dd/MM/yyyy");
+      v['statusIs'] =
+          (v['status'] != null && v['status']) ? 'Active' : 'InActive';
+      controllerr.OrderList.add(v);
+    });
 
+    setState(() {
+      controllerr.finalOrderList = controllerr.OrderList;
       progressWidget = false;
     });
+
+    // });
 
     SearchFn(selectedFilter, filter: 'filter');
   }
