@@ -3,19 +3,14 @@
 import 'dart:convert';
 
 import 'package:crm_demo/screens/Login_Reg/login_screen.dart';
-import 'package:crm_demo/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../constants.dart';
 import '../../../controllers/MenuAppController.dart';
 import '../../../responsive.dart';
 import '../../../themes/style.dart';
-import '../../Profile/profile_details.dart';
-import '../../main/main_screen.dart';
 
 class Header extends StatefulWidget {
   const Header({super.key, @required this.title});
@@ -148,18 +143,17 @@ class _ProfileCardState extends State<ProfileCard> {
     if (userData != null) {
       setState(() {
         user = jsonDecode(userData) as Map<dynamic, dynamic>;
-        // print("${user["avatar"]}     ++++++tt+++++ ");
       });
     }
   }
 
+//////==================================================================
   @override
   void initState() {
     _getUser();
     super.initState();
   }
 
-///////=======================================================================
   @override
   Widget build(BuildContext context) {
     return Container(

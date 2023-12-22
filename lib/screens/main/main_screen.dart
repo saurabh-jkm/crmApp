@@ -41,7 +41,6 @@ class _MainScreenState extends State<MainScreen> {
     if (userData != null) {
       setState(() {
         user = jsonDecode(userData) as Map<dynamic, dynamic>;
-
         // print("$user ++++++++++++++++++++");
       });
     }

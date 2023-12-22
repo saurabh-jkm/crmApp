@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 import '../Selsman/WorkAlot/salesman_list.dart';
+import '../Sub Admin/Add_SubAdmin.dart';
 
 class More_screen extends StatefulWidget {
   const More_screen({super.key});
@@ -59,6 +60,12 @@ class _More_screenState extends State<More_screen> {
                 title: "Salesman Meeting", icon: Icons.meeting_room, route: () {
               Navigator.push(
                   context, MaterialPageRoute(builder: (_) => SalemanList()));
+            }),
+            menut_list(context,
+                title: "Sub Admin",
+                icon: Icons.admin_panel_settings_outlined, route: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => SubAdmin()));
             }),
             menut_list(context,
                 title: "My Profile",

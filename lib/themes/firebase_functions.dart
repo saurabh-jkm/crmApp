@@ -199,7 +199,8 @@ dbFind(where) async {
             Map<int, dynamic> returnData2 = new Map();
             return documentSnapshot.data();
           } else {
-            return 'Document does not exist on the database';
+            print('Document does not exist on the database: $id');
+            // return 'Document does not exist on the database $id';
           }
         });
 
