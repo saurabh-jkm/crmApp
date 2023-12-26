@@ -24,6 +24,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
 import 'controllers/MenuAppController.dart';
 //import 'screens/Login_Reg/Login_user.dart';
+
 import 'screens/Login_Reg/login_screen.dart';
 import 'screens/Selsman/WorkAlot/salesman_list.dart';
 import 'screens/main/main_screen.dart';
@@ -84,7 +85,11 @@ class _MyAppState extends State<MyApp> {
       loginIs = true;
     }
     isWait = false;
-    check_Device_plateform();
+    await check_Device_plateform();
+
+    if(this.mounted){
+      setState(() { });
+    }
   }
 
 ///////
@@ -92,15 +97,15 @@ class _MyAppState extends State<MyApp> {
   check_Device_plateform() async {
     try {
       if (Platform.isAndroid || Platform.isIOS) {
-        setState(() {
+        
           is_mobile = true;
-        });
+      
       }
     } catch (e) {
-      setState(() {
         is_mobile = false;
-      });
     }
+
+    
   }
 
   ///

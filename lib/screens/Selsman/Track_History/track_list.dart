@@ -36,8 +36,9 @@ class _TrackHistoryState extends State<TrackHistory> {
     await controller.init_functions(limit);
     await orderDetails();
     for (String key in controller.listCustomer.keys) {
-      controller.loc =
-          jsonDecode(controller.listCustomer[key]["location_points"]);
+    
+      controller.loc  = (controller.listCustomer[key]["location_points"] != null && controller.listCustomer[key]["location_points"] != 'null' )?
+          jsonDecode(controller.listCustomer[key]["location_points"]):[];
 
       for (var i = 0; i < controller.loc.length; i++) {
         controller.distance = await controller.calculateDistance(
@@ -252,7 +253,7 @@ class _TrackHistoryState extends State<TrackHistory> {
     dataList.add('${data['name']}');
 
     dataList.add(
-        "${double.parse((controller.tempLocation[no]).toStringAsFixed(2))} Km");
+        "${ (controller.tempLocation[no] != null)?double.parse((controller.tempLocation[no]).toStringAsFixed(2)):"0"} Km");
     dataList.add(
         '${(data['date'] == null) ? '-' : formatDate(data['date'], formate: 'dd/MM/yyyy')}');
     dataList.add('action');

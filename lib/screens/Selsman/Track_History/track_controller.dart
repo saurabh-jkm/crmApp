@@ -42,13 +42,17 @@ class trackController {
     listCustomerName = [];
     listCustomer = {};
     var dbData =
-        await dbFindDynamic(db, {'table': 'client_location', "limit": Limit});
+        await dbFindDynamic(db, {'table': 'client_location', 'orderBy':'-date', "limit": Limit});
+
+    
+   
 
     var i = 1;
-    dbData.forEach((k, data) async {
+    //dbData.forEach((k, data) async {
+      for(var k in  dbData.keys){
+      var data = dbData[k];
       if (data['client_id'] != null) {
         var datar = await dbFind({'table': 'users', 'id': data['client_id']});
-        print("$datar    ++++++++++");
         name = "${datar["first_name"]} ${datar["last_name"]}";
         var Loc_point = data["location_points"];
         data["location_points"] = Loc_point;
@@ -56,9 +60,12 @@ class trackController {
         listCustomer['$i'] = data;
         listCustomerAllDataArr['$i'] = data;
         listCustomerName.add(name);
+        //print('++++++++++++++++++++++++++++++++++++++++++++++++++++');
         i++;
       }
-    });
+    };
+
+     //print(listCustomer);
   }
 
   /////// distance Calculate fun ++++++++++++++++++++++++++++++++++++++++
