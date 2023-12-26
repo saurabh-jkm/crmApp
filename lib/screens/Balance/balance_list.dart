@@ -9,6 +9,8 @@ import 'package:crm_demo/screens/Invoice/edit_invoice.dart';
 import 'package:crm_demo/screens/Invoice/pdf.dart';
 import 'package:crm_demo/screens/Invoice/view_invoice_screen-backup.dart';
 import 'package:crm_demo/themes/base_controller.dart';
+import 'package:crm_demo/themes/global.dart';
+import 'package:crm_demo/themes/theme_footer.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
@@ -31,6 +33,7 @@ import '../Invoice/add_invoice_screen.dart';
 import '../Invoice/invoice_controller.dart';
 import '../Invoice/invoice_serv.dart';
 import '../Invoice/view_invoice_details.dart';
+import '../Selsman/WorkAlot/add_meet_widget.dart';
 import '../dashboard/components/header.dart';
 import '../dashboard/components/my_fields.dart';
 import '../dashboard/components/recent_files.dart';
@@ -55,9 +58,9 @@ class BalanceList extends StatefulWidget {
 class _BalanceListState extends State<BalanceList> {
   var controllerr = new invoiceController();
   final _controllers = TextEditingController();
-  var db = (!kIsWeb && Platform.isWindows)
-      ? Firestore.instance
-      : FirebaseFirestore.instance;
+  // var db = (!kIsWeb && Platform.isWindows)
+  //     ? Firestore.instance
+  //     : FirebaseFirestore.instance;
   @override
   void initState() {
     orderList(_number_select);
@@ -96,7 +99,7 @@ class _BalanceListState extends State<BalanceList> {
 
       for (var i = 0; i < controllerr.OrderList.length; i++) {
         // if (controllerr.OrderList[i]["balance"] == "0") {
-        print(" ${controllerr.OrderList[i]["balance"]}  +++++++++++++");
+        // print(" ${controllerr.OrderList[i]["balance"]}  +++++++++++++");
         // }
       }
 
@@ -158,37 +161,29 @@ class _BalanceListState extends State<BalanceList> {
   Widget build(BuildContext context) {
     var fw = MediaQuery.of(context).size.width;
     tableColum = {
-      1: 50.0,
-      // 2: 100.0,
+      1: 30.0,
+      2: 100.0,
       3: 100.0,
-      // 4: fw * 0.17,
-      5: fw * 0.07,
-      6: 90.0,
-      7: 40.0,
-      // 8: 60.0,
-      9: 60.0,
-      10: 80.0,
-      11: fw * 0.08,
-
-      // 12: 120.0,
+      4: 150.0,
+      5: 80.0,
+      6: 80.0,
+      7: 70.0,
+      8: 70.0,
+      9: 70.0,
+      10: 120.0,
     };
 
     headerName = {
       1: '#',
-      // 2: 'Order Id',
-      // 3: 'Type',
-      // 4: 'Product',
-      5: 'Buyer/Seller',
-      6: 'Mobile',
-      7: 'Product',
-      // 7: 'Qnt.',
-      // 8: 'Unit',
-      9: 'Bill Amount',
-      10: 'Outstanding',
-      11: 'Payment',
-      12: 'Payment Date',
-      13: 'Date',
-      14: 'Action',
+      2: 'Buyer/Seller',
+      3: 'Mobile',
+      4: 'Product',
+      5: 'Bill Amount',
+      6: 'Outstanding',
+      7: 'Payment',
+      8: 'Payment Date',
+      9: 'Date',
+      10: 'Action',
     };
 
     return RawKeyboardListener(
@@ -202,6 +197,8 @@ class _BalanceListState extends State<BalanceList> {
         }
       },
       child: Scaffold(
+        bottomNavigationBar:
+            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
         body: Container(
           color: Colors.white,
           child: ListView(
@@ -224,7 +221,7 @@ class _BalanceListState extends State<BalanceList> {
                               color: Colors.blue,
                             ),
                           ),
-                          SizedBox(width: 20.0),
+                          SizedBox(width: 10.0),
                           Text("Balance List", style: GoogleFonts.alike())
                         ],
                       ),
@@ -266,215 +263,246 @@ class _BalanceListState extends State<BalanceList> {
   var _number_select = 50;
   Widget listList(BuildContext context, itemList) {
     return Container(
-      height: MediaQuery.of(context).size.height,
       // margin: EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
       ),
-      child: ListView(
+      child: Column(
         children: [
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 5.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            child: Column(
-              children: [
-                Container(
-                    padding: EdgeInsets.all(10),
-                    color: themeBG4,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
+              padding: EdgeInsets.all(5),
+              color: themeBG4,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Right side buttons
+                  Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 5.0, vertical: 4.0),
+                        color: Color.fromARGB(255, 200, 247, 242),
+                        child: Row(
                           children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 4.0),
-                              color: Color.fromARGB(255, 200, 247, 242),
-                              child: Row(
-                                children: [
-                                  Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 10),
-                                      padding: EdgeInsets.only(top: 14),
-                                      height: 35,
-                                      width: 140.0,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          color: Colors.white),
-                                      child: formTimeInput(
-                                          context, startDate_controller,
-                                          label: 'Date From',
-                                          method: datePick,
-                                          arg: 'fromDate')),
-                                  Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 10),
-                                      padding: EdgeInsets.only(top: 14),
-                                      height: 35,
-                                      width: 140.0,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          color: Colors.white),
-                                      child: formTimeInput(
-                                          context, toDate_controller,
-                                          label: 'Date To',
-                                          method: datePick,
-                                          arg: 'toDate')),
-                                  themeButton3(context, fnFilterController,
-                                      arg: 'date_filter',
-                                      label: 'Filter',
-                                      radius: 2.0,
-                                      borderColor: Colors.transparent,
-                                      buttonColor:
-                                          Color.fromARGB(255, 12, 121, 194)),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ), // end date filter container
-
-                        // Right side buttons
-                        Row(
-                          children: [
-                            // date picker filter  ================================
-
-                            //SizedBox(width: 10.0),
-
-                            themeButton3(context, changeFilter,
-                                arg: 'Sale',
-                                label: 'Sale',
-                                radius: 2.0,
-                                borderColor: (selectedFilter == 'Sale')
-                                    ? Colors.white
-                                    : Colors.white,
-                                buttonColor: (selectedFilter == 'Sale')
-                                    ? Color.fromARGB(255, 4, 141, 134)
-                                    : const Color.fromARGB(0, 110, 110, 110)),
-
-                            SizedBox(width: 10.0),
-
-                            themeButton3(context, changeFilter,
-                                arg: 'Buy',
-                                label: 'Buy',
-                                radius: 2.0,
-                                borderColor: (selectedFilter == 'Buy')
-                                    ? Colors.green
-                                    : Colors.white,
-                                buttonColor: (selectedFilter == 'Buy')
-                                    ? Color.fromARGB(255, 4, 141, 134)
-                                    : const Color.fromARGB(0, 110, 110, 110)),
-
-                            // Container(
-                            //   height: 30,
-                            //   width: 100.0,
-                            //   padding: EdgeInsets.only(top: 6.0),
-                            //   decoration: BoxDecoration(
-                            //       borderRadius: BorderRadius.circular(3.0),
-                            //       color: Colors.white),
-                            //   child: inpuDropdDown(
-                            //       context, 'Filter', itemList, selectedFilter,
-                            //       method: changeFilter, style: 2),
-                            // ),
-                            // search
                             Container(
                                 margin: EdgeInsets.symmetric(horizontal: 10),
                                 padding: EdgeInsets.only(top: 14),
                                 height: 35,
-                                width: 270.0,
+                                width: 120.0,
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
+                                    borderRadius: BorderRadius.circular(5.0),
                                     color: Colors.white),
-                                child: SearchBox(context,
-                                    label: "Search", searchFn: SearchFn))
+                                child: formTimeInput(
+                                    context, startDate_controller,
+                                    label: 'Date From',
+                                    method: datePick,
+                                    arg: 'fromDate')),
+                            Container(
+                                margin: EdgeInsets.symmetric(horizontal: 10),
+                                padding: EdgeInsets.only(top: 14),
+                                height: 35,
+                                width: 120.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    color: Colors.white),
+                                child: formTimeInput(context, toDate_controller,
+                                    label: 'Date To',
+                                    method: datePick,
+                                    arg: 'toDate')),
+                            (is_mobile)
+                                ? IconButton(
+                                    onPressed: () {
+                                      fnFilterController;
+                                    },
+                                    icon: Icon(
+                                      Icons.search,
+                                      color: Colors.blue,
+                                      size: 40,
+                                    ))
+                                : themeButton3(context, fnFilterController,
+                                    arg: 'date_filter',
+                                    label: 'Filter',
+                                    radius: 5.0,
+                                    borderColor: Colors.transparent,
+                                    buttonColor:
+                                        Color.fromARGB(255, 12, 121, 194)),
                           ],
                         ),
-                      ],
-                    )),
-                SizedBox(
-                  height: 5,
-                ),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // date picker filter  ================================
+
+                          //SizedBox(width: 10.0),
+
+                          themeButton3(context, changeFilter,
+                              btnWidthSize: 50.0,
+                              arg: 'Sale',
+                              label: 'Sale',
+                              radius: 10.0,
+                              borderColor: (selectedFilter == 'Sale')
+                                  ? Colors.white
+                                  : Colors.white,
+                              buttonColor: (selectedFilter == 'Sale')
+                                  ? Color.fromARGB(255, 4, 141, 134)
+                                  : const Color.fromARGB(0, 110, 110, 110)),
+
+                          SizedBox(width: 10.0),
+
+                          themeButton3(context, changeFilter,
+                              btnWidthSize: 50.0,
+                              arg: 'Buy',
+                              label: 'Buy',
+                              radius: 10.0,
+                              borderColor: (selectedFilter == 'Buy')
+                                  ? Colors.green
+                                  : Colors.white,
+                              buttonColor: (selectedFilter == 'Buy')
+                                  ? Color.fromARGB(255, 4, 141, 134)
+                                  : const Color.fromARGB(0, 110, 110, 110)),
+
+                          // Container(
+                          //   height: 30,
+                          //   width: 100.0,
+                          //   padding: EdgeInsets.only(top: 6.0),
+                          //   decoration: BoxDecoration(
+                          //       borderRadius: BorderRadius.circular(3.0),
+                          //       color: Colors.white),
+                          //   child: inpuDropdDown(
+                          //       context, 'Filter', itemList, selectedFilter,
+                          //       method: changeFilter, style: 2),
+                          // ),
+                          // search
+                          Container(
+                              margin: EdgeInsets.only(left: 10),
+                              padding: EdgeInsets.only(top: 14),
+                              height: 35,
+                              width: (!is_mobile) ? 270.0 : 220,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color: Colors.white),
+                              child: SearchBox(context,
+                                  label: "Search", searchFn: SearchFn))
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              )),
+          SizedBox(
+            height: 5,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: (controllerr.OrderList.length * 70),
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
                 Container(
-                  decoration: BoxDecoration(
-                      color: themeBG4,
-                      border: Border(
-                          bottom: BorderSide(width: 3.0, color: Colors.white))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (int i in headerName.keys)
-                        tableLable(context, i, headerName[i], tableColum),
+                      Container(
+                        decoration: BoxDecoration(
+                            color: themeBG4,
+                            border: Border(
+                                bottom: BorderSide(
+                                    width: 3.0, color: Colors.white))),
+                        child: Row(
+                          children: [
+                            for (int i in headerName.keys)
+                              tableLablee(
+                                  context, i, headerName[i], tableColum),
+                          ],
+                        ),
+                      ),
+                      for (var index = 0;
+                          index < controllerr.OrderList.length;
+                          index++)
+                        if (controllerr.OrderList[index]['balance'] != "0")
+                          tableRowWidget(
+                              "${index + 1}",
+                              controllerr.OrderList[index]['status'],
+                              controllerr.OrderList[index]['date_at'],
+                              controllerr.OrderList[index],
+                              dbData: controllerr.OrderList[index]),
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        height: 100,
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                height: 40,
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 20, horizontal: 20),
+                                color: Colors.black,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Show",
+                                      style: themeTextStyle(
+                                          fw: FontWeight.normal,
+                                          color: Colors.white,
+                                          size: 15),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 10.0),
+                                      padding: EdgeInsets.all(2),
+                                      height: 20,
+                                      color: Colors.white,
+                                      child: DropdownButton<int>(
+                                        dropdownColor: Colors.white,
+                                        iconEnabledColor: Colors.black,
+                                        hint: Text(
+                                          "$_number_select",
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 12),
+                                        ),
+                                        value: _number_select,
+                                        items: <int>[50, 100, 150, 200]
+                                            .map((int value) {
+                                          return DropdownMenuItem<int>(
+                                            value: value,
+                                            child: Text(
+                                              "$value",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 12),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (newVal) {
+                                          _number_select = newVal!;
+                                          orderList(newVal);
+                                        },
+                                        underline: SizedBox(),
+                                      ),
+                                    ),
+                                    Text(
+                                      "entries",
+                                      style: themeTextStyle(
+                                          fw: FontWeight.normal,
+                                          color: Colors.white,
+                                          size: 15),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ]),
+                      ),
                     ],
                   ),
                 ),
-                for (var index = 0;
-                    index < controllerr.OrderList.length;
-                    index++)
-                  if (controllerr.OrderList[index]['balance'] != "0")
-                    tableRowWidget(
-                        "${index + 1}",
-                        controllerr.OrderList[index]['status'],
-                        controllerr.OrderList[index]['date_at'],
-                        controllerr.OrderList[index],
-                        dbData: controllerr.OrderList[index])
               ],
             ),
           ),
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-            Container(
-              height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              color: Colors.black,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Show",
-                    style: themeTextStyle(
-                        fw: FontWeight.normal, color: Colors.white, size: 15),
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10.0),
-                    padding: EdgeInsets.all(2),
-                    height: 20,
-                    color: Colors.white,
-                    child: DropdownButton<int>(
-                      dropdownColor: Colors.white,
-                      iconEnabledColor: Colors.black,
-                      hint: Text(
-                        "$_number_select",
-                        style: TextStyle(color: Colors.black, fontSize: 12),
-                      ),
-                      value: _number_select,
-                      items: <int>[50, 100, 150, 200].map((int value) {
-                        return DropdownMenuItem<int>(
-                          value: value,
-                          child: Text(
-                            "$value",
-                            style: TextStyle(color: Colors.black, fontSize: 12),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (newVal) {
-                        _number_select = newVal!;
-                        orderList(newVal);
-                      },
-                      underline: SizedBox(),
-                    ),
-                  ),
-                  Text(
-                    "entries",
-                    style: themeTextStyle(
-                        fw: FontWeight.normal, color: Colors.white, size: 15),
-                  ),
-                ],
-              ),
-            )
-          ]),
           SizedBox(height: 100)
         ],
       ),
@@ -510,99 +538,109 @@ class _BalanceListState extends State<BalanceList> {
       subList = productList;
     }
 //////////////////// ++++++++++++++++++++++++++++++++++++++++++++++
-    return Column(children: [
-      //for
-      Container(
-          decoration: BoxDecoration(
-              color: (matchString(type, 'Buy')) ? themeBG6 : themeBG5,
-              border:
-                  Border(bottom: BorderSide(width: 3.0, color: Colors.white))),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Expanded(
-              child: Text(index, style: textStyle3),
-            ),
-            // Expanded(
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(5.0),
-            //     child: Container(child: Text("${type}", style: textStyle3)),
-            //   ),
-            // ),
+    return Container(
+        decoration: BoxDecoration(
+            color: (matchString(type, 'Buy')) ? themeBG6 : themeBG5,
+            border:
+                Border(bottom: BorderSide(width: 3.0, color: Colors.white))),
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Container(
+            width: tableColum[1],
+            padding: EdgeInsets.only(left: 5),
+            child: Text(index, style: textStyle3),
+          ),
+          // Expanded(
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(5.0),
+          //     child: Container(child: Text("${type}", style: textStyle3)),
+          //   ),
+          // ),
 
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Text('${edata['customer_name']}', style: textStyle3),
-              ),
+          Container(
+            width: tableColum[2],
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text('${edata['customer_name']}', style: textStyle3),
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: (edata['mobile'] != "")
-                    ? Text(edata['mobile'], style: textStyle3)
-                    : Text("----", style: textStyle3),
-              ),
+          ),
+          Container(
+            width: tableColum[3],
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: (edata['mobile'] != "")
+                  ? Text(edata['mobile'], style: textStyle3)
+                  : Text("----", style: textStyle3),
             ),
-            Expanded(
-                child: Container(
-                    margin: EdgeInsets.only(right: 10),
-                    child: Text("${productTitle}",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 11.0,
-                            fontWeight: FontWeight.bold,
-                            overflow: TextOverflow.ellipsis)))),
+          ),
+          Container(
+              width: tableColum[4],
+              child: Container(
+                  margin: EdgeInsets.only(right: 10),
+                  child: Text("${productTitle}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.bold,
+                          overflow: TextOverflow.ellipsis)))),
 
-            Expanded(
-              child: Text((edata['total'] != null) ? "${edata['total']}" : "-",
-                  style: textStyle3),
+          Container(
+            width: tableColum[5],
+            child: Text((edata['total'] != null) ? "${edata['total']}" : "-",
+                style: textStyle3),
+          ),
+          Container(
+            width: tableColum[6],
+            child: Text(
+                (edata['balance'] != null) ? "${edata['balance']}" : "-",
+                style: textStyle3),
+          ),
+          Container(
+            width: tableColum[7],
+            child: Text(
+                (edata['payment'] != null) ? "${edata['payment']}" : "-/-",
+                style: textStyle3),
+          ),
+          Container(
+            width: tableColum[8],
+            child: Text("$PayDate", style: textStyle3),
+          ),
+          Container(
+            width: tableColum[9],
+            child: Text("$formattedDate", style: textStyle3),
+          ),
+          Container(
+            width: tableColum[10],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                IconButton(
+                    onPressed: () async {
+                      final data = await InvoiceService(
+                        PriceDetail: edata,
+                      ).createInvoice();
+                      // final data = await service.createInvoice();
+                      await savePdfFile("invoice", data, edata);
+                    },
+                    icon: Icon(
+                      Icons.download,
+                      size: 30,
+                      color: Colors.green,
+                    )),
+                IconButton(
+                    onPressed: () async {
+                      await viewInvoice(edata);
+                    },
+                    icon: Icon(
+                      Icons.visibility_outlined,
+                      size: 30,
+                    )),
+              ],
             ),
-            Expanded(
-              child: Text(
-                  (edata['balance'] != null) ? "${edata['balance']}" : "-",
-                  style: textStyle3),
-            ),
-            Expanded(
-              child: Text(
-                  (edata['payment'] != null) ? "${edata['payment']}" : "-",
-                  style: textStyle3),
-            ),
-            Expanded(
-              child: Text("$PayDate", style: textStyle3),
-            ),
-            Expanded(
-              child: Text("$formattedDate", style: textStyle3),
-            ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(
-                      onPressed: () async {
-                        final data = await InvoiceService(
-                          PriceDetail: edata,
-                        ).createInvoice();
-                        // final data = await service.createInvoice();
-                        await savePdfFile("invoice", data, edata);
-                      },
-                      icon: Icon(
-                        Icons.download,
-                        size: 30,
-                        color: Colors.green,
-                      )),
-                  IconButton(
-                      onPressed: () async {
-                        await viewInvoice(edata);
-                      },
-                      icon: Icon(
-                        Icons.visibility_outlined,
-                        size: 30,
-                      )),
-                ],
-              ),
-            ),
-          ]))
-    ]);
+          ),
+        ]));
   }
 
   // search ==================================================

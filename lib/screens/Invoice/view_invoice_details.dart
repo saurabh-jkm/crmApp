@@ -24,6 +24,7 @@ import '../../../../themes/firebase_Storage.dart';
 import '../../../../themes/firebase_functions.dart';
 import '../../../../themes/style.dart';
 import '../../../../themes/theme_widgets.dart';
+import '../../themes/global.dart';
 import '../dashboard/components/header.dart';
 import '../product/product/product_widgets.dart';
 import './../dashboard/components/my_fields.dart';
@@ -161,14 +162,15 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
                           color: Colors.blue)),
                 ],
               )),
-              Expanded(
-                child: Container(
-                    margin: EdgeInsets.only(left: 20),
-                    child: GoogleText(
-                        text: "Product Details",
-                        fweight: FontWeight.bold,
-                        color: Colors.blue)),
-              ),
+              if (!is_mobile)
+                Expanded(
+                  child: Container(
+                      margin: EdgeInsets.only(left: 20),
+                      child: GoogleText(
+                          text: "Product Details",
+                          fweight: FontWeight.bold,
+                          color: Colors.blue)),
+                ),
             ],
           ),
           SizedBox(height: 10),
@@ -177,8 +179,8 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
             children: [
               Expanded(
                 child: Container(
-                    margin: EdgeInsets.only(right: 20),
-                    padding: EdgeInsets.all(10),
+                    margin: EdgeInsets.only(right: (!is_mobile) ? 20 : 10),
+                    padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(boxShadow: themeBox),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,10 +222,128 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
                       ],
                     )),
               ),
-              Expanded(
-                child: Container(
-                    margin: EdgeInsets.only(left: 20),
-                    padding: EdgeInsets.all(10),
+              if (!is_mobile)
+                Expanded(
+                  child: Container(
+                      margin: EdgeInsets.only(left: 20),
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(boxShadow: themeBox),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          (OrderData["is_sale"] != null &&
+                                  OrderData["is_sale"].toLowerCase() ==
+                                      'estimate')
+                              ? Positioned(
+                                  top: 200.0,
+                                  child: RotationTransition(
+                                    turns: new AlwaysStoppedAnimation(11 / 180),
+                                    child: Text("${OrderData["is_sale"]}",
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 243, 243, 243),
+                                            fontSize: 130.0)),
+                                  ),
+                                )
+                              : SizedBox(),
+                          Container(
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: themeBG2, width: 1.0)),
+                            height: 35,
+                            child: Row(
+                              children: [
+                                Container(
+                                    padding: EdgeInsets.all(5),
+                                    width: 40,
+                                    alignment: Alignment.center,
+                                    child: Text("S.no.",
+                                        style: textStyleHeading1)),
+                                Container(
+                                    padding: EdgeInsets.all(2),
+                                    width: 180,
+                                    alignment: Alignment.centerLeft,
+                                    child:
+                                        Text("Item", style: textStyleHeading1)),
+                                Expanded(
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        child: Text("Price (₹)",
+                                            style: textStyleHeading1))),
+                                Expanded(
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        child: Text("Qty.",
+                                            style: textStyleHeading1))),
+                                Expanded(
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        child: Text("Unit",
+                                            style: textStyleHeading1))),
+                                (isDiscountColum)
+                                    ? Expanded(
+                                        child: Container(
+                                            alignment: Alignment.center,
+                                            child: Text("Disc(₹) ",
+                                                style: textStyleHeading1)))
+                                    : SizedBox(),
+                                Expanded(
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        child: Text("SubTotal(₹)",
+                                            style: textStyleHeading1))),
+                                (isGstColum)
+                                    ? Expanded(
+                                        child: Container(
+                                            alignment: Alignment.center,
+                                            child: Text("GST (%) ",
+                                                style: textStyleHeading1)))
+                                    : SizedBox(),
+                                Expanded(
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        child: Text("Amount(₹)",
+                                            style: textStyleHeading1))),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: themeBG2, width: 1.0)),
+                            child: Column(
+                              children: [
+                                for (var key in OrderData['products'].keys)
+                                  invoiceItemRow(
+                                      context, key, OrderData['products'],
+                                      isGstColum: isGstColum,
+                                      isDiscountColum: isDiscountColum)
+                              ],
+                            ),
+                          ),
+                        ],
+                      )),
+                ),
+            ],
+          ),
+          SizedBox(height: 30),
+          if (is_mobile)
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                        child: GoogleText(
+                            text: "Product Details",
+                            fweight: FontWeight.bold,
+                            color: Colors.blue))
+                  ],
+                ),
+                Container(
+                    margin:
+                        EdgeInsets.only(left: (!is_mobile) ? 20 : 5, top: 10),
+                    padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(boxShadow: themeBox),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,7 +377,7 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
                                       Text("S.no.", style: textStyleHeading1)),
                               Container(
                                   padding: EdgeInsets.all(2),
-                                  width: 180,
+                                  width: 100,
                                   alignment: Alignment.centerLeft,
                                   child:
                                       Text("Item", style: textStyleHeading1)),
@@ -284,7 +404,7 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
                                               style: textStyleHeading1)))
                                   : SizedBox(),
                               Expanded(
-                                 child: Container(
+                                  child: Container(
                                       alignment: Alignment.center,
                                       child: Text("SubTotal(₹)",
                                           style: textStyleHeading1))),
@@ -318,9 +438,8 @@ class _viewInvoiceScreennState extends State<viewInvoiceScreenn> {
                         ),
                       ],
                     )),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
 

@@ -332,8 +332,12 @@ class SellerController {
   sellerList(int limitData) async {
     listCustomerName = [];
     listCustomer = {};
-    Map dbData = await dbFindDynamic(
-        db, {'table': 'users', 'user_type': 'Sales Man', "limit": limitData});
+    Map dbData = await dbFindDynamic(db, {
+      'table': 'users',
+      'user_type': 'Sales Man',
+      // "orderBy": "-date_at",
+      "limit": limitData
+    });
 
     var i = 1;
 

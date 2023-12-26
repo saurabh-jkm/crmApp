@@ -8,6 +8,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/screens/Invoice/invoice_widgets.dart';
 import 'package:crm_demo/screens/product/product/product_controller.dart';
+import 'package:crm_demo/themes/global.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:firedart/generated/google/firestore/v1/document.pb.dart';
@@ -135,27 +136,52 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                                     .Customer_GstNoController,
                                                 padding: 8.0),
                                           ),
-
-                                          Expanded(
-                                            child: formInput(
-                                              context,
-                                              "Mobile No.",
-                                              controller
-                                                  .Customer_MobileController,
-                                              padding: 8.0,
-                                              isNumber: true,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: formInput(
+                                          if (!is_mobile)
+                                            Expanded(
+                                              child: formInput(
                                                 context,
-                                                "Email Id",
+                                                "Mobile No.",
                                                 controller
-                                                    .Customer_emailController,
-                                                padding: 8.0),
-                                          ),
+                                                    .Customer_MobileController,
+                                                padding: 8.0,
+                                                isNumber: true,
+                                              ),
+                                            ),
+                                          if (!is_mobile)
+                                            Expanded(
+                                              child: formInput(
+                                                  context,
+                                                  "Email Id",
+                                                  controller
+                                                      .Customer_emailController,
+                                                  padding: 8.0),
+                                            ),
                                         ],
                                       ),
+
+                                      if (is_mobile)
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: formInput(
+                                                context,
+                                                "Mobile No.",
+                                                controller
+                                                    .Customer_MobileController,
+                                                padding: 8.0,
+                                                isNumber: true,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: formInput(
+                                                  context,
+                                                  "Email Id",
+                                                  controller
+                                                      .Customer_emailController,
+                                                  padding: 8.0),
+                                            ),
+                                          ],
+                                        ),
                                       Row(
                                         children: [
                                           // Expanded(
@@ -190,7 +216,8 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                                     .invoiceDateController,
                                                 padding: 8.0),
                                           ),
-                                          Expanded(child: Text("")),
+                                          if (!is_mobile)
+                                            Expanded(child: Text("")),
                                         ],
                                       ),
                                       // 2nd row =============================================
@@ -245,246 +272,399 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                               Container(
                                                 decoration: BoxDecoration(
                                                     color: Color.fromARGB(
-                                                        106, 211, 234, 255),
+                                                        106, 185, 214, 241),
                                                     border: Border.all(
                                                         color: Colors.black12)),
                                                 margin: EdgeInsets.only(
                                                     right: 8.0, bottom: 10.0),
-                                                child: Column(
-                                                  children: [
-                                                    Container(
-                                                        color: Colors.purple,
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
+                                                child: Container(
+                                                  height: 180,
+                                                  child: ListView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    children: [
+                                                      Container(
+                                                        height: 250,
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            Text(
-                                                                "Product No. $i")
-                                                          ],
-                                                        )),
-                                                    Row(
-                                                      children: [
-                                                        // product Name
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width /
-                                                                  3 -
-                                                              10,
-                                                          child:
-                                                              autoCompleteFormInput(
-                                                            controller.ListName,
-                                                            "Products Name",
-                                                            controller.ProductNameControllers[i],
-                                                            padding: 8.0,
-                                                            method:
-                                                                fnCalcualtePrice,
-                                                            methodArg: i,
-                                                            // autoUpdateCtr:false
-                                                          ),
-                                                        ),
-                                                        // Price
-                                                        Expanded(
-                                                          child: formInput(
-                                                              context,
-                                                              "Price*",
-                                                              controller
-                                                                  // .Customer_nameController,
-                                                                  .ProductPriceControllers[i],
-                                                              padding: 8.0,
-                                                              isNumber: true,
-                                                              isFloat: true,
-                                                              method: fnTotalPrice,
-                                                              methodArg: i),
-                                                        ),
+                                                            Container(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                            10),
+                                                                width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                                color: Colors
+                                                                    .purple,
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    GoogleText(
+                                                                        text:
+                                                                            "Product No. $i",
+                                                                        color: Colors
+                                                                            .white)
+                                                                  ],
+                                                                )),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                // product Name
+                                                                Container(
+                                                                  width: (!is_mobile)
+                                                                      ? MediaQuery.of(context).size.width /
+                                                                              3 -
+                                                                          10
+                                                                      : MediaQuery.of(context)
+                                                                              .size
+                                                                              .width -
+                                                                          10,
+                                                                  child:
+                                                                      autoCompleteFormInput(
+                                                                    controller
+                                                                        .ListName,
+                                                                    "Products Name",
+                                                                    controller
+                                                                        .ProductNameControllers[i],
+                                                                    padding:
+                                                                        8.0,
+                                                                    method:
+                                                                        fnCalcualtePrice,
+                                                                    methodArg:
+                                                                        i,
+                                                                    // autoUpdateCtr:false
+                                                                  ),
+                                                                ),
+                                                                //////// Price  +++++++++++++++++++++++++++++++++++++++++++++
+                                                                (!is_mobile)
+                                                                    ? Expanded(
+                                                                        child: formInput(
+                                                                            context,
+                                                                            "Price*",
+                                                                            controller
+                                                                                // .Customer_nameController,
+                                                                                .ProductPriceControllers[i],
+                                                                            padding: 8.0,
+                                                                            isNumber: true,
+                                                                            isFloat: true,
+                                                                            method: fnTotalPrice,
+                                                                            methodArg: i),
+                                                                      )
+                                                                    : Container(
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            0.23,
+                                                                        child: formInput(
+                                                                            context,
+                                                                            "Price*",
+                                                                            controller
+                                                                                // .Customer_nameController,
+                                                                                .ProductPriceControllers[i],
+                                                                            padding: 8.0,
+                                                                            isNumber: true,
+                                                                            isFloat: true,
+                                                                            method: fnTotalPrice,
+                                                                            methodArg: i),
+                                                                      ),
+                                                                ///////////////// ==============================================
 
-                                                        // Quantity
-                                                        Expanded(
-                                                          child: formInput(
-                                                              context,
-                                                              "Quantity",
-                                                              controller
-                                                                      .ProductQuntControllers[
-                                                                  i],
-                                                              padding: 8.0,
-                                                              isNumber: true,
-                                                              method:
-                                                                  fnTotalPrice,
-                                                              methodArg: i),
-                                                        ),
-                                                        // Unit
-                                                        Expanded(
-                                                          child: formInput(
-                                                              context,
-                                                              "Unit/qnt.",
-                                                              controller
-                                                                      .ProductUnitControllers[
-                                                                  i],
-                                                              padding: 8.0,
-                                                              isNumber: true,
-                                                              method:
-                                                                  fnTotalPrice,
-                                                              methodArg: i,
-                                                              readOnly: (controller.readOnlyField[
-                                                                              i] !=
-                                                                          null &&
-                                                                      controller
-                                                                          .readOnlyField[i])
-                                                                  ? true
-                                                                  : false),
-                                                        ),
+                                                                /////////////// Quantity  +++++++++++++++++++++++++++++++++++++++
+                                                                (!is_mobile)
+                                                                    ? Expanded(
+                                                                        child: formInput(
+                                                                            context,
+                                                                            "Quantity",
+                                                                            controller.ProductQuntControllers[
+                                                                                i],
+                                                                            padding:
+                                                                                8.0,
+                                                                            isNumber:
+                                                                                true,
+                                                                            method:
+                                                                                fnTotalPrice,
+                                                                            methodArg:
+                                                                                i),
+                                                                      )
+                                                                    : Container(
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            0.23,
+                                                                        child: formInput(
+                                                                            context,
+                                                                            "Quantity",
+                                                                            controller.ProductQuntControllers[
+                                                                                i],
+                                                                            padding:
+                                                                                8.0,
+                                                                            isNumber:
+                                                                                true,
+                                                                            method:
+                                                                                fnTotalPrice,
+                                                                            methodArg:
+                                                                                i),
+                                                                      ),
+                                                                /////////////// ============================================
+                                                                /////// Unit  ++++++++++++++++++++++++++++++++++++++++++++
+                                                                (!is_mobile)
+                                                                    ? Expanded(
+                                                                        child: formInput(
+                                                                            context,
+                                                                            "Unit/qnt.",
+                                                                            controller.ProductUnitControllers[
+                                                                                i],
+                                                                            padding:
+                                                                                8.0,
+                                                                            isNumber:
+                                                                                true,
+                                                                            method:
+                                                                                fnTotalPrice,
+                                                                            methodArg:
+                                                                                i,
+                                                                            readOnly: (controller.readOnlyField[i] != null && controller.readOnlyField[i])
+                                                                                ? true
+                                                                                : false),
+                                                                      )
+                                                                    : Container(
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            0.23,
+                                                                        child: formInput(
+                                                                            context,
+                                                                            "Unit/qnt.",
+                                                                            controller.ProductUnitControllers[
+                                                                                i],
+                                                                            padding:
+                                                                                8.0,
+                                                                            isNumber:
+                                                                                true,
+                                                                            method:
+                                                                                fnTotalPrice,
+                                                                            methodArg:
+                                                                                i,
+                                                                            readOnly: (controller.readOnlyField[i] != null && controller.readOnlyField[i])
+                                                                                ? true
+                                                                                : false),
+                                                                      ),
+                                                                ///////// ================================================
+                                                                ////// GST +++++++++++++++++++++++++++++++++++++++++
+                                                                (!is_mobile)
+                                                                    ? Expanded(
+                                                                        child: formInput(
+                                                                            context,
+                                                                            "GST (%)",
+                                                                            controller.ProductGstControllers[
+                                                                                i],
+                                                                            padding:
+                                                                                8.0,
+                                                                            isNumber:
+                                                                                true,
+                                                                            isFloat:
+                                                                                true,
+                                                                            method:
+                                                                                fnTotalPrice,
+                                                                            methodArg:
+                                                                                i),
+                                                                      )
+                                                                    : Container(
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            0.23,
+                                                                        child: formInput(
+                                                                            context,
+                                                                            "GST (%)",
+                                                                            controller.ProductGstControllers[
+                                                                                i],
+                                                                            padding:
+                                                                                8.0,
+                                                                            isNumber:
+                                                                                true,
+                                                                            isFloat:
+                                                                                true,
+                                                                            method:
+                                                                                fnTotalPrice,
+                                                                            methodArg:
+                                                                                i),
+                                                                      ),
+                                                                /////////  ===============================================
+                                                                ////// Discount +++++++++++++++++++++++++++++++++++++++++
+                                                                (!is_mobile)
+                                                                    ? Expanded(
+                                                                        child: formInput(
+                                                                            context,
+                                                                            "Discount",
+                                                                            controller.ProductDiscountControllers[
+                                                                                i],
+                                                                            padding:
+                                                                                8.0,
+                                                                            isNumber:
+                                                                                true,
+                                                                            isFloat:
+                                                                                true,
+                                                                            method:
+                                                                                fnTotalPrice,
+                                                                            methodArg:
+                                                                                i),
+                                                                      )
+                                                                    : Container(
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            0.23,
+                                                                        child: formInput(
+                                                                            context,
+                                                                            "Discount",
+                                                                            controller.ProductDiscountControllers[
+                                                                                i],
+                                                                            padding:
+                                                                                8.0,
+                                                                            isNumber:
+                                                                                true,
+                                                                            isFloat:
+                                                                                true,
+                                                                            method:
+                                                                                fnTotalPrice,
+                                                                            methodArg:
+                                                                                i),
+                                                                      ),
+                                                                ////////////////// ======================================
+                                                                //// // Total  +++++++++++++++++++++++++++++++++++++++++++++++++
+                                                                Container(
+                                                                  width: (!is_mobile)
+                                                                      ? MediaQuery.of(context)
+                                                                              .size
+                                                                              .width /
+                                                                          4
+                                                                      : MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          1.0,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      // sub total
+                                                                      (!is_mobile)
+                                                                          ? Expanded(
+                                                                              child: totalWidgets(context, 'Sub Total', "${(controller.productDBdata[i] != null) ? int.parse(controller.ProductTotalControllers[i]!.text) - int.parse(controller.productDBdata[i]['gst']) : '0'}"),
+                                                                            )
+                                                                          : Container(
+                                                                              width: MediaQuery.of(context).size.width * 0.23,
+                                                                              child: totalWidgets(context, 'Sub Total', "${(controller.productDBdata[i] != null) ? int.parse(controller.ProductTotalControllers[i]!.text) - int.parse(controller.productDBdata[i]['gst']) : '0'}"),
+                                                                            ),
+                                                                      //GST
+                                                                      (!is_mobile)
+                                                                          ? Expanded(
+                                                                              child: totalWidgets(context, 'GST',
+                                                                                  "${(controller.productDBdata[i] != null) ? controller.productDBdata[i]['gst'] : '0'}"))
+                                                                          : Container(
+                                                                              width: MediaQuery.of(context).size.width * 0.23,
+                                                                              child: totalWidgets(context, 'GST', "${(controller.productDBdata[i] != null) ? controller.productDBdata[i]['gst'] : '0'}")),
 
-                                                        // GST
-                                                        Expanded(
-                                                          child: formInput(
-                                                              context,
-                                                              "GST (%)",
-                                                              controller
-                                                                      .ProductGstControllers[
-                                                                  i],
-                                                              padding: 8.0,
-                                                              isNumber: true,
-                                                              isFloat: true,
-                                                              method:
-                                                                  fnTotalPrice,
-                                                              methodArg: i),
-                                                        ),
+                                                                      // Total
+                                                                      (!is_mobile)
+                                                                          ? Expanded(
+                                                                              child: totalWidgets(context, 'Total',
+                                                                                  "${(controller.productDBdata[i] != null) ? controller.ProductTotalControllers[i]!.text : '0'}"))
+                                                                          : Container(
+                                                                              width: MediaQuery.of(context).size.width * 0.23,
+                                                                              child: totalWidgets(context, 'Total', "${(controller.productDBdata[i] != null) ? controller.ProductTotalControllers[i]!.text : '0'}"))
 
-                                                        // Discount
-                                                        Expanded(
-                                                          child: formInput(
-                                                              context,
-                                                              "Discount",
-                                                              controller
-                                                                      .ProductDiscountControllers[
-                                                                  i],
-                                                              padding: 8.0,
-                                                              isNumber: true,
-                                                              isFloat: true,
-                                                              method:
-                                                                  fnTotalPrice,
-                                                              methodArg: i),
-                                                        ),
+                                                                      // Expanded(
+                                                                      //     child: formInput(
+                                                                      //         context,
+                                                                      //         "Total",
+                                                                      //         controller
+                                                                      //             .ProductTotalControllers[i],
+                                                                      //         padding: 8.0,
+                                                                      //         isNumber: true)),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            // second row
+                                                            Container(
+                                                              // height: 100,
+                                                              // width: (!is_mobile)
+                                                              //     ? MediaQuery.of(
+                                                              //                 context)
+                                                              //             .size
+                                                              //             .width /
+                                                              //         4
+                                                              //     : MediaQuery.of(
+                                                              //                 context)
+                                                              //             .size
+                                                              //             .width *
+                                                              //         1.0,
+                                                              child: Row(
+                                                                children: [
+                                                                  Container(
+                                                                    width:
+                                                                        200.0,
+                                                                    child: autoCompleteFormInput(
+                                                                        controller
+                                                                            .ListCategory,
+                                                                        "Category*",
+                                                                        controller.categoryController[
+                                                                            i],
+                                                                        padding:
+                                                                            8.0,
+                                                                        isPreloadInput: (controller.totalIdentifire[i] != null &&
+                                                                                controller.totalIdentifire[i] == true)
+                                                                            ? true
+                                                                            : false),
+                                                                  ),
+                                                                  // Location
+                                                                  Container(
+                                                                    width: 200,
+                                                                    child: autoCompleteFormInput(
+                                                                        controller
+                                                                            .RackList,
+                                                                        "Item Location *",
+                                                                        controller.productLocationController[
+                                                                            i],
+                                                                        padding:
+                                                                            8.0,
+                                                                        isPreloadInput: (controller.totalIdentifire[i] != null &&
+                                                                                controller.totalIdentifire[i] == true)
+                                                                            ? true
+                                                                            : false),
+                                                                  ),
 
-                                                        // Total
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width /
-                                                              4,
-                                                          child: Row(
-                                                            children: [
-                                                              // sub total
-                                                              Expanded(
-                                                                child: totalWidgets(
-                                                                    context,
-                                                                    'Sub Total',
-                                                                    "${(controller.productDBdata[i] != null) ? int.parse(controller.ProductTotalControllers[i]!.text) - int.parse(controller.productDBdata[i]['gst']) : '0'}"),
+                                                                  Container(
+                                                                    // width: (!is_mobile)
+                                                                    //     ? MediaQuery.of(context).size.width -
+                                                                    //         430
+                                                                    //     : MediaQuery.of(context).size.width *
+                                                                    //         3,
+                                                                    child:
+                                                                        // attributes ========
+                                                                        (controller.dynamicControllers['$i'] !=
+                                                                                null)
+                                                                            ? Row(
+                                                                                children: [
+                                                                                  for (String key in controller.dynamicControllers['$i'].keys)
+                                                                                    (!is_mobile)
+                                                                                        ? Expanded(
+                                                                                            child: autoCompleteFormInput(controller.ListAttribute[key.toLowerCase()], "${capitalize(key)}", controller.dynamicControllers['$i'][key], padding: 8.0, isPreloadInput: (controller.totalIdentifire[i] != null && controller.totalIdentifire[i] == true) ? true : false),
+                                                                                          )
+                                                                                        : Container(
+                                                                                            width: MediaQuery.of(context).size.width * 0.23,
+                                                                                            child: autoCompleteFormInput(controller.ListAttribute[key.toLowerCase()], "${capitalize(key)}", controller.dynamicControllers['$i'][key], padding: 8.0, isPreloadInput: (controller.totalIdentifire[i] != null && controller.totalIdentifire[i] == true) ? true : false),
+                                                                                          ),
+                                                                                ],
+                                                                              )
+                                                                            : SizedBox(),
+                                                                  ),
+                                                                ],
                                                               ),
-                                                              //GST
-                                                              Expanded(
-                                                                  child: totalWidgets(
-                                                                      context,
-                                                                      'GST',
-                                                                      "${(controller.productDBdata[i] != null) ? controller.productDBdata[i]['gst'] : '0'}")),
-                                                              // Total
-                                                              Expanded(
-                                                                  child: totalWidgets(
-                                                                      context,
-                                                                      'Total',
-                                                                      "${(controller.productDBdata[i] != null) ? controller.ProductTotalControllers[i]!.text : '0'}")),
-
-                                                              // Expanded(
-                                                              //     child: formInput(
-                                                              //         context,
-                                                              //         "Total",
-                                                              //         controller
-                                                              //             .ProductTotalControllers[i],
-                                                              //         padding: 8.0,
-                                                              //         isNumber: true)),
-                                                            ],
-                                                          ),
+                                                            ),
+                                                          ],
                                                         ),
-                                                      ],
-                                                    ),
-                                                    // second row
-                                                    Row(
-                                                      children: [
-                                                        Container(
-                                                          width: 200.0,
-                                                          child: autoCompleteFormInput(
-                                                              controller
-                                                                  .ListCategory,
-                                                              "Category*",
-                                                              controller
-                                                                      .categoryController[
-                                                                  i],
-                                                              padding: 8.0,
-                                                              isPreloadInput: (controller.totalIdentifire[
-                                                                              i] !=
-                                                                          null &&
-                                                                      controller
-                                                                              .totalIdentifire[i] ==
-                                                                          true)
-                                                                  ? true
-                                                                  : false),
-                                                        ),
-                                                        // Location
-                                                        Container(
-                                                          width: 200,
-                                                          child: autoCompleteFormInput(
-                                                              controller
-                                                                  .RackList,
-                                                              "Item Location *",
-                                                              controller
-                                                                      .productLocationController[
-                                                                  i],
-                                                              padding: 8.0,
-                                                              isPreloadInput: (controller.totalIdentifire[
-                                                                              i] !=
-                                                                          null &&
-                                                                      controller
-                                                                              .totalIdentifire[i] ==
-                                                                          true)
-                                                                  ? true
-                                                                  : false),
-                                                        ),
-
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width -
-                                                              430,
-                                                          child:
-
-                                                              // attributes ========
-                                                              (controller.dynamicControllers[
-                                                                          '$i'] !=
-                                                                      null)
-                                                                  ? Row(
-                                                                      children: [
-                                                                        for (String key in controller
-                                                                            .dynamicControllers['$i']
-                                                                            .keys)
-                                                                          Expanded(
-                                                                            child: autoCompleteFormInput(
-                                                                                controller.ListAttribute[key.toLowerCase()],
-                                                                                "${capitalize(key)}",
-                                                                                controller.dynamicControllers['$i'][key],
-                                                                                padding: 8.0,
-                                                                                isPreloadInput: (controller.totalIdentifire[i] != null && controller.totalIdentifire[i] == true) ? true : false),
-                                                                          ),
-                                                                      ],
-                                                                    )
-                                                                  : SizedBox(),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                           ],
@@ -494,18 +674,55 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                     ],
                                   )),
                                 ),
-                                SizedBox(width: defaultPadding),
+                                // SizedBox(width: defaultPadding),
                               ]),
                           // auto complete =================================
 
                           // buttom submit
-                          themeSpaceVertical(20.0),
+                          themeSpaceVertical(10.0),
                           Container(
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                //////  Payment date
+                                Container(
+                                  width: 130.0,
+                                  height: 60.0,
+                                  child: formInput(context, "Payment Date",
+                                      controller.paymentDateController,
+                                      padding: 8.0),
+                                ),
+
+                                // paid ammount
+                                Container(
+                                  width: 130.0,
+                                  height: 60.0,
+                                  child: formInput(context, "Paid Ammount",
+                                      controller.c_payment_controller,
+                                      isNumber: true,
+                                      padding: 8.0,
+                                      method: fnBalanceCalculate),
+                                ),
+                                // paid Balance
+                                Container(
+                                  width: 130.0,
+                                  height: 60.0,
+                                  child: formInput(context, "Balance",
+                                      controller.c_balance_controller,
+                                      readOnly: true, padding: 8.0),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(top: 10),
+                            // height: 100,
+                            child: Row(
+                              mainAxisAlignment: (!is_mobile)
+                                  ? MainAxisAlignment.end
+                                  : MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
-                                  width: 300.0,
+                                  padding: EdgeInsets.only(left: 10.0),
                                   child: Center(
                                     child: (buttonHide)
                                         ? progress()
@@ -523,7 +740,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                             ),
                                             onPressed: () async {
                                               setState(() {
-                                               // buttonHide = true;
+                                                // buttonHide = true;
                                               });
                                               await controller
                                                   .insertInvoiceDetails(
@@ -536,41 +753,11 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                   ),
                                 ),
                                 Container(
-                                  padding: EdgeInsets.only(right: 30.0),
+                                  padding: EdgeInsets.only(right: 10.0),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      //////  Payment date
-                                      Container(
-                                        width: 180.0,
-                                        height: 60.0,
-                                        child: formInput(
-                                            context,
-                                            "Payment Date",
-                                            controller.paymentDateController,
-                                            padding: 8.0),
-                                      ),
-                                      // paid ammount
-                                      Container(
-                                        width: 180.0,
-                                        height: 60.0,
-                                        child: formInput(
-                                            context,
-                                            "Paid Ammount",
-                                            controller.c_payment_controller,
-                                            isNumber: true,
-                                            padding: 8.0,
-                                            method: fnBalanceCalculate),
-                                      ),
-
-                                      Container(
-                                        width: 180.0,
-                                        height: 60.0,
-                                        child: formInput(context, "Balance",
-                                            controller.c_balance_controller,
-                                            readOnly: true, padding: 8.0),
-                                      ),
-
+                                      SizedBox(width: 30.0),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.end,
@@ -608,23 +795,24 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
                                               )
                                             ],
                                           ),
-                                        ],
-                                      ),
-                                      SizedBox(width: 30.0),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            "Total:",
-                                            style: themeTextStyle(
-                                                size: 20.0,
-                                                fw: FontWeight.bold),
+
+                                          Row(
+                                            // mainAxisAlignment:
+                                            //     MainAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                "Total:",
+                                                style: themeTextStyle(
+                                                    size: 20.0,
+                                                    fw: FontWeight.bold),
+                                              ),
+                                              Text(
+                                                "₹${controller.totalPrice}",
+                                                style:
+                                                    themeTextStyle(size: 25.0),
+                                              )
+                                            ],
                                           ),
-                                          Text(
-                                            "₹${controller.totalPrice}",
-                                            style: themeTextStyle(size: 25.0),
-                                          )
                                         ],
                                       ),
                                     ],
@@ -669,7 +857,7 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
   fnCalcualtePrice(controllerId) async {
     controller.readOnlyField.remove(controllerId);
     var productName = controller.ProductNameControllers[controllerId]!.text;
-    
+
     if (productName != '') {
       var rData = await controller.getProductDetails(productName);
       controller.productDBdata[controllerId] = rData;
@@ -682,42 +870,28 @@ class _addInvoiceSupplierScreenState extends State<addInvoiceSupplierScreen> {
         } else {}
       }
 
-      
-
       if (rData.isNotEmpty) {
-        
-          controller.totalIdentifire[controllerId] = true;
-          controller.ProductPriceControllers[controllerId]!.text =
-              (rData != null && rData['price'] != null) ? rData['price'] : 0;
+        controller.totalIdentifire[controllerId] = true;
+        controller.ProductPriceControllers[controllerId]!.text =
+            (rData != null && rData['price'] != null) ? rData['price'] : 0;
 
-              
+        controller.ProductGstControllers[controllerId]!.text =
+            (controller.ProductGstControllers[controllerId]!.text == '')
+                ? '0'
+                : controller.ProductGstControllers[controllerId]!.text;
 
-          controller.ProductGstControllers[controllerId]!.text =
-              (controller.ProductGstControllers[controllerId]!.text == '')
-                  ? '0'
-                  : controller.ProductGstControllers[controllerId]!.text;
+        controller.ProductQuntControllers[controllerId]!.text =
+            (controller.ProductQuntControllers[controllerId]!.text == '' ||
+                    controller.ProductQuntControllers[controllerId]!.text ==
+                        '0')
+                ? '1'
+                : controller.ProductQuntControllers[controllerId]!.text;
 
-                  
+        controller.ProductDiscountControllers[controllerId]!.text =
+            (controller.ProductDiscountControllers[controllerId]!.text == '')
+                ? '0'
+                : controller.ProductDiscountControllers[controllerId]!.text;
 
-          controller.ProductQuntControllers[controllerId]!.text =
-              (controller.ProductQuntControllers[controllerId]!.text == '' ||
-                      controller.ProductQuntControllers[controllerId]!.text ==
-                          '0')
-                  ? '1'
-                  : controller.ProductQuntControllers[controllerId]!.text;
-
-          controller.ProductDiscountControllers[controllerId]!.text =
-              (controller.ProductDiscountControllers[controllerId]!.text == '')
-                  ? '0'
-                  : controller.ProductDiscountControllers[controllerId]!.text;
-       
-    
-
-        
-
-    
-
-        
         // attributes =============================================
         Future.delayed(const Duration(milliseconds: 200), () {
           controller.fnGetProductDetails(controllerId, rData);

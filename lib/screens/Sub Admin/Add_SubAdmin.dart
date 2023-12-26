@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crm_demo/themes/theme_footer.dart';
 
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/material.dart';
 import '../../constants.dart';
 import '../../responsive.dart';
 import '../../themes/firebase_functions.dart';
+import '../../themes/global.dart';
 import '../../themes/style.dart';
 import '../../themes/base_controller.dart';
 import '../../themes/theme_widgets.dart';
@@ -34,10 +36,7 @@ class _SubAdminState extends State<SubAdmin> {
       ? Firestore.instance
       : FirebaseFirestore.instance;
 
-  ///////////======================================================================
-
-//////
-
+///////////=====================================================================
   var Tablelable = [
     "S.No",
     "Name",
@@ -50,19 +49,13 @@ class _SubAdminState extends State<SubAdmin> {
 
   @override
   void initState() {
-    // if (!kIsWeb && Platform.isWindows) {
-    //   Win_SubAdmin_ListData();
-    // } else {
-    //   _SubAdmin_ListData();
-    // }
-
     _SubAdmin_ListData(_number_select);
     super.initState();
   }
 /////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
 
 //////// Attribute data  ++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-  ///=============================================================================
+
   _SubAdmin_ListData(limitData) async {
     controllerr.StoreDocs = [];
     var temp = await controllerr.SubAdminData(limitData);
@@ -79,7 +72,7 @@ class _SubAdminState extends State<SubAdmin> {
     });
   }
 
-  ///
+  ///=========================================================================
 
   var firstName;
   var lastName;
@@ -118,7 +111,7 @@ class _SubAdminState extends State<SubAdmin> {
   ///
 
   ////////// register
-  //fname,lname, email, Mobile, password,_StatusValue,Date_at
+
   Add_Sub_user(String fname, String lname, String email, String mobile,
       String password, String user_Cate, String _Status, String date_at) async {
     final bytes = utf8.encode(email);
@@ -276,13 +269,12 @@ class _SubAdminState extends State<SubAdmin> {
   ///
 
   bool Add_Category = false;
-
   bool updateWidget = false;
   var update_id;
   @override
   Widget build(BuildContext context) {
     return (controllerr.progressWidget == true)
-        ? Center(child: pleaseWait(context))
+        ? Container(color: Colors.white, child: pleaseWait(context))
         : RawKeyboardListener(
             autofocus: true,
             focusNode: FocusNode(),
@@ -294,22 +286,25 @@ class _SubAdminState extends State<SubAdmin> {
               }
             },
             child: Scaffold(
+                bottomNavigationBar:
+                    (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
                 body: Container(
-              child: ListView(
-                children: [
-                  Header(
-                    title: "Sub Admin",
+                  child: ListView(
+                    children: [
+                      Header(
+                        title: "Sub Admin",
+                      ),
+                      (view_SubAdmin_info != true)
+                          ? (Add_Category != true)
+                              ? (updateWidget != true)
+                                  ? listList(context, "Add / Edit")
+                                  : Update_SubAdmin_Data(
+                                      context, update_id, "Edit")
+                              : listCon(context, "Add New Sub Admin")
+                          : View_SubAdmin_Data(context, "View Details")
+                    ],
                   ),
-                  (view_SubAdmin_info != true)
-                      ? (Add_Category != true)
-                          ? (updateWidget != true)
-                              ? listList(context, "Add / Edit")
-                              : Update_SubAdmin_Data(context, update_id, "Edit")
-                          : listCon(context, "Add New Sub Admin")
-                      : View_SubAdmin_Data(context, "View Details")
-                ],
-              ),
-            )),
+                )),
           );
   }
 
@@ -319,14 +314,12 @@ class _SubAdminState extends State<SubAdmin> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           color: Colors.white,
-          // borderRadius:
-          //     const BorderRadius.all(Radius.circular(10)),
         ),
         child: ListView(children: [
           Container(
             height: 100,
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(horizontal: 5.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -369,8 +362,8 @@ class _SubAdminState extends State<SubAdmin> {
             ),
           ),
           Container(
-              padding: EdgeInsets.all(defaultPadding),
-              margin: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.all(5),
+              margin: EdgeInsets.symmetric(horizontal: 5.0),
               decoration: BoxDecoration(
                 color: Colors.black12,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -820,7 +813,7 @@ class _SubAdminState extends State<SubAdmin> {
                     ],
                   ))),
           SizedBox(
-            height: 100,
+            height: 200,
           )
         ]));
   }
@@ -845,7 +838,7 @@ class _SubAdminState extends State<SubAdmin> {
             });
           }, buttonColor: Colors.blue, iconColor: Colors.black),
           Container(
-            margin: EdgeInsets.all(10),
+            margin: EdgeInsets.all(5),
             decoration: BoxDecoration(
               color: secondaryColor,
             ),
@@ -867,7 +860,7 @@ class _SubAdminState extends State<SubAdmin> {
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text("Category List",
+                                      child: Text("Sub Admin List",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold))),
                                 ),
@@ -950,7 +943,7 @@ class _SubAdminState extends State<SubAdmin> {
             )
           ]),
           SizedBox(
-            height: 100,
+            height: 200,
           ),
         ],
       ),

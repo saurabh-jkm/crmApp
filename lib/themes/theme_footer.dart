@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names, unnecessary_new
 
 import 'package:crm_demo/screens/Invoice/Buy_list.dart';
 import 'package:crm_demo/screens/Invoice/sell_list.dart';

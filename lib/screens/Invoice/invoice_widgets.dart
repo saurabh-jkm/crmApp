@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, deprecated_colon_for_default_value
+
 import 'package:crm_demo/themes/style.dart';
 import 'package:flutter/material.dart';
 
@@ -49,9 +51,11 @@ Widget invoiceItemRow(context, key, productList,
                     color: themeBG2))),
         Container(
             padding: EdgeInsets.all(2),
-            width: 180,
+            width: 100,
             alignment: Alignment.topLeft,
             child: Text("${data["name"]} ",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.normal,

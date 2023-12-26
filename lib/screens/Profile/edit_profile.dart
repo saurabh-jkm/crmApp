@@ -225,7 +225,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                 themeHeader2(context, "${widget.header_name}"),
                 // formField =======================
                 SizedBox(
-                  height: 40,
+                  height: (!is_mobile) ? 40 : 20,
                 ),
                 profile_image(),
                 themeButton3(context, () {
@@ -236,7 +236,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                     btnHeightSize: 30.0,
                     buttonColor: themeBG4),
                 SizedBox(
-                  height: 40,
+                  height: (!is_mobile) ? 40 : 20,
                 ),
                 Edit_List(context, data)
               ]),
@@ -248,8 +248,10 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
   Widget Edit_List(BuildContext context, userr) {
     return Container(
       // height: MediaQuery.of(context).size.height,
-      margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-      padding: EdgeInsets.all(defaultPadding),
+      margin: EdgeInsets.symmetric(
+          vertical: (!is_mobile) ? 20 : 10, horizontal: 10),
+      padding:
+          EdgeInsets.all((!is_mobile) ? defaultPadding : defaultPadding / 2),
       decoration: BoxDecoration(
         color: Color.fromARGB(99, 0, 0, 0),
         borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -275,11 +277,12 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
             ],
           ),
           SizedBox(
-            height: 20,
+            height: (!is_mobile) ? 20 : 10,
             child: Divider(thickness: 1, color: Colors.white),
           ),
           Container(
-              margin: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
+              margin: EdgeInsets.symmetric(
+                  vertical: (!is_mobile) ? 20 : 10, horizontal: 5),
               width: double.infinity,
               child: Column(
                 children: [
@@ -287,7 +290,9 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.all(8.0),
+                        margin: (!is_mobile)
+                            ? EdgeInsets.all(8.0)
+                            : EdgeInsets.all(1.0),
                         padding: EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
@@ -299,7 +304,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                               fontSize: 15,
                               fontWeight: FontWeight.bold),
                         ),
-                        width: 150,
+                        width: 120,
                       ),
                       SizedBox(
                         width: 10,
@@ -318,7 +323,9 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.all(8.0),
+                        margin: (!is_mobile)
+                            ? EdgeInsets.all(8.0)
+                            : EdgeInsets.all(1.0),
                         padding: EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
@@ -330,7 +337,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                               fontSize: 15,
                               fontWeight: FontWeight.bold),
                         ),
-                        width: 150,
+                        width: 120,
                       ),
                       SizedBox(
                         width: 10,
@@ -349,7 +356,9 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.all(8.0),
+                        margin: (!is_mobile)
+                            ? EdgeInsets.all(8.0)
+                            : EdgeInsets.all(1.0),
                         padding: EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
@@ -361,7 +370,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                               fontSize: 15,
                               fontWeight: FontWeight.bold),
                         ),
-                        width: 150,
+                        width: 120,
                       ),
                       SizedBox(
                         width: 10,
@@ -380,14 +389,16 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.all(8.0),
+                        margin: (!is_mobile)
+                            ? EdgeInsets.all(8.0)
+                            : EdgeInsets.all(1.0),
                         padding: EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: Colors.white),
-                        width: 150,
+                        width: 120,
                         child: Text(
-                          "Mobile Number",
+                          "Mobile ",
                           style: GoogleFonts.alike(
                               color: Colors.black,
                               fontSize: 15,
@@ -411,8 +422,10 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.all(8.0),
-                        padding: EdgeInsets.all(8.0),
+                        margin: (!is_mobile)
+                            ? EdgeInsets.all(8.0)
+                            : EdgeInsets.all(1.0),
+                        padding: EdgeInsets.all(6.0),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: Colors.white),
@@ -423,7 +436,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                               fontSize: 15,
                               fontWeight: FontWeight.bold),
                         ),
-                        width: 150,
+                        width: 120,
                       ),
                       SizedBox(
                         width: 10,
@@ -460,16 +473,19 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
                     ],
                   ),
                   SizedBox(
-                    height: 30,
+                    height: (!is_mobile) ? 30 : 20,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       themeButton3(context, () {
                         setState(() {
                           updatelist("${user["id"]}");
                         });
-                      }, buttonColor: themeBG3, label: "Update"),
+                      },
+                          radius: 10.0,
+                          buttonColor: Colors.green,
+                          label: "Update"),
                       SizedBox(
                         width: 10,
                       ),
@@ -497,8 +513,8 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
         ),
         child: Container(
           //margin: EdgeInsets.all(10),
-          height: coverHeight / 1.8,
-          width: coverHeight / 1.8,
+          height: (!is_mobile) ? coverHeight / 1.5 : coverHeight / 2,
+          width: (!is_mobile) ? coverHeight / 1.5 : coverHeight / 2,
           decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(

@@ -61,10 +61,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic userData = (prefs.getString('user'));
-
     if (userData != null) {
       user = await jsonDecode(userData) as Map<dynamic, dynamic>;
-
+      setState(() {});
       invoiceNo = await controller.invo_Data_count();
       StockNo = await controller.stock_Data_count();
       UserNo = await controller.User_Data_count();
@@ -81,11 +80,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (kIsWeb) {
         await appSetting();
       }
+
       BalanceCount = await controller.Balance_count();
     }
-      if(this.mounted){
-        setState(() {});
-      }
+    
+    if(this.mounted){
+      setState(() {});
+    }
+    
   }
 
   @override
@@ -216,7 +218,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ];
     //totallbuy
     return (user.isEmpty)
-        ? Center(child: pleaseWait(context))
+        ? Container(color: Colors.white, child: progress())
+        // Container(
+        //     color: Colors.white, child: Center(child: pleaseWait(context)))
         : Scaffold(
             bottomNavigationBar:
                 (is_mobile) ? theme_footer_android(context, 0) : SizedBox(),

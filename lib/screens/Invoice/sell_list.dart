@@ -70,17 +70,17 @@ class _Sell_listState extends State<Sell_list> {
 
   orderList(limit, {filter: ''}) async {
     Map temp = await controllerr.OrderListData(limit);
-    setState(() {
-      temp.forEach((k, v) {
-        v['date'] = formatDate(v['date_at'], formate: "dd/MM/yyyy");
-        v['statusIs'] =
-            (v['status'] != null && v['status']) ? 'Active' : 'InActive';
-        controllerr.OrderList.add(v);
-      });
-      controllerr.finalOrderList = controllerr.OrderList;
-
-      progressWidget = false;
+    // setState(() {
+    temp.forEach((k, v) {
+      v['date'] = formatDate(v['date_at'], formate: "dd/MM/yyyy");
+      v['statusIs'] =
+          (v['status'] != null && v['status']) ? 'Active' : 'InActive';
+      controllerr.OrderList.add(v);
     });
+    controllerr.finalOrderList = controllerr.OrderList;
+
+    progressWidget = false;
+    // });
 
     SearchFn(selectedFilter, filter: 'filter');
   }
@@ -816,8 +816,8 @@ class _Sell_listState extends State<Sell_list> {
           isFind = true;
         }
       });
+      setState(() {});
     });
-    setState(() {});
   }
 
   // date filter ===================================================
