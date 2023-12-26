@@ -56,6 +56,9 @@ final themeBox = [
 theme_appbar(context,{title:'', isBack:false,shadow:false}){
   return AppBar(
         title: Text("$title",style: textStyle1),
+         iconTheme: IconThemeData(
+          color: Colors.black, //change your color here
+        ),
         backgroundColor: Colors.white,
       );
 }

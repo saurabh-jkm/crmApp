@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/themes/theme_footer.dart';
+import 'package:crm_demo/themes/theme_header.dart';
 
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -274,7 +275,7 @@ class _SubAdminState extends State<SubAdmin> {
   @override
   Widget build(BuildContext context) {
     return (controllerr.progressWidget == true)
-        ? Container(color: Colors.white, child: pleaseWait(context))
+        ? Scaffold(body: Container(color: Colors.white, child: pleaseWait(context)))
         : RawKeyboardListener(
             autofocus: true,
             focusNode: FocusNode(),
@@ -288,9 +289,11 @@ class _SubAdminState extends State<SubAdmin> {
             child: Scaffold(
                 bottomNavigationBar:
                     (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
+                 appBar: (is_mobile)?  theme_appbar(context, title: "Settings"):SizedBox(),
                 body: Container(
                   child: ListView(
                     children: [
+                      (is_mobile)?SizedBox():
                       Header(
                         title: "Sub Admin",
                       ),
