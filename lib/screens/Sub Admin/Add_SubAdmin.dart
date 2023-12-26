@@ -275,7 +275,7 @@ class _SubAdminState extends State<SubAdmin> {
   @override
   Widget build(BuildContext context) {
     return (controllerr.progressWidget == true)
-        ? Scaffold(body: Container(color: Colors.white, child: pleaseWait(context)))
+        ? Scaffold(body: Container(color: Colors.white, child: Center(child: pleaseWait(context))))
         : RawKeyboardListener(
             autofocus: true,
             focusNode: FocusNode(),
@@ -825,6 +825,7 @@ class _SubAdminState extends State<SubAdmin> {
   var _number_select = 50;
   Widget listList(BuildContext context, sub_text) {
     return Container(
+      margin: EdgeInsets.only(bottom: 10.0),
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         color: Colors.white,
