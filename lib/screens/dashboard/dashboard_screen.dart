@@ -84,9 +84,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       BalanceCount = await controller.Balance_count();
     }
     
-    //if(this.mounted){
+    if(this.mounted){
       setState(() {});
-    //}
+    }
 
     
     
@@ -112,7 +112,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       //'status': "$_StatusValue",
     };
     var temp = await dbFindDynamic(db, w);
-    if (temp.isNotEmpty && temp[0]['version'] > 22) {
+    if (temp.isNotEmpty && temp[0]['version'] > arr_webVersion) {
       setState(() {
         isNewUpdate = true;
       });

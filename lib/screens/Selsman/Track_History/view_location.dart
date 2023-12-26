@@ -34,7 +34,7 @@ class _View_Location_ScreenState extends State<View_Location_Screen> {
   double Location_alt = 0.0;
 
   _getUser() async {
-    tempArr = widget.client_location;
+    tempArr =  (widget.client_location != null)?widget.client_location:[];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dynamic userData = (prefs.getString('user'));
     // SharedPreferences prefss = await SharedPreferences.getInstance();
