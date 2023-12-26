@@ -49,16 +49,21 @@ class _TrackHistoryState extends State<TrackHistory> {
             controller.loc[controller.loc.length - 1][0],
             controller.loc[controller.loc.length - 1][1]);
       }
-      setState(() {
-        controller.tempLocation.add(controller.distance);
-      });
+      if (this.mounted) {
+        setState(() {
+          controller.tempLocation.add(controller.distance);
+        });
+      }
     }
   }
 
   // get order details
   orderDetails() async {
     await controller.getOrderData();
-    // setState(() {});
+
+    if (this.mounted) {
+      setState(() {});
+    }
   }
 
   @override

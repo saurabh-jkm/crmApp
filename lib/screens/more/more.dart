@@ -14,7 +14,9 @@ import 'package:crm_demo/themes/theme_footer.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
+
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Selsman/WorkAlot/salesman_list.dart';
@@ -52,6 +54,7 @@ class _More_screenState extends State<More_screen> {
       body: Container(
         child: ListView(
           children: [
+            SizedBox(height: 20.0),
             // menut_list(context,
             //     title: "Category", icon: Icons.category_outlined, route: () {
             //   Navigator.push(
@@ -86,10 +89,11 @@ class _More_screenState extends State<More_screen> {
               Navigator.push(
                   context, MaterialPageRoute(builder: (_) => ProfileDetails()));
             }),
+
             menut_list(context, title: "Log Out", icon: Icons.logout,
                 route: () {
               _LogoutAlert(context, gggg());
-            }),
+            })
           ],
         ),
       ),
@@ -111,9 +115,11 @@ class _More_screenState extends State<More_screen> {
         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
         child: Row(
           children: [
-            Icon(icon, color: themeBG3),
-            SizedBox(width: 10.0),
-            Text("$title", style: themeTextStyle(color: themeBG3))
+            Icon(icon, color: themeBG4),
+            SizedBox(width: 20.0),
+            Text("$title",
+                style: themeTextStyle(
+                    size: 13.0, color: const Color.fromARGB(255, 73, 73, 73)))
           ],
         ),
       ),

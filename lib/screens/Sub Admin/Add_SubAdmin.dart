@@ -5,7 +5,10 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crm_demo/themes/theme_footer.dart';
+
 import 'package:crm_demo/themes/theme_widgets.dart';
+
+import 'package:crm_demo/themes/theme_header.dart';
 
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -276,7 +279,9 @@ class _SubAdminState extends State<SubAdmin> {
   @override
   Widget build(BuildContext context) {
     return (controllerr.progressWidget == true)
-        ? Container(color: Colors.white, child: pleaseWait(context))
+        ? Scaffold(
+            body: Container(
+                color: Colors.white, child: Center(child: pleaseWait(context))))
         : RawKeyboardListener(
             autofocus: true,
             focusNode: FocusNode(),
@@ -299,6 +304,7 @@ class _SubAdminState extends State<SubAdmin> {
                       ),
                 bottomNavigationBar:
                     (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
+                //  appBar: (is_mobile)?  theme_appbar(context, title: "Settings"):SizedBox(),
                 body: Container(
                   child: ListView(
                     children: [
@@ -308,6 +314,11 @@ class _SubAdminState extends State<SubAdmin> {
                         Header(
                           title: "Sub Users List",
                         ),
+                      (is_mobile)
+                          ? SizedBox()
+                          : Header(
+                              title: "Sub Admin",
+                            ),
                       (view_SubAdmin_info != true)
                           ? (Add_Category != true)
                               ? (updateWidget != true)
@@ -836,6 +847,7 @@ class _SubAdminState extends State<SubAdmin> {
   var _number_select = 50;
   Widget listList(BuildContext context, sub_text) {
     return Container(
+      margin: EdgeInsets.only(bottom: 10.0),
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         color: Colors.white,
