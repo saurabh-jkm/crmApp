@@ -197,8 +197,17 @@ class _BalanceListState extends State<BalanceList> {
         }
       },
       child: Scaffold(
+        appBar:
+            // appBar: (is_mobile)
+            //     ? theme_appbar(context,
+            //         title: "Balance List", bg: themeBG4, textColor: Colors.white)
+            //     :
+            PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: clientAppBar(),
+        ),
         bottomNavigationBar:
-            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
+            (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
         body: Container(
           color: Colors.white,
           child: ListView(
@@ -214,15 +223,27 @@ class _BalanceListState extends State<BalanceList> {
                       child: Row(
                         children: [
                           GestureDetector(
-                            onTap: () async {},
-                            child: Icon(
-                              Icons.view_list_sharp,
-                              size: 35,
-                              color: Colors.blue,
-                            ),
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                            },
+                            child: (is_mobile)
+                                ? Icon(
+                                    Icons.arrow_back,
+                                    size: 35,
+                                    color: Colors.white,
+                                  )
+                                : Icon(
+                                    Icons.view_list_sharp,
+                                    size: 35,
+                                    color: Colors.blue,
+                                  ),
                           ),
                           SizedBox(width: 10.0),
-                          Text("Balance List", style: GoogleFonts.alike())
+                          GoogleText(
+                              text: "Balance List",
+                              color: Colors.white,
+                              fsize: 15.0,
+                              fweight: FontWeight.bold)
                         ],
                       ),
                     ),

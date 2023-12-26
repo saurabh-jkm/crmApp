@@ -36,9 +36,11 @@ class _TrackHistoryState extends State<TrackHistory> {
     await controller.init_functions(limit);
     await orderDetails();
     for (String key in controller.listCustomer.keys) {
-    
-      controller.loc  = (controller.listCustomer[key]["location_points"] != null && controller.listCustomer[key]["location_points"] != 'null' )?
-          jsonDecode(controller.listCustomer[key]["location_points"]):[];
+      controller.loc =
+          (controller.listCustomer[key]["location_points"] != null &&
+                  controller.listCustomer[key]["location_points"] != 'null')
+              ? jsonDecode(controller.listCustomer[key]["location_points"])
+              : [];
 
       for (var i = 0; i < controller.loc.length; i++) {
         controller.distance = await controller.calculateDistance(
@@ -56,7 +58,7 @@ class _TrackHistoryState extends State<TrackHistory> {
   // get order details
   orderDetails() async {
     await controller.getOrderData();
-    setState(() {});
+    // setState(() {});
   }
 
   @override
@@ -104,8 +106,17 @@ class _TrackHistoryState extends State<TrackHistory> {
         }
       },
       child: Scaffold(
+        appBar: (is_mobile)
+            ? theme_appbar(context,
+                title: "Track History",
+                bg: Colors.black38,
+                textColor: Colors.white)
+            : PreferredSize(
+                preferredSize: Size.fromHeight(0),
+                child: clientAppBar(),
+              ),
         bottomNavigationBar:
-            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
+            (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
         body: Container(color: themeBG2, child: CustomerList(context)),
       ),
     );
@@ -120,13 +131,14 @@ class _TrackHistoryState extends State<TrackHistory> {
       color: Colors.white,
       child: ListView(
         children: [
-          (is_mobile)
-              ? themeHeader_android(context, title: "Track History")
-              : Container(
-                  height: 70.0, child: Header(title: "Track History List")),
+          if (!is_mobile)
+            // ? themeHeader_android(context, title: "Track History")
+            // :
+
+            Container(height: 70.0, child: Header(title: "Track History List")),
           // search
           Container(
-            // margin: EdgeInsets.symmetric(horizontal: 10),
+            margin: EdgeInsets.only(top: 10),
             color: Color.fromARGB(255, 94, 86, 204),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -253,7 +265,7 @@ class _TrackHistoryState extends State<TrackHistory> {
     dataList.add('${data['name']}');
 
     dataList.add(
-        "${ (controller.tempLocation[no] != null)?double.parse((controller.tempLocation[no]).toStringAsFixed(2)):"0"} Km");
+        "${(controller.tempLocation[no] != null) ? double.parse((controller.tempLocation[no]).toStringAsFixed(2)) : "0"} Km");
     dataList.add(
         '${(data['date'] == null) ? '-' : formatDate(data['date'], formate: 'dd/MM/yyyy')}');
     dataList.add('action');

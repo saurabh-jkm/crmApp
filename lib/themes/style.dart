@@ -1,8 +1,9 @@
 //import 'dart:ffi';
 //import 'package:intl/intl.dart';
 
-// ignore_for_file: prefer_const_constructors, use_full_hex_values_for_flutter_colors, prefer_const_literals_to_create_immutables, unnecessary_null_comparison, avoid_unnecessary_containers, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, use_full_hex_values_for_flutter_colors, prefer_const_literals_to_create_immutables, unnecessary_null_comparison, avoid_unnecessary_containers, non_constant_identifier_names, deprecated_colon_for_default_value
 
+import 'package:crm_demo/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
 
 final Color themeBG = Color(0xFF2697FF);
@@ -52,12 +53,20 @@ final themeBox = [
   ), //BoxShadow
 ];
 
-
-theme_appbar(context,{title:'', isBack:false,shadow:false}){
+theme_appbar(context,
+    {title: '',
+    isBack: false,
+    shadow: false,
+    bg: Colors.white,
+    textColor: Colors.black}) {
   return AppBar(
-        title: Text("$title",style: textStyle1),
-        backgroundColor: Colors.white,
-      );
+    title: GoogleText(
+        text: "$title",
+        fsize: 15.0,
+        fweight: FontWeight.bold,
+        color: textColor),
+    backgroundColor: bg,
+  );
 }
 
 final themeGradient1 = LinearGradient(

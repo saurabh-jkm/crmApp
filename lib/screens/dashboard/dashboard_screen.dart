@@ -83,16 +83,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       BalanceCount = await controller.Balance_count();
     }
-    
-    //if(this.mounted){
+
+    if (this.mounted) {
       setState(() {});
-    //}
-
-    
-    
+    }
   }
-
-
 
   @override
   void initState() {
@@ -222,7 +217,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ];
     //totallbuy
     return (user.isEmpty)
-        ?   Container(color: Colors.white, child: progress())
+        ? Container(color: Colors.white, child: progress())
         //     color: Colors.white, child: Center(child: pleaseWait(context)))
         : Scaffold(
             bottomNavigationBar:
