@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_equal_for_default_values, avoid_unnecessary_containers, deprecated_member_use, no_leading_underscores_for_local_identifiers, prefer_const_literals_to_create_immutables, unnecessary_brace_in_string_interps, sort_child_properties_last, sized_box_for_whitespace, non_constant_identifier_names, deprecated_colon_for_default_value, unnecessary_string_interpolations
 
+import 'dart:io';
+
 import 'package:jkm_crm_admin/themes/function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -996,5 +998,114 @@ Widget LableText(String text, {color: '', fsize: '', fw = ''}) {
             fweight: (fw == '') ? FontWeight.normal : fw,
             color: (color == '') ? Colors.white : color,
             fsize: (fsize == '') ? 10.5 : fsize)),
+  );
+}
+
+////////// Google Locations ++++++++++++++++++++++++++++++++++++++++++++++++++++
+contentBox(context, _fn) {
+  return Container(
+    //padding: EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 20),
+    margin: EdgeInsets.only(top: 20),
+    height: MediaQuery.of(context).size.height - 30,
+    width: MediaQuery.of(context).size.width - 10,
+    decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(color: Colors.black, offset: Offset(0, 10), blurRadius: 10),
+        ]),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        SizedBox(height: 40),
+        wd_disclimer(context, _fn),
+      ],
+    ),
+  );
+}
+
+///  ===========================================================================
+///
+
+// desclimer widget =====================================================
+wd_disclimer(context, fn) {
+  return Container(
+    padding: EdgeInsets.only(top: 0.0, left: 2.0, right: 2.0, bottom: 10.0),
+    height: MediaQuery.of(context).size.height - 200,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.location_on_outlined, size: 50.0, color: themeBG),
+            ],
+          ),
+          themeSpaceVertical(20.0),
+          Text(
+            "Allow Your Location",
+            style: themeTextStyle(
+                color: Color.fromARGB(255, 28, 106, 151),
+                fw: FontWeight.bold,
+                size: 22.0),
+          ),
+          themeSpaceVertical(15.0),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 30.0),
+            child: Column(
+              children: [
+                Center(
+                  child: Text(
+                    'This app collects location data to Track "Salesman Location", "Salesman Realtime Movement" AND "Track Salesman Route" even when the app is running in background.',
+                    textAlign: TextAlign.center,
+                    style: themeTextStyle(
+                      //color: Color.fromARGB(255, 28, 106, 151),
+                      //fw: FontWeight.w300,
+                      size: 14.0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          themeSpaceVertical(20.0),
+          themeSpaceVertical(40.0),
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: 30.0),
+              child: Image.asset('assets/images/location.jpg')),
+        ]),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                  onPressed: () {
+                    if (Platform.isAndroid) {
+                      SystemNavigator.pop();
+                    } else if (Platform.isIOS) {
+                      exit(0);
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Text("Don't Allow",
+                      style: themeTextStyle(
+                          color: themeBG, fw: FontWeight.bold, size: 14.0))),
+              themeButton3(context, () {
+                fn();
+              },
+                  label: 'Allow',
+                  radius: 3.0,
+                  fontSize: 12.0,
+                  btnWidthSize: 50.0,
+                  btnHeightSize: 30.0)
+            ],
+          ),
+        ),
+      ],
+    ),
   );
 }

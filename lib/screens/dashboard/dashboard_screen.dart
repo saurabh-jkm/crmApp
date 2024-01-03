@@ -1,9 +1,10 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, avoid_returning_null_for_void, no_leading_underscores_for_local_identifiers, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, sized_box_for_whitespace, unused_import, unnecessary_new, unnecessary_brace_in_string_interps, prefer_collection_literals, unused_local_variable, await_only_futures, prefer_typing_uninitialized_variables, avoid_unnecessary_containers
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, avoid_returning_null_for_void, no_leading_underscores_for_local_identifiers, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, sized_box_for_whitespace, unused_import, unnecessary_new, unnecessary_brace_in_string_interps, prefer_collection_literals, unused_local_variable, await_only_futures, prefer_typing_uninitialized_variables, avoid_unnecessary_containers, unnecessary_this, unused_field
 
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jkm_crm_admin/controllers/Base_Controller.dart';
 import 'package:jkm_crm_admin/themes/function.dart';
 import 'package:jkm_crm_admin/themes/global.dart';
@@ -15,12 +16,14 @@ import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants.dart';
 import '../../models/MyFiles.dart';
 import '../../responsive.dart';
 import '../../themes/firebase_functions.dart';
 import '../../themes/theme_widgets.dart';
+import '../main/main_screen.dart';
 import 'components/header.dart';
 import 'components/my_fields.dart';
 import 'components/recent_files.dart';
@@ -82,22 +85,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
 
       BalanceCount = await controller.Balance_count();
+      if (is_mobile == true) {
+        await Location_Alert();
+      }
     }
-    
-    if(this.mounted){
+
+    if (this.mounted) {
       setState(() {});
     }
-
-    
-    
   }
-
-
 
   @override
   void initState() {
     _getUser();
+
     super.initState();
+  }
+
+///// Location permission  ++++++++++++++++++++++++++++++++++++++++++++
+  Location? _location;
+  _init() async {
+    _location = await Location();
+    await _location?.getLocation().then((location) {
+      nextScreen(context, MainScreen(pageNo: 1, stockvalue: 0));
+    });
+  }
+
+  ///===================================================================
+  Future<bool> Location_Alert() async {
+    return await showDialog(
+          context: context,
+          builder: (context) => Dialog(
+            insetPadding:
+                EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            child: contentBox(context, () async {
+              await _init();
+              // Navigator.of(context).pop();
+            }),
+          ),
+        ) ??
+        false;
   }
 
   var db = (!kIsWeb && Platform.isWindows)
@@ -222,7 +254,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ];
     //totallbuy
     return (user.isEmpty)
-        ?   Container(color: Colors.white, child: progress())
+        ? Container(color: Colors.white, child: progress())
         //     color: Colors.white, child: Center(child: pleaseWait(context)))
         : Scaffold(
             bottomNavigationBar:

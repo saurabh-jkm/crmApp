@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_new, await_only_futures, prefer_collection_literals, avoid_unnecessary_containers, unused_local_variable, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, unnecessary_new, await_only_futures, prefer_collection_literals, avoid_unnecessary_containers, unused_local_variable, non_constant_identifier_names, unnecessary_this
 
 import 'package:jkm_crm_admin/screens/Invoice/add_supplier_invoice_screen.dart';
 
@@ -109,6 +109,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     _getUser();
+
     super.initState();
   }
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jkm_crm_admin/screens/Selsman/Track_History/error_screen.dart';
 import 'package:jkm_crm_admin/screens/Selsman/Track_History/track_controller.dart';
 import 'package:jkm_crm_admin/screens/Selsman/Track_History/view_location.dart';
 
@@ -36,9 +37,11 @@ class _TrackHistoryState extends State<TrackHistory> {
     await controller.init_functions(limit);
     await orderDetails();
     for (String key in controller.listCustomer.keys) {
-    
-      controller.loc  = (controller.listCustomer[key]["location_points"] != null && controller.listCustomer[key]["location_points"] != 'null' )?
-          jsonDecode(controller.listCustomer[key]["location_points"]):[];
+      controller.loc =
+          (controller.listCustomer[key]["location_points"] != null &&
+                  controller.listCustomer[key]["location_points"] != 'null')
+              ? jsonDecode(controller.listCustomer[key]["location_points"])
+              : [];
 
       for (var i = 0; i < controller.loc.length; i++) {
         controller.distance = await controller.calculateDistance(
@@ -47,8 +50,8 @@ class _TrackHistoryState extends State<TrackHistory> {
             controller.loc[controller.loc.length - 1][0],
             controller.loc[controller.loc.length - 1][1]);
       }
-      if(this.mounted){
-      setState(() {
+      if (this.mounted) {
+        setState(() {
           controller.tempLocation.add(controller.distance);
         });
       }
@@ -58,9 +61,10 @@ class _TrackHistoryState extends State<TrackHistory> {
   // get order details
   orderDetails() async {
     await controller.getOrderData();
-    if(this.mounted){
-    setState(() {});
-  }}
+    if (this.mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   void initState() {
@@ -256,7 +260,7 @@ class _TrackHistoryState extends State<TrackHistory> {
     dataList.add('${data['name']}');
 
     dataList.add(
-        "${ (controller.tempLocation[no] != null)?double.parse((controller.tempLocation[no]).toStringAsFixed(2)):"0"} Km");
+        "${(controller.tempLocation[no] != null) ? double.parse((controller.tempLocation[no]).toStringAsFixed(2)) : "0"} Km");
     dataList.add(
         '${(data['date'] == null) ? '-' : formatDate(data['date'], formate: 'dd/MM/yyyy')}');
     dataList.add('action');
@@ -315,9 +319,12 @@ class _TrackHistoryState extends State<TrackHistory> {
                                     if (controller != '') {
                                       nextScreen(
                                           context,
-                                          View_Location_Screen(
-                                              client_location: json.decode(
-                                                  data['location_points'])));
+                                          Platform.isWindows
+                                              ? ErrorScreen()
+                                              : View_Location_Screen(
+                                                  client_location: json.decode(
+                                                      data[
+                                                          'location_points'])));
                                     }
                                   },
                                   icon: Icon(
