@@ -60,8 +60,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         context,
         MaterialPageRoute(
             builder: (_) => EditProfileDetails(
-                header_name: "Edit Profile Details",
-                iid: "my0Zs0h3wAY6bF0d4xHF")));
+                header_name: "Edit Profile Details", iid: user["id"])));
   }
 
 ////// =========================================================================
@@ -88,19 +87,23 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         }
       },
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(0),
-          child: clientAppBar(),
-        ),
+        appBar: (is_mobile)
+            ? theme_appbar(context,
+                title: "My Profile", bg: themeBG4, textColor: Colors.white)
+            : PreferredSize(
+                preferredSize: Size.fromHeight(0),
+                child: clientAppBar(),
+              ),
         bottomNavigationBar:
-            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
+            (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
         body: ListView(
           children: [
-            (is_mobile)
-                ? themeHeader_android(context, title: "My Profile")
-                : Header(
-                    title: "My Profile",
-                  ),
+            if (!is_mobile)
+              // ? themeHeader_android(context, title: "My Profile")
+              // :
+              Header(
+                title: "My Profile",
+              ),
             Show_info(context)
           ],
         ),
@@ -109,6 +112,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   }
 
   Widget Show_info(BuildContext context) {
+    // print("${user}    +++++++++++++++++");
     return Container(
       color: Colors.white,
       // height: MediaQuery.of(context).size.height,

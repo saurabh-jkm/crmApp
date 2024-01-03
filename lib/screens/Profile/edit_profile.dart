@@ -210,19 +210,19 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
   Widget build(BuildContext context) {
     // print("$user ++++++");
     return (progressWidget == true)
-        ? Center(child: progress())
+        ? progress()
         : Scaffold(
-            appBar: PreferredSize(
-              preferredSize: Size.fromHeight(0),
-              child: clientAppBar(),
-            ),
+            appBar: theme_appbar(context,
+                title: "${widget.header_name}",
+                bg: themeBG4,
+                textColor: Colors.white),
             bottomNavigationBar:
-                (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
+                (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
             body: Container(
               color: Colors.white,
               child: ListView(children: [
                 //header ======================
-                themeHeader2(context, "${widget.header_name}"),
+                // themeHeader2(context, "${widget.header_name}"),
                 // formField =======================
                 SizedBox(
                   height: (!is_mobile) ? 40 : 20,
