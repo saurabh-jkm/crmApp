@@ -3,14 +3,14 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
 
-import 'package:crm_demo/screens/Balance/balance_list.dart';
-import 'package:crm_demo/screens/Login_Reg/login_screen.dart';
-import 'package:crm_demo/screens/Profile/profile_details.dart';
-import 'package:crm_demo/screens/Selsman/Track_History/track_list.dart';
-import 'package:crm_demo/screens/category/category_add.dart';
-import 'package:crm_demo/screens/dashboard/dashboard_screen.dart';
-import 'package:crm_demo/themes/style.dart';
-import 'package:crm_demo/themes/theme_footer.dart';
+import 'package:jkm_crm_admin/screens/Balance/balance_list.dart';
+import 'package:jkm_crm_admin/screens/Login_Reg/login_screen.dart';
+import 'package:jkm_crm_admin/screens/Profile/profile_details.dart';
+import 'package:jkm_crm_admin/screens/Selsman/Track_History/track_list.dart';
+import 'package:jkm_crm_admin/screens/category/category_add.dart';
+import 'package:jkm_crm_admin/screens/dashboard/dashboard_screen.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
+import 'package:jkm_crm_admin/themes/theme_footer.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';

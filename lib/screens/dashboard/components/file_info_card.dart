@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use, prefer_const_constructors, prefer_const_literals_to_create_immutables, must_be_immutable, unnecessary_new, non_constant_identifier_names
 
-import 'package:crm_demo/themes/style.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';

@@ -1,10 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names, unnecessary_new
 
-import 'package:crm_demo/screens/Invoice/Buy_list.dart';
-import 'package:crm_demo/screens/Invoice/sell_list.dart';
-import 'package:crm_demo/screens/dashboard/dashboard_screen.dart';
-import 'package:crm_demo/screens/more/more.dart';
-import 'package:crm_demo/themes/style.dart';
+import 'package:jkm_crm_admin/screens/Invoice/Buy_list.dart';
+import 'package:jkm_crm_admin/screens/Invoice/sell_list.dart';
+import 'package:jkm_crm_admin/screens/dashboard/dashboard_screen.dart';
+import 'package:jkm_crm_admin/screens/more/more.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';
 
 Widget theme_footer_android(context, selectedPage) {

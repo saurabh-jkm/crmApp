@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/screens/product/product/add_product_screen.dart';
-import 'package:crm_demo/screens/product/product/edit_product_screen.dart';
-import 'package:crm_demo/screens/product/product/product_controller.dart';
-import 'package:crm_demo/themes/base_controller.dart';
+import 'package:jkm_crm_admin/screens/product/product/add_product_screen.dart';
+import 'package:jkm_crm_admin/screens/product/product/edit_product_screen.dart';
+import 'package:jkm_crm_admin/screens/product/product/product_controller.dart';
+import 'package:jkm_crm_admin/themes/base_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:firedart/firedart.dart' as fd;

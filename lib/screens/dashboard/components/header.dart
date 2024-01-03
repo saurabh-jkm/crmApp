@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:crm_demo/screens/Login_Reg/login_screen.dart';
+import 'package:jkm_crm_admin/screens/Login_Reg/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';

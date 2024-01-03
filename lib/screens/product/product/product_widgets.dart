@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, sized_box_for_whitespace, deprecated_colon_for_default_value
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/themes/function.dart';
-import 'package:crm_demo/themes/style.dart';
-import 'package:crm_demo/themes/theme_widgets.dart';
+import 'package:jkm_crm_admin/themes/function.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
+import 'package:jkm_crm_admin/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
 
 Widget themeHeader2(context, headerLable,

@@ -2,7 +2,7 @@
 
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/screens/category/category_controller.dart';
+import 'package:jkm_crm_admin/screens/category/category_controller.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';

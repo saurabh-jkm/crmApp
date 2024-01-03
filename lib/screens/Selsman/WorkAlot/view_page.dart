@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/screens/Selsman/WorkAlot/add_meet_widget.dart';
-import 'package:crm_demo/themes/global.dart';
+import 'package:jkm_crm_admin/screens/Selsman/WorkAlot/add_meet_widget.dart';
+import 'package:jkm_crm_admin/themes/global.dart';
 
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';

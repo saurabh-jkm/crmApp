@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/screens/Selsman/Track_History/track_controller.dart';
-import 'package:crm_demo/screens/Selsman/Track_History/view_location.dart';
-import 'package:crm_demo/screens/Selsman/WorkAlot/add_meet_widget.dart';
-import 'package:crm_demo/screens/Selsman/WorkAlot/saler_contoller.dart';
+import 'package:jkm_crm_admin/screens/Selsman/Track_History/track_controller.dart';
+import 'package:jkm_crm_admin/screens/Selsman/Track_History/view_location.dart';
+import 'package:jkm_crm_admin/screens/Selsman/WorkAlot/add_meet_widget.dart';
+import 'package:jkm_crm_admin/screens/Selsman/WorkAlot/saler_contoller.dart';
 
-import 'package:crm_demo/themes/base_controller.dart';
-import 'package:crm_demo/themes/function.dart';
+import 'package:jkm_crm_admin/themes/base_controller.dart';
+import 'package:jkm_crm_admin/themes/function.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

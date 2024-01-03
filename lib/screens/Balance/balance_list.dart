@@ -4,13 +4,13 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
-import 'package:crm_demo/screens/Invoice/edit_invoice.dart';
-import 'package:crm_demo/screens/Invoice/pdf.dart';
-import 'package:crm_demo/screens/Invoice/view_invoice_screen-backup.dart';
-import 'package:crm_demo/themes/base_controller.dart';
-import 'package:crm_demo/themes/global.dart';
-import 'package:crm_demo/themes/theme_footer.dart';
+import 'package:jkm_crm_admin/screens/Invoice/add_supplier_invoice_screen.dart';
+import 'package:jkm_crm_admin/screens/Invoice/edit_invoice.dart';
+import 'package:jkm_crm_admin/screens/Invoice/pdf.dart';
+import 'package:jkm_crm_admin/screens/Invoice/view_invoice_screen-backup.dart';
+import 'package:jkm_crm_admin/themes/base_controller.dart';
+import 'package:jkm_crm_admin/themes/global.dart';
+import 'package:jkm_crm_admin/themes/theme_footer.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';

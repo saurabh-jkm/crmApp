@@ -1,5 +1,5 @@
-import 'package:crm_demo/screens/product/product/product_widgets.dart';
-import 'package:crm_demo/themes/style.dart';
+import 'package:jkm_crm_admin/screens/product/product/product_widgets.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:intl/intl.dart';

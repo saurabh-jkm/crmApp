@@ -6,9 +6,9 @@ import 'dart:io' show Platform;
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/screens/Invoice/invoice_widgets.dart';
-import 'package:crm_demo/screens/product/product/product_controller.dart';
-import 'package:crm_demo/themes/global.dart';
+import 'package:jkm_crm_admin/screens/Invoice/invoice_widgets.dart';
+import 'package:jkm_crm_admin/screens/product/product/product_controller.dart';
+import 'package:jkm_crm_admin/themes/global.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:firedart/generated/google/firestore/v1/document.pb.dart';

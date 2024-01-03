@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_const_constructors, deprecated_colon_for_default_value
 
-import 'package:crm_demo/themes/style.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';
 
 Widget totalWidgets(context, label, value) {

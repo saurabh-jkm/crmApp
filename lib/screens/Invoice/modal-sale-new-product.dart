@@ -1,8 +1,8 @@
 // ignore_for_file: file_names, deprecated_colon_for_default_value
 
-import 'package:crm_demo/themes/function.dart';
-import 'package:crm_demo/themes/style.dart';
-import 'package:crm_demo/themes/theme_widgets.dart';
+import 'package:jkm_crm_admin/themes/function.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
+import 'package:jkm_crm_admin/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
 
 // modal

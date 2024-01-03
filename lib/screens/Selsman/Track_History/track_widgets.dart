@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, unnecessary_string_interpolations, sized_box_for_whitespace, avoid_unnecessary_containers, unnecessary_brace_in_string_interps, non_constant_identifier_names, deprecated_colon_for_default_value, unused_local_variable
 
-import 'package:crm_demo/themes/function.dart';
-import 'package:crm_demo/themes/style.dart';
+import 'package:jkm_crm_admin/themes/function.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';
 
 import '../../Invoice/view_invoice_details.dart';
