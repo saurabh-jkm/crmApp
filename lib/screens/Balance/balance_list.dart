@@ -4,13 +4,13 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
-import 'package:crm_demo/screens/Invoice/edit_invoice.dart';
-import 'package:crm_demo/screens/Invoice/pdf.dart';
-import 'package:crm_demo/screens/Invoice/view_invoice_screen-backup.dart';
-import 'package:crm_demo/themes/base_controller.dart';
-import 'package:crm_demo/themes/global.dart';
-import 'package:crm_demo/themes/theme_footer.dart';
+import 'package:jkm_crm_admin/screens/Invoice/add_supplier_invoice_screen.dart';
+import 'package:jkm_crm_admin/screens/Invoice/edit_invoice.dart';
+import 'package:jkm_crm_admin/screens/Invoice/pdf.dart';
+import 'package:jkm_crm_admin/screens/Invoice/view_invoice_screen-backup.dart';
+import 'package:jkm_crm_admin/themes/base_controller.dart';
+import 'package:jkm_crm_admin/themes/global.dart';
+import 'package:jkm_crm_admin/themes/theme_footer.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firedart/firestore/firestore.dart';
@@ -197,17 +197,8 @@ class _BalanceListState extends State<BalanceList> {
         }
       },
       child: Scaffold(
-        appBar:
-            // appBar: (is_mobile)
-            //     ? theme_appbar(context,
-            //         title: "Balance List", bg: themeBG4, textColor: Colors.white)
-            //     :
-            PreferredSize(
-          preferredSize: Size.fromHeight(0),
-          child: clientAppBar(),
-        ),
         bottomNavigationBar:
-            (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
+            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
         body: Container(
           color: Colors.white,
           child: ListView(
@@ -223,27 +214,15 @@ class _BalanceListState extends State<BalanceList> {
                       child: Row(
                         children: [
                           GestureDetector(
-                            onTap: () async {
-                              Navigator.of(context).pop();
-                            },
-                            child: (is_mobile)
-                                ? Icon(
-                                    Icons.arrow_back,
-                                    size: 35,
-                                    color: Colors.white,
-                                  )
-                                : Icon(
-                                    Icons.view_list_sharp,
-                                    size: 35,
-                                    color: Colors.blue,
-                                  ),
+                            onTap: () async {},
+                            child: Icon(
+                              Icons.view_list_sharp,
+                              size: 35,
+                              color: Colors.blue,
+                            ),
                           ),
                           SizedBox(width: 10.0),
-                          GoogleText(
-                              text: "Balance List",
-                              color: Colors.white,
-                              fsize: 15.0,
-                              fweight: FontWeight.bold)
+                          Text("Balance List", style: GoogleFonts.alike())
                         ],
                       ),
                     ),

@@ -4,11 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/themes/theme_footer.dart';
-
-import 'package:crm_demo/themes/theme_widgets.dart';
-
-import 'package:crm_demo/themes/theme_header.dart';
+import 'package:jkm_crm_admin/themes/theme_footer.dart';
+import 'package:jkm_crm_admin/themes/theme_header.dart';
 
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -19,8 +16,7 @@ import '../../themes/firebase_functions.dart';
 import '../../themes/global.dart';
 import '../../themes/style.dart';
 import '../../themes/base_controller.dart';
-// import '../../themes/theme_widgets.dart';
-import '../../themes/theme_header.dart';
+import '../../themes/theme_widgets.dart';
 import '../dashboard/components/header.dart';
 import 'sub_admin_controller.dart';
 
@@ -57,7 +53,7 @@ class _SubAdminState extends State<SubAdmin> {
     _SubAdmin_ListData(_number_select);
     super.initState();
   }
-/////////////  Category data fetch From Firebase   ++++++++++++++++++++++++++++=
+/////////////  Category data fetch From Firebase   +++++++++++++++++++++++++++++++++++++++++++++
 
 //////// Attribute data  ++++++++++++++++++++++++++++++++++++++++++++++++++++++=
 
@@ -65,14 +61,14 @@ class _SubAdminState extends State<SubAdmin> {
     controllerr.StoreDocs = [];
     var temp = await controllerr.SubAdminData(limitData);
     var tempCate = await controllerr.CateData();
-
-    temp.forEach((k, v) {
-      controllerr.StoreDocs.add(v);
-    });
-    tempCate.forEach((k, v) {
-      controllerr.Cate_Name_list[v['category_name']] = v['category_name'];
-    });
     setState(() {
+      temp.forEach((k, v) {
+        controllerr.StoreDocs.add(v);
+      });
+
+      tempCate.forEach((k, v) {
+        controllerr.Cate_Name_list[v['category_name']] = v['category_name'];
+      });
       controllerr.progressWidget = false;
     });
   }
@@ -279,9 +275,7 @@ class _SubAdminState extends State<SubAdmin> {
   @override
   Widget build(BuildContext context) {
     return (controllerr.progressWidget == true)
-        ? Scaffold(
-            body: Container(
-                color: Colors.white, child: Center(child: pleaseWait(context))))
+        ? Scaffold(body: Container(color: Colors.white, child: Center(child: pleaseWait(context))))
         : RawKeyboardListener(
             autofocus: true,
             focusNode: FocusNode(),
@@ -293,32 +287,16 @@ class _SubAdminState extends State<SubAdmin> {
               }
             },
             child: Scaffold(
-                appBar: (is_mobile)
-                    ? theme_appbar(context,
-                        title: "Sub Users List",
-                        bg: Colors.black38,
-                        textColor: Colors.white)
-                    : PreferredSize(
-                        preferredSize: Size.fromHeight(0),
-                        child: clientAppBar(),
-                      ),
                 bottomNavigationBar:
                     (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
-                //  appBar: (is_mobile)?  theme_appbar(context, title: "Settings"):SizedBox(),
+                 appBar: (is_mobile)?  theme_appbar(context, title: "Settings"):SizedBox(),
                 body: Container(
                   child: ListView(
                     children: [
-                      if (!is_mobile)
-                        // ? themeHeader_android(context, title: "Sub User")
-                        // :
-                        Header(
-                          title: "Sub Users List",
-                        ),
-                      (is_mobile)
-                          ? SizedBox()
-                          : Header(
-                              title: "Sub Admin",
-                            ),
+                      (is_mobile)?SizedBox():
+                      Header(
+                        title: "Sub Admin",
+                      ),
                       (view_SubAdmin_info != true)
                           ? (Add_Category != true)
                               ? (updateWidget != true)
@@ -847,7 +825,6 @@ class _SubAdminState extends State<SubAdmin> {
   var _number_select = 50;
   Widget listList(BuildContext context, sub_text) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10.0),
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -885,8 +862,8 @@ class _SubAdminState extends State<SubAdmin> {
                                   verticalAlignment:
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
-                                      padding: const EdgeInsets.all(1.0),
-                                      child: Text("",
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text("Sub Admin List",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold))),
                                 ),

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:http/http.dart' as http;
-import 'package:crm_demo/themes/style.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart';

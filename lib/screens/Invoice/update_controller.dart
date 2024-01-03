@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:crm_demo/themes/firebase_functions.dart';
-import 'package:crm_demo/themes/style.dart';
+import 'package:jkm_crm_admin/themes/firebase_functions.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firedart/firestore/firestore.dart';

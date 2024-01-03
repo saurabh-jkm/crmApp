@@ -1,19 +1,19 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_new, await_only_futures, prefer_collection_literals, avoid_unnecessary_containers, unused_local_variable, non_constant_identifier_names
 
-import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
+import 'package:jkm_crm_admin/screens/Invoice/add_supplier_invoice_screen.dart';
 
-import 'package:crm_demo/screens/privacy_policy/privacy_policy.dart';
-import 'package:crm_demo/themes/global.dart';
-import 'package:crm_demo/themes/theme_widgets.dart';
+import 'package:jkm_crm_admin/screens/privacy_policy/privacy_policy.dart';
+import 'package:jkm_crm_admin/themes/global.dart';
+import 'package:jkm_crm_admin/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:crm_demo/screens/Invoice/add_invoice_screen.dart';
-import 'package:crm_demo/screens/product/product-backup.dart';
-import 'package:crm_demo/screens/product/product/add_product_screen.dart';
-import 'package:crm_demo/shared/constants.dart';
+import 'package:jkm_crm_admin/screens/Invoice/add_invoice_screen.dart';
+import 'package:jkm_crm_admin/screens/product/product-backup.dart';
+import 'package:jkm_crm_admin/screens/product/product/add_product_screen.dart';
+import 'package:jkm_crm_admin/shared/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firedart/firedart.dart';
 import 'package:flutter/foundation.dart';

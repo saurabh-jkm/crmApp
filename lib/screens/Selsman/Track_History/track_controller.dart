@@ -1,6 +1,6 @@
 // ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unused_local_variable
 
-import 'package:crm_demo/themes/firebase_functions.dart';
+import 'package:jkm_crm_admin/themes/firebase_functions.dart';
 import 'dart:io';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, non_constant_identifier_names, deprecated_colon_for_default_value, prefer_typing_uninitialized_variables
 
-import 'package:crm_demo/screens/customers/customer_all_order_list.dart';
-import 'package:crm_demo/themes/function.dart';
-import 'package:crm_demo/themes/style.dart';
+import 'package:jkm_crm_admin/screens/customers/customer_all_order_list.dart';
+import 'package:jkm_crm_admin/themes/function.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';
 
 // table row

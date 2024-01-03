@@ -1,6 +1,6 @@
 {
-    "name": "crm_demo",
-    "short_name": "crm_demo",
+    "name": "jkm_crm_admin",
+    "short_name": "jkm_crm_admin",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

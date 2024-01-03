@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:crm_demo/screens/customers/customers_list.dart';
+import 'package:jkm_crm_admin/screens/customers/customers_list.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';

@@ -1,14 +1,14 @@
 // ignore_for_file: unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps, non_constant_identifier_names, unused_local_variable, deprecated_colon_for_default_value, unnecessary_string_interpolations
 
-import 'package:crm_demo/screens/product/product/add_product_screen.dart';
+import 'package:jkm_crm_admin/screens/product/product/add_product_screen.dart';
 
 import 'dart:convert';
-import 'package:crm_demo/themes/function.dart';
+import 'package:jkm_crm_admin/themes/function.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:crm_demo/screens/product/product/product_widgets.dart';
-import 'package:crm_demo/themes/firebase_functions.dart';
-import 'package:crm_demo/themes/style.dart';
+import 'package:jkm_crm_admin/screens/product/product/product_widgets.dart';
+import 'package:jkm_crm_admin/themes/firebase_functions.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firedart/firestore/firestore.dart';

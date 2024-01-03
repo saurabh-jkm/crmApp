@@ -1,4 +1,4 @@
-# crm_demo
+# jkm_crm_admin
 
 A new Flutter project.
 

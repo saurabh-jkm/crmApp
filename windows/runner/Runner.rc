@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "crm_demo" "\0"
+            VALUE "FileDescription", "jkm_crm_admin" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "crm_demo" "\0"
+            VALUE "InternalName", "jkm_crm_admin" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "crm_demo.exe" "\0"
-            VALUE "ProductName", "crm_demo" "\0"
+            VALUE "OriginalFilename", "jkm_crm_admin.exe" "\0"
+            VALUE "ProductName", "jkm_crm_admin" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

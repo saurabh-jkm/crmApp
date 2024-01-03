@@ -1,9 +1,9 @@
 // ignore_for_file: non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, sized_box_for_whitespace, deprecated_colon_for_default_value
 
-import "package:crm_demo/themes/function.dart";
-import "package:crm_demo/themes/global.dart";
-import "package:crm_demo/themes/style.dart";
-import "package:crm_demo/themes/theme_widgets.dart";
+import "package:jkm_crm_admin/themes/function.dart";
+import "package:jkm_crm_admin/themes/global.dart";
+import "package:jkm_crm_admin/themes/style.dart";
+import "package:jkm_crm_admin/themes/theme_widgets.dart";
 import "package:flutter/material.dart";
 import "package:google_fonts/google_fonts.dart";
 

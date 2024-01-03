@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:crm_demo/screens/Profile/edit_profile.dart';
-import 'package:crm_demo/themes/base_controller.dart';
-import 'package:crm_demo/themes/global.dart';
-import 'package:crm_demo/themes/theme_footer.dart';
+import 'package:jkm_crm_admin/screens/Profile/edit_profile.dart';
+import 'package:jkm_crm_admin/themes/base_controller.dart';
+import 'package:jkm_crm_admin/themes/global.dart';
+import 'package:jkm_crm_admin/themes/theme_footer.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +60,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         context,
         MaterialPageRoute(
             builder: (_) => EditProfileDetails(
-                header_name: "Edit Profile Details", iid: user["id"])));
+                header_name: "Edit Profile Details",
+                iid: "my0Zs0h3wAY6bF0d4xHF")));
   }
 
 ////// =========================================================================
@@ -87,23 +88,19 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         }
       },
       child: Scaffold(
-        appBar: (is_mobile)
-            ? theme_appbar(context,
-                title: "My Profile", bg: themeBG4, textColor: Colors.white)
-            : PreferredSize(
-                preferredSize: Size.fromHeight(0),
-                child: clientAppBar(),
-              ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: clientAppBar(),
+        ),
         bottomNavigationBar:
-            (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
+            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
         body: ListView(
           children: [
-            if (!is_mobile)
-              // ? themeHeader_android(context, title: "My Profile")
-              // :
-              Header(
-                title: "My Profile",
-              ),
+            (is_mobile)
+                ? themeHeader_android(context, title: "My Profile")
+                : Header(
+                    title: "My Profile",
+                  ),
             Show_info(context)
           ],
         ),
@@ -112,7 +109,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   }
 
   Widget Show_info(BuildContext context) {
-    // print("${user}    +++++++++++++++++");
     return Container(
       color: Colors.white,
       // height: MediaQuery.of(context).size.height,
