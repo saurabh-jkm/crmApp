@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_new, await_only_futures, prefer_collection_literals, avoid_unnecessary_containers, unused_local_variable
+// ignore_for_file: prefer_const_constructors, unnecessary_new, await_only_futures, prefer_collection_literals, avoid_unnecessary_containers, unused_local_variable, non_constant_identifier_names
 
 import 'package:crm_demo/screens/Invoice/add_supplier_invoice_screen.dart';
 
@@ -87,8 +87,8 @@ class _MyAppState extends State<MyApp> {
     isWait = false;
     await check_Device_plateform();
 
-    if(this.mounted){
-      setState(() { });
+    if (this.mounted) {
+      setState(() {});
     }
   }
 
@@ -97,15 +97,11 @@ class _MyAppState extends State<MyApp> {
   check_Device_plateform() async {
     try {
       if (Platform.isAndroid || Platform.isIOS) {
-        
-          is_mobile = true;
-      
+        is_mobile = true;
       }
     } catch (e) {
-        is_mobile = false;
+      is_mobile = false;
     }
-
-    
   }
 
   ///
