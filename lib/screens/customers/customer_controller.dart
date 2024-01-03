@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, deprecated_colon_for_default_value, camel_case_types, unused_local_variable, unused_import
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, deprecated_colon_for_default_value
 
 import 'package:jkm_crm_admin/themes/firebase_functions.dart';
 import 'dart:io';
@@ -6,6 +6,7 @@ import 'package:firedart/firestore/firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter/material.dart';
+
 import '../Invoice/pdf.dart';
 
 class customerController {
@@ -77,8 +78,7 @@ class customerController {
           listCustomer[key] = listCustomerAllDataArr[key];
         }
       }
-    } else {
-      //if (filter == "Supplier") {
+    } else{ //if (filter == "Supplier") {
       for (String key in listCustomerAllDataArr.keys) {
         if (listCustomerAllDataArr[key]['type']
             .toLowerCase()
@@ -86,8 +86,8 @@ class customerController {
           listCustomer[key] = listCustomerAllDataArr[key];
         }
       }
-    }
-
+    }  
+    
     // else {
     //   for (String key in listCustomerAllDataArr.keys) {
     //     if (listCustomerAllDataArr[key]['name']

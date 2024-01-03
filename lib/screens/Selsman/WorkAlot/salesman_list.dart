@@ -110,17 +110,12 @@ class _SalemanListState extends State<SalemanList> {
         }
       },
       child: Scaffold(
-          appBar: (is_mobile)
-              ? theme_appbar(context,
-                  title: "Sellers List",
-                  bg: Colors.black38,
-                  textColor: Colors.white)
-              : PreferredSize(
-                  preferredSize: Size.fromHeight(0),
-                  child: clientAppBar(),
-                ),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(0),
+            child: clientAppBar(),
+          ),
           bottomNavigationBar:
-              (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
+              (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
           body: (controller.secondScreen && controller.selectedSellerId != null)
               ? Container(
                   color: Colors.white,
@@ -139,14 +134,12 @@ class _SalemanListState extends State<SalemanList> {
   Widget CustomerList(context, headLine) {
     return Container(
       height: MediaQuery.of(context).size.height - 70,
-      // margin: EdgeInsets.only(top: 10),
       color: Colors.white,
       child: ListView(
         children: [
-          if (!is_mobile)
-            // ? themeHeader_android(context, title: "$headLine")
-            // :
-            Container(height: 70.0, child: Header(title: "$headLine")),
+          (is_mobile)
+              ? themeHeader_android(context, title: "$headLine")
+              : Container(height: 70.0, child: Header(title: "$headLine")),
           // search
           Container(
             color: Color.fromARGB(255, 94, 86, 204),
@@ -886,6 +879,4 @@ class _SalemanListState extends State<SalemanList> {
     await controller.ctr_fn_search();
     setState(() {});
   }
-}
-
-/// Class CLose
+}/// Class CLose

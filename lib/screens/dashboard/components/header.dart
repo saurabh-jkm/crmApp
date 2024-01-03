@@ -37,7 +37,7 @@ class _HeaderState extends State<Header> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        if (!Responsive.isDesktop(context) && !Responsive.isMobile(context))
+        if (!Responsive.isDesktop(context))
           IconButton(
             icon: Icon(Icons.menu),
             onPressed: context.read<MenuAppController>().controlMenu,
