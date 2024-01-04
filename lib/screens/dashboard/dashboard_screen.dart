@@ -1,5 +1,6 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, avoid_returning_null_for_void, no_leading_underscores_for_local_identifiers, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, sized_box_for_whitespace, unused_import, unnecessary_new, unnecessary_brace_in_string_interps, prefer_collection_literals, unused_local_variable, await_only_futures, prefer_typing_uninitialized_variables, avoid_unnecessary_containers, unnecessary_this, unused_field
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, avoid_returning_null_for_void, no_leading_underscores_for_local_identifiers, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, sized_box_for_whitespace, unused_import, unnecessary_new, unnecessary_brace_in_string_interps, prefer_collection_literals, unused_local_variable, await_only_futures, prefer_typing_uninitialized_variables, avoid_unnecessary_containers, unnecessary_this, unused_field, prefer_final_fields
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -98,17 +99,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     _getUser();
-
     super.initState();
   }
 
 ///// Location permission  ++++++++++++++++++++++++++++++++++++++++++++
+  Completer<GoogleMapController> _googleMapController = Completer();
+  CameraPosition? _cameraPosition;
   Location? _location;
+  LocationData? _tempLocation;
+  LocationData? _currentLocation;
+  // list of locations to display polylines
   _init() async {
     _location = await Location();
-    await _location?.getLocation().then((location) {
-      nextScreen(context, MainScreen(pageNo: 1, stockvalue: 0));
-    });
+    _cameraPosition = CameraPosition(target: LatLng(0, 0), zoom: 15);
+    // await _location?.getLocation();
+    // await _location?.getLocation().then((location) {
+    //   _tempLocation = location;
+    //   _currentLocation = location;
+    // });
+
+    // print("$_currentLocation   ++++++++++++++++++++++");
   }
 
   ///===================================================================
@@ -125,7 +135,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             backgroundColor: Colors.transparent,
             child: contentBox(context, () async {
               await _init();
-              // Navigator.of(context).pop();
+              Navigator.pop(context);
             }),
           ),
         ) ??

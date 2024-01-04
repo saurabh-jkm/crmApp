@@ -13,7 +13,7 @@ import 'package:jkm_crm_admin/themes/global.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+
 import '../../../themes/style.dart';
 import '../../../themes/theme_footer.dart';
 import '../../../themes/theme_header.dart';

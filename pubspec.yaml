@@ -73,6 +73,7 @@ dependencies:
   printing: ^5.10.0
   google_maps_flutter: ^2.5.0
   location: ^4.4.0
+  # location: ^5.0.0
   geolocator: ^10.1.0
 dev_dependencies:
   flutter_test:
