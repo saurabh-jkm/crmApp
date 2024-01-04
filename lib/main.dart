@@ -3,7 +3,9 @@
 import 'package:jkm_crm_admin/screens/Invoice/add_supplier_invoice_screen.dart';
 
 import 'package:jkm_crm_admin/screens/privacy_policy/privacy_policy.dart';
+import 'package:jkm_crm_admin/themes/firebase_Storage.dart';
 import 'package:jkm_crm_admin/themes/global.dart';
+import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:jkm_crm_admin/themes/theme_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +23,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'constants.dart';
 import 'controllers/MenuAppController.dart';
 //import 'screens/Login_Reg/Login_user.dart';
@@ -28,6 +31,8 @@ import 'controllers/MenuAppController.dart';
 import 'screens/Login_Reg/login_screen.dart';
 import 'screens/Selsman/WorkAlot/salesman_list.dart';
 import 'screens/main/main_screen.dart';
+import 'themes/firebase_functions.dart';
+import '../themes/global.dart' as globals;
 
 //////////////
 void main() async {
@@ -72,6 +77,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // final Future<FirebaseApp> _initialization =  Firebase.initializeApp();
 //// ///
+  var settingDate = {};
+  bool isNewUpdate = false;
   bool loginIs = false;
   bool isWait = true;
   Map<dynamic, dynamic> user = new Map();
@@ -98,6 +105,7 @@ class _MyAppState extends State<MyApp> {
     try {
       if (Platform.isAndroid || Platform.isIOS) {
         is_mobile = true;
+        check_new_version();
       }
     } catch (e) {
       is_mobile = false;
@@ -105,6 +113,21 @@ class _MyAppState extends State<MyApp> {
   }
 
   ///
+  // get user data
+  check_new_version() async {
+    Map<dynamic, dynamic> w = {
+      'table': "app_setting",
+      //'status': "$_StatusValue",
+    };
+    var temp = await dbFindDynamic(db, w);
+    if (temp.isNotEmpty &&
+        temp[0]['android_version'] > globals.androidRealeaseNo) {
+      setState(() {
+        settingDate = temp[0];
+        isNewUpdate = true;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -134,7 +157,9 @@ class _MyAppState extends State<MyApp> {
               ? Scaffold(
                   body: Container(child: Center(child: pleaseWait(context))))
               : (loginIs == true)
-                  ? MainScreen(pageNo: 1, stockvalue: 0)
+                  ? (isNewUpdate)
+                      ? newVersionCon(context)
+                      : MainScreen(pageNo: 1, stockvalue: 0)
                   : Login_Copy()),
       // child: Scaffold(
       //     body: (loginIs)
@@ -159,6 +184,49 @@ class _MyAppState extends State<MyApp> {
             ),
       },
     );
+  }
+
+  // New Update Widgets ==================================================
+  //if(isNewUpdate)
+  Widget newVersionCon(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        color: Color.fromARGB(255, 143, 144, 255),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image(image: AssetImage('assets/images/update-avialble.png')),
+              Text(
+                "New Update Available (1.0.${settingDate['android_version']})",
+                style: themeTextStyle(
+                    size: 14.0, color: Color.fromARGB(255, 255, 255, 255)),
+              ),
+              themeSpaceVertical(30.0),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: Color.fromARGB(255, 255, 160, 52)),
+                  onPressed: () {
+                    _launchInBrowser(
+                        "https://play.google.com/store/apps/details?id=com.crmclientapp");
+                  },
+                  child: Text("Update Now")),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchInBrowser(uri) async {
+    final url = Uri.parse(uri);
+
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw Exception('Could not launch $url');
+    }
   }
 }
 /////close///

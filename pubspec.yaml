@@ -67,6 +67,7 @@ dependencies:
 
   dropdown_search: ^5.0.6
   dio: ^5.2.1+1
+  url_launcher: ^6.2.2
   # dropdown_button2: ^2.2.4
   html: ^0.15.4
   charts_flutter: ^0.12.0
