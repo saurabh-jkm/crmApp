@@ -17,7 +17,7 @@ import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:location/location.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants.dart';
 import '../../models/MyFiles.dart';
@@ -87,7 +87,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       BalanceCount = await controller.Balance_count();
       if (is_mobile == true) {
-        await Location_Alert();
+        //await Location_Alert();
       }
     }
 
@@ -105,21 +105,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
 ///// Location permission  ++++++++++++++++++++++++++++++++++++++++++++
   Completer<GoogleMapController> _googleMapController = Completer();
   CameraPosition? _cameraPosition;
-  Location? _location;
-  LocationData? _tempLocation;
-  LocationData? _currentLocation;
+  // Location? _location;
+  // LocationData? _tempLocation;
+  // LocationData? _currentLocation;
   // list of locations to display polylines
-  _init() async {
-    _location = await Location();
-    _cameraPosition = CameraPosition(target: LatLng(0, 0), zoom: 15);
-    // await _location?.getLocation();
-    // await _location?.getLocation().then((location) {
-    //   _tempLocation = location;
-    //   _currentLocation = location;
-    // });
+  // _init() async {
+  //   _location = await Location();
+  //   _cameraPosition = CameraPosition(target: LatLng(0, 0), zoom: 15);
+  //   // await _location?.getLocation();
+  //   // await _location?.getLocation().then((location) {
+  //   //   _tempLocation = location;
+  //   //   _currentLocation = location;
+  //   // });
 
-    // print("$_currentLocation   ++++++++++++++++++++++");
-  }
+  //   // print("$_currentLocation   ++++++++++++++++++++++");
+  // }
 
   ///===================================================================
   Future<bool> Location_Alert() async {
@@ -134,7 +134,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             elevation: 0,
             backgroundColor: Colors.transparent,
             child: contentBox(context, () async {
-              await _init();
+              // await _init();
               Navigator.pop(context);
             }),
           ),

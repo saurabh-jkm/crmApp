@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
+//import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../themes/theme_widgets.dart';
@@ -25,7 +25,7 @@ class _View_Location_ScreenState extends State<View_Location_Screen> {
   Completer<GoogleMapController> _googleMapController = Completer();
   CameraPosition? _cameraPosition;
 
-  LocationData? _currentLocation;
+  //LocationData? _currentLocation;
   Map<dynamic, dynamic> user = new Map();
   Map<dynamic, dynamic> routdata = new Map();
   bool progressWidget = true;
