@@ -93,6 +93,9 @@ class _MyAppState extends State<MyApp> {
     }
     isWait = false;
     await check_Device_plateform();
+    if (is_mobile == true) {
+      await check_new_version();
+    }
 
     if (this.mounted) {
       setState(() {});
@@ -105,7 +108,6 @@ class _MyAppState extends State<MyApp> {
     try {
       if (Platform.isAndroid || Platform.isIOS) {
         is_mobile = true;
-        check_new_version();
       }
     } catch (e) {
       is_mobile = false;
@@ -113,15 +115,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   ///
-  // get user data
+  ///// Check
   check_new_version() async {
     Map<dynamic, dynamic> w = {
       'table': "app_setting",
       //'status': "$_StatusValue",
     };
     var temp = await dbFindDynamic(db, w);
-    if (temp.isNotEmpty &&
-        temp[0]['android_version'] > globals.androidRealeaseNo) {
+    if (temp != null &&
+        temp[0]['crm_android_version'] > globals.androidRealeaseNo) {
       setState(() {
         settingDate = temp[0];
         isNewUpdate = true;
@@ -129,6 +131,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+////////////////
   @override
   void initState() {
     _getUser();
@@ -197,20 +200,21 @@ class _MyAppState extends State<MyApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image(image: AssetImage('assets/images/update-avialble.png')),
-              Text(
-                "New Update Available (1.0.${settingDate['android_version']})",
-                style: themeTextStyle(
-                    size: 14.0, color: Color.fromARGB(255, 255, 255, 255)),
-              ),
+              GoogleText(
+                  text:
+                      "New Update Available (1.0.${settingDate['crm_android_version']})",
+                  fsize: 15.0,
+                  fstyle: FontStyle.italic,
+                  color: Colors.white),
               themeSpaceVertical(30.0),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: Color.fromARGB(255, 255, 160, 52)),
-                  onPressed: () {
-                    _launchInBrowser(
-                        "https://play.google.com/store/apps/details?id=com.crmclientapp");
-                  },
-                  child: Text("Update Now")),
+              themeButton3(context, () {
+                _launchInBrowser("https://play.google.com/store/apps/");
+              },
+                  buttonColor: buttonBG,
+                  label: "Update Now >>",
+                  radius: 8.0,
+                  btnWidthSize: 200.0,
+                  btnHeightSize: 45.0),
             ],
           ),
         ),

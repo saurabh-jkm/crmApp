@@ -12,6 +12,7 @@ final Color themeBG4 = Color.fromARGB(255, 94, 86, 204);
 final Color themeBG5 = Color.fromARGB(255, 162, 155, 255);
 final Color themeBG6 = Color.fromARGB(255, 167, 187, 253);
 final Color themeBG7 = Color.fromARGB(255, 223, 198, 255);
+final Color themeBG8 = Colors.green;
 final Color buttonBG = Color(0xffff9100);
 
 const themeSecondaryColor = Color(0xFF2A2D3E);
@@ -52,15 +53,14 @@ final themeBox = [
   ), //BoxShadow
 ];
 
-
-theme_appbar(context,{title:'', isBack:false,shadow:false}){
+theme_appbar(context, {title: '', isBack: false, shadow: false}) {
   return AppBar(
-        title: Text("$title",style: textStyle1),
-         iconTheme: IconThemeData(
-          color: Colors.black, //change your color here
-        ),
-        backgroundColor: Colors.white,
-      );
+    title: Text("$title", style: textStyle1),
+    iconTheme: IconThemeData(
+      color: Colors.black, //change your color here
+    ),
+    backgroundColor: Colors.white,
+  );
 }
 
 final themeGradient1 = LinearGradient(
