@@ -123,7 +123,7 @@ class _MyAppState extends State<MyApp> {
     };
     var temp = await dbFindDynamic(db, w);
     if (temp != null &&
-        temp[0]['crm_android_version'] > globals.androidRealeaseNo) {
+        temp[0]['crm_admin_android_v'] > globals.androidRealeaseNo) {
       setState(() {
         settingDate = temp[0];
         isNewUpdate = true;
@@ -202,7 +202,7 @@ class _MyAppState extends State<MyApp> {
               Image(image: AssetImage('assets/images/update-avialble.png')),
               GoogleText(
                   text:
-                      "New Update Available (1.0.${settingDate['crm_android_version']})",
+                      "New Update Available (1.0.${settingDate['crm_admin_android_v']})",
                   fsize: 15.0,
                   fstyle: FontStyle.italic,
                   color: Colors.white),
