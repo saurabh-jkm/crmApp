@@ -87,7 +87,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       BalanceCount = await controller.Balance_count();
       if (is_mobile == true) {
-        //await Location_Alert();
+        await Location_Alert();
       }
     }
 
