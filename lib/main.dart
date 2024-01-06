@@ -122,8 +122,8 @@ class _MyAppState extends State<MyApp> {
       //'status': "$_StatusValue",
     };
     var temp = await dbFindDynamic(db, w);
-    if (temp != null &&
-        temp[0]['crm_android_version'] > globals.androidRealeaseNo) {
+
+    if (temp[0]['crm_admin_android_v'] > globals.androidRealeaseNo) {
       setState(() {
         settingDate = temp[0];
         isNewUpdate = true;
@@ -135,7 +135,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     _getUser();
-
     super.initState();
   }
 
