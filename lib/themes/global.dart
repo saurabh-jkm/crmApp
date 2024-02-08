@@ -5,4 +5,5 @@ library my_prj.globals;
 var is_mobile = false;
 var arr_webVersion = 23;
 // android new versoin======
-int androidRealeaseNo = 3;
+int androidRealeaseNo = 4;
+bool arrIsLocationAllowed = false;

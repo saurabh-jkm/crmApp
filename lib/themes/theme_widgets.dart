@@ -6,6 +6,7 @@ import 'package:jkm_crm_admin/themes/function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jkm_crm_admin/themes/global.dart';
 
 import '../constants.dart';
 import '../responsive.dart';
@@ -1095,6 +1096,7 @@ wd_disclimer(context, fn) {
                       style: themeTextStyle(
                           color: themeBG, fw: FontWeight.bold, size: 14.0))),
               themeButton3(context, () {
+                arrIsLocationAllowed = true;
                 fn();
               },
                   label: 'Allow',
