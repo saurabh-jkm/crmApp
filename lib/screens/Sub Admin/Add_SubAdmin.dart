@@ -275,7 +275,9 @@ class _SubAdminState extends State<SubAdmin> {
   @override
   Widget build(BuildContext context) {
     return (controllerr.progressWidget == true)
-        ? Scaffold(body: Container(color: Colors.white, child: Center(child: pleaseWait(context))))
+        ? Scaffold(
+            body: Container(
+                color: Colors.white, child: Center(child: pleaseWait(context))))
         : RawKeyboardListener(
             autofocus: true,
             focusNode: FocusNode(),
@@ -289,14 +291,20 @@ class _SubAdminState extends State<SubAdmin> {
             child: Scaffold(
                 bottomNavigationBar:
                     (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
-                 appBar: (is_mobile)?  theme_appbar(context, title: "Settings"):SizedBox(),
+                appBar: (is_mobile)
+                    ? theme_appbar(context, title: "Settings")
+                    : PreferredSize(
+                        preferredSize: Size.fromHeight(0),
+                        child: clientAppBar(),
+                      ),
                 body: Container(
                   child: ListView(
                     children: [
-                      (is_mobile)?SizedBox():
-                      Header(
-                        title: "Sub Admin",
-                      ),
+                      (is_mobile)
+                          ? SizedBox()
+                          : Header(
+                              title: "Sub Admin",
+                            ),
                       (view_SubAdmin_info != true)
                           ? (Add_Category != true)
                               ? (updateWidget != true)

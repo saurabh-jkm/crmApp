@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, deprecated_colon_for_default_value
+// ignore_for_file: prefer_const_constructors, deprecated_colon_for_default_value, unnecessary_brace_in_string_interps
 
 import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ Widget invoiceItemRow(context, key, productList,
             width: 40,
             padding: EdgeInsets.all(2),
             alignment: Alignment.topCenter,
-            child: Text("${"${i}"}",
+            child: Text("$i",
                 style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.normal,

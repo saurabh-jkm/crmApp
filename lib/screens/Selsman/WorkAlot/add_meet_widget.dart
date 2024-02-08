@@ -344,24 +344,25 @@ Widget tableLablee(context, i, label, tableColum) {
   return Container(
     width: tableColum[i],
     child: Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Text('$label',
-          style: themeTextStyle(
-              size: 12.0, color: Colors.white, fw: FontWeight.bold)),
-    ),
+        padding: const EdgeInsets.all(5.0),
+        child: GoogleText(
+            text: '$label',
+            fsize: 12.0,
+            color: Colors.white,
+            fweight: FontWeight.bold)),
   );
 }
 
 Widget tableDetails(context, i, label, tableColum) {
   return Container(
-    width: tableColum,
+    width: tableColum[i],
     child: Padding(
       padding: const EdgeInsets.all(5.0),
       child: Text('$label',
-          maxLines: 2,
+          maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: themeTextStyle(
-              size: 12.0, color: Colors.black, fw: FontWeight.bold)),
+              size: 12.0, color: Colors.white, fw: FontWeight.bold)),
     ),
   );
 }

@@ -61,6 +61,7 @@ class _BalanceListState extends State<BalanceList> {
   // var db = (!kIsWeb && Platform.isWindows)
   //     ? Firestore.instance
   //     : FirebaseFirestore.instance;
+
   @override
   void initState() {
     orderList(_number_select);
@@ -165,7 +166,7 @@ class _BalanceListState extends State<BalanceList> {
       2: 100.0,
       3: 100.0,
       4: 150.0,
-      5: 80.0,
+      5: 90.0,
       6: 80.0,
       7: 70.0,
       8: 70.0,
@@ -210,22 +211,7 @@ class _BalanceListState extends State<BalanceList> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () async {},
-                            child: Icon(
-                              Icons.view_list_sharp,
-                              size: 35,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          SizedBox(width: 10.0),
-                          Text("Balance List", style: GoogleFonts.alike())
-                        ],
-                      ),
-                    ),
+                    headerB(context, "Balance List"),
                     Container(
                       child: Row(
                         children: [
@@ -262,8 +248,10 @@ class _BalanceListState extends State<BalanceList> {
 //////// ///////////////////////////////// @1  List  of Order       ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   var _number_select = 50;
   Widget listList(BuildContext context, itemList) {
+    var hh = MediaQuery.of(context).size.height;
+    var ww = MediaQuery.of(context).size.width;
     return Container(
-      // margin: EdgeInsets.all(10),
+      margin: EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: Colors.white,
       ),
@@ -273,22 +261,26 @@ class _BalanceListState extends State<BalanceList> {
               padding: EdgeInsets.all(5),
               color: themeBG4,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: (!is_mobile)
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.center,
                 children: [
                   // Right side buttons
                   Column(
                     children: [
                       Container(
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 200, 247, 242),
+                            borderRadius: BorderRadius.circular(5)),
                         padding: EdgeInsets.symmetric(
-                            horizontal: 5.0, vertical: 4.0),
-                        color: Color.fromARGB(255, 200, 247, 242),
+                            horizontal: 2.0, vertical: 2.0),
                         child: Row(
                           children: [
                             Container(
                                 margin: EdgeInsets.symmetric(horizontal: 10),
                                 padding: EdgeInsets.only(top: 14),
                                 height: 35,
-                                width: 120.0,
+                                width: ww * 0.3,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5.0),
                                     color: Colors.white),
@@ -298,10 +290,10 @@ class _BalanceListState extends State<BalanceList> {
                                     method: datePick,
                                     arg: 'fromDate')),
                             Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10),
+                                // margin: EdgeInsets.symmetric(horizontal: 10),
                                 padding: EdgeInsets.only(top: 14),
                                 height: 35,
-                                width: 120.0,
+                                width: ww * 0.3,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5.0),
                                     color: Colors.white),
@@ -309,23 +301,15 @@ class _BalanceListState extends State<BalanceList> {
                                     label: 'Date To',
                                     method: datePick,
                                     arg: 'toDate')),
-                            (is_mobile)
-                                ? IconButton(
-                                    onPressed: () {
-                                      fnFilterController;
-                                    },
-                                    icon: Icon(
-                                      Icons.search,
-                                      color: Colors.blue,
-                                      size: 40,
-                                    ))
-                                : themeButton3(context, fnFilterController,
-                                    arg: 'date_filter',
-                                    label: 'Filter',
-                                    radius: 5.0,
-                                    borderColor: Colors.transparent,
-                                    buttonColor:
-                                        Color.fromARGB(255, 12, 121, 194)),
+                            IconButton(
+                                onPressed: () {
+                                  fnFilterController;
+                                },
+                                icon: Icon(
+                                  Icons.search,
+                                  color: Colors.blue,
+                                  size: 40,
+                                ))
                           ],
                         ),
                       ),
@@ -379,7 +363,7 @@ class _BalanceListState extends State<BalanceList> {
                               margin: EdgeInsets.only(left: 10),
                               padding: EdgeInsets.only(top: 14),
                               height: 35,
-                              width: (!is_mobile) ? 270.0 : 220,
+                              width: (!is_mobile) ? 270.0 : ww * 0.4,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   color: Colors.white),
@@ -394,114 +378,142 @@ class _BalanceListState extends State<BalanceList> {
           SizedBox(
             height: 5,
           ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: (controllerr.OrderList.length * 70),
-            child: ListView(
-              scrollDirection: Axis.horizontal,
+
+          /////////////////////  for Mobile  +++++++++++++++++++++++++++++
+          if (is_mobile)
+            Container(
+              width: MediaQuery.of(context).size.width * 02,
+              height: (controllerr.OrderList.length * 70),
+              // color: Colors.black,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: themeBG4,
+                              border: Border(
+                                  bottom: BorderSide(
+                                      width: 3.0, color: Colors.white))),
+                          child: Row(
+                            children: [
+                              for (int i in headerName.keys)
+                                tableLablee(
+                                    context, i, headerName[i], tableColum),
+                            ],
+                          ),
+                        ),
+                        for (var index = 0;
+                            index < controllerr.OrderList.length;
+                            index++)
+                          if (controllerr.OrderList[index]['balance'] != "0")
+                            tableRowWidget(
+                                "${index + 1}",
+                                controllerr.OrderList[index]['status'],
+                                controllerr.OrderList[index]['date_at'],
+                                controllerr.OrderList[index],
+                                dbData: controllerr.OrderList[index]),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+//////////////////// for web +++++++++++++++++++++
+          //  TableHeading(context, controller.MeetingheadList,
+          //                             rowColor: Color.fromARGB(255, 94, 86, 204),
+          //                             textColor: Colors.white),
+          if (!is_mobile)
+            Column(
               children: [
                 Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  decoration: BoxDecoration(
+                      color: themeBG4,
+                      border: Border(
+                          bottom: BorderSide(width: 3.0, color: Colors.white))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            color: themeBG4,
-                            border: Border(
-                                bottom: BorderSide(
-                                    width: 3.0, color: Colors.white))),
-                        child: Row(
-                          children: [
-                            for (int i in headerName.keys)
-                              tableLablee(
-                                  context, i, headerName[i], tableColum),
-                          ],
-                        ),
-                      ),
-                      for (var index = 0;
-                          index < controllerr.OrderList.length;
-                          index++)
-                        if (controllerr.OrderList[index]['balance'] != "0")
-                          tableRowWidget(
-                              "${index + 1}",
-                              controllerr.OrderList[index]['status'],
-                              controllerr.OrderList[index]['date_at'],
-                              controllerr.OrderList[index],
-                              dbData: controllerr.OrderList[index]),
-                      Container(
-                        margin: EdgeInsets.only(top: 20),
-                        height: 100,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Container(
-                                height: 40,
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 20, horizontal: 20),
-                                color: Colors.black,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Show",
-                                      style: themeTextStyle(
-                                          fw: FontWeight.normal,
-                                          color: Colors.white,
-                                          size: 15),
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: 10.0),
-                                      padding: EdgeInsets.all(2),
-                                      height: 20,
-                                      color: Colors.white,
-                                      child: DropdownButton<int>(
-                                        dropdownColor: Colors.white,
-                                        iconEnabledColor: Colors.black,
-                                        hint: Text(
-                                          "$_number_select",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 12),
-                                        ),
-                                        value: _number_select,
-                                        items: <int>[50, 100, 150, 200]
-                                            .map((int value) {
-                                          return DropdownMenuItem<int>(
-                                            value: value,
-                                            child: Text(
-                                              "$value",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 12),
-                                            ),
-                                          );
-                                        }).toList(),
-                                        onChanged: (newVal) {
-                                          _number_select = newVal!;
-                                          orderList(newVal);
-                                        },
-                                        underline: SizedBox(),
-                                      ),
-                                    ),
-                                    Text(
-                                      "entries",
-                                      style: themeTextStyle(
-                                          fw: FontWeight.normal,
-                                          color: Colors.white,
-                                          size: 15),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ]),
-                      ),
+                      for (int i in headerName.keys)
+                        // Text("$i  ${headerName[i]}")
+                        tableDetails(context, i, "${headerName[i]}", tableColum)
+                      // tableLablee(context, i, headerName[i], tableColum),
                     ],
                   ),
                 ),
+                for (var index = 0;
+                    index < controllerr.OrderList.length;
+                    index++)
+                  if (controllerr.OrderList[index]['balance'] != "0")
+                    tableRowWidget(
+                        "${index + 1}",
+                        controllerr.OrderList[index]['status'],
+                        controllerr.OrderList[index]['date_at'],
+                        controllerr.OrderList[index],
+                        dbData: controllerr.OrderList[index]),
               ],
             ),
+
+          Container(
+            margin: EdgeInsets.only(top: 10),
+            height: 100,
+            child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+              Container(
+                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                margin: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                color: Colors.black,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Show",
+                      style: themeTextStyle(
+                          fw: FontWeight.normal, color: Colors.white, size: 15),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10.0),
+                      padding: EdgeInsets.all(2),
+                      height: 20,
+                      color: Colors.white,
+                      child: DropdownButton<int>(
+                        dropdownColor: Colors.white,
+                        iconEnabledColor: Colors.black,
+                        hint: Text(
+                          "$_number_select",
+                          style: TextStyle(color: Colors.black, fontSize: 12),
+                        ),
+                        value: _number_select,
+                        items: <int>[50, 100, 150, 200].map((int value) {
+                          return DropdownMenuItem<int>(
+                            value: value,
+                            child: Text(
+                              "$value",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 12),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (newVal) {
+                          _number_select = newVal!;
+                          orderList(newVal);
+                        },
+                        underline: SizedBox(),
+                      ),
+                    ),
+                    Text(
+                      "entries",
+                      style: themeTextStyle(
+                          fw: FontWeight.normal, color: Colors.white, size: 15),
+                    ),
+                  ],
+                ),
+              )
+            ]),
           ),
           SizedBox(height: 100)
         ],

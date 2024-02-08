@@ -77,18 +77,16 @@ class _More_screenState extends State<More_screen> {
                   context, MaterialPageRoute(builder: (_) => ProfileDetails()));
             }),
 
-            menut_list(context,
-                title: "Log Out",
-                icon: Icons.logout, route: () async{
-                 SharedPreferences preferences = await SharedPreferences.getInstance();
-                await preferences.clear();
-                await themeAlert(context, "Successfully Logout !!");
-                await Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => Login_Copy() //Home()
-                        ));   
-
-                
+            menut_list(context, title: "Log Out", icon: Icons.logout,
+                route: () async {
+              SharedPreferences preferences =
+                  await SharedPreferences.getInstance();
+              await preferences.clear();
+              await themeAlert(context, "Successfully Logout !!");
+              await Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => Login_Copy() //Home()
+                      ));
             }),
           ],
         ),
@@ -106,7 +104,9 @@ class _More_screenState extends State<More_screen> {
           children: [
             Icon(icon, color: themeBG4),
             SizedBox(width: 20.0),
-            Text("$title", style: themeTextStyle(size: 13.0, color: const Color.fromARGB(255, 73, 73, 73)))
+            Text("$title",
+                style: themeTextStyle(
+                    size: 13.0, color: const Color.fromARGB(255, 73, 73, 73)))
           ],
         ),
       ),

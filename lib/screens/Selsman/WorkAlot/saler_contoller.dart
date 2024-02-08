@@ -131,7 +131,7 @@ class SellerController {
           .then((value) {
         return value.count;
       });
-      tempCount = query;
+      tempCount = query!;
     }
 
     return tempCount;

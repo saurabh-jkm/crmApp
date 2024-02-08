@@ -124,24 +124,31 @@ class _SalemanListState extends State<SalemanList> {
                         controller.MeetingMap, controller.selectedSeller),
                   ]),
                 )
-              : CustomerList(context, "Seller List")),
+              : Column(
+                  children: [
+                    (is_mobile)
+                        ? themeHeader_android(context, title: "Seller List")
+                        : Header(
+                            title: "Seller List",
+                          ),
+                    CustomerList(context),
+                  ],
+                )),
     );
   }
 
   var _number_select = 50;
   var _number_select_meeting = 50;
   // Body Part =================================================
-  Widget CustomerList(context, headLine) {
+  Widget CustomerList(context) {
     return Container(
       height: MediaQuery.of(context).size.height - 70,
       color: Colors.white,
       child: ListView(
         children: [
-          (is_mobile)
-              ? themeHeader_android(context, title: "$headLine")
-              : Container(height: 70.0, child: Header(title: "$headLine")),
           // search
           Container(
+            margin: EdgeInsets.only(top: 10),
             color: Color.fromARGB(255, 94, 86, 204),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -153,8 +160,8 @@ class _SalemanListState extends State<SalemanList> {
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10)),
-                  child: inputSearch(
-                      context, controller.searchTextController, 'Search',
+                  child: inputSearch(context, controller.searchTextController,
+                      'Search  seller name',
                       method: fnSearch),
                 )
               ],
@@ -312,12 +319,12 @@ class _SalemanListState extends State<SalemanList> {
                                           buttonColor: Colors.green,
                                           btnHeightSize: 35.0),
                                 ])
-                          : Text("${dataList[i]}",
-                              style: TextStyle(
-                                  fontSize: 12.0,
-                                  color: (textColor == '')
-                                      ? Color.fromARGB(255, 201, 201, 201)
-                                      : textColor)),
+                          : GoogleText(
+                              text: "${dataList[i]}",
+                              fsize: 12.0,
+                              color: (textColor == '')
+                                  ? Color.fromARGB(255, 201, 201, 201)
+                                  : textColor),
                     ),
                   ),
         ],
@@ -483,84 +490,68 @@ class _SalemanListState extends State<SalemanList> {
                           ],
                         )),
 
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: (MapMeeting.length * 70),
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: themeBG4,
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              width: 3.0,
-                                              color: Colors.white))),
-                                  child: Row(
-                                    children: [
-                                      for (int i in headerName.keys)
-                                        tableLablee(context, i, headerName[i],
-                                            tableColum),
-                                    ],
+                    /////////////////   List For Mobile  +++++++++++
+                    if (is_mobile)
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: (MapMeeting.length * 70),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: themeBG4,
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                width: 3.0,
+                                                color: Colors.white))),
+                                    child: Row(
+                                      children: [
+                                        for (int i in headerName.keys)
+                                          tableLablee(context, i, headerName[i],
+                                              tableColum),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                for (var i = 0; i < MapMeeting.length; i++)
-                                  MeetingViewList(
-                                    context,
-                                    MapMeeting[i],
-                                    i + 1,
-                                    rowColor:
-                                        Color.fromARGB(255, 217, 215, 239),
-                                  )
-                              ],
+                                  for (var i = 0; i < MapMeeting.length; i++)
+                                    MeetingViewList(
+                                      context,
+                                      MapMeeting[i],
+                                      i + 1,
+                                      rowColor:
+                                          Color.fromARGB(255, 217, 215, 239),
+                                    )
+                                ],
+                              ),
                             ),
-                          ),
+                          ],
+                        ),
+                      ),
+
+                    ///////  for web  ++++++++++++++++++++++++++++++++++++++++++++
+                    if (!is_mobile)
+                      Column(
+                        children: [
+                          TableHeading(context, controller.MeetingheadList,
+                              rowColor: Color.fromARGB(255, 94, 86, 204),
+                              textColor: Colors.white),
+                          Container(
+                              height: MediaQuery.of(context).size.height - 100,
+                              child: ListView(children: [
+                                for (int key in MapMeeting.keys)
+                                  MeetingTableRow(context, MapMeeting[key], key,
+                                      rowColor:
+                                          Color.fromARGB(255, 217, 215, 239),
+                                      textColor:
+                                          const Color.fromARGB(255, 0, 0, 0),
+                                      controllerr: controller),
+                              ])),
                         ],
                       ),
-                    ),
-                    // TableHeading(context, controller.MeetingheadList,
-                    //     rowColor: Color.fromARGB(255, 94, 86, 204),
-                    //     textColor: Colors.white),
-                    // Container(
-                    //     height: MediaQuery.of(context).size.height - 100,
-                    //     child: ListView(children: [
-                    //       // heading ==============================================================================
-                    //       Container(
-                    //         width: 400,
-                    //         height: (controllerr.OrderList.length * 60),
-                    //         child: ListView(
-                    //           scrollDirection: Axis.horizontal,
-                    //           shrinkWrap: true,
-                    //           children: [
-                    //             Container(
-                    //               child: Column(
-                    //                 crossAxisAlignment:
-                    //                     CrossAxisAlignment.start,
-                    //                 children: [
-                    //                   // for (var index = 0;
-                    //                   //     index < controllerr.OrderList.length;
-                    //                   //     index++)
-                    //                   //   tableRowWidget("${index + 1}",
-                    //                   //       controllerr.OrderList[index],
-                    //                   //       dbData: controllerr.OrderList[index])
-                    //                 ],
-                    //               ),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       ),
-
-                    //       // for (int key in MapMeeting.keys)
-                    //       //   MeetingTableRow(context, MapMeeting[key], key,
-                    // rowColor: Color.fromARGB(255, 217, 215, 239),
-                    // textColor: const Color.fromARGB(255, 0, 0, 0),
-                    //       //       controllerr: controller),
-
-                    //     ])),
 
                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                       Container(
@@ -879,4 +870,6 @@ class _SalemanListState extends State<SalemanList> {
     await controller.ctr_fn_search();
     setState(() {});
   }
-}/// Class CLose
+}
+
+/// Class CLose

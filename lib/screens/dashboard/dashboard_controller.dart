@@ -33,7 +33,7 @@ class DashboardController {
           .then((value) {
         return value.count;
       });
-      tempCount = query;
+      tempCount = query!;
     }
     return tempCount;
   }
@@ -58,7 +58,7 @@ class DashboardController {
           .then((value) {
         return value.count;
       });
-      tempCount = query;
+      tempCount = query!;
     }
     return tempCount;
   }
@@ -83,7 +83,7 @@ class DashboardController {
           .then((value) {
         return value.count;
       });
-      tempCount = query;
+      tempCount = query!;
     }
     return tempCount;
   }
@@ -154,7 +154,7 @@ class DashboardController {
         // });
         return value.count;
       });
-      tempCount = query;
+      tempCount = query!;
     }
     return tempCount;
   }
@@ -186,7 +186,7 @@ class DashboardController {
           .then((value) {
         return value.count;
       });
-      tempCount = query;
+      tempCount = query!;
     }
     return tempCount;
   }
@@ -213,7 +213,7 @@ class DashboardController {
           .then((value) {
         return value.count;
       });
-      tempCount = query;
+      tempCount = query!;
     }
     return tempCount;
   }

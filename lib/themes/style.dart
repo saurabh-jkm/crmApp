@@ -1,7 +1,7 @@
 //import 'dart:ffi';
 //import 'package:intl/intl.dart';
 
-// ignore_for_file: prefer_const_constructors, use_full_hex_values_for_flutter_colors, prefer_const_literals_to_create_immutables, unnecessary_null_comparison, avoid_unnecessary_containers, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, use_full_hex_values_for_flutter_colors, prefer_const_literals_to_create_immutables, unnecessary_null_comparison, avoid_unnecessary_containers, non_constant_identifier_names, deprecated_colon_for_default_value, prefer_const_declarations
 
 import 'package:flutter/material.dart';
 

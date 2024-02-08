@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, non_constant_identifier_names, unnecessary_new, avoid_unnecessary_containers, deprecated_colon_for_default_value
 
 import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';

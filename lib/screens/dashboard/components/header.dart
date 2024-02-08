@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:jkm_crm_admin/screens/Login_Reg/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jkm_crm_admin/themes/theme_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constants.dart';
@@ -52,9 +53,9 @@ class _HeaderState extends State<Header> {
               SizedBox(
                 width: 10,
               ),
-              Text(
-                "${widget.title}",
-                style: Theme.of(context).textTheme.headline6,
+              GoogleText(
+                text: "${widget.title}",
+                color: Colors.white,
               ),
             ],
           ),

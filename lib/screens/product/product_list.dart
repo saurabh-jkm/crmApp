@@ -240,8 +240,8 @@ class _ProductAddState extends State<ProductAdd> {
                                   tooltip: 'Refresh',
                                 ),
                                 SizedBox(width: 20.0),
-                                // themeButton3(context, addNewStock,
-                                //     label: 'Add New', radius: 5.0),
+                                themeButton3(context, addNewStock,
+                                    label: 'Add New', radius: 5.0),
                               ],
                             ),
                           )

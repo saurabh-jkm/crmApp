@@ -164,7 +164,7 @@ class _MainScreenState extends State<MainScreen> {
                 }
               });
             },
-            horizontalTitleGap: 0.0,
+            horizontalTitleGap: 10.0,
             leading: Icon(Icons.dashboard_outlined, color: Colors.white),
             title: Text(
               "Dashboard",
@@ -183,7 +183,7 @@ class _MainScreenState extends State<MainScreen> {
                 }
               });
             },
-            horizontalTitleGap: 0.0,
+            horizontalTitleGap: 10.0,
             leading: Icon(Icons.category_outlined, color: Colors.white),
             title: Text(
               "Category",
@@ -202,7 +202,7 @@ class _MainScreenState extends State<MainScreen> {
                 }
               });
             },
-            horizontalTitleGap: 0.0,
+            horizontalTitleGap: 10.0,
             leading: Icon(Icons.account_tree_outlined, color: Colors.white),
             title: Text(
               "Attribute",
@@ -223,7 +223,7 @@ class _MainScreenState extends State<MainScreen> {
                 }
               });
             },
-            horizontalTitleGap: 0.0,
+            horizontalTitleGap: 10.0,
             leading: Icon(Icons.production_quantity_limits_outlined,
                 color: Colors.white),
             title: Text(
@@ -243,7 +243,7 @@ class _MainScreenState extends State<MainScreen> {
                 }
               });
             },
-            horizontalTitleGap: 0.0,
+            horizontalTitleGap: 10.0,
             leading: Icon(Icons.bar_chart, color: Colors.white),
             title: Text(
               "Buy",
@@ -262,7 +262,7 @@ class _MainScreenState extends State<MainScreen> {
                 }
               });
             },
-            horizontalTitleGap: 0.0,
+            horizontalTitleGap: 10.0,
             leading: Icon(Icons.sell_outlined, color: Colors.white),
             title: Text(
               "Sale",
@@ -283,7 +283,7 @@ class _MainScreenState extends State<MainScreen> {
                       }
                     });
                   },
-                  horizontalTitleGap: 0.0,
+                  horizontalTitleGap: 10.0,
                   leading: Icon(Icons.balance, color: Colors.white),
                   title: Text(
                     "All Outstanding",
@@ -304,7 +304,7 @@ class _MainScreenState extends State<MainScreen> {
                 }
               });
             },
-            horizontalTitleGap: 0.0,
+            horizontalTitleGap: 10.0,
             leading: Icon(Icons.supervised_user_circle_outlined,
                 color: Colors.white),
             title: Text(
@@ -327,7 +327,7 @@ class _MainScreenState extends State<MainScreen> {
                       }
                     });
                   },
-                  horizontalTitleGap: 0.0,
+                  horizontalTitleGap: 10.0,
                   leading: Icon(Icons.location_history, color: Colors.white),
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -408,7 +408,7 @@ class _MainScreenState extends State<MainScreen> {
                 }
               });
             },
-            horizontalTitleGap: 0.0,
+            horizontalTitleGap: 10.0,
             leading: Icon(Icons.person, color: Colors.white),
             title: Text(
               "Profile",
@@ -449,7 +449,7 @@ class _MainScreenState extends State<MainScreen> {
                       }
                     });
                   },
-                  horizontalTitleGap: 0.0,
+                  horizontalTitleGap: 10.0,
                   leading: Icon(Icons.admin_panel_settings_outlined,
                       color: Colors.white),
                   title: Text(
