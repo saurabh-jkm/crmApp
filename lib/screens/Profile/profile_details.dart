@@ -60,8 +60,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         context,
         MaterialPageRoute(
             builder: (_) => EditProfileDetails(
-                header_name: "Edit Profile Details",
-                iid: "my0Zs0h3wAY6bF0d4xHF")));
+                header_name: "Edit Profile Details", iid: user['id'])));
   }
 
 ////// =========================================================================
@@ -71,7 +70,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     super.initState();
   }
 
-  bool update = false;
+  // bool update = false;
 
   ///
   @override
@@ -93,11 +92,12 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           child: clientAppBar(),
         ),
         bottomNavigationBar:
-            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
+            (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
         body: ListView(
           children: [
             (is_mobile)
-                ? themeHeader_android(context, title: "My Profile")
+                ? themeHeader_android(context,
+                    title: "My Profile", isBack: true)
                 : Header(
                     title: "My Profile",
                   ),
@@ -155,11 +155,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.edit, size: 20),
+                        Icon(
+                          Icons.edit,
+                          size: 20,
+                          color: Colors.white,
+                        ),
                         SizedBox(
                           width: 10,
                         ),
-                        Text("Edit Profile")
+                        GoogleText(text: "Edit Profile", color: Colors.white)
                       ],
                     ))
               ],
@@ -295,7 +299,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                  image: (user.isNotEmpty && user != "")
+                  image: (user.isNotEmpty)
                       ? NetworkImage("${user["avatar"]}")
                       : NetworkImage(
                           "https://img.freepik.com/premium-vector/account-icon-user-icon-vector-graphics_292645-552.jpg?w=2000"),

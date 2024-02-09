@@ -291,17 +291,16 @@ class _SubAdminState extends State<SubAdmin> {
             child: Scaffold(
                 bottomNavigationBar:
                     (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
-                appBar: (is_mobile)
-                    ? theme_appbar(context, title: "Settings")
-                    : PreferredSize(
-                        preferredSize: Size.fromHeight(0),
-                        child: clientAppBar(),
-                      ),
+                appBar: PreferredSize(
+                  preferredSize: Size.fromHeight(0),
+                  child: clientAppBar(),
+                ),
                 body: Container(
                   child: ListView(
                     children: [
                       (is_mobile)
-                          ? SizedBox()
+                          ? themeHeader_android(context,
+                              title: "Sub Users", isBack: true)
                           : Header(
                               title: "Sub Admin",
                             ),
@@ -820,7 +819,10 @@ class _SubAdminState extends State<SubAdmin> {
                               });
                             }, label: "Reset", buttonColor: Colors.black),
                             SizedBox(width: 20.0),
-                          ])
+                          ]),
+                      SizedBox(
+                        height: 50,
+                      )
                     ],
                   ))),
           SizedBox(
@@ -871,7 +873,7 @@ class _SubAdminState extends State<SubAdmin> {
                                       TableCellVerticalAlignment.middle,
                                   child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text("Sub Admin List",
+                                      child: Text("User List",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold))),
                                 ),
@@ -1799,7 +1801,10 @@ class _SubAdminState extends State<SubAdmin> {
                                   });
                                 }, label: "Reset", buttonColor: Colors.black),
                                 SizedBox(width: 20.0),
-                              ])
+                              ]),
+                          SizedBox(
+                            height: 250,
+                          ),
                         ],
                       )))
         ]));

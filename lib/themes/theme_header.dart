@@ -2,6 +2,7 @@
 
 import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';
+import 'package:jkm_crm_admin/themes/theme_widgets.dart';
 
 Widget themeHeader_android(
   context, {
@@ -46,7 +47,7 @@ Widget themeHeader_android(
                             (isBack)
                                 ? IconButton(
                                     onPressed: () {
-                                      //backScreen(context);
+                                      Navigator.of(context).pop();
                                     },
                                     icon: Icon(
                                       Icons.arrow_back,
@@ -55,7 +56,7 @@ Widget themeHeader_android(
                                     ))
                                 : GestureDetector(
                                     onTap: () {
-                                      Scaffold.of(context).openDrawer();
+                                      // Scaffold.of(context).openDrawer();
                                     },
                                     child: Padding(
                                       padding: const EdgeInsets.only(
@@ -67,9 +68,10 @@ Widget themeHeader_android(
                                     ),
                                   ),
                             SizedBox(width: 8.0),
-                            Text("$title",
-                                style: themeTextStyle(
-                                    size: 20.0, color: Colors.white)),
+                            GoogleText(
+                                text: "$title",
+                                fsize: 20.0,
+                                color: Colors.white),
                           ],
                         ),
                       ),

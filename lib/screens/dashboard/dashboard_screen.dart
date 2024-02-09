@@ -87,7 +87,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       BalanceCount = await controller.Balance_count();
       if (is_mobile == true && !arrIsLocationAllowed) {
-        await Location_Alert();
+        // await Location_Alert(context);
       }
     }
 
@@ -105,42 +105,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
 ///// Location permission  ++++++++++++++++++++++++++++++++++++++++++++
   Completer<GoogleMapController> _googleMapController = Completer();
   CameraPosition? _cameraPosition;
-  // Location? _location;
-  // LocationData? _tempLocation;
-  // LocationData? _currentLocation;
-  // list of locations to display polylines
-  // _init() async {
-  //   _location = await Location();
-  //   _cameraPosition = CameraPosition(target: LatLng(0, 0), zoom: 15);
-  //   // await _location?.getLocation();
-  //   // await _location?.getLocation().then((location) {
-  //   //   _tempLocation = location;
-  //   //   _currentLocation = location;
-  //   // });
 
-  //   // print("$_currentLocation   ++++++++++++++++++++++");
+  // ///===================================================================
+  // Future<bool> Location_Alert(BuildContext context) async {
+  //   return await showDialog(
+  //         context: context,
+  //         builder: (context) => Dialog(
+  //           insetPadding:
+  //               EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(10.0),
+  //           ),
+  //           elevation: 0,
+  //           backgroundColor: Colors.transparent,
+  //           child: contentBox(context, () async {
+  //             // await _init();
+  //             Navigator.pop(context);
+  //           }),
+  //         ),
+  //       ) ??
+  //       false;
   // }
-
-  ///===================================================================
-  Future<bool> Location_Alert() async {
-    return await showDialog(
-          context: context,
-          builder: (context) => Dialog(
-            insetPadding:
-                EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            child: contentBox(context, () async {
-              // await _init();
-              Navigator.pop(context);
-            }),
-          ),
-        ) ??
-        false;
-  }
 
   var db = (!kIsWeb && Platform.isWindows)
       ? Firestore.instance
@@ -267,6 +252,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ? Container(color: Colors.white, child: progress())
         //     color: Colors.white, child: Center(child: pleaseWait(context)))
         : Scaffold(
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(0),
+              child: clientAppBar(),
+            ),
             bottomNavigationBar:
                 (is_mobile) ? theme_footer_android(context, 0) : SizedBox(),
             body: Container(

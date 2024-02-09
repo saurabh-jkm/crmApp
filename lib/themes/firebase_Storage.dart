@@ -93,7 +93,8 @@ uploadFile(String filepath, String fileName, var db) async {
     var tempRetrunData = jsonDecode(response.body) as Map<dynamic, dynamic>;
     ulr =
         "https://firebasestorage.googleapis.com/v0/b/crmapp-aed0e.appspot.com/o/media%2F$fileName?alt=media&token=${tempRetrunData["downloadTokens"]}";
-    image_addList(ulr);
+    await image_addList(ulr);
+
     return ulr;
   } else {
     print("Error uploading file: ${response.statusCode}");

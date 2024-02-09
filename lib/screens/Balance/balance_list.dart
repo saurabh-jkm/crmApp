@@ -28,6 +28,7 @@ import '../../responsive.dart';
 import '../../themes/firebase_Storage.dart';
 import '../../themes/firebase_functions.dart';
 import '../../themes/style.dart';
+import '../../themes/theme_header.dart';
 import '../../themes/theme_widgets.dart';
 import '../Invoice/add_invoice_screen.dart';
 import '../Invoice/invoice_controller.dart';
@@ -90,22 +91,15 @@ class _BalanceListState extends State<BalanceList> {
 
   orderList(limit, {filter: ''}) async {
     Map temp = await controllerr.OrderListData(limit);
+
+    temp.forEach((k, v) {
+      v['date'] = formatDate(v['date_at'], formate: "dd/MM/yyyy");
+      v['statusIs'] =
+          (v['status'] != null && v['status']) ? 'Active' : 'InActive';
+      controllerr.OrderList.add(v);
+    });
     setState(() {
-      temp.forEach((k, v) {
-        v['date'] = formatDate(v['date_at'], formate: "dd/MM/yyyy");
-        v['statusIs'] =
-            (v['status'] != null && v['status']) ? 'Active' : 'InActive';
-        controllerr.OrderList.add(v);
-      });
-
-      for (var i = 0; i < controllerr.OrderList.length; i++) {
-        // if (controllerr.OrderList[i]["balance"] == "0") {
-        // print(" ${controllerr.OrderList[i]["balance"]}  +++++++++++++");
-        // }
-      }
-
       controllerr.finalOrderList = controllerr.OrderList;
-
       progressWidget = false;
     });
 
@@ -125,10 +119,6 @@ class _BalanceListState extends State<BalanceList> {
         ),
       );
     } else {
-      // final output = await getTemporaryDirectory();
-      // var filePath = "${output.path}/$fileName.pdf";
-      // final file = File(filePath);
-      // await file.writeAsBytes(byteList);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -199,19 +189,26 @@ class _BalanceListState extends State<BalanceList> {
       },
       child: Scaffold(
         bottomNavigationBar:
-            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
+            (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: clientAppBar(),
+        ),
         body: Container(
           color: Colors.white,
           child: ListView(
             children: [
               //header ======================
+              if (is_mobile)
+                themeHeader_android(context,
+                    title: "Balance List", isBack: true),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 10.0),
                 decoration: BoxDecoration(color: themeBG2),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    headerB(context, "Balance List"),
+                    (is_mobile) ? SizedBox() : headerB(context, "Balance List"),
                     Container(
                       child: Row(
                         children: [

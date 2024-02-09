@@ -199,6 +199,10 @@ class _Sell_listState extends State<Sell_list> {
         }
       },
       child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: clientAppBar(),
+        ),
         bottomNavigationBar:
             (is_mobile) ? theme_footer_android(context, 2) : SizedBox(),
         body: Container(
@@ -750,38 +754,39 @@ class _Sell_listState extends State<Sell_list> {
                       size: 15,
                     ))),
             SizedBox(width: 5),
-            Container(
-                height: 30,
-                width: 30,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 10, 103, 139),
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                child: IconButton(
-                    onPressed: () async {
-                      final temp = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) =>
-                                  (selectedFilter.toLowerCase() == 'sale')
-                                      ? editInvoice(
-                                          data: dbData,
-                                          header_name: "Edit Invoice",
-                                        )
-                                      : editSuplierInvoice(
-                                          data: dbData,
-                                          header_name: "Edit Supplier Invoice",
-                                        )));
-                      if (temp == 'updated') {
-                        orderList(_number_select);
-                      }
-                    },
-                    icon: Icon(
-                      Icons.edit,
-                      color: Colors.yellow,
-                      size: 15,
-                    ))),
+            if (!is_mobile)
+              Container(
+                  height: 30,
+                  width: 30,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 10, 103, 139),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: IconButton(
+                      onPressed: () async {
+                        final temp = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => (selectedFilter.toLowerCase() ==
+                                        'sale')
+                                    ? editInvoice(
+                                        data: dbData,
+                                        header_name: "Edit Invoice",
+                                      )
+                                    : editSuplierInvoice(
+                                        data: dbData,
+                                        header_name: "Edit Supplier Invoice",
+                                      )));
+                        if (temp == 'updated') {
+                          orderList(_number_select);
+                        }
+                      },
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.yellow,
+                        size: 15,
+                      ))),
           ],
         ));
   }

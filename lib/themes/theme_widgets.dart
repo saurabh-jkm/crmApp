@@ -466,34 +466,36 @@ HeadLine(BuildContext context, icon_def, head_text, Sub_text, fn,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Icon(icon_def, color: iconColor, size: 30),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
-              '$head_text',
-              style: themeTextStyle(
-                  size: 18.0,
-                  ftFamily: 'ms',
-                  fw: FontWeight.bold,
-                  color: Colors.black),
-            ),
-            SizedBox(
-              width: 5,
-            ),
-            Text(
-              '$Sub_text',
-              style: themeTextStyle(
-                  size: 12.0,
-                  ftFamily: 'ms',
-                  fw: FontWeight.normal,
-                  color: Colors.black45),
-            ),
-          ],
-        ),
+        (is_mobile)
+            ? SizedBox()
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Icon(icon_def, color: iconColor, size: 30),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    '$head_text',
+                    style: themeTextStyle(
+                        size: 18.0,
+                        ftFamily: 'ms',
+                        fw: FontWeight.bold,
+                        color: Colors.black),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    '$Sub_text',
+                    style: themeTextStyle(
+                        size: 12.0,
+                        ftFamily: 'ms',
+                        fw: FontWeight.normal,
+                        color: Colors.black45),
+                  ),
+                ],
+              ),
         ElevatedButton.icon(
           style: TextButton.styleFrom(
             backgroundColor: buttonColor,
@@ -509,8 +511,11 @@ HeadLine(BuildContext context, icon_def, head_text, Sub_text, fn,
               fn(arg);
             }
           },
-          icon: Icon(Icons.add),
-          label: Text("Add New"),
+          icon: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          label: GoogleText(text: "Add New", color: Colors.white),
         ),
       ],
     ),
@@ -832,11 +837,11 @@ Widget formTimeInput(BuildContext context, controller,
 Widget clientAppBar() {
   return AppBar(
     automaticallyImplyLeading: false,
-    backgroundColor: themeBG2,
+    backgroundColor: themeBgColor,
     elevation: 0,
     centerTitle: false,
     titleSpacing: 0,
-    title: Text("Insaaf99"),
+    // title: Text("Insaaf99"),
   );
 }
 

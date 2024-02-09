@@ -111,8 +111,12 @@ class _TrackHistoryState extends State<TrackHistory> {
         }
       },
       child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(0),
+          child: clientAppBar(),
+        ),
         bottomNavigationBar:
-            (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
+            (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
         body: Container(color: themeBG2, child: CustomerList(context)),
       ),
     );
@@ -128,7 +132,8 @@ class _TrackHistoryState extends State<TrackHistory> {
       child: ListView(
         children: [
           (is_mobile)
-              ? themeHeader_android(context, title: "Track History")
+              ? themeHeader_android(context,
+                  title: "Track History", isBack: true)
               : Container(
                   height: 70.0, child: Header(title: "Track History List")),
           // search

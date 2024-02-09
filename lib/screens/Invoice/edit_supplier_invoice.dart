@@ -43,6 +43,7 @@ class editSuplierInvoice extends StatefulWidget {
 }
 
 class _editSuplierInvoiceState extends State<editSuplierInvoice> {
+  var controller = new invoiceController();
   var documentId;
   bool isWait = true;
   bool isUnderConstruction = false;
@@ -74,8 +75,6 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
 
     super.initState();
   }
-
-  var controller = new invoiceController();
 
   @override
   Widget build(BuildContext context) {
@@ -255,7 +254,7 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height -
-                                                  420,
+                                                  400,
                                               child: ListView(
                                                 children: [
                                                   for (var i = 1;
@@ -811,7 +810,6 @@ class _editSuplierInvoiceState extends State<editSuplierInvoice> {
                   : controller.ProductDiscountControllers[controllerId]!.text;
         });
 
-        
         // attributes =============================================
         Future.delayed(const Duration(milliseconds: 200), () {
           controller.fnGetProductDetails(controllerId, rData);

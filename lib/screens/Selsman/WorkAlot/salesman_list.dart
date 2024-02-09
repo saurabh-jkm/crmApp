@@ -115,7 +115,7 @@ class _SalemanListState extends State<SalemanList> {
             child: clientAppBar(),
           ),
           bottomNavigationBar:
-              (is_mobile) ? theme_footer_android(context, 1) : SizedBox(),
+              (is_mobile) ? theme_footer_android(context, 3) : SizedBox(),
           body: (controller.secondScreen && controller.selectedSellerId != null)
               ? Container(
                   color: Colors.white,
@@ -127,7 +127,8 @@ class _SalemanListState extends State<SalemanList> {
               : Column(
                   children: [
                     (is_mobile)
-                        ? themeHeader_android(context, title: "Seller List")
+                        ? themeHeader_android(context,
+                            title: "Seller List", isBack: true)
                         : Header(
                             title: "Seller List",
                           ),
@@ -142,7 +143,7 @@ class _SalemanListState extends State<SalemanList> {
   // Body Part =================================================
   Widget CustomerList(context) {
     return Container(
-      height: MediaQuery.of(context).size.height - 70,
+      height: MediaQuery.of(context).size.height * 0.7,
       color: Colors.white,
       child: ListView(
         children: [

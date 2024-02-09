@@ -16,6 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../themes/global.dart';
+import '../../themes/theme_header.dart';
+import '../../themes/theme_widgets.dart';
 import '../Selsman/WorkAlot/salesman_list.dart';
 import '../Sub Admin/Add_SubAdmin.dart';
 
@@ -35,18 +38,17 @@ class _More_screenState extends State<More_screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: theme_appbar(context, title: "Settings"),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: clientAppBar(),
+      ),
       bottomNavigationBar: theme_footer_android(context, 3),
       backgroundColor: Colors.white,
       body: Container(
         child: ListView(
           children: [
-            SizedBox(height: 20.0),
-            // menut_list(context,
-            //     title: "Category", icon: Icons.category_outlined, route: () {
-            //   Navigator.push(
-            //       context, MaterialPageRoute(builder: (_) => CategoryAdd()));
-            // }),
+            if (is_mobile) themeHeader_android(context, title: "More"),
+            // SizedBox(height: 20.0),
             menut_list(context,
                 title: "All Outstanding",
                 icon: Icons.account_balance_wallet_outlined, route: () {
@@ -76,7 +78,6 @@ class _More_screenState extends State<More_screen> {
               Navigator.push(
                   context, MaterialPageRoute(builder: (_) => ProfileDetails()));
             }),
-
             menut_list(context, title: "Log Out", icon: Icons.logout,
                 route: () async {
               SharedPreferences preferences =

@@ -81,10 +81,9 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
       if (results != null) {
         final path = results.files.single.path;
         final fileName = results.files.single.name;
-
         // UploadFile(path!, fileName).then((value) {});
 
-        url_img = uploadFile(path!, fileName, db);
+        url_img = await uploadFile(path!, fileName, db);
         _getUser();
       } else {
         themeAlert(context, 'Not find selected', type: "error");
@@ -95,21 +94,21 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
         type: FileType.custom,
         allowedExtensions: ['png', 'jpg'],
       );
+
       if (results != null) {
         Uint8List? UploadImage = results.files.single.bytes;
         fileName = results.files.single.name;
         Reference reference = FirebaseStorage.instance.ref('media/$fileName');
         final UploadTask uploadTask = reference.putData(UploadImage!);
         uploadTask.whenComplete(() => print("selected image"));
-        setState(() async {
-          downloadURL = await FirebaseStorage.instance
-              .ref()
-              .child('media/$fileName')
-              .getDownloadURL();
-          setState(() {
-            url_img = downloadURL.toString();
-            // image_addList(url_img);
-          });
+        downloadURL = await FirebaseStorage.instance
+            .ref()
+            .child('media/$fileName')
+            .getDownloadURL();
+
+        setState(() {
+          url_img = downloadURL.toString();
+          // image_addList(url_img);
         });
       } else {
         themeAlert(context, 'Not find selected', type: "error");
@@ -176,7 +175,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
       await shared_pref_update();
       if (msg != null) {
         themeAlert(context, "Updated Successfully !!");
-        Navigator.pop(context, true);
+        Navigator.pop(context, "Updated");
       }
     }
   }
@@ -192,7 +191,7 @@ class _EditProfileDetailsState extends State<EditProfileDetails> {
       'email': data!["email"],
       "status": data!["status"],
       "date_at": data!["date_at"],
-      'avatar': data!["avatar"],
+      'avatar': url_img,
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('user', jsonEncode(userDataArr));
