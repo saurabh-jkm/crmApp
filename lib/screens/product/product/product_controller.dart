@@ -1,6 +1,4 @@
-// ignore_for_file: unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps, non_constant_identifier_names, unused_local_variable, deprecated_colon_for_default_value, unnecessary_string_interpolations
-
-import 'package:jkm_crm_admin/screens/product/product/add_product_screen.dart';
+// ignore_for_file: unnecessary_new, prefer_collection_literals, unnecessary_brace_in_string_interps, non_constant_identifier_names, unused_local_variable, deprecated_colon_for_default_value, unnecessary_string_interpolations, unused_shown_name, collection_methods_unrelated_type, unrelated_type_equality_checks, deprecated_member_use
 
 import 'dart:convert';
 import 'package:jkm_crm_admin/themes/function.dart';
@@ -508,9 +506,9 @@ class ProductController {
 
     for (var i = 1; i <= totalProduct; i++) {
       tempTitle = (tempTitle == '')
-          ? nameController!.text
-          : '${tempTitle}, ${nameController!.text}';
-      var inv_name = nameController!.text;
+          ? nameController.text
+          : '${tempTitle}, ${nameController.text}';
+      var inv_name = nameController.text;
 
       dynamicControllers['$i'].forEach((key, value) async {
         if (value.text != '') {

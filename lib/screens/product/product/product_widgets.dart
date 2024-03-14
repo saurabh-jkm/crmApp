@@ -1,5 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, sized_box_for_whitespace, deprecated_colon_for_default_value
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: prefer_const_constructors, unnecessary_string_interpolations, unnecessary_brace_in_string_interps, sized_box_for_whitespace, deprecated_colon_for_default_value, avoid_unnecessary_containers, unnecessary_new, non_constant_identifier_names, avoid_print
 import 'package:jkm_crm_admin/themes/function.dart';
 import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:jkm_crm_admin/themes/theme_widgets.dart';
@@ -359,7 +358,7 @@ Widget log_TableRow(context, key, dataArr, headingList, oldSubData,
     });
   }
   //arr = (dataArr[key] == null) ? {} : dataArr[key];
-  print(oldSubData);
+  // print(oldSubData);
   if (oldSubData != null && oldSubData[key] != null) {
     print("yess");
     var odata = oldSubData[key];

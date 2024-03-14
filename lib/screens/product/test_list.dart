@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_final_fields, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, no_leading_underscores_for_local_identifiers, use_build_context_synchronously, sized_box_for_whitespace
+// ignore_for_file: prefer_const_constructors, prefer_final_fields, avoid_print, non_constant_identifier_names, unnecessary_string_interpolations, no_leading_underscores_for_local_identifiers, use_build_context_synchronously, sized_box_for_whitespace, library_private_types_in_public_api
 
 import 'dart:io';
 
@@ -14,6 +14,7 @@ import '../../themes/theme_widgets.dart';
 import 'product/detail_product_screen.dart';
 import 'test2.dart';
 
+// ignore: use_key_in_widget_constructors
 class PaginationScreen extends StatefulWidget {
   @override
   _PaginationScreenState createState() => _PaginationScreenState();

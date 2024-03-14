@@ -3,7 +3,6 @@
 import 'package:jkm_crm_admin/screens/Invoice/add_supplier_invoice_screen.dart';
 
 import 'package:jkm_crm_admin/screens/privacy_policy/privacy_policy.dart';
-import 'package:jkm_crm_admin/themes/firebase_Storage.dart';
 import 'package:jkm_crm_admin/themes/global.dart';
 import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:jkm_crm_admin/themes/theme_widgets.dart';
@@ -116,12 +115,13 @@ class _MyAppState extends State<MyApp> {
 
   ///
   ///// Check
+
   check_new_version() async {
     Map<dynamic, dynamic> w = {
       'table': "app_setting",
       //'status': "$_StatusValue",
     };
-    var temp = await dbFindDynamic(db, w);
+    var temp = await dbFindDynamic(dbd, w);
     if (temp[0]['crm_admin_android_v'] > globals.androidRealeaseNo) {
       setState(() {
         settingDate = temp[0];

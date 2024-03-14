@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, prefer_const_constructors, no_leading_underscores_for_local_identifiers, use_key_in_widget_constructors, non_constant_identifier_names
+// ignore_for_file: deprecated_member_use, prefer_const_constructors, no_leading_underscores_for_local_identifiers, use_key_in_widget_constructors, non_constant_identifier_names, unused_import, use_super_parameters
 
 import 'package:jkm_crm_admin/themes/global.dart';
 import 'package:flutter/material.dart';

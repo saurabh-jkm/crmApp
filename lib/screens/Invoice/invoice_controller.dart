@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, division_optimization, camel_case_types, non_constant_identifier_names, unnecessary_new, prefer_collection_literals, prefer_is_empty, deprecated_colon_for_default_value, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, await_only_futures, avoid_print, unused_local_variable, unused_element
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, division_optimization, camel_case_types, non_constant_identifier_names, unnecessary_new, prefer_collection_literals, prefer_is_empty, deprecated_colon_for_default_value, unnecessary_brace_in_string_interps, prefer_typing_uninitialized_variables, await_only_futures, avoid_print, unused_local_variable, unused_element, unrelated_type_equality_checks, collection_methods_unrelated_type, deprecated_member_use
 import 'dart:convert';
 import 'package:jkm_crm_admin/screens/Invoice/update_controller.dart';
 import 'package:jkm_crm_admin/themes/firebase_functions.dart';
@@ -21,9 +21,6 @@ class invoiceController extends updateController {
   //var db = Firestore.instance;
 
   bool isSupplier = false;
-  var db = (!kIsWeb && Platform.isWindows)
-      ? Firestore.instance
-      : FirebaseFirestore.instance;
 
   final formKeyInvoice = GlobalKey<FormState>();
   List<LogicalKeyboardKey> Keys = [];
@@ -330,7 +327,6 @@ class invoiceController extends updateController {
       var dateFrom = themeCustomeDate(startDate_controller.text);
       var dateTo = themeCustomeDate(toDate_controller.text);
 
-      // TODO Query
       var query;
       if (!kIsWeb && Platform.isWindows) {
         query = await Firestore.instance

@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, deprecated_colon_for_default_value
+// ignore_for_file: file_names, deprecated_colon_for_default_value, prefer_const_constructors, sized_box_for_whitespace, unnecessary_string_interpolations
 
 import 'package:jkm_crm_admin/themes/function.dart';
 import 'package:jkm_crm_admin/themes/style.dart';

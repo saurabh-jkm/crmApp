@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unused_local_variable, prefer_typing_uninitialized_variables
 
 import 'package:jkm_crm_admin/themes/firebase_functions.dart';
 import 'dart:io';
@@ -41,15 +41,12 @@ class trackController {
   Future customerList(int Limit) async {
     listCustomerName = [];
     listCustomer = {};
-    var dbData =
-        await dbFindDynamic(db, {'table': 'client_location', 'orderBy':'-date', "limit": Limit});
-
-    
-   
+    var dbData = await dbFindDynamic(
+        db, {'table': 'client_location', 'orderBy': '-date', "limit": Limit});
 
     var i = 1;
     //dbData.forEach((k, data) async {
-      for(var k in  dbData.keys){
+    for (var k in dbData.keys) {
       var data = dbData[k];
       if (data['client_id'] != null) {
         var datar = await dbFind({'table': 'users', 'id': data['client_id']});
@@ -63,9 +60,9 @@ class trackController {
         //print('++++++++++++++++++++++++++++++++++++++++++++++++++++');
         i++;
       }
-    };
+    }
 
-     //print(listCustomer);
+    //print(listCustomer);
   }
 
   /////// distance Calculate fun ++++++++++++++++++++++++++++++++++++++++

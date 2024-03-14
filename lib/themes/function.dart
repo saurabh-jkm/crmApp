@@ -1,11 +1,9 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_new, prefer_equal_for_default_values, unused_local_variable, avoid_function_literals_in_foreach_calls, prefer_collection_literals, depend_on_referenced_packages, deprecated_colon_for_default_value, prefer_typing_uninitialized_variables
+// ignore_for_file: non_constant_identifier_names, unnecessary_new, prefer_equal_for_default_values, unused_local_variable, avoid_function_literals_in_foreach_calls, prefer_collection_literals, depend_on_referenced_packages, deprecated_colon_for_default_value, prefer_typing_uninitialized_variables, unused_shown_name
 
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
-import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 //exmaple calling DB  function

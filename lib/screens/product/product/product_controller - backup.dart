@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_new, prefer_collection_literals, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, await_only_futures, unnecessary_string_interpolations, file_names
+
 import 'package:jkm_crm_admin/screens/product/product/product_widgets.dart';
 import 'package:jkm_crm_admin/themes/style.dart';
 import 'package:flutter/material.dart';

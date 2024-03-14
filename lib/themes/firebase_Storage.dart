@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, avoid_function_literals_in_foreach_calls, avoid_print, unnecessary_string_interpolations, unused_import, unnecessary_null_comparison, file_names, prefer_const_declarations, unused_local_variable
+// ignore_for_file: non_constant_identifier_names, avoid_function_literals_in_foreach_calls, avoid_print, unnecessary_string_interpolations, unused_import, unnecessary_null_comparison, file_names, prefer_const_declarations, unused_local_variable, unused_shown_name, depend_on_referenced_packages, duplicate_ignore, prefer_typing_uninitialized_variables
 
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';

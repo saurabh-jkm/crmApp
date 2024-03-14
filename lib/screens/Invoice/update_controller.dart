@@ -1,15 +1,9 @@
-import 'dart:convert';
-import 'package:jkm_crm_admin/themes/firebase_functions.dart';
-import 'package:jkm_crm_admin/themes/style.dart';
-import 'package:flutter/material.dart';
+// ignore_for_file: camel_case_types, unused_shown_name
+
 import 'dart:io';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
-import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 
 class updateController {
   var db = (!kIsWeb && Platform.isWindows)

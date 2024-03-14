@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_typing_uninitialized_variables, unused_local_variable, unused_field, prefer_final_fields, unnecessary_new, prefer_collection_literals, camel_case_types, avoid_print, non_constant_identifier_names, unused_element
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_typing_uninitialized_variables, unused_local_variable, unused_field, prefer_final_fields, unnecessary_new, prefer_collection_literals, camel_case_types, avoid_print, non_constant_identifier_names, unused_element, use_super_parameters, deprecated_member_use
 
 import 'dart:async';
 import 'dart:convert';

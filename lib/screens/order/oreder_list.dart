@@ -1748,7 +1748,7 @@ class _OrderListState extends State<OrderList> {
                 Container(
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.amber // Background color
+                          // primary: Colors.amber // Background color
                           ),
                       onPressed: () {
                         setState(() {
@@ -1767,8 +1767,8 @@ class _OrderListState extends State<OrderList> {
                     ? Container(
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.red, // Background color
-                            ),
+                                // primary: Colors.red, // Background color
+                                ),
                             onPressed: () {
                               setState(() {
                                 Order_details--;

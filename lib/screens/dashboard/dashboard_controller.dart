@@ -1,22 +1,13 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, prefer_const_constructors, unused_local_variable, avoid_print, avoid_function_literals_in_foreach_calls, unnecessary_new, prefer_collection_literals, await_only_futures
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, prefer_const_constructors, unused_local_variable, avoid_print, avoid_function_literals_in_foreach_calls, unnecessary_new, prefer_collection_literals, await_only_futures, prefer_typing_uninitialized_variables
 
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firedart/firedart.dart';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../themes/firebase_functions.dart';
 import '../../themes/function.dart';
 
 class DashboardController {
-  // var db = (!kIsWeb && Platform.isWindows)
-  //     ? Firestore.instance
-  //     : FirebaseFirestore.instance;
-
-  // ============================
   stock_Data_count() async {
     var tempCount = 0;
     if (!kIsWeb && Platform.isWindows) {

@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_super_parameters
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';

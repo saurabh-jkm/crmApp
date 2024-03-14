@@ -3,7 +3,6 @@
 import 'dart:convert';
 
 import 'dart:io' show Platform;
-import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jkm_crm_admin/screens/Invoice/invoice_widgets.dart';
@@ -613,8 +612,8 @@ class _addInvoiceScreenState extends State<addInvoiceScreen> {
                                         ? SizedBox()
                                         : ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                              primary: themeBG,
-                                              onPrimary: Colors.white,
+                                              // primary: themeBG,
+                                              // onPrimary: Colors.white,
                                               elevation: 3,
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:

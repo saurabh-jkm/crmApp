@@ -1,5 +1,5 @@
 // table header ===================================================
-// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers
+// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, non_constant_identifier_names, avoid_types_as_parameter_names
 
 import 'package:flutter/material.dart';
 

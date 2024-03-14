@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types, prefer_const_constructors_in_immutables, non_constant_identifier_names, prefer_typing_uninitialized_variables, library_private_types_in_public_api, avoid_print, prefer_const_constructors, file_names, unused_local_variable, sort_child_properties_last, avoid_web_libraries_in_flutter, use_build_context_synchronously, unused_shown_name, unnecessary_string_interpolations, unused_import, unnecessary_import, unnecessary_brace_in_string_interps
+// ignore_for_file: camel_case_types, prefer_const_constructors_in_immutables, non_constant_identifier_names, prefer_typing_uninitialized_variables, library_private_types_in_public_api, avoid_print, prefer_const_constructors, file_names, unused_local_variable, sort_child_properties_last, avoid_web_libraries_in_flutter, use_build_context_synchronously, unused_shown_name, unnecessary_string_interpolations, unused_import, unnecessary_import, unnecessary_brace_in_string_interps, use_super_parameters
 
 import 'dart:convert';
 import 'dart:io';

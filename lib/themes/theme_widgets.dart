@@ -27,8 +27,9 @@ Widget themeButton3(BuildContext context, fn,
     child: Center(
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: buttonColor,
-          onPrimary: buttonColor,
+          backgroundColor: buttonColor,
+          // primary: buttonColor,
+          // onPrimary: buttonColor,
           shadowColor: Color.fromARGB(255, 165, 165, 165),
           elevation: 3,
           shape: RoundedRectangleBorder(

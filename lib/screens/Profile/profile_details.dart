@@ -151,8 +151,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       // });
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.green, // Background color
-                    ),
+                        // primary: Colors.green, // Background color
+                        ),
                     child: Row(
                       children: [
                         Icon(

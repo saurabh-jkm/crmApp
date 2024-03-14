@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, use_build_context_synchronously, file_names, avoid_print, unnecessary_brace_in_string_interps, dead_code, camel_case_types, duplicate_ignore, prefer_typing_uninitialized_variables, avoid_unnecessary_containers
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, use_build_context_synchronously, file_names, avoid_print, unnecessary_brace_in_string_interps, dead_code, camel_case_types, duplicate_ignore, prefer_typing_uninitialized_variables, avoid_unnecessary_containers, unnecessary_new
 
 import 'dart:convert';
 import 'dart:io';

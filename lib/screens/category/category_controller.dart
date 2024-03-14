@@ -37,7 +37,6 @@ import 'package:firedart/firedart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:slug_it/slug_it.dart';
 
 import '../../themes/firebase_functions.dart';
 

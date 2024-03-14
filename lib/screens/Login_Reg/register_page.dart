@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, prefer_final_fields, non_constant_identifier_names, prefer_const_constructors, depend_on_referenced_packages
+// ignore_for_file: use_build_context_synchronously, prefer_final_fields, non_constant_identifier_names, prefer_const_constructors, depend_on_referenced_packages, use_super_parameters
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

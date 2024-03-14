@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, deprecated_member_use, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, deprecated_member_use, prefer_const_literals_to_create_immutables, use_super_parameters
 
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;

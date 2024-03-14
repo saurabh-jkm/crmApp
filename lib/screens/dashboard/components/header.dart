@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, deprecated_member_use, prefer_typing_uninitialized_variables, unused_element, no_leading_underscores_for_local_identifiers, non_constant_identifier_names, dead_code
+// ignore_for_file: prefer_const_constructors, deprecated_member_use, prefer_typing_uninitialized_variables, unused_element, no_leading_underscores_for_local_identifiers, non_constant_identifier_names, dead_code, use_super_parameters, unnecessary_new, prefer_collection_literals
 
 import 'dart:convert';
 

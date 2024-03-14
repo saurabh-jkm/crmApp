@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unnecessary_null_comparison, unused_local_variable, avoid_print, prefer_const_declarations, prefer_typing_uninitialized_variables
+// ignore_for_file: unnecessary_string_interpolations, unused_shown_name, non_constant_identifier_names, unnecessary_new, camel_case_types, prefer_collection_literals, deprecated_colon_for_default_value, avoid_function_literals_in_foreach_calls, await_only_futures, unnecessary_null_comparison, unused_local_variable, avoid_print, prefer_const_declarations, prefer_typing_uninitialized_variables, duplicate_import, depend_on_referenced_packages
 
 import 'package:jkm_crm_admin/themes/firebase_functions.dart';
 import 'dart:io';
