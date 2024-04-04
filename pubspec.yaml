@@ -1,0 +1,98 @@
+name: jkm_crm_admin
+description: A new Flutter project.
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.2 <3.0.0'
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  google_fonts: ^4.0.4
+  fl_chart: ^0.66.2
+  provider: ^6.1.2
+  cupertino_icons: ^1.0.3
+  qr_flutter: ^4.0.0
+  slug_it: ^0.0.1
+  flutter_colorpicker: ^1.0.3
+  intl: ^0.17.0
+# Firebase setup +++++
+  firebase_auth: ^4.2.0
+  firebase_core: ^2.9.0
+  cloud_firestore: ^4.2.0
+  # cloud_firestore_web: ^3.1.1
+  firebase_storage: ^11.0.7
+  file_picker: ^5.2.6
+  shared_preferences: ^2.1.0
+# testyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+  firedart: ^0.9.1+1
+# Invoice pdf generator ==========================
+  pdf: ^3.8.2
+  path_provider: ^2.0.5
+  url_strategy: ^0.2.0
+  photo_view: ^0.14.0
+  
+  
+  
+  
+  # syncfusion_flutter_pdfviewer: ^21.2.8
+  # syncfusion_flutter_pdfviewer: ^20.3.47
+  syncfusion_flutter_pdfviewer: ^21.2.3
+
+  dropdown_search: ^5.0.6
+  dio: ^5.2.1+1
+  url_launcher: ^6.2.2
+  # dropdown_button2: ^2.2.4
+  html: ^0.15.4
+  charts_flutter: ^0.12.0
+  printing: ^5.10.0
+  google_maps_flutter: ^2.5.0
+  # location: ^4.4.0
+  # location: ^5.0.0
+  geolocator: ^11.0.0
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+
+
+
+flutter:
+  uses-material-design: true
+
+
+
+  assets:
+    - assets/images/
+    - assets/icons/ 
+    - assets/OpenSans-Regular.ttf
+
+
+
