@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
   bool loginIs = false;
   bool isWait = true;
   Map<dynamic, dynamic> user = new Map();
-
+//
   // get user data
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
